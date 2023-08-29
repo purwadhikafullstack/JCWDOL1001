@@ -1,4 +1,3 @@
-import Sequelize from "sequelize";
 const config = require("../config/index.js");
 const Sequelize = require("sequelize");
 

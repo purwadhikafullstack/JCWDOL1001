@@ -64,11 +64,11 @@ export const User_Profile = db.sequelize.define("user_profile", {
     },
     gender : {
         type : db.Sequelize.STRING,
-        allowNull : false
+        allowNull : true
     },
     birthdate: {
         type : db.Sequelize.DATEONLY,
-        allowNull : false
+        allowNull : true
     }
 },{
   timestamps: false
@@ -101,7 +101,7 @@ export const User_Address = db.sequelize.define("user_address", {
         allowNull : false
     },
     postalCode: {
-        type : db.Sequelize.STRING,
+        type : db.Sequelize.INTEGER,
         allowNull : false
     },
 },{
