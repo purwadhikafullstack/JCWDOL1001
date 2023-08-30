@@ -1,9 +1,8 @@
 const { ValidationError } = require("yup")
 const { User_Account } = require("../../model/user.js")
 const validation = require("./validation.js")
-const encryption = require("../../helper/encryption.js")
-const tokenHelper = require("../../helper/token.js")
-const errorMiddleware = require("../../middleware/error.handler.js")
+const {helperToken, helperEncryption} = require("../../helper/index.js")
+const { middlewareErrorHandling } = require("../../middleware/index.js")
 
 const login = async (req, res, next) => {
     try {
@@ -18,19 +17,19 @@ const login = async (req, res, next) => {
         )
 
         if (!userExists) throw ({
-            status : errorMiddleware.NOT_FOUND_STATUS, 
-            message : errorMiddleware.EMAIL_NOT_FOUND 
+            status : middlewareErrorHandling.NOT_FOUND_STATUS, 
+            message : middlewareErrorHandling.EMAIL_NOT_FOUND 
         })
         
-        const isPasswordCorrect = encryption.comparePassword(password, userExists?.dataValues?.password)
+        const isPasswordCorrect = helperEncryption.comparePassword(password, userExists?.dataValues?.password)
 
         if (!isPasswordCorrect) throw ({ 
-            status : errorMiddleware.BAD_REQUEST_STATUS,
-            message : errorMiddleware.INCORRECT_PASSWORD 
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.INCORRECT_PASSWORD 
         });
         
-        const accessToken = tokenHelper.createToken({ 
-            id: userExists?.dataValues?.userId, 
+        const accessToken = helperToken.createToken({ 
+            UUID: userExists?.dataValues?.UUID, 
             email : userExists?.dataValues?.email,
             roleId : userExists?.dataValues?.role
         });
@@ -47,7 +46,7 @@ const login = async (req, res, next) => {
     } catch (error) {
         if (error instanceof ValidationError) {
             return next({ 
-                status : errorMiddleware.BAD_REQUEST_STATUS, 
+                status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
                 message : error?.errors?.[0] 
             })
         }
@@ -60,7 +59,7 @@ const keepLogin = async (req, res, next) => {
         const users = await User_Account?.findOne(
             { 
                 where : {
-                    userId : req.user.id
+                    UUID : req.user.UUID
                 },
                 attributes : {
                     exclude : ["password"]

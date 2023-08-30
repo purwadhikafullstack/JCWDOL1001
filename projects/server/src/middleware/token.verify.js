@@ -1,4 +1,4 @@
-const { verifyToken } = require("../helper/token.js")
+const { helperToken } = require("../helper/index.js")
 
 async function verifyUser(req, res, next) {
     try {
@@ -9,7 +9,7 @@ async function verifyUser(req, res, next) {
             message : "Invalid Credential" 
         });
 
-        const decoded = verifyToken(token);
+        const decoded = helperToken.verifyToken(token);
 
         if (decoded?.roleId > 2) throw ({ 
             type : "error",
@@ -36,7 +36,7 @@ async function verifyAdmin(req, res, next) {
             message : "Invalid Credential" 
         });
 
-        const decoded = verifyToken(token);
+        const decoded = helperToken.verifyToken(token);
 
         if (decoded?.roleId !== 2) throw ({ 
             type : "error",
