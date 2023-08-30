@@ -1,20 +1,26 @@
-require("dotenv/config");
 const express = require("express");
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 const cors = require("cors");
+const {errorHandler} = require("./middleware/error.handler.js");
 const { join } = require("path");
 
 const PORT = process.env.PORT || 8000;
+dotenv.config()
+
 const app = express();
+
 app.use(
   cors({
     origin: [
       process.env.WHITELISTED_DOMAIN &&
         process.env.WHITELISTED_DOMAIN.split(","),
     ],
+    exposedHeaders : "Authorization"
   })
 );
 
-app.use(express.json());
+app.use(bodyParser.json());
 
 //#region API ROUTES
 
@@ -31,26 +37,32 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
+
+const AuthRouters = require("./controllers/authentication/routers.js")
+
+app.use("/api/auth", AuthRouters)
+app.use(errorHandler)
+
 // ===========================
 
 // not found
-app.use((req, res, next) => {
-  if (req.path.includes("/api/")) {
-    res.status(404).send("Not found !");
-  } else {
-    next();
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path.includes("/api/")) {
+//     res.status(404).send("Not found !");
+//   } else {
+//     next();
+//   }
+// });
 
 // error
-app.use((err, req, res, next) => {
-  if (req.path.includes("/api/")) {
-    console.error("Error : ", err.stack);
-    res.status(500).send("Error !");
-  } else {
-    next();
-  }
-});
+// app.use((err, req, res, next) => {
+//   if (req.path.includes("/api/")) {
+//     console.error("Error : ", err.stack);
+//     res.status(500).send("Error !");
+//   } else {
+//     next();
+//   }
+// });
 
 //#endregion
 

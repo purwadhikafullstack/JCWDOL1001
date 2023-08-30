@@ -15,4 +15,10 @@ User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})
 User_Account.belongsTo(User_Status, {targetKey : "status", foreignKey : "status"})
 
 
-export { User_Account, User_Profile, User_Address, User_Role, User_Status  }
+module.exports = { 
+    User_Account, 
+    User_Profile, 
+    User_Address, 
+    User_Role, 
+    User_Status  
+}
