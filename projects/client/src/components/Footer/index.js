@@ -8,9 +8,9 @@ export default function Footer() {
     { title: "Tentang Kami", path: "/tentang-kami" },
     { title: "Kebijakan Privasi", path: "/kebijakan-privasi" },
     { title: "Syarat & Ketentuan", path: "/syarat-ketentuan" },
-  ];
+  ]
   return (
-    <div className="fixed bottom-9 w-full border-t-2 ml-10 lg:ml-0">
+    <div className="w-full border-t-2">
       <div className="container grid grid-cols-1 gap-x-20 gap-y-8 pb-24 pt-8 lg:grid-cols-4 lg:pb-4">
         <div>
           LOGO
