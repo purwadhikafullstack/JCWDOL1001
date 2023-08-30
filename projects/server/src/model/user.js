@@ -1,14 +1,14 @@
-const db = require ("./index.js");
+const db = require("./index.js")
 
-export const User_Account = db.sequelize.define("user_account", {
+const User_Account = db.sequelize.define("user_account", {
     userId : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
     UUID : {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4 
+        type: db.Sequelize.UUID,
+        defaultValue: db.Sequelize.UUIDV4 
     },
     email : {
         type : db.Sequelize.STRING,
@@ -44,7 +44,7 @@ export const User_Account = db.sequelize.define("user_account", {
   timestamps: false
 });
 
-export const User_Profile = db.sequelize.define("user_profile", {
+const User_Profile = db.sequelize.define("user_profile", {
     profileId : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
@@ -74,7 +74,7 @@ export const User_Profile = db.sequelize.define("user_profile", {
   timestamps: false
 });
 
-export const User_Address = db.sequelize.define("user_address", {
+const User_Address = db.sequelize.define("user_address", {
     addressId : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
@@ -108,7 +108,7 @@ export const User_Address = db.sequelize.define("user_address", {
   timestamps: false
 });
 
-export const User_Role = db.sequelize.define("user_role", {
+const User_Role = db.sequelize.define("user_role", {
     role : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
@@ -122,7 +122,7 @@ export const User_Role = db.sequelize.define("user_role", {
   timestamps: false
 });
 
-export const User_Status = db.sequelize.define("user_status", {
+const User_Status = db.sequelize.define("user_status", {
     status : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
@@ -135,3 +135,11 @@ export const User_Status = db.sequelize.define("user_status", {
 },{
   timestamps: false
 });
+
+module.exports = { 
+    User_Account, 
+    User_Profile, 
+    User_Address, 
+    User_Role, 
+    User_Status  
+}
