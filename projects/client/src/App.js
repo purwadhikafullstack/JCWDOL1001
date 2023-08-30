@@ -5,12 +5,15 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import "./App.css";
-import AdminPage from "./components/Navbar/menu.admin";
+import AdminPage from "./pages/admin";
+
 
 function App() {
+  const [isSidebarActive, setIsSidebarActive] = useState(false);
+
   const [message, setMessage] = useState("");
 
-  const user = 1;
+  const user = { role: 1 }
 
   const [isLogin, setIsLogin] = useState(false);
 
@@ -24,12 +27,18 @@ function App() {
   }, []);
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
-      <AdminPage/>
+      <Navbar     
+        user={user}
+        isLogin={isLogin}
+        setIsLogin={setIsLogin}
+        isSidebarActive={isSidebarActive}
+        setIsSidebarActive={setIsSidebarActive}
+      />
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/admin" element={<AdminPage isSidebarActive={isSidebarActive} setIsSidebarActive={setIsSidebarActive}/>} />
         </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

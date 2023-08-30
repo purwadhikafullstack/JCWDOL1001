@@ -1,22 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;200;300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer components{
+@layer base {
+  body {
+    @apply bg-slate-50 font-public text-dark;
+  }
+
+  .container {
+    @apply px-4;
+  }
+
+  h3.title {
+    @apply text-base font-bold text-dark md:text-xl;
+  }
+
+  .see-all {
+    @apply text-sm font-bold text-primary duration-300 hover:text-teal-700 lg:text-base;
+  }
+
+  /*::-webkit-scrollbar {
+    @apply h-0 w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-300;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray;
+  }*/
+
+  .categories-wrapper::-webkit-scrollbar {
+    @apply h-0;
+  }
+}
+
+@layer components {
   @import url("./components/Navbar/index.css");
   @import url("./components/Footer/index.css");
+
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer utilities {
 }

@@ -1,5 +1,5 @@
 .nav {
-  @apply fixed z-10 w-full border-slate-300 bg-slate-50 shadow-md duration-300
+  @apply fixed z-50 w-full border-slate-300 bg-slate-50 shadow-md duration-300
 }
 
 .navbar {

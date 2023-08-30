@@ -3,7 +3,7 @@ import Button from "../Button"
 import { HiDocumentText, HiMiniSquares2X2 } from "react-icons/hi2"
 import { BiSolidDiscount } from "react-icons/bi"
 
-export default function NavMenuItems({ user }) {
+export default function UserNavMenuItems({ user }) {
   const { pathname } = useLocation()
 
   return (
