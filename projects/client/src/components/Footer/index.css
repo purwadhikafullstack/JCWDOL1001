@@ -1,0 +1,3 @@
+.footer-item {
+  @apply py-2 font-semibold text-dark duration-300 hover:text-primary
+}

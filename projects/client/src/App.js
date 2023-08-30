@@ -1,10 +1,15 @@
 import axios from "axios";
-import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   const [message, setMessage] = useState("");
+
+  const user = 1;
+
+  const [isLogin, setIsLogin] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -15,11 +20,10 @@ function App() {
     })();
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
+    <div>
+      <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
+       {message}
+      <Footer />
     </div>
   );
 }
