@@ -8,7 +8,7 @@ async function verifyUser(req, res, next) {
             type : "error",
             message : "Invalid Credential" 
         });
-
+        
         const decoded = helperToken.verifyToken(token);
 
         if (decoded?.roleId > 2) throw ({ 
