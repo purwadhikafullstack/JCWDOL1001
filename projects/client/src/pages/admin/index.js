@@ -1,7 +1,5 @@
-import React from 'react'
-
 export default function AdminPage() {
   return (
-    <div>AdminPage</div>
+    <div className="container py-24 ml-[calc(5rem)]">AdminPage</div>
   )
 }
