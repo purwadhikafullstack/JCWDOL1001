@@ -2,13 +2,13 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import NavMenuItems from "./menu.items"
+import UserNavMenuItems from "./user.nav.menu.items"
 import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout } from "../../store/slices/auth/slices"
 
-export default function NavMenu({
+export default function UserNavMenu({
   isLogin,
   setIsLogin,
   user,
@@ -27,7 +27,7 @@ export default function NavMenu({
   }
 
   return (
-    <div className="flex">
+    <div className={`nav-menu-wrapper justify-end  ${isLogin ? "lg:w-1/3" :""}`} >
       <div className={`nav-menu mr-8 w-full ${ isLogin ? "border-primary/70 pr-8 lg:border-r-[1px]" :"" }`} >
         {
           !isLogin ? 
@@ -47,7 +47,7 @@ export default function NavMenu({
                 onClick={() => handleShowModal("register")}
               />
             </div>
-          : <NavMenuItems user={user} />
+          : <UserNavMenuItems user={user} />
         }
       </div>
 
