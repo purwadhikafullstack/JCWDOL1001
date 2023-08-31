@@ -1,5 +1,5 @@
 const { ValidationError } = require("yup")
-const { User_Account,User_Address,User_Profile } = require("../../model/user.js")
+const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
 const {RegisterValidationSchema, VerifyValidationSchema  } = require("./validation.js")
@@ -21,7 +21,10 @@ const login = async (req, res, next) => {
 
         const userExists = await User_Account?.findOne(
             {
-                where: {email}
+                where: {email},
+                include : {
+                    model : User_Profile
+                }
             }
         )
 
@@ -49,6 +52,7 @@ const login = async (req, res, next) => {
             .status(200)
             .json({ 
                 type : "success",
+                message : `Welcom ${userExists.dataValues.email}`,
                 user : userExists 
             })
 
@@ -70,6 +74,9 @@ const keepLogin = async (req, res, next) => {
                 where : {
                     UUID : req.user.UUID
                 },
+                include : {
+                    model : User_Profile
+                },
                 attributes : {
                     exclude : ["password"]
                 }
@@ -79,7 +86,7 @@ const keepLogin = async (req, res, next) => {
         res.status(200).json({ 
             type : "success",
             message : "Data berhasil dimuat",
-            users : users
+            user : users
         })
     } catch (error) {
         next(error)
