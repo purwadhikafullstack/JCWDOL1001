@@ -6,6 +6,7 @@ const BAD_REQUEST = "Bad request"
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
 const NOT_FOUND_STATUS = 404
+const INVALID_CREDENTIALS = "Invalid credentials";
 
 function errorHandler (error, req, res, next) {
     if (error?.name === "SequelizeValidationError") {
@@ -32,5 +33,6 @@ module.exports = {
     BAD_REQUEST,
     DEFAULT_ERROR_STATUS,
     BAD_REQUEST_STATUS,
-    NOT_FOUND_STATUS
+    NOT_FOUND_STATUS,
+    INVALID_CREDENTIALS
 }
