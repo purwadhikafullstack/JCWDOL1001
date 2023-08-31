@@ -5,9 +5,9 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
-import AdminPage from "./components/Navbar/menu.admin";
 import { keepLogin } from "./store/slices/auth/slices";
 import "./App.css";
+import AdminPage from "./pages/admin";
 
 function App() {
   const [message, setMessage] = useState("")
@@ -41,6 +41,7 @@ function App() {
       { user.role == 1 ? <AdminPage/> : ""}
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       <Footer />
     </div>
