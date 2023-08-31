@@ -49,28 +49,13 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                     <Modal
                         showModal={showModal.show}
                         closeModal={handleCloseModal}
-                        title={ 
-                            showModal.context === "login" ? 
-                                "Login" 
-                            : showModal.context === "register" ? 
-                                "Register" 
-                            : "Lupa Password" 
+                        context={showModal.context}
+                        title={
+                            showModal.context === "login"
+                                ? "Login"
+                                : "Register"
                         }
                     >
-                        {
-                            showModal.context === "login" ?
-                                <div>
-                                    LOGIN FORM
-                                </div>
-                            : showModal.context === "register" ? 
-                                <div>
-                                    REGISTER FORM
-                                </div>
-                            :
-                                <div>
-                                    FORGOT PASSWORD FORM
-                                </div>
-                        }
                     </Modal>
                 </motion.div>
             </AnimatePresence>
