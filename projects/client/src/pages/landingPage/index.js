@@ -2,6 +2,7 @@ import Button from "../../components/Button"
 import Guarantee from "./components/guarantee.component"
 import ProdukDiskon from "./components/product.diskon.component"
 import UnggahResep from "./components/unggah.resep.component"
+
 export default function LandingPage() {
   return (
     <div>

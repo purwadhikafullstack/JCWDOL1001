@@ -1,10 +1,12 @@
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import NavMenuItems from "./menu.items"
 import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
+import { logout } from "../../store/slices/auth/slices"
 
 export default function NavMenu({
   isLogin,
@@ -12,9 +14,17 @@ export default function NavMenu({
   user,
   handleShowModal,
 }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+
+  const dispatch = useDispatch()
 
   const [isMenuVisible, setIsMenuVisible] = useState(false)
+
+  const onClickKeluar = () => {
+    dispatch(logout())
+    setIsLogin(false)
+    setIsMenuVisible(false)
+  }
 
   return (
     <div className="flex">
@@ -92,13 +102,13 @@ export default function NavMenu({
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
                             <div className="h-12 w-12 overflow-hidden rounded-full">
                               <img
-                                src=""
+                                src={user.profile.profilePicture}
                                 alt=""
                                 className="h-full w-full object-cover"
                               />
                             </div>
                             <div className="">
-                              <h3>username</h3>
+                              <h3>{user.profile.name}</h3>
                               <p className="text-sm font-normal text-slate-500">
                                 Cek Profil
                               </p>
@@ -119,10 +129,7 @@ export default function NavMenu({
                             isLink
                             title="Keluar"
                             className="hover:text-primary"
-                            onClick={() => {
-                              setIsLogin(false);
-                              setIsMenuVisible(false);
-                            }}
+                            onClick={onClickKeluar}
                           />
                         </div>
                       </div>

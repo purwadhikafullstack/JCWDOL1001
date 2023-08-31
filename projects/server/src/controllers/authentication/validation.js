@@ -5,7 +5,7 @@ YupPassword(Yup);
 const LoginValidationSchema = Yup.object({
     email : Yup.string()
         .email("Email is invalid")
-        .required("Username is required"),
+        .required("Email is required"),
     password : Yup.string().required("Password is required")
 })
 
