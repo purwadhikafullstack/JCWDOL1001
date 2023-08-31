@@ -10,6 +10,7 @@ const moment = require ("moment")
 const path = require("path")
 const fs = require("fs")
 const handlebars = require("handlebars")
+const { LINK_EXPIRED_STATUS, LINK_EXPIRED } = require("../../middleware/error.handler.js")
 
 
 const login = async (req, res, next) => {
@@ -118,10 +119,10 @@ const register= async (req, res, next) => {
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            UUID: userAcc?.dataValues?.UUID, 
+            UUID: userAcc?.dataValues?.UUID,
+            name : name, 
             email : userAcc.dataValues?.email,
             roleId : userAcc?.dataValues?.role,
-            otp : otpToken
         });
 
         //@ send otp to email for verification
@@ -142,7 +143,6 @@ const register= async (req, res, next) => {
 
         // @return response
         res
-            .header("Authorization", `Bearer ${accessToken}`)
             .status(200)
             .json({
             message: "We have sent OTP to your email address",
@@ -161,13 +161,16 @@ const register= async (req, res, next) => {
     }
 }
 
+//otp dari body, gak perlu yup validator
+//otp puisahin
+
 const verify = async (req, res, next) => {
     try {
         // @create transaction
         const transaction = await db.sequelize.transaction(async()=>{   
         //@ grab input
-        const { gender, birthdate, address, province, city, district, postalCode } = req.body;  
-          
+        const { otp, gender,address, birthdate,province, city,postalCode,district } = req.body;  
+        delete req.body.otp
         //@ get user from uuid
         const users = await User_Account?.findOne({ where : { UUID : req.user.UUID }});
         if (!users) throw ({ status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS });
@@ -181,28 +184,28 @@ const verify = async (req, res, next) => {
         await VerifyValidationSchema.validate(req.body)
         
         // @verify token
-        if (req.user.otp !== users?.dataValues?.otp) throw (
+        if (otp !== users?.dataValues?.otp) throw (
             { status : 400, 
             message : middlewareErrorHandling.INVALID_CREDENTIALS });
 
         // @check if token is expired
         const isExpired = moment().isAfter(users?.dataValues?.expiredOtp);
-        if (isExpired) throw ({ status : 400, message : INVALID_CREDENTIALS });
+        if (isExpired) throw ({ status : LINK_EXPIRED_STATUS, message : LINK_EXPIRED });
 
         // @langsung input, janlup verify dibikin 1
         await User_Account?.update({ status : 1, otp : null, expiredOtp : null }, { where : { uuid : req.user.UUID} });
         await User_Profile.update({
-            gender : gender,
-            birthdate : birthdate},
+            gender,
+            birthdate},
             {where : { 
             userId : users?.dataValues?.userId
         }});
         await User_Address.create({
-            address : address , 
-            province : province, 
-            city : city, 
-            district : district, 
-            postalCode : postalCode,
+            address , 
+            province, 
+            city, 
+            district, 
+            postalCode,
             userId : users?.dataValues?.userId
         });
                         
@@ -222,18 +225,69 @@ const verify = async (req, res, next) => {
         });
        
         // @return response
-        res.status(200).json({ message : "Account verified successfully",  data : result, token : accessToken })
+        res
+        .header("Authorization", `Bearer ${accessToken}`)
+        .status(200).json({ message : "Account verified successfully",  data : result})
     }); 
     } catch (error) {
         next(error)
     }
 }
 
+const resendOtp = async (req, res, next) => {
+    try {
+        // @create transaction
+        const transaction = await db.sequelize.transaction(async()=>{   
+        // @grab req.user 
+        const otpToken =  helperOTP.generateOtp()
 
+        await User_Account?.update({
+            otp : otpToken,
+            expiredOtp : moment().add(7,'h').add(30,'m').format("YYYY-MM-DD HH:mm:ss")
+        }, {where : {email : req.user?.email}});
+
+        // @generate access token
+        const accessToken = helperToken.createToken({ 
+            name : req.user?.name,
+            UUID: req.user?.UUID, 
+            email : req.user?.email,
+            roleId : req.user?.role,
+        });
+  
+
+        //@ send otp to email for verification
+        const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
+        const html = handlebars.compile(template)({ name: (req.user?.name), otp : (otpToken), link :(REDIRECT_URL + `/auth/verify/reg-${accessToken}`) })
+
+        const mailOptions = {
+            from: `Apotech Team Support <${GMAIL}>`,
+            to: req.user?.email,
+            subject: "Verify Account",
+            html: html}
+            console.log(mailOptions)
+
+            helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+                if (error) throw error;
+                console.log("Email sent: " + info.response);
+            })
+
+        // @return response
+        res
+            .status(200)
+            .json({
+            message: "We have resent OTP to your email address",
+            // userAcc
+        });
+    }); 
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = {
    login,
    keepLogin,
    register,
-   verify
+   verify,
+   resendOtp
 }
