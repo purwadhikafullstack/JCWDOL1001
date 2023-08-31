@@ -1,16 +1,27 @@
 import axios from "axios";
-import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
+import { useDispatch, useSelector } from "react-redux"
+import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import LandingPage from "./pages/landingPage";
+import { keepLogin } from "./store/slices/auth/slices";
+import "./App.css";
+import AdminPage from "./pages/admin";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("")
 
-  const user = 1;
+  const dispatch = useDispatch()
+  
+  const { user } = useSelector(state => {
+		return {
+			user : state?.auth
+		}
+	})
 
-  const [isLogin, setIsLogin] = useState(true);
-
+  const [isLogin, setIsLogin] = useState(false);
+  
   useEffect(() => {
     (async () => {
       const { data } = await axios.get(
@@ -18,11 +29,20 @@ function App() {
       );
       setMessage(data?.message || "");
     })();
-  }, []);
+    
+    const token = localStorage.getItem("token")
+    
+    if(token) return setIsLogin(true)
+
+  }, [user] )
   return (
     <div>
       <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
-       {message}
+      { user.role == 1 ? <AdminPage/> : ""}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
       <Footer />
     </div>
   );

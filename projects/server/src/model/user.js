@@ -69,7 +69,11 @@ const User_Profile = db.sequelize.define("user_profile", {
     birthdate: {
         type : db.Sequelize.DATEONLY,
         allowNull : true
-    }
+    },
+    phone : {
+        type : db.Sequelize.STRING,
+        allowNull : false
+    }   
 },{
   timestamps: false
 });

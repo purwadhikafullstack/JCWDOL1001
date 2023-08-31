@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Modal from "../Modal"
-import NavMenu from "./menu"
+import UserNavMenu from "./user.nav.menu"
+import AdminNavMenu from "./admin.nav.menu";
 
 export default function Navbar ({ user, isLogin, setIsLogin }) {
+    const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
   
     const handleShowModal = (context) => {
@@ -26,7 +28,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                     className="nav"
                 >
                     <div className="navbar container flex">
-                        <div className="lg:block ml-10">
+                        <div className="lg:block">
                             <a 
                                 href="/" 
                                 className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-dark"
@@ -35,42 +37,36 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                             </a>
                         </div>
 
-                        <div className={`nav-menu-wrapper justify-end  ${isLogin ? "lg:w-1/3" :""}`} >
+                        {user.role === 1 &&
+                            <AdminNavMenu
+                                isLogin={isLogin}
+                                setIsLogin={setIsLogin}
+                                isSidebarActive={isSidebarActive}
+                                setIsSidebarActive={setIsSidebarActive}
+                                user={user}
+                            />
+                        }
 
-                        <NavMenu
+                        {user.role === 2 &&
+                            <UserNavMenu
                             isLogin={isLogin}
                             setIsLogin={setIsLogin}
                             handleShowModal={handleShowModal}
                             user={user}
-                        />
-                        </div>
+                            />
+                        }
                     </div>
 
                     <Modal
                         showModal={showModal.show}
                         closeModal={handleCloseModal}
-                        title={ 
-                            showModal.context === "login" ? 
-                                "Login" 
-                            : showModal.context === "register" ? 
-                                "Register" 
-                            : "Lupa Password" 
+                        context={showModal.context}
+                        title={
+                            showModal.context === "login"
+                                ? "Login"
+                                : "Register"
                         }
                     >
-                        {
-                            showModal.context === "login" ?
-                                <div>
-                                    LOGIN FORM
-                                </div>
-                            : showModal.context === "register" ? 
-                                <div>
-                                    REGISTER FORM
-                                </div>
-                            :
-                                <div>
-                                    FORGOT PASSWORD FORM
-                                </div>
-                        }
                     </Modal>
                 </motion.div>
             </AnimatePresence>
