@@ -1,6 +1,6 @@
 const Yup = require("yup")
-const YupPassword = require("yup-password")
-YupPassword(Yup);
+//const YupPassword = require("yup-password")
+//YupPassword(Yup);
 
 const LoginValidationSchema = Yup.object({
     email : Yup.string()
