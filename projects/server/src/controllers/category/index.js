@@ -83,7 +83,6 @@ const updateCategory = async (req, res, next) => {
         const {categoryId, categoryDesc} = req.body;
 
         const categoryExists = await Categories?.findOne({where : {categoryId : categoryId}});
-        console.log(categoryExists?.dataValues);
         if(!categoryExists) throw ({status : 400, message : "Kategori tidak ditemukan"});
         if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : 400, message : "Kategori tidak ditemukan"});
 
