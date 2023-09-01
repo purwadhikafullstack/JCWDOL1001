@@ -7,19 +7,18 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import { keepLogin } from "./store/slices/auth/slices";
 import "./App.css";
-import AdminPage from "./pages/admin";
+import AdminProducts from "./pages/admin/products";
 
 function App() {
   const [message, setMessage] = useState("")
 
   const dispatch = useDispatch()
-  
+
   const { user } = useSelector(state => {
 		return {
 			user : state?.auth
 		}
 	})
-
   const [isLogin, setIsLogin] = useState(false);
   
   useEffect(() => {
@@ -38,12 +37,11 @@ function App() {
   return (
     <div>
       <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
-      { user.role == 1 ? <AdminPage/> : ""}
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
         </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
