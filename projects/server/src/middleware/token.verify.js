@@ -38,7 +38,7 @@ async function verifyAdmin(req, res, next) {
 
         const decoded = helperToken.verifyToken(token);
 
-        if (decoded?.roleId !== 2) throw ({ 
+        if (decoded?.roleId !== 1) throw ({ 
             type : "error",
             message : "Unauthorized" 
         });

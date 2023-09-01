@@ -1,8 +1,9 @@
 const Yup = require("yup")
-// const YupPassword = require("yup-password")
+//const YupPassword = require("yup-password")
+//YupPassword(Yup);
+
 const {parse, isDate} = require("date-fns")
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-// YupPassword(Yup);
 
 const today = new Date();
 
