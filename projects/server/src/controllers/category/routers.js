@@ -11,8 +11,8 @@ const uploader = helperUploader.createUploader(storage)
 router.post("/", verifyAdmin, uploader.single("file"), CatControllers.addCategory)
 router.get("/", CatControllers.getCategory)
 router.patch("/",verifyAdmin, CatControllers.updateCategory)
-router.patch("/categorypicture/:categoryId",verifyAdmin,uploader.single("file"), CatControllers.updateCategoryPicture)
-router.patch("/deletecategory",verifyAdmin,CatControllers.deleteCategory)
+router.patch("/category-picture/:categoryId",verifyAdmin,uploader.single("file"), CatControllers.updateCategoryPicture)
+router.patch("/delete-category",verifyAdmin,CatControllers.deleteCategory)
 
 module.exports = router
 

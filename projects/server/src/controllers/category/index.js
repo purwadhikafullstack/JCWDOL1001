@@ -1,15 +1,13 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 const {Categories} = require("../../model/category.js");
 const cloudinary = require("cloudinary");
-const {db} = require("../../model/index.js");
-const {sequelize} = require("sequelize");
 
 const getCategory = async (req, res, next) => {
     try{
 		const category = await Categories?.findAll({where : {isDeleted : 0}});
 		res.status(200).json({
 			type : "success",
-			message : "Kategori berhasil didapatkan",
+			message : "categoryGet",
 			data : {category}
 		});
 	}catch(error){
@@ -24,7 +22,7 @@ const addCategory = async (req, res, next) => {
             return next ({
                 type : "error",
                 status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-                message : "Gambar kosong."
+                message : middlewareErrorHandling.IMAGE_NOT_FOUND
             })
         }
         const body = JSON.parse(data);
@@ -37,20 +35,20 @@ const addCategory = async (req, res, next) => {
             const categoryAdded = await Categories?.update({isDeleted : 0, categoryPicture : req?.file?.filename},{where : {categoryDesc : categoryDesc}} );
             res.status(200).json({
                 type : "success",
-                message : "Kategori berhasil dibuat ulang.",
+                message : "Category has been re-created.",
                 data : {categoryId : categoryExists?.dataValues?.categoryId, categoryDesc : categoryDesc}
             });
         
         }else if(categoryExists?.dataValues?.isDeleted === 0){
             
-            throw ({ status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : "Kategori sudah ada!"});
+            throw ({ status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_ALREADY_EXISTS});
         
         }else{
             
             const categoryAdded = await Categories?.create({categoryDesc, categoryPicture : req?.file?.filename, isDeleted : 0})
             res.status(200).json({
                 type : "success",
-                message : "Kategori berhasil dibuat.",
+                message : "Category created",
                 data : categoryAdded
             });
         }       
@@ -66,13 +64,13 @@ const deleteCategory = async (req, res, next) => {
         const {categoryId} = req.body;
 
         const categoryExists = await Categories?.findOne({where : {categoryId : categoryId}});
-        if(!categoryExists) throw ({status : 400, message : "Kategori tidak ditemukan"});
+        if(!categoryExists) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
 
         const categoryStatus = categoryExists?.dataValues?.isDeleted;
-        if(categoryStatus === 1) throw ({status : 400, message : "Kategori telah di-delete"});
+        if(categoryStatus === 1) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
 
         const categoryDeleted = await categoryExists?.update({isDeleted : 1}, {where : {categoryId : categoryId}});
-        res.status(200).json({message : "Kategori telah di-delete.", data : categoryDeleted});
+        res.status(200).json({message : "Category has been deleted", data : categoryDeleted});
     }catch(error){
         next(error);
     }
@@ -83,11 +81,11 @@ const updateCategory = async (req, res, next) => {
         const {categoryId, categoryDesc} = req.body;
 
         const categoryExists = await Categories?.findOne({where : {categoryId : categoryId}});
-        if(!categoryExists) throw ({status : 400, message : "Kategori tidak ditemukan"});
-        if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : 400, message : "Kategori tidak ditemukan"});
+        if(!categoryExists) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
+        if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
 
         const categoryChanged = await Categories?.update({categoryDesc : categoryDesc},{where : {categoryId : categoryId}});
-        res.status(200).json({message : "Kategori telah diganti.", data : {categoryId : categoryId, categoryDesc : categoryDesc}});
+        res.status(200).json({message : "Category has been changed!", data : {categoryId : categoryId, categoryDesc : categoryDesc}});
     }catch(error){
         next(error);
     }
@@ -99,14 +97,14 @@ const updateCategoryPicture = async (req, res, next) => {
 
         const categoryExists = await Categories?.findOne({where : {categoryId : categoryId}});
 
-        if(!categoryExists) throw ({type : "error", message : "Kategori tidak ditemukan"});
+        if(!categoryExists) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
 
-        if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : 400, message : "Kategori telah di-delete"});
+        if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
 
         if(!req.file){
             return next({
                 status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-                message : "Gambar kosong."
+                message : middlewareErrorHandling.IMAGE_NOT_FOUND
             });
         }       
 
@@ -116,7 +114,7 @@ const updateCategoryPicture = async (req, res, next) => {
         
         await Categories?.update({categoryPicture : req?.file?.filename},{where: {categoryId : categoryId}});
 
-        res.status(200).json({type : "success", message : "Gambar Kategori sudah diupload.",imageURL : req?.file?.filename});
+        res.status(200).json({type : "success", message : "Category Image Uploaded.",imageURL : req?.file?.filename});
     }catch(error){
 
         cloudinary.v2.api.delete_resources([`${req?.file?.filename}`],{type : `upload`,resource_type : 'image'});
