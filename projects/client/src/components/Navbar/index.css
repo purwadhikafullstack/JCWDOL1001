@@ -1,9 +1,9 @@
 .nav {
-  @apply fixed z-10 w-full border-slate-300 bg-slate-50 shadow-md duration-300
+  @apply flex items-center fixed z-20 w-full border-slate-300 bg-slate-50 shadow-md duration-300 h-16
 }
 
 .navbar {
-  @apply flex items-center justify-between gap-8 py-4
+  @apply flex items-center justify-between gap-8
 }
 
 .nav-menu-wrapper {
@@ -23,7 +23,7 @@
 }
 
 .sidebar-bg {
-  @apply absolute inset-0 z-[20] h-screen bg-slate-700/60 backdrop-blur-sm dark:bg-slate-700/90
+  @apply absolute inset-0 -z-10 h-screen bg-slate-700/60 backdrop-blur-sm dark:bg-slate-700/90
 }
 
 .profile-menu {
