@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import AdminPage from "./components/Navbar/menu.admin";
+import Verification from "./pages/verification";
 import { keepLogin } from "./store/slices/auth/slices";
 import "./App.css";
 
@@ -39,8 +40,10 @@ function App() {
     <div>
       <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
       { user.role == 1 ? <AdminPage/> : ""}
+      
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/verify/*" element={<Verification/>} />
         </Routes>
       <Footer />
     </div>

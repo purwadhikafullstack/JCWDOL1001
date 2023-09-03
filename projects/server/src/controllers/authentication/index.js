@@ -1,5 +1,7 @@
 const { ValidationError } = require("yup")
+
 const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
+
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
 const {RegisterValidationSchema, VerifyValidationSchema  } = require("./validation.js")
@@ -134,7 +136,7 @@ const register= async (req, res, next) => {
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
-        const html = handlebars.compile(template)({ name: (name), otp : (otpToken), link :(REDIRECT_URL + `/auth/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
@@ -152,7 +154,7 @@ const register= async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have sent OTP to your email address",
+            message: "We have sent OTP and redirect link to your email address",
             // userAcc
         });
         
@@ -190,14 +192,15 @@ const verify = async (req, res, next) => {
         // @cek apakah formatnya valid, terus data user address dan user profilenya uda valid belum
         await VerifyValidationSchema.validate(req.body)
         
-        // @verify token
+        // @verify otp
         if (otp !== users?.dataValues?.otp) throw (
             { status : 400, 
-            message : middlewareErrorHandling.INVALID_CREDENTIALS });
+            message : middlewareErrorHandling.INVALID_CREDENTIALS_OTP });
 
-        // @check if token is expired
+        // @check if otp is expired
         const isExpired = moment().isAfter(users?.dataValues?.expiredOtp);
-        if (isExpired) throw ({ status : LINK_EXPIRED_STATUS, message : LINK_EXPIRED });
+        if (isExpired) throw ({ status : middlewareErrorHandling.LINK_EXPIRED_STATUS,
+             message : middlewareErrorHandling.LINK_EXPIRED });
 
         // @langsung input, janlup verify dibikin 1
         await User_Account?.update({ status : 1, otp : null, expiredOtp : null }, { where : { uuid : req.user.UUID} });
@@ -224,6 +227,10 @@ const verify = async (req, res, next) => {
                 attributes : { exclude : ["password","otp","expiredOtp"] }
             }
         );
+        
+        const profile = await User_Profile?.findOne({
+            where : {userId : users?.dataValues?.userId }
+        })
          // @generate access token
          const accessToken = helperToken.createToken({ 
             UUID: result?.dataValues?.UUID, 
@@ -234,7 +241,7 @@ const verify = async (req, res, next) => {
         // @return response
         res
         .header("Authorization", `Bearer ${accessToken}`)
-        .status(200).json({ message : "Account verified successfully",  data : result})
+        .status(200).json({ message : "Account verified successfully",  data : result, profile : profile})
     }); 
     } catch (error) {
         next(error)
@@ -264,7 +271,7 @@ const resendOtp = async (req, res, next) => {
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
-        const html = handlebars.compile(template)({ name: (req.user?.name), otp : (otpToken), link :(REDIRECT_URL + `/auth/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (req.user?.name), otp : (otpToken), link :(REDIRECT_URL + `verify/reg-${accessToken}`) })
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,

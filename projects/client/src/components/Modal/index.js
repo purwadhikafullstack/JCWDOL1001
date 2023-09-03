@@ -11,6 +11,7 @@ export default function Modal({ showModal, closeModal, title, context }) {
   
   const [login,setLogin] = useState(false)
   const [regist,setRegist] = useState(false)
+  const [doneregist,setDoneRegist] = useState(false)
   const [forgot,setForgot] = useState(false)
   const [titleModal,setTitle] = useState("")
 
@@ -33,9 +34,8 @@ export default function Modal({ showModal, closeModal, title, context }) {
     return () => {
       document.removeEventListener("keydown", handleEscapeKey)
     }
-    
   }, [closeModal, showModal])
-  
+
 
   return (
     <AnimatePresence>
@@ -84,26 +84,26 @@ export default function Modal({ showModal, closeModal, title, context }) {
                   {
                     login ?
                       <LoginContext 
-                        onLogin={()=>{setLogin(false)}} 
-                        onRegist={()=>{
-                          setRegist(true)
-                          setTitle("Register")
-                        }}
-                        onForgot={()=>{
-                          setForgot(true)
-                          setRegist(false)
-                          setTitle("Forgot Password")
-                        }}
+                      onLogin={() => {
+                        setLogin(false);
+                      }}
+                      onRegist={() => {
+                        setRegist(true);
+                        setTitle("Register");
+                      }}
+                      onForgot={() => {
+                        setForgot(true);
+                        setRegist(false);
+                        setTitle("Forgot Password");
+                      }}
                       />
                     : regist ?
                       <RegisterContext
-                        onLogin={()=>{
-                          setLogin(true)
-                          setTitle("Login")
-                        }} 
-                        onRegist={()=>{setRegist(false)}} 
+                        onDoneRegist={()=>{
+                        setTitle("Next Step")}} 
                       />
-                    : <ForgotContext/>
+                      :
+                    <ForgotContext/>
                   }
                 </div>
               </motion.div>
