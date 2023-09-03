@@ -3,6 +3,9 @@ const EMAIL_NOT_FOUND = "Email not found"
 const INCORRECT_PASSWORD = "Password is incorrect"
 const BAD_REQUEST = "Bad request"
 const LINK_EXPIRED = "Gone. Your OTP is expired. Please ask for resend OTP code in previous page."
+const CATEGORY_NOT_FOUND = "Category not found."
+const IMAGE_NOT_FOUND = "There are no images in file, try again."
+const CATEGORY_ALREADY_EXISTS = "There are already same category in the list!"
 
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
@@ -40,5 +43,8 @@ module.exports = {
     INVALID_CREDENTIALS,
     INVALID_CREDENTIALS_OTP,
     LINK_EXPIRED,
-    LINK_EXPIRED_STATUS
+    LINK_EXPIRED_STATUS,
+    IMAGE_NOT_FOUND,
+    CATEGORY_NOT_FOUND,
+    CATEGORY_ALREADY_EXISTS
 }

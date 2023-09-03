@@ -5,22 +5,24 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
-import AdminPage from "./components/Navbar/menu.admin";
+
+// import AdminPage from "./components/Navbar/admin.nav.menu.js";
 import Verification from "./pages/verification";
+
 import { keepLogin } from "./store/slices/auth/slices";
 import "./App.css";
+import AdminProducts from "./pages/admin/products";
 
 function App() {
   const [message, setMessage] = useState("")
 
   const dispatch = useDispatch()
-  
+
   const { user } = useSelector(state => {
 		return {
 			user : state?.auth
 		}
 	})
-
   const [isLogin, setIsLogin] = useState(false);
   
   useEffect(() => {
@@ -39,13 +41,14 @@ function App() {
   return (
     <div>
       <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
-      { user.role == 1 ? <AdminPage/> : ""}
-      
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/verify/*" element={<Verification/>} />
+
         </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -38,8 +38,10 @@ app.get("/api/greetings", (req, res, next) => {
 
 
 const AuthRouters = require("./controllers/authentication/routers.js")
+const CatRouters = require("./controllers/category/routers.js")
 
 app.use("/api/auth", AuthRouters)
+app.use("/api/category",CatRouters)
 app.use(errorHandler)
 
 // ===========================
