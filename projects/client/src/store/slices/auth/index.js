@@ -11,6 +11,7 @@ const INITIAL_STATE = {
     email : "",
     role: "",
     profile:[],
+    isLogin : false,
     isLoginLoading : false,
     isKeepLoginLoading : false,
     isLogoutLoading : false
@@ -32,6 +33,7 @@ const authSlice = createSlice({
                 role : action.payload?.user?.role,
                 email : action.payload?.user?.email,
                 profile : action.payload?.user?.user_profile,
+                isLogin : true,
                 isLoginLoading : false,
             })
         },

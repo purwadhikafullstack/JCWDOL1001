@@ -67,8 +67,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 ? "Login"
                                 : "Register"
                         }
-                    >
-                    </Modal>
+                    />
                 </motion.div>
             </AnimatePresence>
         </div>

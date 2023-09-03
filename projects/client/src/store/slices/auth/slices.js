@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 
 export const login = createAsyncThunk(
-    "auth/admin/login",
+    "auth/login",
      
     async (payload, { rejectWithValue }) => {
         try {
@@ -26,7 +26,7 @@ export const login = createAsyncThunk(
 )
 
 export const keepLogin = createAsyncThunk (
-    "auth/admin/keep-login",
+    "auth/keep-login",
 
     async (payload, { rejectWithValue }) =>{
         try {
@@ -41,7 +41,7 @@ export const keepLogin = createAsyncThunk (
 )
 
 export const logout = createAsyncThunk(
-    "",
+    "auth/logout",
     async (payload, { rejectWithValue }) => {
         try {
             localStorage.removeItem("token")

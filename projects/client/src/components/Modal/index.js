@@ -31,10 +31,6 @@ export default function Modal({
 
     document.addEventListener("keydown", handleEscapeKey);
 
-    const token = localStorage.getItem("token");
-
-    if (token) return closeModal();
-
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
     };
@@ -98,6 +94,7 @@ export default function Modal({
                       setRegist(false);
                       setTitle("Forgot Password");
                     }}
+                    onClose ={() => closeModal()}
                   />
                 ) : regist ? (
                   <RegisterContext
