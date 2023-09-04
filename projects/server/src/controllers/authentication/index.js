@@ -271,13 +271,7 @@ const resendOtp = async (req, res, next) => {
             email : email,
             roleId : user?.role,
         });
-        console.log({
-            name : profile?.name,
-            UUID: user?.UUID, 
-            email : email,
-            roleId : user?.role,
-        })
-  
+
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");

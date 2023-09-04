@@ -94,13 +94,6 @@ export default function Verification() {
                 Profile Information : 
             </div>
             <div className="flex flex-row gap-6 mb-5">
-                {/* <Input
-                ref={genderRef}
-                required
-                type="text"
-                label="Gender : "
-                placeholder="Male or Female?"
-                /> */}
                 <div>
                 Gender :
                 <select className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2 " 

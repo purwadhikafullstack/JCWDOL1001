@@ -22,7 +22,8 @@ export const RegisterValidationSchema = Yup.object({
     password : Yup.string().required("Password is required")
         .min(6,"Password must at least 6 characters"),
     confirmPassword : Yup.string().required("Password is required")
-        .min(6,"Password must at least 6 characters"),  
+        .min(6,"Password must at least 6 characters").oneOf([Yup.ref('password'), null], 
+        'Must match "password" field value'), 
     email : Yup.string().email("Invalid email").required("Email is required"),
     phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
         .min(11, "Phone number must at least 11 characters")

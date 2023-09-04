@@ -70,8 +70,12 @@ export const register = createAsyncThunk(
             alert(response?.data?.message)
             
         } catch (error) {
-            alert(error.response?.data?.message)
-
+            if (error){
+                alert(error)
+            }
+            else{
+                alert(error.response?.data?.message)
+            }
             return rejectWithValue(error.response?.data?.message)
         }
     }
