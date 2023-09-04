@@ -82,17 +82,37 @@ export const verify = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
             const {token} = payload
-            console.log(token)
+           
             delete payload.token
-            console.log(payload)
+            
             await VerifyValidationSchema.validate(payload)
             const response = await api.post("auth/verify", payload, {headers : {"Authorization": `Bearer ${token}`}})
             const newToken = response.headers.authorization.split(" ")[1]
+            localStorage.setItem("token", newToken)
 
             const {data} = response
-        
+            
             alert(response?.data?.message)
             return data
+            
+        } catch (error) {
+            alert(error.response?.data?.message)
+
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const resendOtp= createAsyncThunk(
+    "auth/admin/resendOtp",
+     
+    async (payload, { rejectWithValue }) => {
+        try {
+            const response = await api.post("auth/resendOtp", payload)
+
+            const {data} = response
+
+            alert(response?.data?.message)
             
         } catch (error) {
             alert(error.response?.data?.message)

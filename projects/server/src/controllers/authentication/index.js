@@ -252,33 +252,42 @@ const resendOtp = async (req, res, next) => {
     try {
         // @create transaction
         const transaction = await db.sequelize.transaction(async()=>{   
+        const {email} = req.body
         // @grab req.user 
         const otpToken =  helperOTP.generateOtp()
 
         await User_Account?.update({
             otp : otpToken,
             expiredOtp : moment().add(7,'h').add(30,'m').format("YYYY-MM-DD HH:mm:ss")
-        }, {where : {email : req.user?.email}});
+        }, {where : {email : email}});
+
+        const user = await User_Account.findOne({where: {email : email}})
+        const profile = await User_Profile.findOne({where: {userId :user?.userId}})
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            name : req.user?.name,
-            UUID: req.user?.UUID, 
-            email : req.user?.email,
-            roleId : req.user?.role,
+            name : profile?.name,
+            UUID: user?.UUID, 
+            email : email,
+            roleId : user?.role,
         });
+        console.log({
+            name : profile?.name,
+            UUID: user?.UUID, 
+            email : email,
+            roleId : user?.role,
+        })
   
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
-        const html = handlebars.compile(template)({ name: (req.user?.name), otp : (otpToken), link :(REDIRECT_URL + `verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
-            to: req.user?.email,
+            to: email,
             subject: "Verify Account",
             html: html}
-            console.log(mailOptions)
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;

@@ -20,7 +20,9 @@ export const LoginValidationSchema = Yup.object({
 export const RegisterValidationSchema = Yup.object({
     name : Yup.string().required("Name is required"),
     password : Yup.string().required("Password is required")
-        .min(6,"Password must at least 6 characters"), 
+        .min(6,"Password must at least 6 characters"),
+    confirmPassword : Yup.string().required("Password is required")
+        .min(6,"Password must at least 6 characters"),  
     email : Yup.string().email("Invalid email").required("Email is required"),
     phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
         .min(11, "Phone number must at least 11 characters")

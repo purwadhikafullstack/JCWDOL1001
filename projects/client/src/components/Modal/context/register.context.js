@@ -2,12 +2,13 @@ import Button from "../../Button"
 import Input from "../../Input"
 import { React, useEffect, useRef, useState} from "react"
 import { useDispatch } from "react-redux"
-import { login,register } from "../../../store/slices/auth/slices"
+import { login,register, resendOtp } from "../../../store/slices/auth/slices"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
 }){
     const [submit , setSubmit] = useState(false);
+    const [resend,setResend] = useState(true);
     const dispatch = useDispatch()
     const [email,setEmail] = useState(false);
     const [refresh, setRefresh] = useState(30);
@@ -16,26 +17,23 @@ export default function RegisterContext ({
     const phoneRef = useRef()
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
-    // function countdown(from, to) {
-    //     let current = refresh;
-    
-    //     setTimeout(function go() {
-    //       alert(current);
-    //       if (current < to) {
-    //         setTimeout(go, 1000);
-    //       }
-    //       current--;
-    //     }, 1000);
-    //   }
-      
-    //   // usage:
-    //   countdown(30, 0);
+    //resend otp logic
+    useEffect(()=>{
+        const timeoutID = setTimeout(() => {
+            if (submit && resend && refresh > 0){
+                setRefresh(refresh - 1)
+            }
+        }, 1000)
 
-    // useEffect(()=>{
-
-    // },[])
+        if ( submit && resend && refresh === 0){
+            setResend(false)
+        }
+        return () => clearTimeout(timeoutID)
+    },[refresh,submit])
     const onButtonResend = () => {
-        
+        setRefresh(30)
+        dispatch(resendOtp({email : email}))
+        setResend(true)
     }
 
     const onButtonRegist= () => {
@@ -47,7 +45,6 @@ export default function RegisterContext ({
         const password = passwordRef.current?.value
         const confirmPassword = confirmPasswordRef.current?.value
        dispatch(register({ name : name, email : sendemail, phone : phone, password : password, confirmPassword : confirmPassword}))
-       console.log(phone) 
        setSubmit(true)
     }
     return (
@@ -56,10 +53,23 @@ export default function RegisterContext ({
                 <div className="flex flex-col gap-10">
                     <span>
                         We have sent OTP and verification link via email to {email}
-                        <span className="text-gray-500 font-semibold">
-
-                        </span>
                     </span>
+                    <div className="flex flex-col items-start justify-start">
+                        <span className="text-gray-500 font-semibold text-sm">
+                        You need to wait for {refresh} s to resend the data.
+                        </span>
+                        
+                        <Button
+                           
+                            onClick={()=>{onButtonResend()}}
+                            className="block rounded-lg bg-teal-500 py-3 min-w-[52px] disabled:opacity-40 text-white duration-200 hover:bg-slate-200 lg: lg:group-hover:w-full"
+                            isLoading={resend}>
+                            <div className="flex w-max items-center gap-6 px-3 ">
+                                <span>Resend OTP</span>
+                            </div>
+                        </Button>
+                        
+                    </div>
                 </div> :
                 
                 <form className="mt-8 flex flex-col gap-8" >
