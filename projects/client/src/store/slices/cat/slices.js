@@ -5,7 +5,7 @@ export const getCategory = createAsyncThunk(
     "category/allcat",
     async(payload, {rejectWithValue}) => {
         try{
-            const response = await api.get("/api/category");
+            const response = await api.get("/category");
             return response.data;
         }catch(error){
             return rejectWithValue(error.response.data);

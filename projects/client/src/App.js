@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import { keepLogin } from "./store/slices/auth/slices";
 import "./App.css";
-import AdminProducts from "./pages/admin/products";
+import AdminProducts from "./pages/admin/product";
 
 function App() {
   const [message, setMessage] = useState("")
