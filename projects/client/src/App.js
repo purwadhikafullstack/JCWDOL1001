@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import { keepLogin } from "./store/slices/auth/slices";
+import CategoryList from "./pages/categoryPage";
 import "./App.css";
 import AdminProducts from "./pages/admin/products";
 
@@ -39,6 +40,7 @@ function App() {
       <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/categories" element={<CategoryList/>}/>
           <Route path="/admin/products" element={<AdminProducts />} />
         </Routes>
       {/* <Footer /> */}
