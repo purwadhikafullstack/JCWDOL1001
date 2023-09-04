@@ -1,27 +1,47 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import Button from "../../components/Button"
 import Guarantee from "./components/guarantee.component"
-import ProdukDiskon from "./components/product.diskon.component"
+import Produk from "./components/product.component"
 import UnggahResep from "./components/unggah.resep.component"
+import Categories from "./components/category.component";
+import {getCategory,} from "../../store/slices/cat/slices.js";
+import { getProducts } from "../../store/slices/product/slices";
+
 
 export default function LandingPage() {
+  const { user, status, role, categories, products  } = useSelector(state => {
+		return {
+			user : state?.auth,
+			status : state?.auth?.status,
+			role : state?.auth?.role,
+			categories : state?.cat?.category,
+			products : state?.products?.data,
+		}
+	})
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if(status === 0){
+      //show modal for verification
+    }
+    if(role === 1){
+      navigate("/admin/products", "replace")
+      //show modal for verification
+    }
+    dispatch(getCategory())
+    dispatch(getProducts())
+  }, [user, status, role]);
   return (
     <div>
       <div className="container pt-24">
         <UnggahResep/>
 
         <div className="mt-4">
-          <Button
-              isLink
-              path="/"
-              className="flex w-48 flex-shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6"
-            >
-              <div className="h-8 w-8 md:h-10 md:w-10">
-                category pic
-              </div>
-              <p className="text-sm font-bold text-dark md:text-base">
-                category.name
-              </p>
-            </Button>
+          <Categories categories={categories} />
         </div>
 
         <div className="mt-4">
@@ -36,7 +56,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <ProdukDiskon/>
+            <Produk products={products}/>
           </div>
         </div>
 
