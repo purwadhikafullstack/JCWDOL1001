@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import { keepLogin } from "./store/slices/auth/slices";
+import CategoryList from "./pages/categoryPage";
 import "./App.css";
 import AdminPage from "./pages/admin";
 
@@ -42,6 +43,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/categories" element={<CategoryList/>}/>
         </Routes>
       <Footer />
     </div>
