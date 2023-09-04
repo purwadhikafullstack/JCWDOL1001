@@ -47,14 +47,15 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                             />
                         }
 
-                        {(!user.role||user.role === 2) &&
+                        {(!user.role || user.role === 2) && (
                             <UserNavMenu
-                            isLogin={isLogin}
-                            setIsLogin={setIsLogin}
-                            handleShowModal={handleShowModal}
-                            user={user}
+                                isLogin={isLogin}
+                                setIsLogin={setIsLogin}
+                                handleShowModal={handleShowModal}
+                                user={user}
                             />
-                        }
+                        )}
+
                     </div>
 
                     <Modal
