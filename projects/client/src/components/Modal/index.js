@@ -13,6 +13,7 @@ export default function Modal({
   title,
   context,
   children,
+  disableOutside
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -50,10 +51,12 @@ export default function Modal({
             transition={{ duration: 0.3 }}
             exit={{ opacity: 0 }}
             onClick={() => {
-              closeModal();
-              setTitle("");
-              setLogin(false);
-              setRegist(false);
+              if (!disableOutside) {
+                closeModal();
+                setTitle("");
+                setLogin(false);
+                setRegist(false);
+              }
             }}
             className="fixed inset-0 z-20 bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
           />
@@ -63,7 +66,7 @@ export default function Modal({
             animate={{ translateY: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
             exit={{ translateY: -20, opacity: 0 }}
-            className="fixed inset-0 z-20 m-auto h-fit w-4/5 rounded-lg bg-slate-100 p-6 shadow-lg dark:bg-slate-800 md:w-1/2 lg:w-1/3"
+            className="fixed inset-0 z-20 m-auto h-fit w-5/6 overflow-hidden rounded-lg bg-slate-100 p-6 shadow-lg dark:bg-slate-800 md:w-1/2 lg:w-1/3"
           >
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">
