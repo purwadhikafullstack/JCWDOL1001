@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: [
       process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(",")[0],
+        process.env.WHITELISTED_DOMAIN.split(" "),
     ],
     exposedHeaders : "Authorization"
   })
@@ -40,9 +40,11 @@ app.get("/api/greetings", (req, res, next) => {
 
 const AuthRouters = require("./controllers/authentication/routers.js")
 const CatRouters = require("./controllers/category/routers.js")
+const ProductsRouters = require("./controllers/products/routers.js")
 
 app.use("/api/auth", AuthRouters)
 app.use("/api/category",CatRouters)
+app.use("/api/products", ProductsRouters)
 app.use(errorHandler)
 
 // ===========================
