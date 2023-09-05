@@ -38,7 +38,7 @@ export default function InputImage({
   const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
-    accept: { "image/*": [".jpg", ".png", ".jpeg"] },
+    accept: { "image/*": [".jpg", ".png", ".jpeg", "gif"] },
     noClick: true,
     noKeyboard: true,
   });
