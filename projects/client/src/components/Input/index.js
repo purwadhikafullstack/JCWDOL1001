@@ -62,7 +62,6 @@ const Input = React.forwardRef(({
 
   if (type === "textarea") {
     return (
-      <>
         <div className="">
           {label && <label htmlFor={id}>{label}</label>}
           <textarea
@@ -80,12 +79,10 @@ const Input = React.forwardRef(({
             disabled={isDisabled}
           ></textarea>
         </div>
-      </>
     );
   }
 
   return (
-    <>
       <div className="">
         {label && <label htmlFor={id}>{label}</label>}
         <input
@@ -102,7 +99,6 @@ const Input = React.forwardRef(({
           disabled={isDisabled}
         />
       </div>
-    </>
   );
 });
 

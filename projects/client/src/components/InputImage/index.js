@@ -5,6 +5,7 @@ import Button from "../Button";
 export default function InputImage({
   file,
   error,
+  setError,
   setFile,
   dataImage,
   setDataImage,
@@ -18,6 +19,7 @@ export default function InputImage({
       return;
     }
     setFile(selectedFile);
+    setError("")
 
     // show prev image
     const reader = new FileReader();
@@ -49,8 +51,8 @@ export default function InputImage({
 
       <div
         {...getRootProps({
-          className: `w-full h-fit flex items-center justify-center flex-col p-4 border-2 border-slate-500
-            border-dashed rounded-md ${isDragActive ? "bg-teal-200/30" : null}`,
+          className: `w-full h-fit flex items-center justify-center flex-col p-4 border-2 
+            border-dashed rounded-md ${isDragActive ? "bg-teal-200/30" : null} ${error ? "border-danger":"border-slate-500"}`,
         })}
       >
         <input
@@ -60,17 +62,29 @@ export default function InputImage({
         />
 
         {previewImage || dataImage ? (
-          <img
-            src={
-              previewImage ||
-              process.env.REACT_APP_PRODUCT_IMAGE_URL + dataImage
-            }
-            className="w-64"
-          />
+          <>
+            <img 
+              alt=""
+              src={
+                previewImage ||
+                process.env.REACT_APP_CLOUDINARY_BASE_URL + dataImage
+              }
+              className="w-64"
+            />
+
+            <Button
+              onClick={removeImage}
+              title="Remove"
+              isSmall
+              isPrimaryOutline
+              className="mt-2"
+            />
+          </>
         ) : (
           <>
-            <p className="md:text-md text-center text-sm text-slate-400">
-              {file === null && !dataImage ? (
+            <div className="md:text-md text-center text-sm text-slate-400">
+              {file === null && !dataImage && (
+
                 <>
                   <span className="select-none">
                     Drag & Drop your image here
@@ -83,28 +97,18 @@ export default function InputImage({
                     <hr className="h-[2px] w-full bg-slate-300" />
                   </div>
                   <Button onClick={open} title="Choose a file" isSmall isPrimary />
-
-                  {/* {error.image && (
-                    <div className="text-base text-red-500 dark:text-red-400">
-                      {error.image}
-                    </div>
-                  )} */}
                 </>
-              ) : (
-                <div className="flex gap-2">
-                  <Button
-                    onClick={removeImage}
-                    title="Remove"
-                    isSmall
-                    isSecondary
-                    className="mt-2"
-                  />
-                </div>
-              )}
-            </p>
+                )}
+            </div>          
           </>
         )}
       </div>
+      {error && (
+        <div className="mt-2 text-sm text-red-500 dark:text-red-400">
+          {error}
+        </div>
+      )}
+
     </div>
   );
 }
