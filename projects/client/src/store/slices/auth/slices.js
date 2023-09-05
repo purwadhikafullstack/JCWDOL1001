@@ -1,12 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
-import { RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
 
 export const login = createAsyncThunk(
     "auth/login",
      
     async (payload, { rejectWithValue }) => {
         try {
+            await LoginValidationSchema.validate(payload)
+
             const response = await api.post("auth/login", payload)
 
             const {data} = response
