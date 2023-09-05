@@ -1,6 +1,7 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Button from "../../../components/Button"
+import formatNumber from "../../../utils/formatNumber"
 
 export default function Produk({ products }) {
 
@@ -33,7 +34,7 @@ export default function Produk({ products }) {
             {products.productName}
           </h3>
           <h3 className="font-bold">
-              Rp.{products.productPrice}
+              Rp.{formatNumber(products.productPrice)}
           </h3>
           <Button
             isButton

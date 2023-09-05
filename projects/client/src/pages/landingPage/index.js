@@ -9,7 +9,6 @@ import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
 import { getProducts } from "../../store/slices/product/slices";
 
-
 export default function LandingPage() {
   const { user, status, role, categories, products  } = useSelector(state => {
 		return {
@@ -25,12 +24,8 @@ export default function LandingPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if(status === 0){
-      //show modal for verification
-    }
     if(role === 1){
       navigate("/admin/products", "replace")
-      //show modal for verification
     }
     dispatch(getCategory())
     dispatch(getProducts())

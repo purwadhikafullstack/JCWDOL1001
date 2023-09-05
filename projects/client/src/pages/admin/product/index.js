@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HiXMark } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import TableProducts from "./table.products";
+import { useNavigate } from "react-router-dom";
 
-export default function AdminProducts() {
+export default function AdminProducts({user}) {
   const [file, setFile] = useState(null);
   const dispatch = useDispatch();
-
-
+  const navigate = useNavigate()
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -54,7 +54,7 @@ export default function AdminProducts() {
     { id: 5, name: "Ibu & Anak" },
   ];
 
-  
+  if(!user.role)return navigate("/","replace")
 
   return (
     <>

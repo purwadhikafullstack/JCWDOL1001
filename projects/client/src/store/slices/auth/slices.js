@@ -32,9 +32,9 @@ export const keepLogin = createAsyncThunk (
     async (payload, { rejectWithValue }) =>{
         try {
             const {data} = await api.get("/auth/keep-login")
-            return data
+            return data.user
         } catch (error) {
-            alert(error.response?.data?.message)
+            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response.data.message)
         }

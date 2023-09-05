@@ -261,12 +261,17 @@ const resendOtp = async (req, res, next) => {
             expiredOtp : moment().add(7,'h').add(30,'m').format("YYYY-MM-DD HH:mm:ss")
         }, {where : {email : email}});
 
-        const user = await User_Account.findOne({where: {email : email}})
-        const profile = await User_Profile.findOne({where: {userId :user?.userId}})
+        const user = await User_Account.findOne({
+            where: {email},
+            include : {
+                    model : User_Profile
+                }
+        })
+        // const profile = await User_Profile.findOne({where: {userId :user?.userId}})
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            name : profile?.name,
+            name : user?.user_profile?.name,
             UUID: user?.UUID, 
             email : email,
             roleId : user?.role,
@@ -275,7 +280,7 @@ const resendOtp = async (req, res, next) => {
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
-        const html = handlebars.compile(template)({ name: (profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (user?.user_profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
