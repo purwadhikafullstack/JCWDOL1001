@@ -60,7 +60,6 @@ const Input = React.forwardRef(({
 
   if (type === "textarea") {
     return (
-      <>
         <div className="">
           {label && <label htmlFor={id}>{label}</label>}
           <textarea
@@ -77,12 +76,10 @@ const Input = React.forwardRef(({
             onBlur={onBlur}
           ></textarea>
         </div>
-      </>
     );
   }
 
   return (
-    <>
       <div className="">
         {label && <label htmlFor={id}>{label}</label>}
         <input
@@ -98,7 +95,6 @@ const Input = React.forwardRef(({
           onBlur={onBlur}
         />
       </div>
-    </>
   );
 });
 

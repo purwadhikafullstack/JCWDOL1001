@@ -1,19 +1,21 @@
 import * as Yup from "yup";
 
 export const inputProductValidationSchema = Yup.object({
-  name: Yup.string()
-    .matches(/^[a-zA-Z][a-zA-Z\s]*$/, "Product name must start with a letter")
-    .matches(/^[a-zA-Z\s]+$/, "Product name must contain only letters")
+  productName: Yup.string()
     .required("Product name is required"),
-  price: Yup.string()
+  productPrice: Yup.string()
     .required("Price is required")
     .matches(/^[0-9]+$/, "Price must contain only numbers"),
-  description: Yup.string()
+  productDosage: Yup.string()
+    .required("Dosage is required"),
+  productDescription: Yup.string()
     .required("Description is required")
     .matches(/[a-zA-Z]/, "Description must contain at least one letter")
     .min(20, "Description must be at least 20 letters long"),
-  categoryId: Yup.string().required("Category is required"),
-  image: Yup.mixed()
+  categoryId: Yup.array()
+    .min(1, "At least one category must be selected")
+    .required("Category is required"),
+  productPicture: Yup.mixed()
     .required("Image is required")
     .test("fileFormat", "Invalid file format", (value) => {
       if (!value) return false;
@@ -27,18 +29,21 @@ export const inputProductValidationSchema = Yup.object({
 });
 
 export const updateProductValidationSchema = Yup.object({
-  name: Yup.string()
-    .matches(/^[a-zA-Z\s]+$/, "Product name must contain only letters")
+  productName: Yup.string()
     .required("Product name is required"),
-  price: Yup.string()
+  productPrice: Yup.string()
     .required("Price is required")
     .matches(/^[0-9]+$/, "Price must contain only numbers"),
-  description: Yup.string()
+  productDosage: Yup.string()
+    .required("Dosage is required"),
+  productDescription: Yup.string()
     .required("Description is required")
     .matches(/[a-zA-Z]/, "Description must contain at least one letter")
     .min(20, "Description must be at least 20 letters long"),
-  categoryId: Yup.string().required("Category is required"),
-  image: Yup.mixed()
+  categoryId: Yup.array()
+    .min(1, "At least one category must be selected")
+    .required("Category is required"),
+  productPicture: Yup.mixed()
     .nullable()
     .test("fileSize", "File size is too large", (value) => {
       if (!value) return true;
