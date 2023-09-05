@@ -16,7 +16,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function AdminProducts({user}) {
   const dispatch = useDispatch();
-  const navigate = useNavigate()  const {
+  const navigate = useNavigate()  
+  const {
     success,
     products,
     categories,
