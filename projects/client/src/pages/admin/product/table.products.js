@@ -7,13 +7,30 @@ import Button from "../../../components/Button";
 import { motion } from "framer-motion";
 import formatNumber from "../../../utils/formatNumber";
 import { FaEllipsisVertical } from "react-icons/fa6";
-import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteProduct } from "../../../store/slices/product/slices";
+import { getProducts } from "../../../store/slices/product/slices";
 
-export default function TableProducts({
-  handleShowModal,
-  products,
-  isGetProductsLoading,
-}) {
+
+export default function TableProducts({ setShowModal }) {
+  const dispatch = useDispatch()
+
+  const { products, isGetProductsLoading, isDeleteProductLoading } = useSelector((state) => {
+    return {
+      products: state.products.data,
+      isGetProductsLoading: state.products.isGetProductsLoading,
+      isDeleteProductLoading: state.products.isDeleteProductLoading,
+    };
+  });
+
+  const handleDeleteProduct = (id) => {
+    dispatch(deleteProduct(id));
+  };
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [isDeleteProductLoading]);
 
   return (
     <table className="text-gray-500 w-full text-left text-sm">
@@ -34,7 +51,9 @@ export default function TableProducts({
         {isGetProductsLoading ? (
           <tr className="text-center">
             <td colSpan={7} className="p-3">
-              <LoadingSpinner isLarge />
+              <div className="mx-auto block h-6 w-6 animate-spin rounded-full border-[3px] border-r-transparent">
+                <span className="sr-only">Loading...</span>
+              </div>
             </td>
           </tr>
         ) : products.length === 0 ? (
@@ -53,6 +72,7 @@ export default function TableProducts({
               transition={{ duration: 0.1, delay: index * 0.05 }}
               key={index}
               className="odd:bg-slate-200/70 even:bg-slate-100"
+              // onClick={() => handleShowModal("Details", product.productId)}
             >
               <th
                 scope="row"
@@ -81,10 +101,7 @@ export default function TableProducts({
                   <Button
                     isSmall
                     isPrimaryOutline
-                    onClick={() =>
-                      handleShowModal("Details Product", product?.productId)
-                    }
-
+                    // onClick={() => handleShowModal("Edit", product?.productId)}
                     title="Details"
                   />
 
@@ -99,9 +116,7 @@ export default function TableProducts({
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        onClick={() =>
-                          handleShowModal("Edit Product", product.productId)
-                        }
+                        // onClick={handleDeleteProduct}
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlinePencilSquare className="text-lg text-blue-500" />
@@ -123,10 +138,7 @@ export default function TableProducts({
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        onClick={() =>
-                          handleShowModal("Delete Product", product.productId)
-                        }
-
+                        onClick={()=>handleDeleteProduct(product.productId)}
                       >
                         <span className="flex items-center gap-2 py-2 text-danger">
                           <HiOutlineTrash className="text-lg" />
