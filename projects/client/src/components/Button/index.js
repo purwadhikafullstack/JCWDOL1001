@@ -6,7 +6,7 @@ export default function Button(props) {
   const className = [props.className]
   props.isButton && className.push("px-6 py-2 rounded-lg select-none text-sm")
 
-  props.isSmall && className.push("px-2 py-1 rounded-md select-none")
+  props.isSmall && className.push("px-2 py-1 rounded-md select-none text-sm")
 
   props.isPrimary &&
     !props.isDisabled &&

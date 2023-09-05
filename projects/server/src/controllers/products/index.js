@@ -6,17 +6,44 @@ const {inputProductValidationSchema, updateProductValidationSchema } = require("
 const {ValidationError} = require("yup")
 
 const getProducts = async (req, res, next) => {
-    try{
-		const products = await Product_List?.findAll({where : {isDeleted : 0}});
-		res.status(200).json({
-			type : "success",
-			message : "Products fetched",
-			data : products
-		});
-	}catch(error){
-		next(error);
-	}
-}
+  try {
+    const products = await Product_List.findAll();
+
+    const productCategories = await Product_Category.findAll();
+
+    const categoryMap = {};
+
+    productCategories.forEach((category) => {
+      const productId = category.productId;
+      const categoryId = category.categoryId;
+
+      if (!categoryMap[productId]) {
+        categoryMap[productId] = [categoryId];
+      } else {
+        categoryMap[productId].push(categoryId);
+      }
+    });
+
+    const formattedProducts = products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      isDeleted: product.isDeleted,
+      productPicture: product.productPicture,
+      productPrice: product.productPrice,
+      productDosage: product.productDosage,
+      productDescription: product.productDescription,
+      categoryId: categoryMap[product.productId] || [],
+    }));
+
+    res.status(200).json({
+      type: 'success',
+      message: 'Products fetched',
+      data: formattedProducts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const addProducts = async (req, res, next) => {
   try {
@@ -40,7 +67,7 @@ const addProducts = async (req, res, next) => {
       productPicture: req.file?.filename
     };
 
-    // await inputProductValidationSchema.validate(productData);
+    await inputProductValidationSchema.validate(productData);
 
     const productExists = await Product_List.findOne({
       where: { productName: body.productName, isDeleted: 0 },
@@ -85,7 +112,7 @@ const updateProduct = async (req, res, next) => {
       throw new Error('Product already exists');
     }
 
-    // await updateProductValidationSchema.validate(productData);
+    await updateProductValidationSchema.validate(productData);
 
     product.productName = body.productName || product.productName;
     product.productPrice = +body.productPrice || product.productPrice;
