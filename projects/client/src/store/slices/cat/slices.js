@@ -44,6 +44,7 @@ export const updateCategory = createAsyncThunk(
     "category/updatecat",
     async(payload, {rejectWithValue}) => {
         try{
+            CategoryValidationSchema.validateSync(payload)
             const response = await api.patch("/category",payload)
             alert("Category updated")
             return{}

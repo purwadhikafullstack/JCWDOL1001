@@ -15,21 +15,18 @@ User_Profile.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId
 User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})
 User_Account.belongsTo(User_Status, {targetKey : "status", foreignKey : "status"})
 
-// Product_List.hasMany(Product_Category, { foreignKey: "productId", sourceKey: "productId" });
-// Product_Category.belongsTo(Product_List, { foreignKey: "productId", targetKey: "productId" });
-
 Product_List.belongsToMany(Product_Category, {
-    through: "product_categories",
-    foreignKey: "productId",
-    // otherKey: "categoryId",
-    as: "ProductCategories"
+  through: "product_categories",
+  foreignKey: "productId",
+  otherKey: "categoryId",
+  as: "ProductCategories"
 });
 
 Product_Category.belongsToMany(Product_List, {
-    through: "product_categories",
-    foreignKey: "categoryId",
-    // otherKey: "productId",
-    as: "CategoriesProducts"
+  through: "product_categories",
+  foreignKey: "categoryId",
+  otherKey: "productId",
+  as: "CategoriesProducts"
 });
 
 
