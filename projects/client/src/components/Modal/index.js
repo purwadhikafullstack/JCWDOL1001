@@ -17,6 +17,7 @@ export default function Modal({
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
+  const [doneregist,setDoneRegist] = useState(false)
   const [forgot, setForgot] = useState(false);
   const [titleModal, setTitle] = useState("");
 
@@ -102,19 +103,14 @@ export default function Modal({
                       setTitle("Forgot Password");
                     }}
                   />
-                ) : regist ? (
+                ) : regist ? 
                   <RegisterContext
-                    onLogin={() => {
-                      setLogin(true);
-                      setTitle("Login");
-                    }}
-                    onRegist={() => {
-                      setRegist(false);
-                    }}
-                  />
-                ) : (
-                  <ForgotContext />
-                )
+                  onDoneRegist={()=>{
+                  setTitle("Next Step")}} 
+                />
+                :
+              <ForgotContext/>
+                
               ) : (
                 children
               )}

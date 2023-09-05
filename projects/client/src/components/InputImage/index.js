@@ -64,6 +64,7 @@ export default function InputImage({
         {previewImage || dataImage ? (
           <>
             <img 
+              alt=""
               src={
                 previewImage ||
                 process.env.REACT_APP_CLOUDINARY_BASE_URL + dataImage
@@ -83,6 +84,7 @@ export default function InputImage({
           <>
             <div className="md:text-md text-center text-sm text-slate-400">
               {file === null && !dataImage && (
+
                 <>
                   <span className="select-none">
                     Drag & Drop your image here
@@ -106,6 +108,7 @@ export default function InputImage({
           {error}
         </div>
       )}
+
     </div>
   );
 }

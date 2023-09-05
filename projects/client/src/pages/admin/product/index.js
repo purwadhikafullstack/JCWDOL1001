@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../../components/Button";
 import Modal from "../../../components/Modal";
-
 import { useDispatch, useSelector } from "react-redux";
 import TableProducts from "./table.products";
 import ModalInputProduct from "./modal.input.product";
@@ -37,6 +36,7 @@ export default function AdminProducts() {
     };
   });
 
+
   const [showModal, setShowModal] = useState({ show: false, context: "" });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -50,6 +50,7 @@ export default function AdminProducts() {
       const productData = products.find((item) => item.productId === productId);
       setSelectedProduct(productData);
     }
+
   };
 
   const handleCloseModal = () => {
@@ -72,6 +73,7 @@ export default function AdminProducts() {
   useEffect(()=>{
     dispatch(getCategory());
   }, [])
+
 
   return (
     <>
@@ -97,6 +99,7 @@ export default function AdminProducts() {
             isDeleteProductLoading={isDeleteProductLoading}
             setSelectedProduct={setSelectedProduct}
           />
+
         </div>
       </div>
 

@@ -6,14 +6,14 @@ const {errorHandler} = require("./middleware/error.handler.js");
 const { join } = require("path");
 
 const PORT = process.env.PORT || 8000;
-dotenv.config()
-
+const path = require("path");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const app = express();
 
 app.use(
   cors({
     origin: [
-      process.env.WHITELISTED_DOMAIN &&
+     process.env.WHITELISTED_DOMAIN &&
         process.env.WHITELISTED_DOMAIN.split(" "),
     ],
     exposedHeaders : "Authorization"

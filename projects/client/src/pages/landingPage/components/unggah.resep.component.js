@@ -15,7 +15,7 @@ export default function UnggahResep() {
           <h3 className="title">Punya resep Dokter?</h3>
           <p className="mt-2 text-slate-500">
             Tak perlu antre & obat langsung dikirimkan ke lokasi anda! Foto
-            tidak boleh lebih dari 10 MB
+            tidak boleh lebih dari 1 MB
           </p>
         </div>
         <div className="flex w-1/2 flex-col items-center pr-4 lg:w-fit lg:pr-10">

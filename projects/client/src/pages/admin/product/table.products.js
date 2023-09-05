@@ -14,6 +14,7 @@ export default function TableProducts({
   products,
   isGetProductsLoading,
 }) {
+
   return (
     <table className="text-gray-500 w-full text-left text-sm">
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
@@ -83,6 +84,7 @@ export default function TableProducts({
                     onClick={() =>
                       handleShowModal("Details Product", product?.productId)
                     }
+
                     title="Details"
                   />
 
@@ -124,6 +126,7 @@ export default function TableProducts({
                         onClick={() =>
                           handleShowModal("Delete Product", product.productId)
                         }
+
                       >
                         <span className="flex items-center gap-2 py-2 text-danger">
                           <HiOutlineTrash className="text-lg" />

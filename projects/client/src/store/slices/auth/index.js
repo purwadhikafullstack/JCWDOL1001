@@ -4,14 +4,19 @@ import {
     login,
     keepLogin,
     logout,
+    register,
+    verify,
 } from "./slices"
 
 const INITIAL_STATE = {
     uuid : "",
     email : "",
     role: "",
+    status : 0,
     profile:[],
     isLoginLoading : false,
+    isRegisterLoading : false,
+    isVerifyLoading : false,
     isKeepLoginLoading : false,
     isLogoutLoading : false
 }
@@ -26,7 +31,7 @@ const authSlice = createSlice({
         [login.pending] : (state, action) => {
             state.isLoginLoading = true
         },
-        [login.fulfilled] : (state, action) => {
+        [login.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
                 uuid : action.payload?.user?.UUID,
                 role : action.payload?.user?.role,
@@ -64,6 +69,31 @@ const authSlice = createSlice({
         },
         [logout.rejected] : (state, action) => {
             state.isLogoutLoading = false
+        }, 
+        [register.pending] : (state, action) => {
+            state.isRegisterLoading = true
+        },
+        [register.fulfilled] : (state, action) => {
+            state.isRegisterLoading = false
+        },
+        [register.rejected] : (state, action) => {
+            state.isRegisterLoading = false
+        }, 
+        [verify.pending] : (state, action) => {
+            state.isVerifyLoading = true
+        },
+        [verify.fulfilled] : (state, action) => {
+            state = Object.assign(state, {
+                uuid : action.payload?.data?.UUID,
+                role : action.payload?.data?.role,
+                email : action.payload?.data?.email,
+                status : action.payload?.data?.status,
+                profile : action.payload?.profile,
+                isVerifyLoading : false
+            })
+        },
+        [verify.rejected] : (state, action) => {
+            state.isVerifyLoading = false
         }, 
     }
 })

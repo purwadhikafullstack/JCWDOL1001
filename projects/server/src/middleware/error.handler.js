@@ -14,6 +14,7 @@ const BAD_REQUEST_STATUS = 400
 const NOT_FOUND_STATUS = 404
 const LINK_EXPIRED_STATUS = 410
 const INVALID_CREDENTIALS = "Invalid credentials";
+const INVALID_CREDENTIALS_OTP = "Invalid credentials for OTP. Please check your OTP";
 
 function errorHandler (error, req, res, next) {
     if (error?.name === "SequelizeValidationError") {
@@ -42,6 +43,7 @@ module.exports = {
     BAD_REQUEST_STATUS,
     NOT_FOUND_STATUS,
     INVALID_CREDENTIALS,
+    INVALID_CREDENTIALS_OTP,
     LINK_EXPIRED,
     LINK_EXPIRED_STATUS,
     IMAGE_NOT_FOUND,

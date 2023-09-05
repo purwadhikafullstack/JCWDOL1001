@@ -45,8 +45,6 @@ const getProducts = async (req, res, next) => {
   }
 };
 
-
-
 const addProducts = async (req, res, next) => {
   try {
     const { data } = req.body;

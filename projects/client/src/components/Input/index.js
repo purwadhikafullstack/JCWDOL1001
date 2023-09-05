@@ -13,6 +13,7 @@ const Input = React.forwardRef(({
   className,
   errorInput,
   onBlur,
+  isDisabled
 },ref) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,6 +43,7 @@ const Input = React.forwardRef(({
             value={value}
             onChange={onChange}
             onBlur={onBlur}
+            disabled={isDisabled}
           />
           <span
             className="absolute bottom-1/2 right-2 flex aspect-square h-1/2 translate-y-1/2 cursor-pointer select-none items-center justify-center"
@@ -74,6 +76,7 @@ const Input = React.forwardRef(({
             autoFocus={autoFocus}
             onChange={onChange}
             onBlur={onBlur}
+            disabled={isDisabled}
           ></textarea>
         </div>
     );
@@ -93,6 +96,7 @@ const Input = React.forwardRef(({
           autoFocus={autoFocus}
           onChange={onChange}
           onBlur={onBlur}
+          disabled={isDisabled}
         />
       </div>
   );
