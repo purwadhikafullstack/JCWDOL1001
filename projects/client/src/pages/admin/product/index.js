@@ -12,9 +12,11 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
+import { useNavigate } from "react-router-dom";
 
-export default function AdminProducts() {
+export default function AdminProducts({user}) {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const {
     success,
