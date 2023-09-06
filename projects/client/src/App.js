@@ -41,7 +41,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/categories" element={<CategoryList/>}/>
-          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/products" element={<AdminProducts user={user} />} />
           <Route path="/verify/*" element={<Verification/>} />
 
         </Routes>
