@@ -40,8 +40,8 @@ function App() {
       <Navbar user={user} isLogin={isLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/admin/products" element={<AdminProducts user={user} />} />
           <Route path="/admin/categories" element={<CategoryList/>}/>
-          <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/verify/*" element={<Verification/>} />
 
         </Routes>
