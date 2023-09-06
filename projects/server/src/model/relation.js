@@ -1,5 +1,6 @@
 const { User_Account, User_Profile, User_Address, User_Role, User_Status } = require("./user.js")
 const { Product_List, Product_Category, Product_Unit, Product_Detail } = require("./product.js")
+const { Categories } = require("./category.js")
 
 // @define relation
 //acc-address, one to many
@@ -15,22 +16,25 @@ User_Profile.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId
 User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})
 User_Account.belongsTo(User_Status, {targetKey : "status", foreignKey : "status"})
 
-// Product_List.hasMany(Product_Category, { foreignKey: "productId", sourceKey: "productId" });
-// Product_Category.belongsTo(Product_List, { foreignKey: "productId", targetKey: "productId" });
 
-Product_List.belongsToMany(Product_Category, {
-    through: "product_categories",
+Product_List.belongsToMany(Categories, {
+    through: Product_Category,
     foreignKey: "productId",
-    // otherKey: "categoryId",
+    otherKey: "categoryId",
     as: "ProductCategories"
 });
 
-Product_Category.belongsToMany(Product_List, {
-    through: "product_categories",
-    foreignKey: "categoryId",
+Product_List.hasMany(Product_Category, { foreignKey: "productId"});
+
+Product_Category.belongsTo(Product_List, {
+    // through: "product_categories",
+    foreignKey: "productId",
     // otherKey: "productId",
     as: "CategoriesProducts"
 });
+
+Categories.hasMany(Product_Category,{foreignKey: "categoryId"})
+Product_Category.belongsTo(Categories,{foreignKey:"categoryId"})
 
 Product_List.belongsToMany(Product_Unit, { through : Product_Detail, foreignKey : "productId", otherKey: "unitId" })
 Product_List.hasMany(Product_Detail,{foreignKey : "productId"})
@@ -45,5 +49,6 @@ module.exports = {
     Product_List,
     Product_Category, 
     Product_Unit,
-    Product_Detail
+    Product_Detail,
+    Categories
 }
