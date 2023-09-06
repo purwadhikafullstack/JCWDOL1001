@@ -12,10 +12,11 @@ const INITIAL_STATE = {
     uuid : "",
     email : "",
     role: "",
-    status:0,
+    status : 0,
     profile:[],
     isLogin : false,
     isLoginLoading : false,
+    isRegister : false,
     isRegisterLoading : false,
     isVerifyLoading : false,
     isKeepLoginLoading : false,
@@ -79,6 +80,8 @@ const authSlice = createSlice({
         },
         [register.fulfilled] : (state, action) => {
             state.isRegisterLoading = false
+            state.isRegister = true
+
         },
         [register.rejected] : (state, action) => {
             state.isRegisterLoading = false

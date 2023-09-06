@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
+
 import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+
 
 export const login = createAsyncThunk(
     "auth/login",
@@ -70,6 +72,9 @@ export const register = createAsyncThunk(
             const {data} = response
 
             alert(response?.data?.message)
+
+            return data
+
             
         } catch (error) {
             if (error){

@@ -9,6 +9,8 @@ import {
 const INITIAL_STATE = {
     province : [],
     city : [],
+    isLoading : false
+
 }
 
 const addressSlice = createSlice({
@@ -17,8 +19,37 @@ const addressSlice = createSlice({
     reducers : {
     },
     extraReducers : {
-       
+
+        [listProvince.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [listProvince.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                province : action.payload?.rajaongkir?.results,
+                isLoading : false,
+            })
+        },
+        [listProvince.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isLoading : false,
+            })
+        },
+        [listCity.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [listCity.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                city : action.payload?.rajaongkir?.results,
+                isLoading : false,
+            })
+        },
+        [listCity.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isLoading : false,
+            })
+        },
     }
 })
 
-export default authSlice.reducer
+export default addressSlice.reducer
+
