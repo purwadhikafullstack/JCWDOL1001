@@ -13,10 +13,11 @@ const getProducts = async (req, res, next) => {
         {
           model:Categories,
           attributes:['categoryDesc','categoryId'],
-          as: "ProductCategories",
+          as: "productCategories",
         },
         {
           model:Product_Unit,
+          as:"productUnits"
         }
       ]
     });

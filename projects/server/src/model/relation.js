@@ -21,7 +21,7 @@ Product_List.belongsToMany(Categories, {
     through: Product_Category,
     foreignKey: "productId",
     otherKey: "categoryId",
-    as: "ProductCategories"
+    as: "productCategories"
 });
 
 Product_List.hasMany(Product_Category, { foreignKey: "productId"});
@@ -36,7 +36,7 @@ Product_Category.belongsTo(Product_List, {
 Categories.hasMany(Product_Category,{foreignKey: "categoryId"})
 Product_Category.belongsTo(Categories,{foreignKey:"categoryId"})
 
-Product_List.belongsToMany(Product_Unit, { through : Product_Detail, foreignKey : "productId", otherKey: "unitId" })
+Product_List.belongsToMany(Product_Unit, { through : Product_Detail, foreignKey : "productId", otherKey: "unitId", as: "productUnits"})
 Product_List.hasMany(Product_Detail,{foreignKey : "productId"})
 Product_Detail.belongsTo(Product_List,{foreignKey : "productId"})
 
