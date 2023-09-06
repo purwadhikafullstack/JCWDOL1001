@@ -1,5 +1,5 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List, Product_Unit, } = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, Categories } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema } = require("./validation.js")
@@ -7,13 +7,27 @@ const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product_List.findAll({where : {isDeleted : 0}});
+
+    const products = await Product_List?.findAll({where : {isDeleted : 0},
+      include:[
+        {
+          model:Categories,
+          attributes:['categoryDesc','categoryId'],
+          as: "productCategories",
+        },
+        {
+          model:Product_Unit,
+          as:"productUnits"
+        }
+      ]
+    });
 
     res.status(200).json({
 			type : "success",
 			message : "Products fetched",
 			data : products
 		});
+
   }catch(error){
     next(error)
   }
