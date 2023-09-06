@@ -36,7 +36,6 @@ export default function AdminProducts() {
     };
   });
 
-
   const [showModal, setShowModal] = useState({ show: false, context: "" });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -74,6 +73,7 @@ export default function AdminProducts() {
     dispatch(getCategory());
   }, [])
 
+  if(!user.role)return navigate("/","replace")
 
   return (
     <>
