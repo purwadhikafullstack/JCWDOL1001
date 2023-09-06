@@ -9,7 +9,7 @@ import {
 const INITIAL_STATE = {
   data: [],
   message: null,
-  error:null,
+  errorMessage:null,
   success: false,
   total_pages: null,
   current_page: null,
@@ -41,7 +41,7 @@ const productsSlice = createSlice({
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isGetProductsLoading = false;
-        state.error = action.payload;
+        state.data = action.payload.data;
       })
 
       .addCase(createProduct.pending, (state, action) => {
@@ -53,7 +53,7 @@ const productsSlice = createSlice({
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.isSubmitProductLoading = false;
-        state.error = action.payload;
+        state.data = action.payload.data;
       })
 
       .addCase(updateProduct.pending, (state, action) => {
@@ -65,6 +65,7 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.isSubmitProductLoading = false;
+        state.errorMessage = action.payload.data;
       })
 
       .addCase(deleteProduct.pending, (state, action) => {

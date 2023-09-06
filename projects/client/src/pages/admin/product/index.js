@@ -12,8 +12,8 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
-import { useNavigate } from "react-router-dom";
 
+import { useNavigate } from "react-router-dom";
 export default function AdminProducts({user}) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ export default function AdminProducts({user}) {
     isGetProductsLoading,
     isDeleteProductLoading,
     isSubmitProductLoading,
-    error,
+    errorMessage,
   } = useSelector((state) => {
     return {
       success: state.products.success,
@@ -34,7 +34,7 @@ export default function AdminProducts({user}) {
       isGetProductsLoading: state.products.isGetProductsLoading,
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
-      error: state.products.error,
+      errorMessage: state.products.errorMessage,
     };
   });
 
@@ -123,7 +123,7 @@ export default function AdminProducts({user}) {
             setShowCategoryModal={setShowCategoryModal}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
-            errorResponse={error}
+            errorMessage={errorMessage}
           />
         )}
 

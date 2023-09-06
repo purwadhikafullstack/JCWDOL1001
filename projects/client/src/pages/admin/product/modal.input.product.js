@@ -16,7 +16,8 @@ import {
   updateProductValidationSchema,
 } from "../../../store/slices/product/validation";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import SuccessMessage from "../../../components/SuccessMessage";
+import Message from "../../../components/Message";
+
 
 export default function ModalInputProduct({
   success,
@@ -28,7 +29,7 @@ export default function ModalInputProduct({
   setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
-  errorResponse,
+  errorMessage,
 }) {
   const dispatch = useDispatch();
 
@@ -135,12 +136,13 @@ export default function ModalInputProduct({
 
   if (success) {
     return (
-      <SuccessMessage
+      <Message
+        type="success"
         message={
           productData
             ? "Product Updated Successfully"
             : "Product Added Successfully!"
-        }
+          }
         handleCloseModal={handleCloseModal}
       />
     );
