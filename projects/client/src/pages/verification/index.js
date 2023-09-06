@@ -34,7 +34,7 @@ export default function Verification() {
     const postalRef = useRef(null)
 
     const onProvinceChange = (provinceId,provinceName) =>{
-        setProvinceRef(provinceName)
+        // setProvinceRef(provinceName)
         dispatch(listCity({province : provinceId}))
     }
 

@@ -1,49 +1,23 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List} = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema } = require("./validation.js")
-const {ValidationError} = require("yup")
+const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product_List.findAll();
-
-    const productCategories = await Product_Category.findAll();
-
-    const categoryMap = {};
-
-    productCategories.forEach((category) => {
-      const productId = category.productId;
-      const categoryId = category.categoryId;
-
-      if (!categoryMap[productId]) {
-        categoryMap[productId] = [categoryId];
-      } else {
-        categoryMap[productId].push(categoryId);
-      }
-    });
-
-    const formattedProducts = products.map((product) => ({
-      productId: product.productId,
-      productName: product.productName,
-      isDeleted: product.isDeleted,
-      productPicture: product.productPicture,
-      productPrice: product.productPrice,
-      productDosage: product.productDosage,
-      productDescription: product.productDescription,
-      categoryId: categoryMap[product.productId] || [],
-    }));
+    const products = await Product_List.findAll({where : {isDeleted : 0}});
 
     res.status(200).json({
-      type: 'success',
-      message: 'Products fetched',
-      data: formattedProducts,
-    });
-  } catch (error) {
-    next(error);
+			type : "success",
+			message : "Products fetched",
+			data : products
+		});
+  }catch(error){
+    next(error)
   }
-};
+}
 
 const createProduct = async (req, res, next) => {
   try {
