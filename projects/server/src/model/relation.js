@@ -1,5 +1,5 @@
 const { User_Account, User_Profile, User_Address, User_Role, User_Status } = require("./user.js")
-const { Product_List, Product_Category } = require("./product.js")
+const { Product_List, Product_Category, Product_Unit, Product_Detail } = require("./product.js")
 
 // @define relation
 //acc-address, one to many
@@ -29,6 +29,9 @@ Product_Category.belongsToMany(Product_List, {
   as: "CategoriesProducts"
 });
 
+Product_List.belongsToMany(Product_Unit, { through : Product_Detail, foreignKey : "productId", otherKey: "unitId" })
+Product_List.hasMany(Product_Detail,{foreignKey : "productId"})
+Product_Detail.belongsTo(Product_List,{foreignKey : "productId"})
 
 module.exports = { 
     User_Account, 
@@ -38,4 +41,6 @@ module.exports = {
     User_Status,
     Product_List,
     Product_Category, 
+    Product_Unit,
+    Product_Detail
 }

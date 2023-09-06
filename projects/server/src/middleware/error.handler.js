@@ -8,6 +8,9 @@ const CATEGORY_NOT_FOUND = "Category not found."
 const CATEGORY_ALREADY_EXISTS = "There are already same category in the list!"
 const PRODUCT_NOT_FOUND = "Product not found."
 const PRODUCT_ALREADY_EXISTS = "There are already same product in the list!"
+const PRODUCT_ALREADY_HAS_DEFAULT_UNIT = "Product already have default unit in the list!"
+const PRODUCT_UNIT_ALREADY_EXISTS = "Product unit already exist in the list!"
+const CANNOT_DELETE_DEFAULT_PRODUCT_UNIT = "Default product unit can't be deleted!"
 
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
@@ -50,5 +53,8 @@ module.exports = {
     CATEGORY_NOT_FOUND,
     CATEGORY_ALREADY_EXISTS,
     PRODUCT_NOT_FOUND,
-    PRODUCT_ALREADY_EXISTS
+    PRODUCT_ALREADY_EXISTS,
+    PRODUCT_ALREADY_HAS_DEFAULT_UNIT,
+    PRODUCT_UNIT_ALREADY_EXISTS,
+    CANNOT_DELETE_DEFAULT_PRODUCT_UNIT
 }
