@@ -1,8 +1,8 @@
 import {useDispatch, useSelector} from "react-redux";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
-import Button from "../../components/Button/index.js";
-import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../store/slices/cat/slices.js";
+import Button from "../../../components/Button/index.js";
+import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../../store/slices/cat/slices.js";
 
 export default function CategoryList(){
     const dispatch = useDispatch()

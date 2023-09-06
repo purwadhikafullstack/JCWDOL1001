@@ -9,9 +9,9 @@ const storage = helperUploader.createCloudinaryStorage("Public/Products")
 const uploader = helperUploader.createUploader(storage)
 
 router.get("/", product.getProducts)
-router.post("/", uploader.single("file"), product.addProducts) //NOTE: verifyAdmin
-router.patch("/:id", uploader.single("file"), product.updateProduct) //NOTE: verifyAdmin
-router.patch("/delete/:id", product.deleteProduct) //NOTE: verifyAdmin
+router.post("/", verifyAdmin, uploader.single("file"), product.createProduct)
+router.patch("/:id", verifyAdmin, uploader.single("file"), product.updateProduct)
+router.patch("/delete/:id", verifyAdmin, product.deleteProduct)
 
 
 module.exports = router
