@@ -21,9 +21,9 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
         document.body.style.overflow = "auto"
     }
     useEffect(()=>{
-        if(user.status === 0 && isLogin){
-            dispatch(resendOtp({email : user.email}))
-        }
+        // if(user.status === 0 && isLogin){
+        //     dispatch(resendOtp({email : user.email}))
+        // }
     },[isLogin])
 
 	return (
