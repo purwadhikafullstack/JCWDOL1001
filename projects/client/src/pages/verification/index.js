@@ -1,15 +1,22 @@
-import { useRef, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
+
 import Button from "../../components/Button"
 import Input from "../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { verify } from "../../store/slices/auth/slices";
 import { useLocation, useNavigate } from "react-router-dom";
+import { listCity, listProvince } from "../../store/slices/address/slices";
+import GetProvince from "./components/component.province";
 export default function Verification() {
     //pake uuid dari response register buat bikin trigger ke /landingpage
     const location = useLocation()
-    const { user } = useSelector(state => {
+    const { user, dataProvince, dataCity } = useSelector(state => {
 		return { 
-			user : state?.auth
+			user : state?.auth,
+            dataProvince : state?.address?.province,
+            dataCity : state?.address?.city
+
 		}
 	})
 
@@ -21,9 +28,20 @@ export default function Verification() {
     const dateRef = useRef(null)
     const addressRef = useRef(null)
     const districtRef = useRef(null)
+
+//     const [cityRef,setCityRef] = useState(null)
+//     const [provinceRef,setProvinceRef] = useState(null)
+    const postalRef = useRef(null)
+
+    const onProvinceChange = (provinceId,provinceName) =>{
+        setProvinceRef(provinceName)
+        dispatch(listCity({province : provinceId}))
+    }
+
+
     const cityRef = useRef(null)
     const provinceRef = useRef(null)
-    const postalRef = useRef(null)
+
     const onButtonSubmit = () =>{
         const otp = otpRef.current?.value
         const gender = genderRef.current?.value
@@ -46,8 +64,12 @@ export default function Verification() {
             province : province,
             postalCode : postal
         }))
-        
     }
+
+    useEffect(()=>{
+        dispatch(listProvince())
+    },[])
+
 
   return (
       <div className="w-full flex flex-col items-center">
@@ -129,6 +151,12 @@ export default function Verification() {
                 label="District :"
                 placeholder="e.g. Tebet"
                 />
+
+                {/* <GetProvince
+                onProvinceChange={onProvinceChange}
+                province={dataProvince}
+                /> */}
+
                 <Input
                 ref={cityRef}
                 required
@@ -143,6 +171,7 @@ export default function Verification() {
                 label="Province :"
                 placeholder="e.g. DKI Jakarta"
                 />
+
                 <Input
                 ref={postalRef}
                 required
