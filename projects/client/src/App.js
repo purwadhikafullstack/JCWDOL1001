@@ -10,7 +10,7 @@ import LandingPage from "./pages/landingPage";
 import Verification from "./pages/verification";
 
 import { keepLogin } from "./store/slices/auth/slices";
-import CategoryList from "./pages/categoryPage";
+import CategoryList from "./pages/admin/category";
 import "./App.css";
 import AdminProducts from "./pages/admin/product";
 
@@ -40,7 +40,7 @@ function App() {
       <Navbar user={user} isLogin={isLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/categories" element={<CategoryList/>}/>
+          <Route path="/admin/categories" element={<CategoryList/>}/>
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/verify/*" element={<Verification/>} />
 
