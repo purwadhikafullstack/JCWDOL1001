@@ -1,5 +1,7 @@
+import { useDispatch } from "react-redux"
 import { FaList, FaPowerOff } from "react-icons/fa6";
 import Button from "../Button"
+import { logout } from "../../store/slices/auth/slices"
 import {
     HiBanknotes,
     HiClipboardDocumentList,
@@ -11,6 +13,11 @@ import {
 import { BiSolidDiscount } from "react-icons/bi";
 
 export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLogin, setIsLogin, user}) {
+    const dispatch = useDispatch()
+
+    const onClickLogOut = () => {
+        dispatch(logout())
+    }
     return (
         <>
         <div
@@ -102,7 +109,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
-                            // onClick={} : function for log out
+                            onClick={onClickLogOut}
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
                                 <FaPowerOff className="h-7 w-7 " />

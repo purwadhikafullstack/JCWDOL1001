@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Modal from "../Modal"
 import UserNavMenu from "./user.nav.menu"
 import AdminNavMenu from "./admin.nav.menu";
+import { keepLogin, resendOtp } from "../../store/slices/auth/slices";
+import { useDispatch } from "react-redux";
 
 export default function Navbar ({ user, isLogin, setIsLogin }) {
+    const dispatch = useDispatch()
     const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
   
@@ -17,6 +20,11 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
         setShowModal({ show: false, context: "" })
         document.body.style.overflow = "auto"
     }
+    useEffect(()=>{
+        if(user.status === 0 && isLogin){
+            dispatch(resendOtp({email : user.email}))
+        }
+    },[isLogin])
 
 	return (
 		<div>
@@ -67,8 +75,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 ? "Login"
                                 : "Register"
                         }
-                    >
-                    </Modal>
+                    />
                 </motion.div>
             </AnimatePresence>
         </div>

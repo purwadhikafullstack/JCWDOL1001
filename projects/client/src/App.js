@@ -19,30 +19,25 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user } = useSelector(state => {
+  const { user, isLogin } = useSelector(state => {
 		return {
-			user : state?.auth
+			user : state?.auth,
+      isLogin : state?.auth?.isLogin
 		}
 	})
-  const [isLogin, setIsLogin] = useState(false);
   
   useEffect(() => {
     (async () => {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}greetings`
+        `${process.env.REACT_APP_API_BASE_URL}/greetings`
       );
       setMessage(data?.message || "");
     })();
-    
-    const token = localStorage.getItem("token")
-    
-    if(token) return setIsLogin(true)
-
-  }, [user] )
+    dispatch(keepLogin())
+  }, [] )
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
-
+      <Navbar user={user} isLogin={isLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/admin/categories" element={<CategoryList/>}/>
