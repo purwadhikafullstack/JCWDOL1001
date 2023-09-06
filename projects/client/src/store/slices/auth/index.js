@@ -14,6 +14,7 @@ const INITIAL_STATE = {
     role: "",
     status : 0,
     profile:[],
+    isLogin : false,
     isLoginLoading : false,
     isRegister : false,
     isRegisterLoading : false,
@@ -37,7 +38,9 @@ const authSlice = createSlice({
                 uuid : action.payload?.user?.UUID,
                 role : action.payload?.user?.role,
                 email : action.payload?.user?.email,
+                status : action.payload?.user?.status,
                 profile : action.payload?.user?.user_profile,
+                isLogin : true,
                 isLoginLoading : false,
             })
         },
@@ -52,11 +55,12 @@ const authSlice = createSlice({
         },
         [keepLogin.fulfilled] : (state, action)=> {
             state = Object.assign(state, {
-                uuid : action.payload?.user?.UUID,
-                role : action.payload?.user?.role,
-                email : action.payload?.user?.email,
-                profile : action.payload?.user?.user_profile,
-                isKeepLoginLoading : false
+                uuid : action.payload?.UUID,
+                role : action.payload?.role,
+                email : action.payload?.email,
+                profile : action.payload?.user_profile,
+                isKeepLoginLoading : false,
+                isLogin : true,
             })
         },
         [keepLogin.rejected] : (state, action) => {
@@ -77,6 +81,7 @@ const authSlice = createSlice({
         [register.fulfilled] : (state, action) => {
             state.isRegisterLoading = false
             state.isRegister = true
+
         },
         [register.rejected] : (state, action) => {
             state.isRegisterLoading = false

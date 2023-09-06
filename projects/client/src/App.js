@@ -10,7 +10,7 @@ import LandingPage from "./pages/landingPage";
 import Verification from "./pages/verification";
 
 import { keepLogin } from "./store/slices/auth/slices";
-import CategoryList from "./pages/categoryPage";
+import CategoryList from "./pages/admin/category";
 import "./App.css";
 import AdminProducts from "./pages/admin/product";
 
@@ -19,12 +19,12 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user } = useSelector(state => {
+  const { user, isLogin } = useSelector(state => {
 		return {
-			user : state?.auth
+			user : state?.auth,
+      isLogin : state?.auth?.isLogin
 		}
 	})
-  const [isLogin, setIsLogin] = useState(false);
   
   useEffect(() => {
     (async () => {
@@ -33,20 +33,16 @@ function App() {
       );
       setMessage(data?.message || "");
     })();
-    
-    const token = localStorage.getItem("token")
-    
-    if(token) return setIsLogin(true)
-
-  }, [user] )
+    dispatch(keepLogin())
+  }, [] )
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
 
+      <Navbar user={user} isLogin={isLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/categories" element={<CategoryList/>}/>
-          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/products" element={<AdminProducts user={user} />} />
+          <Route path="/admin/categories" element={<CategoryList/>}/>
           <Route path="/verify/*" element={<Verification/>} />
 
         </Routes>

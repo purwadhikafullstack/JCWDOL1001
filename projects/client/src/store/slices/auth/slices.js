@@ -1,12 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
-import { RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+
+import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+
 
 export const login = createAsyncThunk(
-    "auth/admin/login",
+    "auth/login",
      
     async (payload, { rejectWithValue }) => {
         try {
+            await LoginValidationSchema.validate(payload)
+
             const response = await api.post("auth/login", payload)
 
             const {data} = response
@@ -27,14 +31,14 @@ export const login = createAsyncThunk(
 )
 
 export const keepLogin = createAsyncThunk (
-    "auth/admin/keep-login",
+    "auth/keep-login",
 
     async (payload, { rejectWithValue }) =>{
         try {
             const {data} = await api.get("/auth/keep-login")
-            return data
+            return data.user
         } catch (error) {
-            alert(error.response?.data?.message)
+            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response.data.message)
         }
@@ -42,7 +46,7 @@ export const keepLogin = createAsyncThunk (
 )
 
 export const logout = createAsyncThunk(
-    "",
+    "auth/logout",
     async (payload, { rejectWithValue }) => {
         try {
             localStorage.removeItem("token")
@@ -68,7 +72,9 @@ export const register = createAsyncThunk(
             const {data} = response
 
             alert(response?.data?.message)
+
             return data
+
             
         } catch (error) {
             if (error){

@@ -10,6 +10,7 @@ const INITIAL_STATE = {
     province : [],
     city : [],
     isLoading : false
+
 }
 
 const addressSlice = createSlice({
@@ -18,6 +19,7 @@ const addressSlice = createSlice({
     reducers : {
     },
     extraReducers : {
+
         [listProvince.pending] : (state, action) => {
             state.isLoading = true
         },
@@ -50,3 +52,4 @@ const addressSlice = createSlice({
 })
 
 export default addressSlice.reducer
+

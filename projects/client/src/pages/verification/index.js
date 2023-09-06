@@ -1,4 +1,6 @@
+
 import { useEffect, useRef, useState } from "react";
+
 import Button from "../../components/Button"
 import Input from "../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +16,7 @@ export default function Verification() {
 			user : state?.auth,
             dataProvince : state?.address?.province,
             dataCity : state?.address?.city
+
 		}
 	})
 
@@ -25,14 +28,19 @@ export default function Verification() {
     const dateRef = useRef(null)
     const addressRef = useRef(null)
     const districtRef = useRef(null)
-    const [cityRef,setCityRef] = useState(null)
-    const [provinceRef,setProvinceRef] = useState(null)
+
+//     const [cityRef,setCityRef] = useState(null)
+//     const [provinceRef,setProvinceRef] = useState(null)
     const postalRef = useRef(null)
 
     const onProvinceChange = (provinceId,provinceName) =>{
         setProvinceRef(provinceName)
         dispatch(listCity({province : provinceId}))
     }
+
+
+    const cityRef = useRef(null)
+    const provinceRef = useRef(null)
 
     const onButtonSubmit = () =>{
         const otp = otpRef.current?.value
@@ -61,6 +69,7 @@ export default function Verification() {
     useEffect(()=>{
         dispatch(listProvince())
     },[])
+
 
   return (
       <div className="w-full flex flex-col items-center">
@@ -142,10 +151,12 @@ export default function Verification() {
                 label="District :"
                 placeholder="e.g. Tebet"
                 />
+
                 {/* <GetProvince
                 onProvinceChange={onProvinceChange}
                 province={dataProvince}
                 /> */}
+
                 <Input
                 ref={cityRef}
                 required

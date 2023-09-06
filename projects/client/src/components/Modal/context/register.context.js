@@ -1,17 +1,21 @@
 import Button from "../../Button"
 import Input from "../../Input"
 import { React, useEffect, useRef, useState} from "react"
+
 import { useDispatch, useSelector } from "react-redux"
+
 import { login,register, resendOtp } from "../../../store/slices/auth/slices"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
 }){
+
     const {isRegister} = useSelector(state =>{
         return {
             isRegister : state?.auth?.isRegister
         }
     })
+
     const [submit , setSubmit] = useState(false);
     const [resend,setResend] = useState(true);
     const dispatch = useDispatch()
@@ -36,7 +40,6 @@ export default function RegisterContext ({
         return () => clearTimeout(timeoutID)
     },[refresh,submit])
 
-    
     const onButtonResend = () => {
         setRefresh(30)
         dispatch(resendOtp({email : email}))
@@ -62,6 +65,7 @@ export default function RegisterContext ({
             setSubmit(false)
         }
     },[email])
+
 
     return (
         <div>
