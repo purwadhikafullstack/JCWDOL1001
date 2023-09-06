@@ -21,7 +21,7 @@
     @apply text-sm font-bold text-primary duration-300 hover:text-teal-700 lg:text-base;
   }
 
-  /*::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     @apply h-0 w-2;
   }
 
@@ -30,12 +30,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray;
+    @apply bg-slate-500;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray;
-  }*/
+    @apply bg-slate-500;
+  }
 
   .categories-wrapper::-webkit-scrollbar {
     @apply h-0;
