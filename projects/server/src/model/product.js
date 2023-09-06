@@ -53,7 +53,49 @@ const Product_Category = db.sequelize.define("product_category", {
     timestamps: false
 });
 
+const Product_Unit = db.sequelize.define("product_unit", {
+    unitId : {
+        type: db.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    name : {
+        type: db.Sequelize.STRING,
+        allowNull: false
+    }
+},{
+    timestamps: false
+});
+
+const Product_Detail = db.sequelize.define("product_detail", {
+    stockId : {
+        type: db.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    productId : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    unitId : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    quantity : {
+        type: db.Sequelize.STRING,
+        allowNull: false
+    },
+    isDefault : {
+        type: db.Sequelize.BOOLEAN,
+        allowNull: false
+    }
+},{
+    timestamps: false
+});
+
 module.exports = { 
   Product_List,
-  Product_Category
+  Product_Category,
+  Product_Unit,
+  Product_Detail
 }
