@@ -18,7 +18,7 @@ export const listProvince = createAsyncThunk(
 
             // alert(response?.data?.message)
             
-            return data
+            // return data
         } catch (error) {
             alert(error.response?.data?.message)
 

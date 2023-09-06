@@ -7,12 +7,12 @@ const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
   try {
+
     const products = await Product_List?.findAll({where : {isDeleted : 0},
       include:{
         model:Product_Unit, 
       }
     });
-
     res.status(200).json({
 			type : "success",
 			message : "Products fetched",
