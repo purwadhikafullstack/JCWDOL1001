@@ -6,19 +6,46 @@ const {inputProductValidationSchema, updateProductValidationSchema } = require("
 const {ValidationError} = require("yup")
 
 const getProducts = async (req, res, next) => {
-    try{
-		const products = await Product_List?.findAll({where : {isDeleted : 0}});
-		res.status(200).json({
-			type : "success",
-			message : "Products fetched",
-			data : products
-		});
-	}catch(error){
-		next(error);
-	}
-}
+  try {
+    const products = await Product_List.findAll();
 
-const addProducts = async (req, res, next) => {
+    const productCategories = await Product_Category.findAll();
+
+    const categoryMap = {};
+
+    productCategories.forEach((category) => {
+      const productId = category.productId;
+      const categoryId = category.categoryId;
+
+      if (!categoryMap[productId]) {
+        categoryMap[productId] = [categoryId];
+      } else {
+        categoryMap[productId].push(categoryId);
+      }
+    });
+
+    const formattedProducts = products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      isDeleted: product.isDeleted,
+      productPicture: product.productPicture,
+      productPrice: product.productPrice,
+      productDosage: product.productDosage,
+      productDescription: product.productDescription,
+      categoryId: categoryMap[product.productId] || [],
+    }));
+
+    res.status(200).json({
+      type: 'success',
+      message: 'Products fetched',
+      data: formattedProducts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createProduct = async (req, res, next) => {
   try {
     const { data } = req.body;
     const body = JSON.parse(data);
@@ -40,7 +67,7 @@ const addProducts = async (req, res, next) => {
       productPicture: req.file?.filename
     };
 
-    // await inputProductValidationSchema.validate(productData);
+    await inputProductValidationSchema.validate(productData);
 
     const productExists = await Product_List.findOne({
       where: { productName: body.productName, isDeleted: 0 },
@@ -73,28 +100,41 @@ const updateProduct = async (req, res, next) => {
     const { data } = req.body;
     const body = JSON.parse(data);
 
-    const product = await Product_List.findOne({ where: { productId : id } });
+    const product = await Product_List.findOne({ where: { productId: id } });
 
     if (!product) {
       throw new Error('Product not found');
     }
 
-    const productExist = await Product_List.findAll({ where: { productId: { [Op.not]: id }, productName: body?.name ? body.name : '' } });
+    const existingProduct = await Product_List.findOne({
+      where: {
+        productId: { [Op.not]: id },
+        productName: body.productName || product.productName,
+      },
+    });
 
-    if (productExist.length > 0) {
+    if (existingProduct) {
       throw new Error('Product already exists');
     }
 
-    // await updateProductValidationSchema.validate(productData);
+    const productData = {
+      productName: body.productName || product.productName,
+      productPrice: +body.productPrice || product.productPrice,
+      productDosage: body.productDosage || product.productDosage,
+      productDescription: body.productDescription || product.productDescription,
+      categoryId: body.categoryId || product.categoryId,
+    };
 
-    product.productName = body.productName || product.productName;
-    product.productPrice = +body.productPrice || product.productPrice;
-    product.productDosage = body.productDosage || product.productDosage;
-    product.productDescription = +body.productDescription || product.productDescription;
+    await updateProductValidationSchema.validate(productData);
+
+    Object.assign(product, productData);
 
     if (req.file) {
       if (product.productPicture) {
-        cloudinary.v2.api.delete_resources([`${product.productPicture}`], { type: 'upload', resource_type: 'image' });
+        cloudinary.v2.api.delete_resources([`${product.productPicture}`], {
+          type: 'upload',
+          resource_type: 'image',
+        });
       }
 
       product.productPicture = req.file.filename;
@@ -102,20 +142,19 @@ const updateProduct = async (req, res, next) => {
 
     await product.save();
 
-    if (Array.isArray(body?.categoryId)) {
+    if (Array.isArray(body.categoryId)) {
       await Product_Category.destroy({ where: { productId: id } });
 
-      for (const categoryId of body?.categoryId) {
-        await Product_Category.create({
-          productId: product.productId,
-          categoryId: categoryId,
-        });
-      }
+      const categoryIds = body.categoryId.map((categoryId) => ({
+        productId: product.productId,
+        categoryId,
+      }));
+
+      await Product_Category.bulkCreate(categoryIds);
     }
 
     res.status(200).json({ message: 'Product updated successfully', data: product });
   } catch (error) {
-
     if (req.file) {
       await cloudinary.v2.api.delete_resources([req.file.filename], {
         type: 'upload',
@@ -126,6 +165,7 @@ const updateProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 
 const deleteProduct = async (req, res, next)=>{
   try {
@@ -147,7 +187,7 @@ const deleteProduct = async (req, res, next)=>{
 
 module.exports = {
     getProducts,
-    addProducts,
+    createProduct,
     updateProduct,
     deleteProduct,
 }

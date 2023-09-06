@@ -31,6 +31,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-2">
                             <Button
                             isLink
+                            path="/admin/products"
                             className="block w-full rounded-lg bg-primary py-3 text-white duration-300 lg:w-[52px] lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -43,6 +44,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             isLink
+                            path="/admin/categories"
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -55,6 +57,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             isLink
+                            path="/admin/transaction"
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -67,6 +70,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             isLink
+                            path="/admin/discount"
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -79,6 +83,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             isLink
+                            path="/admin/qna"
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -91,6 +96,7 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
                         <li className="w-full space-y-4">
                             <Button
                             isLink
+                            path="/admin/report"
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
                             >
                             <div className="flex w-max items-center gap-6 px-3 ">
@@ -102,7 +108,6 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive, isLog
 
                         <li className="w-full space-y-4">
                             <Button
-                            isLink
                             className="block w-full rounded-lg bg-inherit py-3 text-dark duration-200 hover:bg-slate-200 lg:w-[52px] lg:group-hover:w-full"
                             onClick={onClickLogOut}
                             >
