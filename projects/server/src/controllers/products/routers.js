@@ -15,7 +15,7 @@ router.patch("/:id", uploader.single("file"), product.updateProduct) //NOTE: ver
 router.patch("/delete/:id", product.deleteProduct) //NOTE: verifyAdmin
 router.get("/unit", verifyAdmin, convertion.productUnits)
 router.patch("/unit/update/:productId", verifyAdmin, convertion.updateProductUnits)
-router.delete("/unit/delete/:productId", verifyAdmin, convertion.deleteProductUnits)
+router.patch("/unit/delete/:productId", verifyAdmin, convertion.deleteProductUnits)
 router.post("/unit/:productId", verifyAdmin, convertion.setProductUnits)
 
 

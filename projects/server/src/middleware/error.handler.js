@@ -10,6 +10,7 @@ const PRODUCT_NOT_FOUND = "Product not found."
 const PRODUCT_ALREADY_EXISTS = "There are already same product in the list!"
 const PRODUCT_ALREADY_HAS_DEFAULT_UNIT = "Product already have default unit in the list!"
 const PRODUCT_UNIT_ALREADY_EXISTS = "Product unit already exist in the list!"
+const PRODUCT_UNIT_EXCEED_LIMIT = "Product unit is limit max 2!"
 const CANNOT_DELETE_DEFAULT_PRODUCT_UNIT = "Default product unit can't be deleted!"
 
 const DEFAULT_ERROR_STATUS = 500
@@ -56,5 +57,6 @@ module.exports = {
     PRODUCT_ALREADY_EXISTS,
     PRODUCT_ALREADY_HAS_DEFAULT_UNIT,
     PRODUCT_UNIT_ALREADY_EXISTS,
+    PRODUCT_UNIT_EXCEED_LIMIT,
     CANNOT_DELETE_DEFAULT_PRODUCT_UNIT
 }

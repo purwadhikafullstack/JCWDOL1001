@@ -88,6 +88,10 @@ const Product_Detail = db.sequelize.define("product_detail", {
     isDefault : {
         type: db.Sequelize.BOOLEAN,
         allowNull: false
+    },
+    isDeleted : {
+        type: db.Sequelize.BOOLEAN,
+        allowNull: false
     }
 },{
     timestamps: false
