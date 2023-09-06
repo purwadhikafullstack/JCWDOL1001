@@ -18,6 +18,7 @@ import {
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Message from "../../../components/Message";
 
+
 export default function ModalInputProduct({
   success,
   categories,

@@ -280,7 +280,9 @@ const resendOtp = async (req, res, next) => {
 
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
+
         const html = handlebars.compile(template)({ name: (user?.user_profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
+
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,

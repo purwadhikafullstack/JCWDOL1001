@@ -13,8 +13,10 @@ import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
 
-export default function AdminProducts() {
+import { useNavigate } from "react-router-dom";
+export default function AdminProducts({user}) {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const {
     success,
@@ -35,7 +37,6 @@ export default function AdminProducts() {
       errorMessage: state.products.errorMessage,
     };
   });
-
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -74,6 +75,7 @@ export default function AdminProducts() {
     dispatch(getCategory());
   }, [])
 
+  if(!user.role)return navigate("/","replace")
 
   return (
     <>
