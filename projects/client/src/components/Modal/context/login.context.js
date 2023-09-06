@@ -1,5 +1,5 @@
-import { React, useRef, useState} from "react"
-import { useDispatch } from "react-redux"
+import { React, useRef } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import Button from "../../Button"
 import Input from "../../Input"
 import { login } from "../../../store/slices/auth/slices"
@@ -8,10 +8,16 @@ export default function LoginContext ({
     onLogin = ()=>{},
     onRegist = ()=>{},
     onForgot = ()=>{},
+    onClose = ()=>{},
 })
 {
     const dispatch = useDispatch()
-   
+    const {isLogin} = useSelector(state => {
+		return {
+			isLogin : state?.auth?.isLogin
+		}
+	})
+
     const emailRef = useRef()
     const passwordRef = useRef()
 
@@ -20,6 +26,11 @@ export default function LoginContext ({
         const password = passwordRef.current?.value
         dispatch(login({ email, password }))
     }
+
+    if(isLogin){
+        onClose()
+    }
+
     return (
         <div>
             <span className="mr-2 text-slate-600">Belum punya akun?</span>
