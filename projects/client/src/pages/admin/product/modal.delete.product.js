@@ -1,5 +1,5 @@
 import Button from "../../../components/Button";
-import SuccessMessage from "../../../components/SuccessMessage";
+import SuccessMessage from "../../../components/Message";
 
 export default function ModalDeleteProduct({
   success,

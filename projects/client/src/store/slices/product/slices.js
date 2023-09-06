@@ -32,7 +32,11 @@ export const createProduct = createAsyncThunk(
       const { data } = await api.post("/products", payload);
       return data.message;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      if (error.response) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue("An error occurred");
+      }
     }
   }
 );

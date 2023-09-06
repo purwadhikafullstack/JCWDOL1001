@@ -23,7 +23,7 @@ export default function AdminProducts() {
     isGetProductsLoading,
     isDeleteProductLoading,
     isSubmitProductLoading,
-    error,
+    errorMessage,
   } = useSelector((state) => {
     return {
       success: state.products.success,
@@ -32,7 +32,7 @@ export default function AdminProducts() {
       isGetProductsLoading: state.products.isGetProductsLoading,
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
-      error: state.products.error,
+      errorMessage: state.products.errorMessage,
     };
   });
 
@@ -121,7 +121,7 @@ export default function AdminProducts() {
             setShowCategoryModal={setShowCategoryModal}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
-            errorResponse={error}
+            errorMessage={errorMessage}
           />
         )}
 

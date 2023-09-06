@@ -50,12 +50,12 @@ const createProduct = async (req, res, next) => {
     const { data } = req.body;
     const body = JSON.parse(data);
 
-    if(!req.file) {
-      return next ({
-          type : "error",
-          status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-          message : middlewareErrorHandling.IMAGE_NOT_FOUND
-      })
+    if (!req.file) {
+      return next({
+        type: 'error',
+        status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+        message: middlewareErrorHandling.IMAGE_NOT_FOUND,
+      });
     }
 
     const productData = {
@@ -64,35 +64,44 @@ const createProduct = async (req, res, next) => {
       productDosage: body?.productDosage,
       productDescription: body?.productDescription,
       categoryId: body?.categoryId,
-      productPicture: req.file?.filename
+      productPicture: req.file?.filename,
     };
 
     await inputProductValidationSchema.validate(productData);
 
-    const productExists = await Product_List.findOne({
+    const existingProduct = await Product_List.findOne({
       where: { productName: body.productName, isDeleted: 0 },
     });
 
-    if (productExists) {
-      throw new Error('Product already exists');
+    if (existingProduct) {
+      throw new Error(middlewareErrorHandling.PRODUCT_ALREADY_EXISTS);
     }
 
     const product = await Product_List.create(productData);
 
-      for (const categoryId of body?.categoryId) {
-        await Product_Category.create({
+    const categoryIds = Array.isArray(body?.categoryId)
+      ? body.categoryId.map((categoryId) => ({
           productId: product.productId,
-          categoryId: categoryId,
-        });
-      }
+          categoryId,
+        }))
+      : [];
 
-    res.status(200).json({ message: 'Product Added Successfully', data: product
-    });
+    if (categoryIds.length > 0) {
+      await Product_Category.bulkCreate(categoryIds);
+    }
+
+    res.status(200).json({ message: 'Product Added Successfully', data: product });
   } catch (error) {
-    cloudinary.v2.api.delete_resources([`${req?.file?.filename}`],{type : `upload`,resource_type : 'image'})
+    if (req.file) {
+      await cloudinary.v2.api.delete_resources([req.file.filename], {
+        type: 'upload',
+        resource_type: 'image',
+      });
+    }
     next(error);
   }
 };
+
 
 const updateProduct = async (req, res, next) => {
   try {
@@ -103,7 +112,7 @@ const updateProduct = async (req, res, next) => {
     const product = await Product_List.findOne({ where: { productId: id } });
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
     }
 
     const existingProduct = await Product_List.findOne({
@@ -114,7 +123,7 @@ const updateProduct = async (req, res, next) => {
     });
 
     if (existingProduct) {
-      throw new Error('Product already exists');
+      throw new Error(middlewareErrorHandling.PRODUCT_ALREADY_EXISTS);
     }
 
     const productData = {
@@ -173,7 +182,7 @@ const deleteProduct = async (req, res, next)=>{
     const productExists = await Product_List.findOne({ where: { productId : id } });
 
     if (!productExists) {
-      throw new Error('Product not found');
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
     }
     await productExists.update({ isDeleted: 1 });
 
