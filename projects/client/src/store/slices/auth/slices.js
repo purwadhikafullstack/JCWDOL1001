@@ -68,6 +68,7 @@ export const register = createAsyncThunk(
             const {data} = response
 
             alert(response?.data?.message)
+            return data
             
         } catch (error) {
             if (error){
