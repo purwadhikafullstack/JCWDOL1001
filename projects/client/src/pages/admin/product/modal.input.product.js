@@ -144,6 +144,8 @@ export default function ModalInputProduct({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const categoryIds = selectedCategories.map((category) => category.categoryId);
+
     // Data product (JSON)
     const inputProductData = {
       productName: capitalizeEachWords(productNameRef.current?.value),
@@ -151,7 +153,7 @@ export default function ModalInputProduct({
       productDosage: productDosageRef.current?.value,
       productDescription: productDescriptionRef.current?.value,
       productPicture: file,
-      categoryId: selectedCategories,
+      categoryId: categoryIds,
     };
 
     const formData = new FormData();
@@ -159,6 +161,7 @@ export default function ModalInputProduct({
     if (file) formData.append("file", file);
 
     try {
+
       if (productData) {
         await updateProductValidationSchema.validate(inputProductData, {
           abortEarly: false,

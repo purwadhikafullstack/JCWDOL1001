@@ -1,6 +1,8 @@
 import {
+  HiOutlineCircleStack,
   HiOutlinePencilSquare,
   HiOutlineRectangleStack,
+  HiOutlineSquare3Stack3D,
   HiOutlineTrash,
 } from "react-icons/hi2";
 import Button from "../../../components/Button";
@@ -111,12 +113,12 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Product", product.productId)
+                          handleShowModal("Edit Details", product.productId)
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlinePencilSquare className="text-lg text-blue-500" />
-                          Edit Product
+                          Edit Details
                         </span>
                       </Button>
 
@@ -128,8 +130,21 @@ export default function TableProducts({
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
-                          <HiOutlineRectangleStack className="text-lg text-primary" />
+                          <HiOutlineSquare3Stack3D className="text-lg text-primary" />
                           Edit Stock
+                        </span>
+                      </Button>
+
+                      <Button
+                        isBLock
+                        className="px-2 hover:bg-slate-200"
+                        onClick={() =>
+                          handleShowModal("Edit Unit", product.productId)
+                        }
+                      >
+                        <span className="flex items-center gap-2 py-2">
+                          <HiOutlineCircleStack className="text-lg text-purple-500 " />
+                          Edit Unit
                         </span>
                       </Button>
 
