@@ -42,13 +42,11 @@ const getProducts = async (req, res, next) => {
 		res.status(200).json({
 			type : "success",
 			message : "Products fetched",
-			data : {
-        currentPage : page ? page : 1,
-        totalPage : pages,
-        totalProducts : total,
-        productLimit : options.limit,
-        productList : products
-      }
+      currentPage : page ? page : 1,
+      totalPage : pages,
+      totalProducts : total,
+      productLimit : options.limit,
+			data : products
 		});
 
   }catch(error){
