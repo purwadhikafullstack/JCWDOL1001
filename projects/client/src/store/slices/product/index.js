@@ -25,6 +25,7 @@ const productsSlice = createSlice({
   reducers: {
     resetSuccessProduct: (state, action) => {
       state.success = false;
+      state.errorMessage = null;
     },
   },
   extraReducers: (builder) => {
