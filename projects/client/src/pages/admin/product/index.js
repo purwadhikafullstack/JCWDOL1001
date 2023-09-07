@@ -14,6 +14,8 @@ import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
 
 import { useNavigate } from "react-router-dom";
+import Input from "../../../components/Input";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 export default function AdminProducts({user}) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -51,7 +53,6 @@ export default function AdminProducts({user}) {
       const productData = products.find((item) => item.productId === productId);
       setSelectedProduct(productData);
     }
-
   };
 
   const handleCloseModal = () => {
@@ -61,10 +62,6 @@ export default function AdminProducts({user}) {
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
     document.body.style.overflow = "auto";
-  };
-
-  const handleDeleteProduct = (id) => {
-    dispatch(deleteProduct(id));
   };
 
   useEffect(() => {
@@ -79,8 +76,17 @@ export default function AdminProducts({user}) {
 
   return (
     <>
-      <div className="container py-24 lg:ml-[calc(5rem)]">
-        <h3 className="border-b-2 pb-2 text-2xl font-semibold">Products</h3>
+      <div className="container py-24 lg:px-8 lg:ml-[calc(5rem)]">
+        <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
+          <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
+
+          <form className="relative w-1/3" onSubmit={()=>window.alert("ok")}>
+            <Input type="text" placeholder="Search"/>
+            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
+              <HiMagnifyingGlass className="text-2xl text-primary" />
+            </button>
+          </form>
+        </div>
 
         <div className="mt-4 flex items-center justify-between">
           <Button
@@ -112,7 +118,7 @@ export default function AdminProducts({user}) {
         disableOutside
       >
         {(showModal.context === "Add Product" ||
-          showModal.context === "Edit Product") && (
+          showModal.context === "Edit Details") && (
           <ModalInputProduct
             success={success}
             categories={categories}
@@ -138,10 +144,19 @@ export default function AdminProducts({user}) {
           <ModalDeleteProduct
             selectedProduct={selectedProduct}
             success={success}
-            handleDeleteProduct={handleDeleteProduct}
             handleCloseModal={handleCloseModal}
             isDeleteProductLoading={isDeleteProductLoading}
           />
+        )}
+
+        {showModal.context === "Edit Stock" && (
+          <h3>{selectedProduct.productName}</h3>
+          // NOTE: CREATE COMPONENT MODAL FOR EDIT STOCK ex: modal.edit.stock.js
+        )}
+
+        {showModal.context === "Edit Unit" && (
+          <h3>{selectedProduct.productName}</h3>
+          // NOTE: CREATE COMPONENT MODAL FOR EDIT UNIT ex: modal.edit.unit.js
         )}
       </Modal>
     </>

@@ -20,6 +20,17 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
         setShowModal({ show: false, context: "" })
         document.body.style.overflow = "auto"
     }
+
+    useEffect(()=>{
+        if (isSidebarActive) {
+            document.body.style.overflow = "hidden"
+        }
+
+        if (!isSidebarActive) {
+            document.body.style.overflow = "auto"
+        }
+    },[isSidebarActive])
+
     useEffect(()=>{
         // if(user.status === 0 && isLogin){
         //     dispatch(resendOtp({email : user.email}))
