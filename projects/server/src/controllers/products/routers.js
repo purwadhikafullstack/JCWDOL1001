@@ -1,6 +1,7 @@
 const express = require("express")
 const product = require("./index.js")
-const convertion = require("./convertion/index.js")
+const unit = require("./units/index.js")
+const convertion = require("./units/convertion/index.js")
 const {verifyUser, verifyAdmin} = require("../../middleware/token.verify.js")
 const { helperUploader } = require("../../helper/index.js");
 
@@ -13,10 +14,12 @@ router.get("/", product.getProducts)
 router.post("/", uploader.single("file"), product.createProduct) //NOTE: verifyAdmin
 router.patch("/:id", uploader.single("file"), product.updateProduct) //NOTE: verifyAdmin
 router.patch("/delete/:id", product.deleteProduct) //NOTE: verifyAdmin
-router.get("/unit", verifyAdmin, convertion.productUnits)
-router.patch("/unit/update/:productId", verifyAdmin, convertion.updateProductUnits)
-router.delete("/unit/delete/:productId", verifyAdmin, convertion.deleteProductUnits)
-router.post("/unit/:productId", verifyAdmin, convertion.setProductUnits)
+router.get("/unit", verifyAdmin, unit.productUnits)
+router.patch("/unit/update/:productId", verifyAdmin, unit.updateProductUnits)
+router.patch("/unit/delete/:productId", verifyAdmin, unit.deleteProductUnits)
+router.patch("/unit/make-convertion", convertion.makeConvertionUnit)
+router.patch("/unit/reactivate", unit.activateDeletedUnits)
+router.post("/unit/:productId", verifyAdmin, unit.setProductUnits)
 router.patch("/stock/update",  verifyAdmin, product.updateMainStock)
 
 
