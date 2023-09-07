@@ -78,11 +78,71 @@ export default function ModalInputProduct({
     }
   }, [productData]);
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
+// const handleSubmit = async (event) => {
+//   event.preventDefault();
   
-    try {
-    const categoryIds = selectedCategories.map((category) => category.categoryId);
+//     try {
+//     const categoryIds = selectedCategories.map((category) => category.categoryId);
+
+//     // Data product (JSON)
+//     const inputProductData = {
+//       productName: capitalizeEachWords(productNameRef.current?.value),
+//       productPrice: productPriceRef.current?.value,
+//       productDosage: productDosageRef.current?.value,
+//       productDescription: productDescriptionRef.current?.value,
+//       productPicture: file,
+//       categoryId: categoryIds,
+//     };
+
+//     if (productData) {
+//       await updateProductValidationSchema.validate(inputProductData, {
+//         abortEarly: false,
+//       });
+
+//       setError("");
+//       setInputFormData(inputProductData)
+//       setConfirmAdd(true)
+//     } else {
+//       await inputProductValidationSchema.validate(inputProductData, {
+//         abortEarly: false,
+//       });
+
+//       setError("");
+//       setInputFormData(inputProductData)
+//       setConfirmAdd(true)
+
+//     }
+//   } catch (error) {
+//     const errors = {};
+
+//     error.inner.forEach((innerError) => {
+//       errors[innerError.path] = innerError.message;
+//     });
+//     setError(errors);
+//   }
+// };
+
+// const handleConfirm = async (event) => {
+//   event.preventDefault();
+
+//     const formData = new FormData();
+//     formData.append("data", JSON.stringify(inputFormData));
+//     if (file) formData.append("file", file);
+
+//     // for (let pair of formData.entries()) {
+//     //   console.log(pair[0], pair[1]);
+//     // }
+
+//     if (productData) {
+//       dispatch(updateProduct({ id: productData.productId, formData }));
+//     }else{
+//       dispatch(createProduct(formData));
+//     }
+
+// };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     // Data product (JSON)
     const inputProductData = {
@@ -91,55 +151,51 @@ const handleSubmit = async (event) => {
       productDosage: productDosageRef.current?.value,
       productDescription: productDescriptionRef.current?.value,
       productPicture: file,
-      categoryId: categoryIds,
+      categoryId: selectedCategories,
     };
 
-    if (productData) {
-      await updateProductValidationSchema.validate(inputProductData, {
-        abortEarly: false,
-      });
-
-      setError("");
-      setInputFormData(inputProductData)
-      setConfirmAdd(true)
-    } else {
-      await inputProductValidationSchema.validate(inputProductData, {
-        abortEarly: false,
-      });
-
-      setError("");
-      setInputFormData(inputProductData)
-      setConfirmAdd(true)
-
-    }
-  } catch (error) {
-    const errors = {};
-
-    error.inner.forEach((innerError) => {
-      errors[innerError.path] = innerError.message;
-    });
-    setError(errors);
-  }
-};
-
-const handleConfirm = async (event) => {
-  event.preventDefault();
-
     const formData = new FormData();
-    formData.append("data", JSON.stringify(inputFormData));
+    formData.append("data", JSON.stringify(inputProductData));
     if (file) formData.append("file", file);
 
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0], pair[1]);
-    // }
+    try {
+      if (productData) {
+        await updateProductValidationSchema.validate(inputProductData, {
+          abortEarly: false,
+        });
 
-    if (productData) {
-      dispatch(updateProduct({ id: productData.productId, formData }));
-    }else{
-      dispatch(createProduct(formData));
+        setError("");
+        setConfirmAdd(true);
+
+        if (confirmAdd) {
+          dispatch(updateProduct({ id: productData.productId, formData }));
+          // for (let pair of formData.entries()) {
+          //   console.log(pair[0], pair[1]);
+          // }
+        }
+      }
+
+      if (!productData) {
+        await inputProductValidationSchema.validate(inputProductData, {
+          abortEarly: false,
+        });
+
+        setError("");
+        setConfirmAdd(true);
+
+        if (confirmAdd) {
+          dispatch(createProduct(formData));
+        }
+      }
+    } catch (error) {
+      const errors = {};
+
+      error.inner.forEach((innerError) => {
+        errors[innerError.path] = innerError.message;
+      });
+      setError(errors);
     }
-
-};
+  };
 
   if (isSubmitProductLoading) {
     return <LoadingSpinner isLarge />;
@@ -159,9 +215,19 @@ const handleConfirm = async (event) => {
     );
   }
 
+  if (errorMessage) {
+    return (
+      <Message
+        type="error"
+        message={errorMessage}
+        handleCloseModal={handleCloseModal}
+      />
+    );
+  }
+
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
-      <form onSubmit={handleConfirm}>
+      <form onSubmit={handleSubmit}>
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="">
             {selectedCategories.length === 0 ? (
@@ -298,8 +364,18 @@ const handleConfirm = async (event) => {
               onClick={handleCloseModal}
             />
             <button
-              className=" w-full select-none rounded-lg bg-primary px-6 py-2 text-sm text-white duration-300 hover:bg-teal-700"
-              onClick={handleSubmit}
+              className="
+              w-full 
+              select-none 
+              rounded-lg 
+              bg-primary 
+              px-6 
+              py-2 
+              text-sm 
+              text-white 
+              duration-300 
+              hover:bg-teal-700"
+              type="submit"
             >
               {productData ? "Update" : "Add Product"}
             </button>
