@@ -34,8 +34,17 @@ const updateProductValidationSchema = Yup.object({
     .min(1, "At least one category must be selected")
     .required("Category is required"),
 });
+const updateMainStockValidationSchema = Yup.object({
+  productId: Yup.string()
+    .required("productId is required")
+    .matches(/^[0-9]+$/, "productId must contain only numbers"),
+  value: Yup.string()
+    .required("value is required")
+    .matches(/-*[0-9]+$/, "value must contain only numbers"),
+});
 
 module.exports = {
   inputProductValidationSchema,
-  updateProductValidationSchema
+  updateProductValidationSchema,
+  updateMainStockValidationSchema
 }

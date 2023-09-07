@@ -93,9 +93,58 @@ const Product_Detail = db.sequelize.define("product_detail", {
     timestamps: false
 });
 
+const Product_History = db.sequelize.define("product_history",{
+    historyId : {
+        type: db.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    productId : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    createdAt : {
+        type: db.Sequelize.DATE,
+        allowNull: false,
+    },
+    updatedAt : {
+        type: db.Sequelize.DATE,
+        allowNull: false
+    },
+    unit : {
+        type: db.Sequelize.STRING,
+        allowNull: false
+    },
+    initialStock: {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    type: {
+        type: db.Sequelize.STRING,
+        allowNull: false
+    },
+    status : {
+        type: db.Sequelize.STRING,
+        allowNull: false
+    },
+    quantity : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    results : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    }
+},{
+    timestamps: true,
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+});
+
 module.exports = { 
   Product_List,
   Product_Category,
   Product_Unit,
-  Product_Detail
+  Product_Detail,
+  Product_History
 }

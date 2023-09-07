@@ -1,8 +1,8 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List, Product_Unit, Categories } = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, Categories, Product_Detail, Product_History } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
-const {inputProductValidationSchema, updateProductValidationSchema } = require("./validation.js")
+const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
@@ -182,9 +182,59 @@ const deleteProduct = async (req, res, next)=>{
   }
 }
 
+const updateMainStock = async (req, res, next)=>{
+  try {
+    const { productId, value} = req.body
+    // type: penjualan, unit conversion,update stock; kasus ini typenya cmn buat update main stock
+    //@validate request
+    await updateMainStockValidationSchema.validate(req.body)
+    //@ambil data product details(id produk, id unit, idsstocknya, quantity, dll : 
+    //misal as detailproduk, dimana id product sesuai input dan isdefault true 
+    const detail = await Product_Detail.findOne({where : {productId : productId, isDefault : 1}})
+    const unitName = await Product_Unit.findOne({where : {unitId : detail?.unitId}})
+        // kalau status detail produk is deleted 1 throw error 
+        if (detail?.isDeleted === 1) {
+          throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+        }
+
+        let status = "Penjumlahan"
+        // kalau besar perubahan > 0, tipe penambahan
+        if(value < 0){
+          status = "Pengurangan"
+        }
+        if (value === 0){
+          throw new Error(middlewareErrorHandling.NO_CHANGES);
+        }
+
+        //@update product detail and history
+        const history = await Product_History.create({
+          productId : productId,
+          unit : unitName?.name,
+          initialStock : detail?.quantity,
+          status : status,
+          type : "Update Stock",
+          quantity : value > 0? value : -1 * +value,
+          results : detail?.quantity + +value
+        })
+        
+        await detail.update({quantity : history?.results})
+
+    res.status(200).json({ message: 'Product stock updated successfully',
+        detail : detail,
+        history : history
+  });
+
+  } catch (error) {
+    next(error);
+    
+  }
+}
+
+
 module.exports = {
     getProducts,
     createProduct,
     updateProduct,
     deleteProduct,
+    updateMainStock
 }
