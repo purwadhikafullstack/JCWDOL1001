@@ -6,26 +6,49 @@ const {inputProductValidationSchema, updateProductValidationSchema, updateMainSt
 const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
-  try {
+  try{
+    const {page, id_cat, product_name, sort_price, sort_name} = req.query;
+    
+    const currentPage = page ? parseInt(page) : 1;
 
-    const products = await Product_List?.findAll({where : {isDeleted : 0},
-      include:[
-        {
-          model:Categories,
-          attributes:['categoryDesc','categoryId'],
-          as: "productCategories",
-        },
-        {
-          model:Product_Unit,
-          as:"productUnits"
-        }
-      ]
-    });
+    const options = {
+      offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+      limit : 10,
+    }
 
-    res.status(200).json({
+    const filter = {id_cat, product_name}
+    if(id_cat) filter.id_cat={'categoryId' : id_cat}
+    if(product_name) filter.product_name = {"productName" : {[Op.like] : `%${product_name}%`}}
+
+    let sort = []
+    if(sort_price) sort.push([`productPrice`,sort_price])
+    if(sort_name) sort.push([`productName`, sort_name])
+
+    const products = await Product_List?.findAll({...options,
+      include : {
+          model : Categories,
+          attributes : ['categoryDesc','categoryId'],
+          as : "productCategories",
+          where : filter.id_cat
+      },
+      where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
+      order : sort}
+      );
+    
+    const total = id_cat || id_cat && page ? await products.length : await Product_List?.count();
+
+    const pages = Math.ceil(total / options.limit);
+
+		res.status(200).json({
 			type : "success",
 			message : "Products fetched",
-			data : products
+			data : {
+        currentPage : page ? page : 1,
+        totalPage : pages,
+        totalProducts : total,
+        productLimit : options.limit,
+        productList : products
+      }
 		});
 
   }catch(error){

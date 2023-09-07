@@ -36,7 +36,7 @@ const Product_List = db.sequelize.define("product_list", {
 });
 
 const Product_Category = db.sequelize.define("product_category", {
-    productCategoryId : {
+    productCategoryid : {
         type: db.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
