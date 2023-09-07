@@ -1,17 +1,24 @@
+import { useDispatch } from "react-redux";
 import Button from "../../../components/Button";
 import SuccessMessage from "../../../components/Message";
+import { deleteProduct } from "../../../store/slices/product/slices";
 
 export default function ModalDeleteProduct({
   success,
   selectedProduct,
   handleCloseModal,
-  handleDeleteProduct,
   isDeleteProductLoading,
 }) {
+
+  const dispatch = useDispatch()
+  const handleDeleteProduct = (id) => {
+    dispatch(deleteProduct(id));
+  };
   if (success) {
     return (
       <SuccessMessage
-        message={`Product ${selectedProduct.productName} deleted successfully`}
+        type="success"
+        message={`${selectedProduct.productName} deleted successfully`}
         handleCloseModal={handleCloseModal}
       />
     );
