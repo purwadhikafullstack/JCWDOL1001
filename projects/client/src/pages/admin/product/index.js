@@ -88,7 +88,6 @@ export default function AdminProducts({user}) {
           </form>
         </div>
 
-
         <div className="mt-4 flex items-center justify-between">
           <Button
             isButton
