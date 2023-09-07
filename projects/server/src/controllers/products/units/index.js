@@ -23,7 +23,7 @@ const setProductUnits = async( req, res, next ) => {
 
     await productUnitValidationSchema.validate(req.body)
 
-    const isExceedMaxUnit = await Product_Detail.count({where : { productId }})
+    const isExceedMaxUnit = await Product_Detail.count({where : { productId, isDeleted : 0}})
 
     if(isExceedMaxUnit === 2 ) throw ({
       status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
@@ -37,26 +37,21 @@ const setProductUnits = async( req, res, next ) => {
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
-    const isProductUnitAlreadyExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        unitId : req.body.unitId
-      }
-    })
+    const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : req.body.unitId }})
 
     if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(req.body.unitId)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
     })
 
-    const unitProductList = await Product_Unit.findOne({where :{unitId : req.body.unitId}})
+    const isInUnitProductList = await Product_Unit.findOne({where :{unitId : req.body.unitId}})
 
-    if(!unitProductList){
-      const isUnitNameExist = await Product_Unit.findOne({where : { name : req.body.unitName }})
+    if(!isInUnitProductList){
+      const isUnitNameExist = await Product_Unit.findOne({where : {name : req.body.unitName}})
       
       if(isUnitNameExist) throw ({
           status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-          message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
+          message : middlewareErrorHandling.PRODUCT_UNIT_NAME_ALREADY_EXISTS 
       })
 
       const newUnit = await Product_Unit.create({name : req.body.unitName})
@@ -87,24 +82,14 @@ const updateProductUnits = async( req, res, next ) => {
 
     await productUnitValidationSchema.validate(req.body)
 
-    const isDefaultUnitExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        isDefault:1
-      }
-    })
+    const isDefaultUnitExist = await Product_Detail.findOne({ where : { productId, isDefault:1 }})
 
     if(Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
-    const isProductUnitAlreadyExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        unitId : req.body.unitId
-      }
-    })
+    const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : req.body.unitId }})
 
     if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(req.body.unitId)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
@@ -114,11 +99,7 @@ const updateProductUnits = async( req, res, next ) => {
     const unitProductList = await Product_Unit.findOne({ where :{unitId : req.body.unitId}})
 
     if(!unitProductList){
-      const isUnitNameExist = await Product_Unit.findOne({
-        where : { 
-          name : req.body.unitName 
-        }
-      })
+      const isUnitNameExist = await Product_Unit.findOne({ where : {name : req.body.unitName}})
 
       if(isUnitNameExist) throw ({
           status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
@@ -138,11 +119,7 @@ const updateProductUnits = async( req, res, next ) => {
 
     await Product_Detail.update(
       req.body,
-      {
-        where : {
-          stockId
-        }
-      }
+      {where : {stockId}}
     )
 
     const unitProduct =await Product_Detail.findOne({where:{stockId}})
