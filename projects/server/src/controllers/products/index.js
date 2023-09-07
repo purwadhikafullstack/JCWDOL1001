@@ -1,30 +1,51 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List, Product_Unit, Categories } = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, Categories, Product_Detail, Product_History } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
-const {inputProductValidationSchema, updateProductValidationSchema } = require("./validation.js")
+const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
-  try {
+  try{
+    const {page, id_cat, product_name, sort_price, sort_name} = req.query;
+    
+    const currentPage = page ? parseInt(page) : 1;
 
-    const products = await Product_List?.findAll({where : {isDeleted : 0},
-      include:[
-        {
-          model:Categories,
-          attributes:['categoryDesc','categoryId'],
-          as: "productCategories",
-        },
-        {
-          model:Product_Unit,
-          as:"productUnits"
-        }
-      ]
-    });
+    const options = {
+      offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+      limit : 10,
+    }
 
-    res.status(200).json({
+    const filter = {id_cat, product_name}
+    if(id_cat) filter.id_cat={'categoryId' : id_cat}
+    if(product_name) filter.product_name = {"productName" : {[Op.like] : `%${product_name}%`}}
+
+    let sort = []
+    if(sort_price) sort.push([`productPrice`,sort_price])
+    if(sort_name) sort.push([`productName`, sort_name])
+
+    const products = await Product_List?.findAll({...options,
+      include : {
+          model : Categories,
+          attributes : ['categoryDesc','categoryId'],
+          as : "productCategories",
+          where : filter.id_cat
+      },
+      where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
+      order : sort}
+      );
+    
+    const total = id_cat || id_cat && page ? await products.length : await Product_List?.count();
+
+    const pages = Math.ceil(total / options.limit);
+
+		res.status(200).json({
 			type : "success",
 			message : "Products fetched",
+      currentPage : page ? page : 1,
+      totalPage : pages,
+      totalProducts : total,
+      productLimit : options.limit,
 			data : products
 		});
 
@@ -182,9 +203,59 @@ const deleteProduct = async (req, res, next)=>{
   }
 }
 
+const updateMainStock = async (req, res, next)=>{
+  try {
+    const { productId, value} = req.body
+    // type: penjualan, unit conversion,update stock; kasus ini typenya cmn buat update main stock
+    //@validate request
+    await updateMainStockValidationSchema.validate(req.body)
+    //@ambil data product details(id produk, id unit, idsstocknya, quantity, dll : 
+    //misal as detailproduk, dimana id product sesuai input dan isdefault true 
+    const detail = await Product_Detail.findOne({where : {productId : productId, isDefault : 1}})
+    const unitName = await Product_Unit.findOne({where : {unitId : detail?.unitId}})
+        // kalau status detail produk is deleted 1 throw error 
+        if (detail?.isDeleted === 1) {
+          throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+        }
+
+        let status = "Penjumlahan"
+        // kalau besar perubahan > 0, tipe penambahan
+        if(value < 0){
+          status = "Pengurangan"
+        }
+        if (value === 0){
+          throw new Error(middlewareErrorHandling.NO_CHANGES);
+        }
+
+        //@update product detail and history
+        const history = await Product_History.create({
+          productId : productId,
+          unit : unitName?.name,
+          initialStock : detail?.quantity,
+          status : status,
+          type : "Update Stock",
+          quantity : value > 0? value : -1 * +value,
+          results : detail?.quantity + +value
+        })
+        
+        await detail.update({quantity : history?.results})
+
+    res.status(200).json({ message: 'Product stock updated successfully',
+        detail : detail,
+        history : history
+  });
+
+  } catch (error) {
+    next(error);
+    
+  }
+}
+
+
 module.exports = {
     getProducts,
     createProduct,
     updateProduct,
     deleteProduct,
+    updateMainStock
 }
