@@ -79,23 +79,23 @@ const Input = React.forwardRef(({
             disabled={isDisabled}
           ></textarea>
         </div>
-    );
-  }
+      );
+    }
 
-  return (
-      <div className="">
-        {label && <label htmlFor={id}>{label}</label>}
-        <input
-          ref={ref}
-          value={value}
-          type={type}
-          name={name}
-          className={inputClass.join(" ")}
-          id={id}
-          placeholder={placeholder}
-          autoFocus={autoFocus}
-          onChange={onChange}
-          onBlur={onBlur}
+    return (
+        <div className="">
+          {label && <label htmlFor={id}>{label}</label>}
+          <input
+            ref={ref}
+            value={value}
+            type={type}
+            name={name}
+            className={inputClass.join(" ")}
+            id={id}
+            placeholder={placeholder}
+            autoFocus={autoFocus}
+            onChange={onChange}
+            onBlur={onBlur}
           disabled={isDisabled}
         />
       </div>
