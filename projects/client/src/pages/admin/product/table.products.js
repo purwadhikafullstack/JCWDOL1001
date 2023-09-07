@@ -77,7 +77,7 @@ export default function TableProducts({
               </td>
 
               <td className="p-3">
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Button
                     isSmall
                     isPrimaryOutline
@@ -88,7 +88,18 @@ export default function TableProducts({
                     title="Details"
                   />
 
-                  <div className="group relative px-2">
+                  <Button
+                  isSmall
+                  isDanger
+                    onClick={() =>
+                      handleShowModal("Delete Product", product.productId)
+                    }
+
+                  >
+                      <HiOutlineTrash className="text-lg" />
+                  </Button>
+
+                  <div className="group relative -ml-1 pr-2 mt-1">
                     <Button
                       title={
                         <FaEllipsisVertical className="text-2xl text-primary" />
@@ -112,7 +123,9 @@ export default function TableProducts({
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        // onClick={handleDeleteProduct}
+                        onClick={() =>
+                          handleShowModal("Edit Stock", product.productId)
+                        }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineRectangleStack className="text-lg text-primary" />
@@ -120,19 +133,7 @@ export default function TableProducts({
                         </span>
                       </Button>
 
-                      <Button
-                        isBLock
-                        className="px-2 hover:bg-slate-200"
-                        onClick={() =>
-                          handleShowModal("Delete Product", product.productId)
-                        }
-
-                      >
-                        <span className="flex items-center gap-2 py-2 text-danger">
-                          <HiOutlineTrash className="text-lg" />
-                          Delete Product
-                        </span>
-                      </Button>
+                      
                     </div>
                   </div>
                 </div>
