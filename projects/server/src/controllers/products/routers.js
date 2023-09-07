@@ -17,6 +17,7 @@ router.get("/unit", verifyAdmin, convertion.productUnits)
 router.patch("/unit/update/:productId", verifyAdmin, convertion.updateProductUnits)
 router.patch("/unit/delete/:productId", verifyAdmin, convertion.deleteProductUnits)
 router.post("/unit/:productId", verifyAdmin, convertion.setProductUnits)
+router.patch("/stock/update",  verifyAdmin, product.updateMainStock)
 
 
 module.exports = router
