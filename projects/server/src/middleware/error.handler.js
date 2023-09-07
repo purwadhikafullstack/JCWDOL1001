@@ -12,6 +12,7 @@ const PRODUCT_ALREADY_HAS_DEFAULT_UNIT = "Product already have default unit in t
 const PRODUCT_UNIT_ALREADY_EXISTS = "Product unit already exist in the list!"
 const PRODUCT_UNIT_NAME_ALREADY_EXISTS = "Product unit with that name is already exist in the list!"
 const PRODUCT_UNIT_EXCEED_LIMIT = "Product unit is limit max 2!"
+const PRODUCT_UNIT_NOT_FOUND = "Product unit not found."
 const CANNOT_DELETE_DEFAULT_PRODUCT_UNIT = "Default product unit can't be deleted!"
 const NO_CHANGES = "No changes were made";
 const DEFAULT_UNIT_UNAVAILABLE = "Default product unit is out of stock"
@@ -67,6 +68,7 @@ module.exports = {
     CANNOT_DELETE_DEFAULT_PRODUCT_UNIT,
     NO_CHANGES,
     DEFAULT_UNIT_UNAVAILABLE,
-    SECONDARY_PRODUCT_UNIT_NOT_FOUND
+    SECONDARY_PRODUCT_UNIT_NOT_FOUND,
+    PRODUCT_UNIT_NOT_FOUND
 
 }

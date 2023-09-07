@@ -117,10 +117,7 @@ const updateProductUnits = async( req, res, next ) => {
 
     delete req.body.stockId
 
-    await Product_Detail.update(
-      req.body,
-      {where : {stockId}}
-    )
+    await Product_Detail.update( req.body, {where : {stockId}} )
 
     const unitProduct =await Product_Detail.findOne({where:{stockId}})
 
@@ -166,9 +163,38 @@ const deleteProductUnits = async( req, res, next ) => {
   }
 }
 
+const activateDeletedUnits = async( req, res, next ) => {
+  try{
+    const unitProduct = await Product_Detail.count({where : { productId : req.body.productId, unitId : req.body.unitId}})
+
+    if(!unitProduct ) throw ({
+      status : middlewareErrorHandling.NOT_FOUND_STATUS, 
+      message : middlewareErrorHandling.PRODUCT_UNIT_NOT_FOUND 
+    })
+
+    const isExceedMaxUnit = await Product_Detail.count({where : { productId : req.body.productId, isDeleted : 0}})
+
+    if(isExceedMaxUnit === 2 ) throw ({
+      status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+      message : middlewareErrorHandling.PRODUCT_UNIT_EXCEED_LIMIT 
+    })
+
+    await Product_Detail.update({isDeleted : 0},{where:{ productId : req.body.productId, unitId : req.body.unitId}})
+
+    res.status(200).json({ 
+      type : "success",
+      message : "Unit Produk berhasil diaktifkan kembali"
+    })
+
+  } catch (error){
+    next(error)
+  }
+}
+
 module.exports = {
     productUnits,
     setProductUnits,
     updateProductUnits,
-    deleteProductUnits
+    deleteProductUnits,
+    activateDeletedUnits
 }
