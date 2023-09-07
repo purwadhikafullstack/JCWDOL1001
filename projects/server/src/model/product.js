@@ -82,7 +82,11 @@ const Product_Detail = db.sequelize.define("product_detail", {
         allowNull: false
     },
     quantity : {
-        type: db.Sequelize.STRING,
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    convertion : {
+        type: db.Sequelize.INTEGER,
         allowNull: false
     },
     isDefault : {

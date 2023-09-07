@@ -13,6 +13,8 @@ const PRODUCT_UNIT_ALREADY_EXISTS = "Product unit already exist in the list!"
 const PRODUCT_UNIT_EXCEED_LIMIT = "Product unit is limit max 2!"
 const CANNOT_DELETE_DEFAULT_PRODUCT_UNIT = "Default product unit can't be deleted!"
 const NO_CHANGES = "No changes were made";
+const CANNOT_MAKING_CONVERTION = "Default product unit is out of stock"
+
 
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
@@ -60,5 +62,7 @@ module.exports = {
     PRODUCT_UNIT_ALREADY_EXISTS,
     PRODUCT_UNIT_EXCEED_LIMIT,
     CANNOT_DELETE_DEFAULT_PRODUCT_UNIT,
-    NO_CHANGES
+    NO_CHANGES,
+    CANNOT_MAKING_CONVERTION
+
 }

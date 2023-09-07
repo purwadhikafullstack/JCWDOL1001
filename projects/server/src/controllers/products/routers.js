@@ -16,6 +16,7 @@ router.patch("/delete/:id", product.deleteProduct) //NOTE: verifyAdmin
 router.get("/unit", verifyAdmin, convertion.productUnits)
 router.patch("/unit/update/:productId", verifyAdmin, convertion.updateProductUnits)
 router.patch("/unit/delete/:productId", verifyAdmin, convertion.deleteProductUnits)
+router.patch("/unit/make-convertion", convertion.makeConvertionUnit)
 router.post("/unit/:productId", verifyAdmin, convertion.setProductUnits)
 router.patch("/stock/update",  verifyAdmin, product.updateMainStock)
 

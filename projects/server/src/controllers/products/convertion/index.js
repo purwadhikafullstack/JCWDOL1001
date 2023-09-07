@@ -1,3 +1,4 @@
+const {Op} = require("sequelize")
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const { Product_Unit, Product_Detail } = require("../../../model/relation.js")
 const {productUnitValidationSchema, deleteProductUnitValidationSchema } = require("./validation.js")
@@ -173,8 +174,8 @@ const deleteProductUnits = async( req, res, next ) => {
     })
 
     if(isDefaultUnit) throw ({
-        status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-        message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
+      status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+      message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
     })
 
     await Product_Detail.update({isDeleted : 1},{where:{stockId : req.body.stockId}})
@@ -189,9 +190,49 @@ const deleteProductUnits = async( req, res, next ) => {
   }
 }
 
+const makeConvertionUnit = async( req, res, next ) => {
+  try{
+    
+    const isProductDefaultAvailable = await Product_Detail.findOne({
+      where : {
+        productId : req.body.productId,
+        isDefault : 1,
+        quantity : {
+          [Op.gt] : 0
+        }
+      }
+    })
+    
+    if(!isProductDefaultAvailable) throw ({
+      status : middlewareErrorHandling.NOT_FOUND_STATUS, 
+      message : middlewareErrorHandling.CANNOT_MAKING_CONVERTION 
+    })
+
+    await Product_Detail.update(
+      { quantity : isProductDefaultAvailable.dataValues?.quantity - req.body.times },
+      { where : { stockId : isProductDefaultAvailable?.dataValues?.stockId } }
+    )
+
+    const unitConvertion = await Product_Detail.update(
+      { quantity : (isProductDefaultAvailable.dataValues?.convertion * req.body.times ) },
+      { where : { productId : req.body.productId, isDefault : 0 } }
+    )
+
+    res.status(200).json({ 
+      type : "success",
+      message : "Unit Produk berhasil dikonversi",
+      unitConvertion
+    })
+
+  } catch (error){
+    next(error)
+  }
+}
+
 module.exports = {
     productUnits,
     setProductUnits,
     updateProductUnits,
-    deleteProductUnits
+    deleteProductUnits,
+    makeConvertionUnit
 }
