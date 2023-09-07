@@ -51,7 +51,6 @@ export default function AdminProducts({user}) {
       const productData = products.find((item) => item.productId === productId);
       setSelectedProduct(productData);
     }
-
   };
 
   const handleCloseModal = () => {
@@ -79,7 +78,7 @@ export default function AdminProducts({user}) {
 
   return (
     <>
-      <div className="container py-24 lg:ml-[calc(5rem)]">
+      <div className="container py-24 lg:px-8 lg:ml-[calc(5rem)]">
         <h3 className="border-b-2 pb-2 text-2xl font-semibold">Products</h3>
 
         <div className="mt-4 flex items-center justify-between">
@@ -142,6 +141,11 @@ export default function AdminProducts({user}) {
             handleCloseModal={handleCloseModal}
             isDeleteProductLoading={isDeleteProductLoading}
           />
+        )}
+
+        {showModal.context === "Edit Stock" && (
+          <h3>{selectedProduct.productName}</h3>
+          // NOTE: CREATE COMPONENT MODAL FOR EDIT STOCK ex: modal.edit.stock.js
         )}
       </Modal>
     </>

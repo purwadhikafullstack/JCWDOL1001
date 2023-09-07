@@ -17,10 +17,11 @@ export default function ModalDetailsProduct({selectedProduct, categories}) {
       </div>
       <div className="">
         <h3 className="title mt-4">{selectedProduct.productName}</h3>
-
-        {selectedProduct.categoryId.map((categoryId) => (
-          <p>{getCategoryByName(categoryId, categories)}</p>
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {selectedProduct.productCategories.map((category) => (
+            <span className="text-sm border border-primary text-primary p-1 rounded-lg select-none">{category.categoryDesc}</span>
+          ))}
+        </div>
         <p className="card-price mt-2">
           IDR {formatNumber(selectedProduct.productPrice)}
         </p>
