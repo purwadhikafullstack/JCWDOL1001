@@ -4,6 +4,7 @@ import Modal from "../../../components/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import TableProducts from "./table.products";
 import ModalInputProduct from "./modal.input.product";
+import ModalUnitsProduct from "./unit/modal.units.product";
 import {
   deleteProduct,
   getProducts,
@@ -16,6 +17,11 @@ import ModalDeleteProduct from "./modal.delete.product";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
+import ModalDeleteUnit from "./unit/modal.unit.delete.product";
+import ModalUnitProduct from "./unit/modal.units.product";
+import ModalInputProductUnit from "./unit/modal.unit.edit";
+import ModalAddProductUnit from "./unit/modal.unit.add";
 export default function AdminProducts({user}) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -28,6 +34,8 @@ export default function AdminProducts({user}) {
     isDeleteProductLoading,
     isSubmitProductLoading,
     errorMessage,
+    units,
+    unitsSuccess
   } = useSelector((state) => {
     return {
       success: state.products.success,
@@ -37,6 +45,8 @@ export default function AdminProducts({user}) {
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
       errorMessage: state.products.errorMessage,
+      units : state?.units?.data,
+      unitsSuccess : state?.units?.success
     };
   });
 
@@ -44,15 +54,29 @@ export default function AdminProducts({user}) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState({});
 
-  const handleShowModal = (context, productId) => {
+
+  const handleShowModal = ({context, productId, unitId}) => {
     setShowModal({ show: true, context });
+    
     document.body.style.overflow = "hidden";
 
     if (productId) {
       const productData = products.find((item) => item.productId === productId);
       setSelectedProduct(productData);
     }
+    
+    if({unitId}){
+      const unitFinder = selectedProduct.productUnits
+
+      const unitData = unitFinder.find( (unit) => unit.unitId === unitId)
+      
+      console.log(unitData!==undefined ? unitData : {})
+
+      Object.assign(selectedUnit,unitData!==undefined ? unitData : {})
+    }
+   
   };
 
   const handleCloseModal = () => {
@@ -61,6 +85,7 @@ export default function AdminProducts({user}) {
     setSelectedCategories([]);
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
+    dispatch(resetUnit())
     document.body.style.overflow = "auto";
   };
 
@@ -70,6 +95,7 @@ export default function AdminProducts({user}) {
 
   useEffect(()=>{
     dispatch(getCategory());
+    dispatch(getUnits())
   }, [])
 
   if(!user.role)return navigate("/","replace")
@@ -93,7 +119,7 @@ export default function AdminProducts({user}) {
             isButton
             isPrimary
             title="Add Product"
-            onClick={() => handleShowModal("Add Product")}
+            onClick={() => handleShowModal({context:"Add Product"})}
           />
 
           <div className="">Dropdown For Filter</div>
@@ -155,8 +181,47 @@ export default function AdminProducts({user}) {
         )}
 
         {showModal.context === "Edit Unit" && (
-          <h3>{selectedProduct.productName}</h3>
-          // NOTE: CREATE COMPONENT MODAL FOR EDIT UNIT ex: modal.edit.unit.js
+          <>
+            <h3 className="text-xl font-bold">| {selectedProduct.productName}</h3>
+            <ModalUnitsProduct
+              selectedProduct = {selectedProduct}
+              unitList = {units}
+              handleShowModal = {handleShowModal}
+              handleCloseModal = {handleCloseModal}
+
+            />
+          </>
+        )}
+
+        {showModal.context === "Delete Unit" && (
+          <ModalDeleteUnit
+            selectedUnit={selectedUnit}
+            success={unitsSuccess}
+            handleShowModal = {handleShowModal}
+            handleCloseModal={handleCloseModal}
+            isDeleteProductLoading={isDeleteProductLoading}
+          />
+        )}
+
+        {showModal.context === "Edit Unit Details" && (
+          <ModalInputProductUnit
+            success={success}
+            units={units}
+            productData={selectedProduct}
+            selectedUnit={selectedUnit}
+            handleShowModal={handleShowModal}
+            handleCloseModal={handleCloseModal}
+          />
+        )}
+
+        {showModal.context === "Add New Unit" && (
+          <ModalAddProductUnit
+            success={success}
+            units={units}
+            productData={selectedProduct}
+            handleShowModal={handleShowModal}
+            handleCloseModal={handleCloseModal}
+          />
         )}
       </Modal>
     </>

@@ -37,6 +37,11 @@ const setProductUnits = async( req, res, next ) => {
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
+    if(!isDefaultUnitExist && Number(req.body.isDefault) ===0) throw ({
+        status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+        message : middlewareErrorHandling.PRODUCT_DONT_HAVE_DEFAULT_UNIT 
+    })
+
     const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : req.body.unitId }})
 
     if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(req.body.unitId)) throw ({
@@ -83,8 +88,9 @@ const updateProductUnits = async( req, res, next ) => {
     await productUnitValidationSchema.validate(req.body)
 
     const isDefaultUnitExist = await Product_Detail.findOne({ where : { productId, isDefault:1 }})
+    const lengthUnit = await Product_Detail.count({where:{productId}})
 
-    if(Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault)) throw ({
+    if(Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault) && lengthUnit>1) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
