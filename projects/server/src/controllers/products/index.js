@@ -25,12 +25,17 @@ const getProducts = async (req, res, next) => {
     if(sort_name) sort.push([`productName`, sort_name])
 
     const products = await Product_List?.findAll({...options,
-      include : {
+      include : [{
           model : Categories,
           attributes : ['categoryDesc','categoryId'],
           as : "productCategories",
           where : filter.id_cat
       },
+      {
+        model : Product_Detail,
+        attributes : ["quantity"]
+    }
+    ],
       where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
       order : sort}
       );
@@ -218,7 +223,7 @@ const updateMainStock = async (req, res, next)=>{
           throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
         }
 
-        let status = "Penjumlahan"
+        let status = "Penambahan"
         // kalau besar perubahan > 0, tipe penambahan
         if(value < 0){
           status = "Pengurangan"
