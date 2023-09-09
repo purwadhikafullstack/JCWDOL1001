@@ -25,17 +25,24 @@ const getProducts = async (req, res, next) => {
     if(sort_name) sort.push([`productName`, sort_name])
 
     const products = await Product_List?.findAll({...options,
-      include : [{
+      include : 
+      [
+        {
           model : Categories,
           attributes : ['categoryDesc','categoryId'],
           as : "productCategories",
           where : filter.id_cat
-      },
-      {
-        model : Product_Detail,
-        attributes : ["quantity"]
-    }
-    ],
+        },
+        {
+          model : Product_Unit,
+          as : "productUnits"
+        },
+        {
+          model : Product_Detail,
+          attributes : ["quantity"]
+        }
+      ]
+      ,
       where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
       order : sort}
       );

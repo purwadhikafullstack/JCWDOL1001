@@ -23,6 +23,13 @@ const setProductUnits = async( req, res, next ) => {
 
     await productUnitValidationSchema.validate(req.body)
 
+    const isExceedMaxUnit = await Product_Detail.count({where : { productId, isDeleted : 0}})
+
+    if(isExceedMaxUnit === 2 ) throw ({
+      status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+      message : middlewareErrorHandling.PRODUCT_UNIT_EXCEED_LIMIT 
+    })
+
     const isDefaultUnitExist = await Product_Detail.findOne({where : {productId, isDefault:1}})
 
     if(Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault)) throw ({
@@ -30,34 +37,21 @@ const setProductUnits = async( req, res, next ) => {
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
-    const isProductUnitAlreadyExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        unitId : req.body.unitId
-      }
-    })
+    const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : req.body.unitId }})
 
     if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(req.body.unitId)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
     })
 
-    const unitProductList = await Product_Unit.findOne({ 
-      where :{
-        unitId : req.body.unitId
-      }
-    })
+    const isInUnitProductList = await Product_Unit.findOne({where :{unitId : req.body.unitId}})
 
-    if(!unitProductList){
-      const isUnitNameExist = await Product_Unit.findOne({
-        where : { 
-          name : req.body.unitName 
-        }
-      })
+    if(!isInUnitProductList){
+      const isUnitNameExist = await Product_Unit.findOne({where : {name : req.body.unitName}})
       
       if(isUnitNameExist) throw ({
           status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-          message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
+          message : middlewareErrorHandling.PRODUCT_UNIT_NAME_ALREADY_EXISTS 
       })
 
       const newUnit = await Product_Unit.create({name : req.body.unitName})
@@ -66,6 +60,8 @@ const setProductUnits = async( req, res, next ) => {
     }
 
     req.body.productId = productId
+
+    req.body.isDeleted = 0
 
     const unitProduct = await Product_Detail.create(req.body)
 
@@ -86,42 +82,24 @@ const updateProductUnits = async( req, res, next ) => {
 
     await productUnitValidationSchema.validate(req.body)
 
-    const isDefaultUnitExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        isDefault:1
-      }
-    })
+    const isDefaultUnitExist = await Product_Detail.findOne({ where : { productId, isDefault:1 }})
 
     if(Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
-    const isProductUnitAlreadyExist = await Product_Detail.findOne({
-      where : {
-        productId, 
-        unitId : req.body.unitId
-      }
-    })
+    const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : req.body.unitId }})
 
     if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(req.body.unitId)) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
     })
 
-    const unitProductList = await Product_Unit.findOne({ 
-      where :{
-        unitId : req.body.unitId
-      }
-    })
+    const unitProductList = await Product_Unit.findOne({ where :{unitId : req.body.unitId}})
 
     if(!unitProductList){
-      const isUnitNameExist = await Product_Unit.findOne({
-        where : { 
-          name : req.body.unitName 
-        }
-      })
+      const isUnitNameExist = await Product_Unit.findOne({ where : {name : req.body.unitName}})
 
       if(isUnitNameExist) throw ({
           status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
@@ -139,14 +117,7 @@ const updateProductUnits = async( req, res, next ) => {
 
     delete req.body.stockId
 
-    await Product_Detail.update(
-      req.body,
-      {
-        where : {
-          stockId
-        }
-      }
-    )
+    await Product_Detail.update( req.body, {where : {stockId}} )
 
     const unitProduct =await Product_Detail.findOne({where:{stockId}})
 
@@ -176,19 +147,43 @@ const deleteProductUnits = async( req, res, next ) => {
     })
 
     if(isDefaultUnit) throw ({
-        status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-        message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
+      status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+      message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
     })
 
-    await Product_Detail.destroy({
-      where:{
-        stockId : req.body.stockId
-      }
-    })
+    await Product_Detail.update({isDeleted : 1},{where:{stockId : req.body.stockId}})
 
     res.status(200).json({ 
       type : "success",
-      message : "Unit Produk berhasil dibuang"
+      message : "Unit Produk berhasil didelete"
+    })
+
+  } catch (error){
+    next(error)
+  }
+}
+
+const activateDeletedUnits = async( req, res, next ) => {
+  try{
+    const unitProduct = await Product_Detail.count({where : { productId : req.body.productId, unitId : req.body.unitId}})
+
+    if(!unitProduct ) throw ({
+      status : middlewareErrorHandling.NOT_FOUND_STATUS, 
+      message : middlewareErrorHandling.PRODUCT_UNIT_NOT_FOUND 
+    })
+
+    const isExceedMaxUnit = await Product_Detail.count({where : { productId : req.body.productId, isDeleted : 0}})
+
+    if(isExceedMaxUnit === 2 ) throw ({
+      status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
+      message : middlewareErrorHandling.PRODUCT_UNIT_EXCEED_LIMIT 
+    })
+
+    await Product_Detail.update({isDeleted : 0},{where:{ productId : req.body.productId, unitId : req.body.unitId}})
+
+    res.status(200).json({ 
+      type : "success",
+      message : "Unit Produk berhasil diaktifkan kembali"
     })
 
   } catch (error){
@@ -200,5 +195,6 @@ module.exports = {
     productUnits,
     setProductUnits,
     updateProductUnits,
-    deleteProductUnits
+    deleteProductUnits,
+    activateDeletedUnits
 }
