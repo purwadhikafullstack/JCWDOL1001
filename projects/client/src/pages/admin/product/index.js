@@ -18,10 +18,10 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
-import ModalDeleteUnit from "./unit/modal.unit.delete.product";
-import ModalUnitProduct from "./unit/modal.units.product";
-import ModalInputProductUnit from "./unit/modal.unit.edit";
+import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
+import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
+import ModalMakeConvertion from "./unit/modal.unit.make.convertion";
 export default function AdminProducts({user}) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -35,7 +35,8 @@ export default function AdminProducts({user}) {
     isSubmitProductLoading,
     errorMessage,
     units,
-    unitsSuccess
+    unitsSuccess,
+    isLoading,
   } = useSelector((state) => {
     return {
       success: state.products.success,
@@ -46,7 +47,8 @@ export default function AdminProducts({user}) {
       isSubmitProductLoading: state.products.isSubmitProductLoading,
       errorMessage: state.products.errorMessage,
       units : state?.units?.data,
-      unitsSuccess : state?.units?.success
+      unitsSuccess : state?.units?.success,
+      isLoading : state.units.isLoading,
     };
   });
 
@@ -57,7 +59,7 @@ export default function AdminProducts({user}) {
   const [selectedUnit, setSelectedUnit] = useState({});
 
 
-  const handleShowModal = ({context, productId, unitId}) => {
+  const handleShowModal = ({context, productId, stockId}) => {
     setShowModal({ show: true, context });
     
     document.body.style.overflow = "hidden";
@@ -67,13 +69,11 @@ export default function AdminProducts({user}) {
       setSelectedProduct(productData);
     }
     
-    if({unitId}){
+    if({stockId}){
       const unitFinder = selectedProduct.productUnits
 
-      const unitData = unitFinder.find( (unit) => unit.unitId === unitId)
+      const unitData = unitFinder.find( (unit) => unit.product_detail.stockId === stockId)
       
-      console.log(unitData!==undefined ? unitData : {})
-
       Object.assign(selectedUnit,unitData!==undefined ? unitData : {})
     }
    
@@ -91,7 +91,11 @@ export default function AdminProducts({user}) {
 
   useEffect(() => {
     dispatch(getProducts());
-  }, [isDeleteProductLoading, isSubmitProductLoading]);
+  }, [
+    isDeleteProductLoading, 
+    isSubmitProductLoading, 
+    isLoading,
+  ]);
 
   useEffect(()=>{
     dispatch(getCategory());
@@ -185,16 +189,14 @@ export default function AdminProducts({user}) {
             <h3 className="text-xl font-bold">| {selectedProduct.productName}</h3>
             <ModalUnitsProduct
               selectedProduct = {selectedProduct}
-              unitList = {units}
               handleShowModal = {handleShowModal}
-              handleCloseModal = {handleCloseModal}
-
             />
           </>
         )}
 
-        {showModal.context === "Delete Unit" && (
-          <ModalDeleteUnit
+        {(showModal.context === "Delete Unit" || showModal.context === "Reactivate Unit") && (
+          <ModalDeleteAndReactiveUnit
+            messageInput = {showModal.context.toLowerCase()}
             selectedUnit={selectedUnit}
             success={unitsSuccess}
             handleShowModal = {handleShowModal}
@@ -205,7 +207,7 @@ export default function AdminProducts({user}) {
 
         {showModal.context === "Edit Unit Details" && (
           <ModalInputProductUnit
-            success={success}
+            success={unitsSuccess}
             units={units}
             productData={selectedProduct}
             selectedUnit={selectedUnit}
@@ -216,8 +218,17 @@ export default function AdminProducts({user}) {
 
         {showModal.context === "Add New Unit" && (
           <ModalAddProductUnit
-            success={success}
+            success={unitsSuccess}
             units={units}
+            productData={selectedProduct}
+            handleShowModal={handleShowModal}
+            handleCloseModal={handleCloseModal}
+          />
+        )}
+
+        {showModal.context === "Make Convertion" && (
+          <ModalMakeConvertion
+            success={unitsSuccess}
             productData={selectedProduct}
             handleShowModal={handleShowModal}
             handleCloseModal={handleCloseModal}

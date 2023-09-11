@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Button from "../../../../components/Button";
 import Input from "../../../../components/Input";
-import { useDispatch, useSelector } from "react-redux";
-import LoadingSpinner from "../../../../components/LoadingSpinner";
-import Message from "../../../../components/Message";
-import { addUnit, updateUnit } from "../../../../store/slices/product/unit/slices";
-
+import { useDispatch } from "react-redux";
+import SuccessMessage from "../../../../components/Message";
+import { addUnit } from "../../../../store/slices/product/unit/slices";
 
 export default function ModalAddProductUnit({
   success,
@@ -14,7 +12,6 @@ export default function ModalAddProductUnit({
   handleShowModal,
   handleCloseModal,
 }) {
-
     const dispatch = useDispatch()
     const unitRef = useRef()
     const qtyRef = useRef()
@@ -30,6 +27,18 @@ export default function ModalAddProductUnit({
         name :"no"
     })
 
+    const [confirmation, setConfirmation] = useState(false);
+
+    if (success) {
+        return (
+            <SuccessMessage
+                type="success"
+                message={`Add product unit ${unitSelected.unitName} into ${productData.productName} success`}
+                handleCloseModal={handleCloseModal}
+            />
+        );
+    }
+
     const handleChangeUnit = (event) => {
         setSelectedUnit({
             unitId :event.target.selectedOptions[0].className,
@@ -37,51 +46,43 @@ export default function ModalAddProductUnit({
         })
     }
 
-    const handleInputUnit = (event) => {
-        setSelectedUnit({
-            unitId :units.length+1,
-            unitName :event.target.value
-        })
-    }
-
     const handleChangeDefault = (type) => {
         setIsDefaultUnit(type)
     }
 
-    const [confirmation, setConfirmation] = useState(false);
-
     const output = {data:{},productId:""}
 
-    const handleOnYes =()=>{
-        
-        setConfirmation(true)
-    }
-
-    const handleOnSure = ()=>{
+    const handleOnSure = async ()=> {
         qtyRef?.current?.value ? output.data.quantity = qtyRef?.current?.value : output.data.quantity = 0
         
         qtyPerUnitRef?.current?.value ? output.data.convertion = qtyPerUnitRef?.current?.value : output.data.convertion = 0
        
-
         if( unitRef?.current?.value ){
             output.data.unitName = unitRef?.current?.value
         }
 
-        output.data.unitId = unitSelected.unitId
+        output.data.unitId = unitRef?.current?.value ? units.length + 1 : unitSelected.unitId
 
         output.data.isDefault= isDefaultUnit.id
 
         output.productId = productData.productId
+        
+        try {
 
-        dispatch(addUnit(output))
-        setConfirmation(false)
+            if(output.data.isDefault == 1 && output.data.quantity === 0) throw(
+                alert("Default Unit must have qty")
+            )
+    
+            if(output.data.isDefault == 1 && output.data.convertion === 0) throw(
+                alert("Default Unit must have qty per unit")
+            )
+
+            dispatch(addUnit(output))
+
+            setConfirmation(false)
+            
+        }catch (error) {}
     }
-
-    // useEffect(() => {
-    //     if (selectedUnit) {
-
-    //     }
-    // }, [productData]);
 
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
@@ -105,7 +106,7 @@ export default function ModalAddProductUnit({
                             {units.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}
-                            <option value="other">Input Manual </option>
+                            <option value="other">Manual Input </option>
                         </select>
 
                     }
@@ -175,19 +176,19 @@ export default function ModalAddProductUnit({
                 <Button
                     isButton
                     isPrimary
-                    title="Yes"
-                    onClick={handleOnYes}
+                    title="Confirm"
+                    onClick={()=>{setConfirmation(true)}}
                 />
             </div>
 
             {confirmation && (
-                <div >
+                <div className="pt-10">
                     <p className="modal-text">
                         Are you sure you want to save these changes?
                     </p>
-                    <div className="flex justify-end gap-2">
+                    <div className="flex gap-2">
                         <Button
-                            title="Back" 
+                            title="Cancel" 
                             isButton 
                             isSecondary 
                             onClick={() => setConfirmation(false)}

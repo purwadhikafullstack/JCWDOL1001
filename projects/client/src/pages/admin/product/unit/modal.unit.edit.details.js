@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Button from "../../../../components/Button";
 import Input from "../../../../components/Input";
-import { useDispatch, useSelector } from "react-redux";
-import LoadingSpinner from "../../../../components/LoadingSpinner";
-import Message from "../../../../components/Message";
+import { useDispatch } from "react-redux";
 import { updateUnit } from "../../../../store/slices/product/unit/slices";
+import SuccessMessage from "../../../../components/Message";
 
 
 export default function ModalEditProductUnit({
-  title,
   success,
   units,
   productData,
@@ -16,11 +14,8 @@ export default function ModalEditProductUnit({
   handleShowModal,
   handleCloseModal,
 }) {
-  console.log('inInput' + JSON.stringify(selectedUnit))
-
     const dispatch = useDispatch()
     const unitRef = useRef()
-    const qtyRef = useRef()
     const qtyPerUnitRef = useRef()
 
     const [unitSelected, setSelectedUnit] = useState({
@@ -28,10 +23,24 @@ export default function ModalEditProductUnit({
         unitName : selectedUnit?.name
     });
 
+    const unitBefore = selectedUnit.name
+
     const [isDefaultUnit, setIsDefaultUnit] = useState({
         id : `${selectedUnit?.product_detail?.isDefault === true ? 1: 0 }`,
         name : `${selectedUnit?.product_detail?.isDefault === true ? "yes": "no" }`
     })
+
+    const [confirmation, setConfirmation] = useState(false);
+
+    if (success) {
+        return (
+            <SuccessMessage
+                type="success"
+                message={`Change product unit from ${unitBefore} into ${unitSelected.unitName} success`}
+                handleCloseModal={handleCloseModal}
+            />
+        );
+    }
 
     const handleChangeUnit = (event) => {
         setSelectedUnit({
@@ -40,53 +49,31 @@ export default function ModalEditProductUnit({
         })
     }
 
-    const handleInputUnit = (event) => {
-        setSelectedUnit({
-            unitId :units.length+1,
-            unitName :event.target.value
-        })
-    }
-
     const handleChangeDefault = (type) => {
         setIsDefaultUnit(type)
     }
 
-    const [confirmation, setConfirmation] = useState(false);
-
-
-    const handleOnYes =()=>{
-        setConfirmation(true)
-    }
-
     const handleOnSure = ()=>{
-        if(title.split(" ")[0]==="Edit"){
-            dispatch(
-                updateUnit({
-                    data :{
-                        unitId : unitSelected.unitId,
-                        quantity : qtyRef.current?.value,
-                        convertion : qtyPerUnitRef.current?.value,
-                        isDefault : isDefaultUnit.id,
-                        stockId : selectedUnit?.product_detail?.stockId
-                    },
-                    productId : productData.productId
-                })
-            )
-        }
+        dispatch(
+            updateUnit({
+                data :{
+                    unitId : unitSelected.unitId,
+                    quantity : selectedUnit?.product_detail?.quantity,
+                    convertion : qtyPerUnitRef?.current?.value,
+                    isDefault : isDefaultUnit.id,
+                    stockId : selectedUnit?.product_detail?.stockId
+                },
+                productId : productData.productId
+            })
+        )
         setConfirmation(false)
     }
-
-    useEffect(() => {
-        if (selectedUnit) {
-
-        }
-    }, [productData]);
-
+    
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
        | {productData.productName}
        <form >
-            <div className="mt-4 flex flex-col gap-y-4">
+            <div className="mt-4 flex flex-col gap-y-4 ">
                 <div className="h-auto max-h-[75vh] overflow-auto px-1">
                     <h3>Unit ({selectedUnit.name}): </h3>
                     {unitSelected.unitName === "other" ?
@@ -109,7 +96,7 @@ export default function ModalEditProductUnit({
 
                     }
                     
-                    <fieldset className="mt-4">
+                    <fieldset className="mt-4 hidden">
                         <legend>Is Default Unit?</legend>
                         <div>
                             <input
@@ -137,15 +124,6 @@ export default function ModalEditProductUnit({
 
                     { isDefaultUnit.name === "yes" ?
                         <div>
-                            <h3 className="pt-2">Qty Unit : </h3>
-                            <input
-                                type="number"
-                                ref={qtyRef}
-                                id="qty"
-                                name="qtyUnit"
-                                defaultValue={selectedUnit?.product_detail?.quantity}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            />
                             <h3 className="pt-2">Qty per Unit : </h3>
                             <input
                                 type="number"
@@ -168,7 +146,7 @@ export default function ModalEditProductUnit({
                     onClick={() =>
                         handleShowModal({
                             context : "Edit Unit",
-                            productId : "",
+                            productId : productData.productId,
                             unitId : ""
                         })
                     }
@@ -176,19 +154,19 @@ export default function ModalEditProductUnit({
                 <Button
                     isButton
                     isPrimary
-                    title="Yes"
-                    onClick={handleOnYes}
+                    title="Confirm"
+                    onClick={()=>{setConfirmation(true)}}
                 />
             </div>
 
             {confirmation && (
-                <div >
+                <div className="pt-10">
                     <p className="modal-text">
                         Are you sure you want to save these changes?
                     </p>
-                    <div className="flex justify-end gap-2">
+                    <div className="flex gap-2">
                         <Button
-                            title="Back" 
+                            title="Cancel" 
                             isButton 
                             isSecondary 
                             onClick={() => setConfirmation(false)}
