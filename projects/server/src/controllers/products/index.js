@@ -62,6 +62,40 @@ const getProducts = async (req, res, next) => {
   }
 }
 
+const getProductById = async (req, res, next) => {
+  try{
+    const { id } = req.params;
+
+    const product = await Product_List?.findOne({
+      include : 
+      [
+        {
+          model : Categories,
+          attributes : ['categoryDesc','categoryId'],
+          as : "productCategories",
+        },
+        {
+          model : Product_Unit,
+          as : "productUnits"
+        }
+      ],
+      where: {productId : id},
+    });
+
+    if (!product) {
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+    }
+
+		res.status(200).json({
+			data : product
+		});
+
+  }catch(error){
+    next(error)
+  }
+}
+
+
 const createProduct = async (req, res, next) => {
   try {
     const { data } = req.body;
@@ -262,6 +296,7 @@ const updateMainStock = async (req, res, next)=>{
 
 module.exports = {
     getProducts,
+    getProductById,
     createProduct,
     updateProduct,
     deleteProduct,

@@ -5,21 +5,32 @@ export const getProducts = createAsyncThunk(
   "products/getProducts",
   async (payload, { rejectWithValue }) => {
     try {
-      // const {
-      //   category_id,
-      //   page,
-      //   sort_name,
-      //   sort_price,
-      //   limit,
-      //   keywords,
-      //   status,
-      // } = payload;
-      // const PARAMETER = `page=${page}&limit=${limit}&category_id=${category_id}&sort_name=${sort_name}&sort_price=${sort_price}&status=${status}&keywords=${keywords}`;
-      // const { data } = await api.get("/products?" + encodeURI(PARAMETER));
-      const { data } = await api.get("/products");
+      const {
+        page,
+        id_cat,
+        product_name,
+        sort_price,
+        sort_name,
+      } = payload;
+      const PARAMETER = `page=${page}&id_cat=${id_cat}&sort_name=${sort_name}&sort_price=${sort_price}&product_name=${product_name}`;
+      const { data } = await api.get(`/products?` + encodeURI(PARAMETER));
 
       return data;
     } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getProductById = createAsyncThunk(
+  "products/getProductById",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/products/" + encodeURI(payload));
+
+      return data;
+    } catch (error) {
+      console.log(error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }

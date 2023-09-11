@@ -96,7 +96,8 @@ const Input = React.forwardRef(({
             autoFocus={autoFocus}
             onChange={onChange}
             onBlur={onBlur}
-          disabled={isDisabled}
+            onWheel={(e) => e.target.blur()}
+            disabled={isDisabled}
         />
       </div>
   );

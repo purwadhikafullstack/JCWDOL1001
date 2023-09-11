@@ -23,14 +23,14 @@ export default function ModalInputProduct({
   success,
   categories,
   productData,
-  showCategoryModal,
-  setShowCategoryModal,
   selectedCategories,
   setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
   errorMessage,
 }) {
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+
   const dispatch = useDispatch();
 
   const productNameRef = useRef(null);
@@ -41,7 +41,6 @@ export default function ModalInputProduct({
   const [error, setError] = useState("");
   const [confirmAdd, setConfirmAdd] = useState(false);
 
-  const [inputFormData, setInputFormData] = useState(null)
   const [file, setFile] = useState(null);
   const [dataImage, setDataImage] = useState(null);
 
@@ -65,7 +64,6 @@ export default function ModalInputProduct({
     setSelectedCategories(selectedCategories.filter((item) => item.categoryId !== categoryId));
   };
 
-
   useEffect(() => {
     if (productData) {
       productNameRef.current.value = productData.productName || "";
@@ -77,69 +75,6 @@ export default function ModalInputProduct({
       setDataImage(productData.productPicture);
     }
   }, [productData]);
-
-// const handleSubmit = async (event) => {
-//   event.preventDefault();
-  
-//     try {
-//     const categoryIds = selectedCategories.map((category) => category.categoryId);
-
-//     // Data product (JSON)
-//     const inputProductData = {
-//       productName: capitalizeEachWords(productNameRef.current?.value),
-//       productPrice: productPriceRef.current?.value,
-//       productDosage: productDosageRef.current?.value,
-//       productDescription: productDescriptionRef.current?.value,
-//       productPicture: file,
-//       categoryId: categoryIds,
-//     };
-
-//     if (productData) {
-//       await updateProductValidationSchema.validate(inputProductData, {
-//         abortEarly: false,
-//       });
-
-//       setError("");
-//       setInputFormData(inputProductData)
-//       setConfirmAdd(true)
-//     } else {
-//       await inputProductValidationSchema.validate(inputProductData, {
-//         abortEarly: false,
-//       });
-
-//       setError("");
-//       setInputFormData(inputProductData)
-//       setConfirmAdd(true)
-
-//     }
-//   } catch (error) {
-//     const errors = {};
-
-//     error.inner.forEach((innerError) => {
-//       errors[innerError.path] = innerError.message;
-//     });
-//     setError(errors);
-//   }
-// };
-
-// const handleConfirm = async (event) => {
-//   event.preventDefault();
-
-//     const formData = new FormData();
-//     formData.append("data", JSON.stringify(inputFormData));
-//     if (file) formData.append("file", file);
-
-//     // for (let pair of formData.entries()) {
-//     //   console.log(pair[0], pair[1]);
-//     // }
-
-//     if (productData) {
-//       dispatch(updateProduct({ id: productData.productId, formData }));
-//     }else{
-//       dispatch(createProduct(formData));
-//     }
-
-// };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -197,6 +132,8 @@ export default function ModalInputProduct({
         errors[innerError.path] = innerError.message;
       });
       setError(errors);
+
+      window.alert("Check your input field!")
     }
   };
 
@@ -230,7 +167,7 @@ export default function ModalInputProduct({
 
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e)=>handleSubmit(e)}>
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="">
             {selectedCategories.length === 0 ? (
@@ -301,7 +238,7 @@ export default function ModalInputProduct({
             <div className="">
               <Input
                 ref={productPriceRef}
-                type="text"
+                type="number"
                 label="Product Price"
                 placeholder="e.g. 35000"
                 errorInput={error.productPrice}
@@ -366,22 +303,13 @@ export default function ModalInputProduct({
               title="Cancel"
               onClick={handleCloseModal}
             />
-            <button
-              className="
-              w-full 
-              select-none 
-              rounded-lg 
-              bg-primary 
-              px-6 
-              py-2 
-              text-sm 
-              text-white 
-              duration-300 
-              hover:bg-teal-700"
-              type="submit"
-            >
-              {productData ? "Update" : "Add Product"}
-            </button>
+            <Button 
+            isButton
+            isPrimary
+            isBLock
+            title={productData? "Update" : "Add Product"}
+            type="submit"
+            />
           </div>
         </div>
 

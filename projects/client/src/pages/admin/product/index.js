@@ -16,9 +16,10 @@ import ModalDeleteProduct from "./modal.delete.product";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass } from "react-icons/hi2";
-export default function AdminProducts({user}) {
+import { HiPlus } from "react-icons/hi";
+export default function AdminProducts({ user }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     success,
@@ -41,13 +42,11 @@ export default function AdminProducts({user}) {
   });
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleShowModal = (context, productId) => {
     setShowModal({ show: true, context });
-    document.body.style.overflow = "hidden";
 
     if (productId) {
       const productData = products.find((item) => item.productId === productId);
@@ -57,46 +56,85 @@ export default function AdminProducts({user}) {
 
   const handleCloseModal = () => {
     setShowModal({ show: false, context: "" });
-    setShowCategoryModal(false);
     setSelectedCategories([]);
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
-    document.body.style.overflow = "auto";
   };
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+      })
+    );
   }, [isDeleteProductLoading, isSubmitProductLoading]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getCategory());
-  }, [])
+  }, []);
 
-  if(!user.role)return navigate("/","replace")
+  if (!user.role) return navigate("/", "replace");
 
   return (
     <>
-      <div className="container py-24 lg:px-8 lg:ml-[calc(5rem)]">
+      <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
+        <form className="relative lg:w-1/3" onSubmit={() => window.alert("ok")}>
+          <Input type="text" placeholder="Search" />
+          <button
+            className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
+            type="submit"
+          >
+            <HiMagnifyingGlass className="text-2xl text-primary" />
+          </button>
+        </form>
         <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
-          <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
-
-          <form className="relative w-1/3" onSubmit={()=>window.alert("ok")}>
-            <Input type="text" placeholder="Search"/>
-            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
-              <HiMagnifyingGlass className="text-2xl text-primary" />
-            </button>
-          </form>
+          <h3 className=" w-1/2 text-2xl font-semibold">Products</h3>
         </div>
-
-        <div className="mt-4 flex items-center justify-between">
+        
+        <div className="mt-4 grid lg:grid-cols-2">
           <Button
             isButton
             isPrimary
+            className="lg:justify-self-start"
             title="Add Product"
             onClick={() => handleShowModal("Add Product")}
           />
 
-          <div className="">Dropdown For Filter</div>
+          <div className="mt-4 flex gap-4 lg:mt-0 lg:justify-self-end">
+            <select
+              className="bg-slate-50 border-primary block rounded-lg border p-2.5 text-sm outline-primary focus:border-primary focus:ring-primary w-1/2"
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option
+                  key={category.categoryId}
+                  value={category.categoryId}
+                  className="p-2"
+                >
+                  {category.categoryDesc}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="bg-slate-50 border-primary block rounded-lg border p-2.5 text-sm outline-primary focus:border-primary focus:ring-primary w-1/2"
+            >
+              <option value="">Filter: None</option>
+              {categories.map((category) => (
+                <option
+                  key={category.categoryId}
+                  value={category.categoryId}
+                  className="p-2"
+                >
+                  {category.categoryDesc}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="relative mt-4 shadow-md">
@@ -104,10 +142,10 @@ export default function AdminProducts({user}) {
             products={products}
             handleShowModal={handleShowModal}
             isGetProductsLoading={isGetProductsLoading}
+            isSubmitProductLoading={isSubmitProductLoading}
             isDeleteProductLoading={isDeleteProductLoading}
             setSelectedProduct={setSelectedProduct}
           />
-
         </div>
       </div>
 
@@ -125,8 +163,6 @@ export default function AdminProducts({user}) {
             productData={selectedProduct}
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
-            showCategoryModal={showCategoryModal}
-            setShowCategoryModal={setShowCategoryModal}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
             errorMessage={errorMessage}
