@@ -84,7 +84,7 @@ export default function TableProducts({
                     isSmall
                     isPrimaryOutline
                     onClick={() =>
-                      handleShowModal("Details Product", product?.productId)
+                      handleShowModal({context:"Details Product", productId:product?.productId})
                     }
 
                     title="Details"
@@ -94,7 +94,7 @@ export default function TableProducts({
                   isSmall
                   isDanger
                     onClick={() =>
-                      handleShowModal("Delete Product", product.productId)
+                      handleShowModal({context:"Delete Product", productId:product.productId})
                     }
 
                   >
@@ -113,7 +113,7 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Details", product.productId)
+                          handleShowModal({context:"Edit Details", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
@@ -126,7 +126,7 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Stock", product.productId)
+                          handleShowModal({context:"Edit Stock", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
@@ -139,7 +139,10 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Unit", product.productId)
+                          handleShowModal({
+                            context : "Edit Unit", 
+                            productId : product.productId
+                          })
                         }
                       >
                         <span className="flex items-center gap-2 py-2">

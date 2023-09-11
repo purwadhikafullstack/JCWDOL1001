@@ -40,6 +40,10 @@ Product_List.belongsToMany(Product_Unit, { through : Product_Detail, foreignKey 
 Product_List.hasMany(Product_Detail,{foreignKey : "productId"})
 Product_Detail.belongsTo(Product_List,{foreignKey : "productId"})
 
+Product_Unit.belongsToMany(Product_List, { through : Product_Detail, foreignKey : "productId", otherKey: "unitId", as: "productDetails"})
+Product_Unit.hasMany(Product_Detail,{foreignKey : "unitId"})
+Product_Detail.belongsTo(Product_Unit,{foreignKey : "unitId"})
+
 Product_Detail.hasMany(Product_History,{sourceKey : "productId", foreignKey : "productId"})
 Product_History.belongsTo(Product_Detail, {targetKey : "productId", foreignKey : "productId"})
 
