@@ -1,33 +1,26 @@
-const Yup = require('yup');
+import * as Yup from "yup";
 
-const productUnitValidationSchema = Yup.object({
+export const ProductUnitValidationSchema = Yup.object({
   unitId: Yup.number("Unit is required")
     .required("Unit is required"),
   quantity: Yup.number("Qty must contain only numbers"),
 });
 
-const deleteProductUnitValidationSchema = Yup.object({
+export const DeleteProductUnitValidationSchema = Yup.object({
   stockId: Yup.number("Unit ID is required")
     .required("Unit ID is required")
 });
 
-const reactivateProductUnitValidationSchema = Yup.object({
+export const ReactivateProductUnitValidationSchema = Yup.object({
   productId: Yup.number("Product ID is required")
     .required("Product  is required"),
   stockId: Yup.number("Stock ID is required")
-    .required("Unit is required"),
+    .required("Stock is required"),
 });
 
-const makeConvertionProductUnitValidationSchema = Yup.object({
+export const MakeConvertionProductUnitValidationSchema = Yup.object({
   productId: Yup.number("Product ID is required")
     .required("Product  is required"),
   times: Yup.number("How many times of convertion is required")
     .required("How many times of convertion is required"),
 });
-
-module.exports = {
-  productUnitValidationSchema,  
-  deleteProductUnitValidationSchema,
-  reactivateProductUnitValidationSchema,
-  makeConvertionProductUnitValidationSchema
-}

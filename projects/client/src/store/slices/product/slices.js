@@ -70,3 +70,16 @@ export const deleteProduct = createAsyncThunk(
 export const resetSuccessProduct = () => ({
   type: "products/resetSuccessProduct",
 });
+
+export const updateMainStock = createAsyncThunk(
+  "products/updateMainStock",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch("/products/stock/update", payload);
+      return data.message
+
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);

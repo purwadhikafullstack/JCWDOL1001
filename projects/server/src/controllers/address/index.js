@@ -1,67 +1,79 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import addressApi from "../../utils/address.api.instance.js";
-import Axios from "axios";
+const Axios = require("axios");
+const path = require("path")
+const fs = require("fs")
 
 
-export const listProvince = createAsyncThunk(
-    "address/province",
-     
-    async (payload, { rejectWithValue }) => {
-        try {
-
-            // console.log(addressApi)
-            const response = await Axios.get("https://api.rajaongkir.com/starter/"+"province",{headers: {"key" : "bf12278d056fc12d712c25b1d6561eb9", "Content-Type": "application/x-www-form-urlencoded"}})
-            // const response = await addressApi.get("province", payload,{headers: {"key" : process.env.RAJAONGKIR_API_KEY}})
-
-
-            // const {data} = response
-
-            // alert(response?.data?.message)
-            
-            // return data
-        } catch (error) {
-            alert(error.response?.data?.message)
-
-            return rejectWithValue(error.response?.data?.message)
+const getListProvince = async (req, res, next) => {
+    try {
+        
+        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + "province",
+        { 
+            headers : 
+            {
+                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
+                "Content-Type": "application/x-www-form-urlencoded"
         }
-    }
-)
-
-export const listCity = createAsyncThunk(
-    "address/city",
-     
-    async (payload, { rejectWithValue }) => {
-        try {
-            // https://api.rajaongkir.com/starter/city?province=21
-            const response = await addressApi.get(`city?province=${payload?.province}`,{headers: {"key" : process.env.RAJAONGKIR_API_KEY}})
-
-            const {data} = response
-
-            alert(response?.data?.message)
-            
-            return data
-            
-        } catch (error) {
-            alert(error.response?.data?.message)
-
-            return rejectWithValue(error.response?.data?.message)
         }
+        )
+        const {data} = response;
+        const {rajaongkir} = data
+        res.status(200).json({ 
+            message : "Data Province from RajaOngkir",
+            data: rajaongkir.results
+        })
+    } catch (error) {
+        next(error)
     }
-)
-
-export const cost = createAsyncThunk(
-    "address/cost",
-     
-    async (payload, { rejectWithValue }) => {
-        try {
-
-            
-            // return data
-
-        } catch (error) {
-            alert(error.response?.data?.message)
-
-            return rejectWithValue(error.response?.data?.message)
+}
+const getListCity = async (req, res, next) => {
+    try {
+        const {province} = req.query
+        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + 
+            `city?province=${province}`,
+        { 
+            headers : 
+            {
+                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
+                "Content-Type": "application/x-www-form-urlencoded"
         }
+    })
+
+    const {data} = response;
+    const {rajaongkir} = data
+    res.status(200).json({ 
+        message : "Data City based on Province from RajaOngkir",
+        data: rajaongkir.results
+    })
+    } catch (error) {
+        next(error)
     }
-)
+}
+
+const getCost = async (req, res, next) => {
+    try {
+        const {province} = req.params
+        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + 
+            `city?province=${province}`,
+        { 
+            headers : 
+            {
+                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
+                "Content-Type": "application/x-www-form-urlencoded"
+        }
+    })
+
+        res.status(200).json({ 
+            type : "success",
+            message : "Data berhasil dimuat",
+            data : response
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {
+    getListProvince,
+    getListCity,
+    getCost
+ }
