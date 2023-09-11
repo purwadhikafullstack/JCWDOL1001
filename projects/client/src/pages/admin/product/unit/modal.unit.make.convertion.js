@@ -10,7 +10,6 @@ export default function ModalMakeConvertion({
   handleShowModal,
   handleCloseModal,
 }) {
-    console.log(productData)
     const dispatch = useDispatch()
     const timesRef = useRef()
 

@@ -48,7 +48,6 @@ export default function ModalEditStock({
     if(valueType?.current?.value === "Remove"){
       setValueTypeState("Remove")
       if(quantity >= productData?.product_details[0]?.quantity){
-        console.log("jalan")
         setQuantity(productData?.product_details[0]?.quantity)
       }
     }
