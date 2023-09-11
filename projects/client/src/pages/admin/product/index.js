@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TableProducts from "./table.products";
 import ModalInputProduct from "./modal.input.product";
 import ModalUnitsProduct from "./unit/modal.units.product";
+import ModalEditStock from "./modal.edit.stock.js";
 import {
   deleteProduct,
   getProducts,
@@ -33,6 +34,7 @@ export default function AdminProducts({user}) {
     isGetProductsLoading,
     isDeleteProductLoading,
     isSubmitProductLoading,
+    isSubmitStockLoading,
     errorMessage,
     units,
     unitsSuccess,
@@ -45,6 +47,7 @@ export default function AdminProducts({user}) {
       isGetProductsLoading: state.products.isGetProductsLoading,
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
+      isSubmitStockLoading : state.products.isSubmitStockLoading,
       errorMessage: state.products.errorMessage,
       units : state?.units?.data,
       unitsSuccess : state?.units?.success,
@@ -91,11 +94,7 @@ export default function AdminProducts({user}) {
 
   useEffect(() => {
     dispatch(getProducts());
-  }, [
-    isDeleteProductLoading, 
-    isSubmitProductLoading, 
-    isLoading,
-  ]);
+  }, [isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
 
   useEffect(()=>{
     dispatch(getCategory());
@@ -180,8 +179,13 @@ export default function AdminProducts({user}) {
         )}
 
         {showModal.context === "Edit Stock" && (
-          <h3>{selectedProduct.productName}</h3>
-          // NOTE: CREATE COMPONENT MODAL FOR EDIT STOCK ex: modal.edit.stock.js
+          <ModalEditStock
+          success={success}
+          productData={selectedProduct}
+          handleCloseModal={handleCloseModal}
+          isSubmitStockLoading={isSubmitStockLoading}
+          errorMessage={errorMessage}
+        />
         )}
 
         {showModal.context === "Edit Unit" && (

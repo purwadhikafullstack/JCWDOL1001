@@ -4,6 +4,7 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
+  updateMainStock,
 } from "./slices";
 
 const INITIAL_STATE = {
@@ -17,6 +18,7 @@ const INITIAL_STATE = {
   isGetProductsLoading: false,
   isSubmitProductLoading: false,
   isDeleteProductLoading: false,
+  isSubmitStockLoading: false,
 };
 
 const productsSlice = createSlice({
@@ -78,6 +80,17 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.isDeleteProductLoading = false;
+      })
+      .addCase(updateMainStock.pending, (state, action) => {
+        state.isSubmitStockLoading = true;
+      })
+      .addCase(updateMainStock.fulfilled, (state, action) => {
+        state.isSubmitStockLoading= false;
+        state.success = true;
+      })
+      .addCase(updateMainStock.rejected, (state, action) => {
+        state.isSubmitStockLoading = false;
+        state.errorMessage = action.payload;
       });
   },
 });

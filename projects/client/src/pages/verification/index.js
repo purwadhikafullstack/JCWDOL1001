@@ -8,6 +8,7 @@ import { verify } from "../../store/slices/auth/slices";
 import { useLocation, useNavigate } from "react-router-dom";
 import { listCity, listProvince } from "../../store/slices/address/slices";
 import GetProvince from "./components/component.province";
+import GetCity from "./components/component.city";
 export default function Verification() {
     //pake uuid dari response register buat bikin trigger ke /landingpage
     const location = useLocation()
@@ -16,10 +17,8 @@ export default function Verification() {
 			user : state?.auth,
             dataProvince : state?.address?.province,
             dataCity : state?.address?.city
-
 		}
 	})
-
     
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -28,19 +27,30 @@ export default function Verification() {
     const dateRef = useRef(null)
     const addressRef = useRef(null)
     const districtRef = useRef(null)
-
-//     const [cityRef,setCityRef] = useState(null)
-//     const [provinceRef,setProvinceRef] = useState(null)
+    
+    const [postalCodeState, setPostalCode] = useState("Choose province and city first")
+    const [cityRef,setCityRef] = useState(null)
+    const [costId,setCostId] = useState(null)
+    const [provinceRef,setProvinceRef] = useState(null)
     const postalRef = useRef(null)
 
-    const onProvinceChange = (provinceId,provinceName) =>{
-        // setProvinceRef(provinceName)
-        dispatch(listCity({province : provinceId}))
+    const onProvinceChange = (provinceParams) =>{
+        const result = provinceParams.split(",")
+        setProvinceRef(result[1])
+        dispatch(listCity({province : result[0]}))
+    }
+    const onCityChange = (cityParams) =>{
+        const result = cityParams.split(",")
+        setPostalCode(result[2]);
+        setCityRef(result[1])
+        setCostId(result[0])
+
+        // dispatch(listCity({province : provinceId}))
     }
 
 
-    const cityRef = useRef(null)
-    const provinceRef = useRef(null)
+    // const cityRef = useRef(null)
+    // const provinceRef = useRef(null)
 
     const onButtonSubmit = () =>{
         const otp = otpRef.current?.value
@@ -48,9 +58,10 @@ export default function Verification() {
         const date = dateRef.current?.value
         const address = addressRef.current?.value
         const district = districtRef.current?.value
-        const city = cityRef.current?.value
-        const province = provinceRef.current?.value
-        const postal = postalRef.current?.value
+        const city = cityRef
+        const province = provinceRef
+        const postal = postalCodeState
+        const cost = costId
         const token = location.pathname.split('reg-')[1]
 
         dispatch(verify({
@@ -62,14 +73,24 @@ export default function Verification() {
             district : district,
             city : city,
             province : province,
-            postalCode : postal
+            postalCode : postal,
+            costId : cost
         }))
     }
 
     useEffect(()=>{
         dispatch(listProvince())
     },[])
+    
+    useEffect(()=>{
+        if(user?.status === 1){
+            const timeoutID = setTimeout(()=>{
+            navigate("/")
+        }, 5000)
 
+        return () => clearTimeout(timeoutID)
+    }
+    },[user])
 
   return (
       <div className="w-full flex flex-col items-center">
@@ -118,7 +139,8 @@ export default function Verification() {
             <div className="flex flex-row gap-6 mb-5">
                 <div>
                 Gender :
-                <select className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2 " 
+                <select className="w-full rounded-lg border h-max bg-inherit px-2 py-2 outline-none focus:ring-2
+            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary" 
                 ref={genderRef}>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -137,12 +159,14 @@ export default function Verification() {
                 Address Information :
              </div>
              <div className="flex flex-col gap-3 mb-5">
-                <Input
-                ref={addressRef}
-                required
-                type="text"
-                label="Address : "
-                placeholder="e.g. Jalan Pelangi"
+                <GetProvince
+                onProvinceChange={onProvinceChange}
+                province={dataProvince}
+                />
+
+                <GetCity
+                onCityChange={onCityChange}
+                city={dataCity}
                 />
                 <Input
                 ref={districtRef}
@@ -152,33 +176,27 @@ export default function Verification() {
                 placeholder="e.g. Tebet"
                 />
 
-                {/* <GetProvince
-                onProvinceChange={onProvinceChange}
-                province={dataProvince}
-                /> */}
-
                 <Input
-                ref={cityRef}
+                ref={addressRef}
                 required
                 type="text"
-                label="City :"
-                placeholder="e.g. Jakarta"
-                />
-                <Input
-                ref={provinceRef}
-                required
-                type="text"
-                label="Province :"
-                placeholder="e.g. DKI Jakarta"
+                label="Address : "
+                placeholder="e.g. Jalan Pelangi"
                 />
 
-                <Input
-                ref={postalRef}
-                required
-                type="number"
-                label="Postal Code :"
-                placeholder="e.g. 40141"
-                />
+                <div classname="flex flex-col">
+                    <span>
+                        Postal Code :
+                    </span>
+                    <div
+                    className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
+                    focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
+                    ">
+                    {postalCodeState}    
+                    </div>
+                </div>
+
+
                 </div>
                 <div className="w-full flex flex-col items-center">
                     <Button
@@ -193,10 +211,6 @@ export default function Verification() {
                 </div>
              </div>
 
-
-        <div className="grid w-full grid-cols-1 justify-between gap-4 py-10 ">
-
-        </div>
       </div> 
             }
     </div>
