@@ -5,6 +5,8 @@ import {
   deleteProduct,
   updateProduct,
   getProductById,
+  updateMainStock,
+
 } from "./slices";
 
 const INITIAL_STATE = {
@@ -13,12 +15,13 @@ const INITIAL_STATE = {
   message: null,
   errorMessage:null,
   success: false,
-  total_pages: null,
+  total_page: null,
   current_page: null,
-  next_page: null,
+  //next_page: null,
   isGetProductsLoading: false,
   isSubmitProductLoading: false,
   isDeleteProductLoading: false,
+  isSubmitStockLoading: false,
 };
 
 const productsSlice = createSlice({
@@ -38,9 +41,10 @@ const productsSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
-        state.total_pages = action.payload.totalPage;
+        state.total_page = action.payload.totalPage;
         state.current_page = action.payload.currentPage;
-                })
+        // state.next_page = action.payload.next_page;
+      })
       .addCase(getProducts.rejected, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
@@ -91,6 +95,17 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.isDeleteProductLoading = false;
+      })
+      .addCase(updateMainStock.pending, (state, action) => {
+        state.isSubmitStockLoading = true;
+      })
+      .addCase(updateMainStock.fulfilled, (state, action) => {
+        state.isSubmitStockLoading= false;
+        state.success = true;
+      })
+      .addCase(updateMainStock.rejected, (state, action) => {
+        state.isSubmitStockLoading = false;
+        state.errorMessage = action.payload;
       });
   },
 });

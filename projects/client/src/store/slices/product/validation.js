@@ -49,3 +49,12 @@ export const updateProductValidationSchema = Yup.object({
     //   return value.size <= maxSize;
     // }),
 });
+
+export const updateMainStockValidationSchema = Yup.object({
+  productId: Yup.string()
+    .required("productId is required")
+    .matches(/^[0-9]+$/, "productId must contain only numbers"),
+  value: Yup.string()
+    .required("Value is required")
+    .matches(/-*[0-9]+$/, "Changes must contain only numbers")
+});

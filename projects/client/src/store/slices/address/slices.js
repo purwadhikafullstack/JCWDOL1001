@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import addressApi from "../../utils/address.api.instance.js";
+import api from "../../utils/api.instance";
 import Axios from "axios";
 
 
@@ -9,16 +9,11 @@ export const listProvince = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-            // console.log(addressApi)
-            const response = await Axios.get("https://api.rajaongkir.com/starter/"+"province",{headers: {"key" : "bf12278d056fc12d712c25b1d6561eb9", "Content-Type": "application/x-www-form-urlencoded"}})
-            // const response = await addressApi.get("province", payload,{headers: {"key" : process.env.RAJAONGKIR_API_KEY}})
+           const response = await api.get("address")
 
+            const {data} = response
 
-            // const {data} = response
-
-            // alert(response?.data?.message)
-            
-            // return data
+            return data
         } catch (error) {
             alert(error.response?.data?.message)
 
@@ -32,13 +27,10 @@ export const listCity = createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
-            // https://api.rajaongkir.com/starter/city?province=21
-            const response = await addressApi.get(`city?province=${payload?.province}`,{headers: {"key" : process.env.RAJAONGKIR_API_KEY}})
+            const response = await api.get(`address/city?province=${payload?.province}`)
 
             const {data} = response
-
-            alert(response?.data?.message)
-            
+ 
             return data
             
         } catch (error) {
@@ -54,7 +46,10 @@ export const cost = createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
-
+            //teruntuk siapapun yang ngerjain ongkir
+            //cukup grab costId dari address user, sebagai alamat tujuan;
+            // jadi bisa langsung dapet ongkosnya
+            //nanti tanya wellington aja kalau bingung, trims
             
             // return data
 
