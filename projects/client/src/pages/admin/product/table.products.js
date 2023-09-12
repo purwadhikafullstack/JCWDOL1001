@@ -1,6 +1,8 @@
 import {
+  HiOutlineCircleStack,
   HiOutlinePencilSquare,
   HiOutlineRectangleStack,
+  HiOutlineSquare3Stack3D,
   HiOutlineTrash,
 } from "react-icons/hi2";
 import Button from "../../../components/Button";
@@ -14,19 +16,16 @@ export default function TableProducts({
   products,
   isGetProductsLoading,
 }) {
-
   return (
     <table className="text-gray-500 w-full text-left text-sm">
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
         <tr>
           <th className="p-3">#</th>
-
           <th className="p-3">Product Name</th>
-
           <th className="p-3">Price</th>
-
+          <th className="p-3">Quantity</th>
+          <th className="p-3">Unit</th>
           <th className="p-3">Image</th>
-
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -63,6 +62,8 @@ export default function TableProducts({
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
+              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
+              <td className="p-3">{product?.productUnits[0]?.name}</td>
               <td className="p-3">
                 <div className="aspect-[4/3] w-10">
                   <img
@@ -77,18 +78,29 @@ export default function TableProducts({
               </td>
 
               <td className="p-3">
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Button
                     isSmall
                     isPrimaryOutline
                     onClick={() =>
-                      handleShowModal("Details Product", product?.productId)
+                      handleShowModal({context:"Details Product", productId:product?.productId})
                     }
 
                     title="Details"
                   />
 
-                  <div className="group relative px-2">
+                  <Button
+                  isSmall
+                  isDanger
+                    onClick={() =>
+                      handleShowModal({context:"Delete Product", productId:product.productId})
+                    }
+
+                  >
+                      <HiOutlineTrash className="text-lg" />
+                  </Button>
+
+                  <div className="group relative -ml-1 pr-2 mt-1">
                     <Button
                       title={
                         <FaEllipsisVertical className="text-2xl text-primary" />
@@ -100,22 +112,24 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Product", product.productId)
+                          handleShowModal({context:"Edit Details", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlinePencilSquare className="text-lg text-blue-500" />
-                          Edit Product
+                          Edit Details
                         </span>
                       </Button>
 
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        // onClick={handleDeleteProduct}
+                        onClick={() =>
+                          handleShowModal({context:"Edit Stock", productId:product.productId})
+                        }
                       >
                         <span className="flex items-center gap-2 py-2">
-                          <HiOutlineRectangleStack className="text-lg text-primary" />
+                          <HiOutlineSquare3Stack3D className="text-lg text-primary" />
                           Edit Stock
                         </span>
                       </Button>
@@ -124,15 +138,18 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Delete Product", product.productId)
+                          handleShowModal({
+                            context : "Edit Unit", 
+                            productId : product.productId
+                          })
                         }
-
                       >
-                        <span className="flex items-center gap-2 py-2 text-danger">
-                          <HiOutlineTrash className="text-lg" />
-                          Delete Product
+                        <span className="flex items-center gap-2 py-2">
+                          <HiOutlineCircleStack className="text-lg text-purple-500 " />
+                          Edit Unit
                         </span>
                       </Button>
+                      
                     </div>
                   </div>
                 </div>

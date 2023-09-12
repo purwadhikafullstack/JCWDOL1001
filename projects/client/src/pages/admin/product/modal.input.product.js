@@ -16,7 +16,8 @@ import {
   updateProductValidationSchema,
 } from "../../../store/slices/product/validation";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import SuccessMessage from "../../../components/SuccessMessage";
+import Message from "../../../components/Message";
+
 
 export default function ModalInputProduct({
   success,
@@ -28,7 +29,7 @@ export default function ModalInputProduct({
   setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
-  errorResponse,
+  errorMessage,
 }) {
   const dispatch = useDispatch();
 
@@ -40,26 +41,30 @@ export default function ModalInputProduct({
   const [error, setError] = useState("");
   const [confirmAdd, setConfirmAdd] = useState(false);
 
+  const [inputFormData, setInputFormData] = useState(null)
   const [file, setFile] = useState(null);
   const [dataImage, setDataImage] = useState(null);
 
+
   const handleSelectCategory = (e) => {
-    const categoryId = +e.target.value;
+  const categoryId = +e.target.value;
 
-    if (selectedCategories.includes(categoryId)) {
-      setSelectedCategories(
-        selectedCategories.filter((id) => id !== categoryId)
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    }
+  const isCategorySelected = selectedCategories.some((category) => category.categoryId === categoryId);
 
-    setError({ ...error, categoryId: "" });
+  if (isCategorySelected) {
+    setSelectedCategories(selectedCategories.filter((category) => category.categoryId !== categoryId));
+  } else {
+    const selectedCategory = categories.find((category) => category.categoryId === categoryId);
+    setSelectedCategories([...selectedCategories, selectedCategory]);
+  }
+
+  setError({ ...error, categoryId: "" });
   };
 
   const handleRemoveCategory = (categoryId) => {
-    setSelectedCategories(selectedCategories.filter((id) => id !== categoryId));
+    setSelectedCategories(selectedCategories.filter((item) => item.categoryId !== categoryId));
   };
+
 
   useEffect(() => {
     if (productData) {
@@ -68,13 +73,78 @@ export default function ModalInputProduct({
       productDosageRef.current.value = productData.productDosage || "";
       productDescriptionRef.current.value =
         productData.productDescription || "";
-      setSelectedCategories(productData.categoryId);
+      setSelectedCategories(productData.productCategories);
       setDataImage(productData.productPicture);
     }
   }, [productData]);
 
+// const handleSubmit = async (event) => {
+//   event.preventDefault();
+  
+//     try {
+//     const categoryIds = selectedCategories.map((category) => category.categoryId);
+
+//     // Data product (JSON)
+//     const inputProductData = {
+//       productName: capitalizeEachWords(productNameRef.current?.value),
+//       productPrice: productPriceRef.current?.value,
+//       productDosage: productDosageRef.current?.value,
+//       productDescription: productDescriptionRef.current?.value,
+//       productPicture: file,
+//       categoryId: categoryIds,
+//     };
+
+//     if (productData) {
+//       await updateProductValidationSchema.validate(inputProductData, {
+//         abortEarly: false,
+//       });
+
+//       setError("");
+//       setInputFormData(inputProductData)
+//       setConfirmAdd(true)
+//     } else {
+//       await inputProductValidationSchema.validate(inputProductData, {
+//         abortEarly: false,
+//       });
+
+//       setError("");
+//       setInputFormData(inputProductData)
+//       setConfirmAdd(true)
+
+//     }
+//   } catch (error) {
+//     const errors = {};
+
+//     error.inner.forEach((innerError) => {
+//       errors[innerError.path] = innerError.message;
+//     });
+//     setError(errors);
+//   }
+// };
+
+// const handleConfirm = async (event) => {
+//   event.preventDefault();
+
+//     const formData = new FormData();
+//     formData.append("data", JSON.stringify(inputFormData));
+//     if (file) formData.append("file", file);
+
+//     // for (let pair of formData.entries()) {
+//     //   console.log(pair[0], pair[1]);
+//     // }
+
+//     if (productData) {
+//       dispatch(updateProduct({ id: productData.productId, formData }));
+//     }else{
+//       dispatch(createProduct(formData));
+//     }
+
+// };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const categoryIds = selectedCategories.map((category) => category.categoryId);
 
     // Data product (JSON)
     const inputProductData = {
@@ -83,7 +153,7 @@ export default function ModalInputProduct({
       productDosage: productDosageRef.current?.value,
       productDescription: productDescriptionRef.current?.value,
       productPicture: file,
-      categoryId: selectedCategories,
+      categoryId: categoryIds,
     };
 
     const formData = new FormData();
@@ -91,6 +161,7 @@ export default function ModalInputProduct({
     if (file) formData.append("file", file);
 
     try {
+
       if (productData) {
         await updateProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
@@ -135,12 +206,23 @@ export default function ModalInputProduct({
 
   if (success) {
     return (
-      <SuccessMessage
+      <Message
+        type="success"
         message={
           productData
             ? "Product Updated Successfully"
             : "Product Added Successfully!"
-        }
+          }
+        handleCloseModal={handleCloseModal}
+      />
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <Message
+        type="error"
+        message={errorMessage}
         handleCloseModal={handleCloseModal}
       />
     );
@@ -161,20 +243,20 @@ export default function ModalInputProduct({
                   className="mb-2 flex flex-wrap gap-2"
                   onChange={() => setError({ ...error, categoryId: false })}
                 >
-                  {selectedCategories.map((categoryId) => {
+                  {selectedCategories.map((item) => {
                     const selectedCategory = categories.find(
-                      (category) => category.categoryId === categoryId
+                      (category) => category.categoryId === item.categoryId
                     );
                     return (
                       <Button
                         isPrimaryOutline
-                        key={selectedCategory.categoryId}
+                        key={selectedCategory?.categoryId}
                         className="flex items-center rounded-md px-2 py-1 text-sm"
                       >
-                        {selectedCategory.categoryDesc}
+                        {selectedCategory?.categoryDesc}
                         <span
                           className="ml-2 cursor-pointer"
-                          onClick={() => handleRemoveCategory(categoryId)}
+                          onClick={() => handleRemoveCategory(item.categoryId)}
                         >
                           <HiXMark className="text-lg" />
                         </span>
@@ -285,7 +367,17 @@ export default function ModalInputProduct({
               onClick={handleCloseModal}
             />
             <button
-              class=" w-full select-none rounded-lg bg-primary px-6 py-2 text-sm text-white duration-300 hover:bg-teal-700"
+              className="
+              w-full 
+              select-none 
+              rounded-lg 
+              bg-primary 
+              px-6 
+              py-2 
+              text-sm 
+              text-white 
+              duration-300 
+              hover:bg-teal-700"
               type="submit"
             >
               {productData ? "Update" : "Add Product"}
@@ -383,7 +475,7 @@ export default function ModalInputProduct({
                       name={category.categoryDesc}
                       value={category.categoryId}
                       onChange={handleSelectCategory}
-                      checked={selectedCategories.includes(category.categoryId)}
+                      checked={selectedCategories.some(item => item.categoryId === category.categoryId)}
                       className="cursor-pointer"
                     />
                   </div>

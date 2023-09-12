@@ -1,19 +1,66 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List, Product_Unit, } = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, Categories, Product_Detail, Product_History } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
-const {inputProductValidationSchema, updateProductValidationSchema } = require("./validation.js")
+const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
-  try {
-    const products = await Product_List.findAll({where : {isDeleted : 0}});
+  try{
+    const {page, id_cat, product_name, sort_price, sort_name} = req.query;
+    
+    const currentPage = page ? parseInt(page) : 1;
 
-    res.status(200).json({
+    const options = {
+      offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+      limit : 10,
+    }
+
+    const filter = {id_cat, product_name}
+    if(id_cat) filter.id_cat={'categoryId' : id_cat}
+    if(product_name) filter.product_name = {"productName" : {[Op.like] : `%${product_name}%`}}
+
+    let sort = []
+    if(sort_price) sort.push([`productPrice`,sort_price])
+    if(sort_name) sort.push([`productName`, sort_name])
+
+    const products = await Product_List?.findAll({...options,
+      include : 
+      [
+        {
+          model : Categories,
+          attributes : ['categoryDesc','categoryId'],
+          as : "productCategories",
+          where : filter.id_cat
+        },
+        {
+          model : Product_Unit,
+          as : "productUnits"
+        },
+        {
+          model : Product_Detail,
+          attributes : ["quantity"]
+        }
+      ]
+      ,
+      where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
+      order : sort}
+      );
+    
+    const total = id_cat || id_cat && page ? await products.length : await Product_List?.count();
+
+    const pages = Math.ceil(total / options.limit);
+
+		res.status(200).json({
 			type : "success",
 			message : "Products fetched",
+      currentPage : page ? page : 1,
+      totalPage : pages,
+      totalProducts : total,
+      productLimit : options.limit,
 			data : products
 		});
+
   }catch(error){
     next(error)
   }
@@ -24,12 +71,12 @@ const createProduct = async (req, res, next) => {
     const { data } = req.body;
     const body = JSON.parse(data);
 
-    if(!req.file) {
-      return next ({
-          type : "error",
-          status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-          message : middlewareErrorHandling.IMAGE_NOT_FOUND
-      })
+    if (!req.file) {
+      return next({
+        type: 'error',
+        status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+        message: middlewareErrorHandling.IMAGE_NOT_FOUND,
+      });
     }
 
     const productData = {
@@ -38,35 +85,44 @@ const createProduct = async (req, res, next) => {
       productDosage: body?.productDosage,
       productDescription: body?.productDescription,
       categoryId: body?.categoryId,
-      productPicture: req.file?.filename
+      productPicture: req.file?.filename,
     };
 
     await inputProductValidationSchema.validate(productData);
 
-    const productExists = await Product_List.findOne({
+    const existingProduct = await Product_List.findOne({
       where: { productName: body.productName, isDeleted: 0 },
     });
 
-    if (productExists) {
-      throw new Error('Product already exists');
+    if (existingProduct) {
+      throw new Error(middlewareErrorHandling.PRODUCT_ALREADY_EXISTS);
     }
 
     const product = await Product_List.create(productData);
 
-      for (const categoryId of body?.categoryId) {
-        await Product_Category.create({
+    const categoryIds = Array.isArray(body?.categoryId)
+      ? body.categoryId.map((categoryId) => ({
           productId: product.productId,
-          categoryId: categoryId,
-        });
-      }
+          categoryId,
+        }))
+      : [];
 
-    res.status(200).json({ message: 'Product Added Successfully', data: product
-    });
+    if (categoryIds.length > 0) {
+      await Product_Category.bulkCreate(categoryIds);
+    }
+
+    res.status(200).json({ message: 'Product Added Successfully', data: product });
   } catch (error) {
-    cloudinary.v2.api.delete_resources([`${req?.file?.filename}`],{type : `upload`,resource_type : 'image'})
+    if (req.file) {
+      await cloudinary.v2.api.delete_resources([req.file.filename], {
+        type: 'upload',
+        resource_type: 'image',
+      });
+    }
     next(error);
   }
 };
+
 
 const updateProduct = async (req, res, next) => {
   try {
@@ -77,7 +133,7 @@ const updateProduct = async (req, res, next) => {
     const product = await Product_List.findOne({ where: { productId: id } });
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
     }
 
     const existingProduct = await Product_List.findOne({
@@ -88,7 +144,7 @@ const updateProduct = async (req, res, next) => {
     });
 
     if (existingProduct) {
-      throw new Error('Product already exists');
+      throw new Error(middlewareErrorHandling.PRODUCT_ALREADY_EXISTS);
     }
 
     const productData = {
@@ -147,7 +203,7 @@ const deleteProduct = async (req, res, next)=>{
     const productExists = await Product_List.findOne({ where: { productId : id } });
 
     if (!productExists) {
-      throw new Error('Product not found');
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
     }
     await productExists.update({ isDeleted: 1 });
 
@@ -159,9 +215,59 @@ const deleteProduct = async (req, res, next)=>{
   }
 }
 
+const updateMainStock = async (req, res, next)=>{
+  try {
+    const { productId, value} = req.body
+    // type: penjualan, unit conversion,update stock; kasus ini typenya cmn buat update main stock
+    //@validate request
+    await updateMainStockValidationSchema.validate(req.body)
+    //@ambil data product details(id produk, id unit, idsstocknya, quantity, dll : 
+    //misal as detailproduk, dimana id product sesuai input dan isdefault true 
+    const detail = await Product_Detail.findOne({where : {productId : productId, isDefault : 1}})
+    const unitName = await Product_Unit.findOne({where : {unitId : detail?.unitId}})
+        // kalau status detail produk is deleted 1 throw error 
+        if (detail?.isDeleted === 1) {
+          throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+        }
+
+        let status = "Penambahan"
+        // kalau besar perubahan > 0, tipe penambahan
+        if(value < 0){
+          status = "Pengurangan"
+        }
+        if (value === 0){
+          throw new Error(middlewareErrorHandling.NO_CHANGES);
+        }
+
+        //@update product detail and history
+        const history = await Product_History.create({
+          productId : productId,
+          unit : unitName?.name,
+          initialStock : detail?.quantity,
+          status : status,
+          type : "Update Stock",
+          quantity : value > 0? value : -1 * +value,
+          results : detail?.quantity + +value
+        })
+        
+        await detail.update({quantity : history?.results})
+
+    res.status(200).json({ message: 'Product stock updated successfully',
+        detail : detail,
+        history : history
+  });
+
+  } catch (error) {
+    next(error);
+    
+  }
+}
+
+
 module.exports = {
     getProducts,
     createProduct,
     updateProduct,
     deleteProduct,
+    updateMainStock
 }

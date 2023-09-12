@@ -95,7 +95,7 @@ export const verify = createAsyncThunk(
             const {token} = payload
            
             delete payload.token
-            
+            console.log(payload)
             await VerifyValidationSchema.validate(payload)
             const response = await api.post("auth/verify", payload, {headers : {"Authorization": `Bearer ${token}`}})
             const newToken = response.headers.authorization.split(" ")[1]

@@ -25,7 +25,7 @@ const addressSlice = createSlice({
         },
         [listProvince.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
-                province : action.payload?.rajaongkir?.results,
+                province : action.payload?.data,
                 isLoading : false,
             })
         },
@@ -39,7 +39,7 @@ const addressSlice = createSlice({
         },
         [listCity.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
-                city : action.payload?.rajaongkir?.results,
+                city : action.payload?.data,
                 isLoading : false,
             })
         },
