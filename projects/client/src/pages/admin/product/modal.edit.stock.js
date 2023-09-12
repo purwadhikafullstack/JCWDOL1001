@@ -203,7 +203,8 @@ const inputStockChange = (e) => {
             <Input
                   type="number"
                   value={(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "Remove")
-                   ? productData?.product_details[0]?.quantity : quantity }
+                   ? productData?.product_details[0]?.quantity : 
+                   quantity < 0 ? 0 : quantity }
                   onChange={inputStockChange}
                   errorInput={error.value}
                 />
@@ -221,26 +222,6 @@ const inputStockChange = (e) => {
               <FaPlus/>
             </button>
           </div>
-
-          {/* <div className="mt-4 flex flex-col gap-y-4">
-            <div className="text-gray-500 font-bold">
-              <Input
-                ref={productNameRef}
-                type="text"
-                label="Product Name"
-                placeholder="e.g. Paracetamol 500 mg"
-                errorInput={error.productName}
-                isDisabled = {true}
-                onChange={() => setError({ ...error, productName: false })}
-              />
-              {error.productName && (
-                <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productName}
-                </div>
-              )}
-            </div>
-           
-          </div> */}
 
           <div className="mt-8 flex gap-2">
             <Button

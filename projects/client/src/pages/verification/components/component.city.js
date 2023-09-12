@@ -3,9 +3,10 @@ function ListOfCity({
     city = [],
 }){
     return city.map((item)=>{
+        const name = item.type+" "+item.city_name
         return(
-            <option value={[item.city_id, item.city_name, item.postal_code]}>
-                {item.city_name}
+            <option value={[name, item.postal_code]}>
+                {item.type+" "+item.city_name}
             </option>
             
         )
