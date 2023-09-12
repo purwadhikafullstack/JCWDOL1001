@@ -11,9 +11,7 @@ const storage = helperUploader.createCloudinaryStorage("Public/Products")
 const uploader = helperUploader.createUploader(storage)
 
 router.get("/", product.getProducts)
-router.get("/:id", product.getProductById)
 router.post("/", verifyAdmin, uploader.single("file"), product.createProduct)
-router.patch("/:id", verifyAdmin, uploader.single("file"), product.updateProduct)
 router.patch("/delete/:id", verifyAdmin, product.deleteProduct)
 router.get("/unit", verifyAdmin, unit.productUnits)
 router.patch("/unit/update/:productId", verifyAdmin, unit.updateProductUnits)
@@ -22,6 +20,8 @@ router.patch("/unit/make-convertion", verifyAdmin, convertion.makeConvertionUnit
 router.patch("/unit/reactivate", verifyAdmin, unit.reactivateUnits)
 router.post("/unit/:productId", verifyAdmin, unit.setProductUnits)
 router.patch("/stock/update",  verifyAdmin, product.updateMainStock)
+router.get("/:id", product.getProductById)
+router.patch("/:id", verifyAdmin, uploader.single("file"), product.updateProduct)
 
 
 module.exports = router

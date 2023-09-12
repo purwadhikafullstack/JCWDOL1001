@@ -52,10 +52,6 @@ export default function ModalEditProductUnit({
         })
     }
 
-    const handleChangeDefault = (type) => {
-        setIsDefaultUnit(type)
-    }
-
     const handleOnSure = ()=>{
         dispatch(
             updateUnit({
@@ -101,36 +97,11 @@ export default function ModalEditProductUnit({
                         </select>
 
                     }
-{/*                     
-                    <fieldset className="mt-4 hidden">
-                        <legend>Is Default Unit?</legend>
-                        <div>
-                            <input
-                                type="radio"
-                                id="1"
-                                name="isDefault"
-                                value="yes"
-                                checked = {isDefaultUnit.name === "yes" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:"1",name:"yes"})}}
-                                
-                            />
-                            <label for="1" className="mr-4">Yes</label>
-                            <input 
-                                type="radio" 
-                                id="0" 
-                                name="isDefault" 
-                                value="no" 
-                                checked = {isDefaultUnit.name === "no" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:"0",name:"no"})}}
-                            />
-                            <label for="0">No</label>
-                        </div>
-                    </fieldset> */}
 
                     { isDefaultUnit.name === "yes" ?
                         <div>
                             <h3 className="pt-2">Qty per Unit : </h3>
-                            <input
+                            <Input
                                 type="number"
                                 ref={qtyPerUnitRef}
                                 id="qtyUnit"
