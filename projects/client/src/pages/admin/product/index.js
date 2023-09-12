@@ -68,7 +68,7 @@ export default function AdminProducts({user}) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchedProduct, setSearchedProduct] = useState(null);
   const searchedProductRef = useRef();
-  const [page, setPage] = useState(current_page);
+  const [page, setPage] = useState(1);
   const [options, setOptions] = useState({sortName : "", sortPrice : "", categoryId : ""})
   const [selectedUnit, setSelectedUnit] = useState({});
 
@@ -145,15 +145,6 @@ export default function AdminProducts({user}) {
   return (
     <>
       <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-        <form className="relative lg:w-1/3" onSubmit={() => window.alert("ok")}>
-          <Input type="text" placeholder="Search" />
-          <button
-            className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
-            type="submit"
-          >
-            <HiMagnifyingGlass className="text-2xl text-primary" />
-          </button>
-        </form>
         <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
 
           <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
@@ -223,7 +214,7 @@ export default function AdminProducts({user}) {
         </div>
         <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
           {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
-          <h1>current page : {current_page}</h1>
+          {total_page !== 1 && <h1>current page : {current_page}</h1>}
           {page!==total_page && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===total_page}> Next </button>}
         </div>
       </div>
