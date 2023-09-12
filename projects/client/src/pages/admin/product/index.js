@@ -75,6 +75,7 @@ export default function AdminProducts({user}) {
 
   const handleShowModal = ({context, productId, stockId}) => {
     setShowModal({ show: true, context });
+    
     document.body.style.overflow = "hidden";
     
     if (productId) {
@@ -101,6 +102,10 @@ export default function AdminProducts({user}) {
     document.body.style.overflow = "auto";
   };
 
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
+  
   const handleOptionChange = (e) => {
     const {name , value} = e.target
     setOptions({

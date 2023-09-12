@@ -142,7 +142,7 @@ const updateProductUnits = async( req, res, next ) => {
           message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
       })
 
-      const newUnit = await Product_Unit.create({name : req.body.unitName})
+      const newUnit = await Product_Unit.create({name : req.body.unitName, isSecondary : req.body.isSecondary ? 1 : 0})
 
       req.body.unitId = newUnit?.dataValues?.unitId
     }
