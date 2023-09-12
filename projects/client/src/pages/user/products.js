@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../store/slices/product/slices";
 import { getCategory } from "../../store/slices/cat/slices";
 import { useEffect, useRef, useState } from "react";
-import ReactPaginate from "react-paginate";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Footer from "../../components/Footer";

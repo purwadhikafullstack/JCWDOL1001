@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
+import { toast } from 'react-toastify';
 
 import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
 
@@ -19,7 +20,17 @@ export const login = createAsyncThunk(
 
             localStorage.setItem("token", token)
 
-            alert(response?.data?.message)
+            // alert(response?.data?.message)
+            toast.success(response?.data?.message, {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
             
             return data
         } catch (error) {
