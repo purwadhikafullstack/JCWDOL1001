@@ -4,11 +4,14 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
+  getProductById,
   updateMainStock,
+
 } from "./slices";
 
 const INITIAL_STATE = {
   data: [],
+  productDetail: null,
   message: null,
   errorMessage:null,
   success: false,
@@ -43,6 +46,18 @@ const productsSlice = createSlice({
         // state.next_page = action.payload.next_page;
       })
       .addCase(getProducts.rejected, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.data = action.payload.data;
+      })
+
+      .addCase(getProductById.pending, (state, action) => {
+        state.isGetProductsLoading = true;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.productDetail = action.payload.data;
+      })
+      .addCase(getProductById.rejected, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
       })

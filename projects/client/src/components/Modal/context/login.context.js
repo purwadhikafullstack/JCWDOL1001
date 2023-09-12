@@ -21,7 +21,8 @@ export default function LoginContext ({
     const emailRef = useRef()
     const passwordRef = useRef()
 
-    const onButtonLogin = () => {
+    const handleLogin = (e) => {
+        e.preventDefault()
         const email = emailRef.current?.value
         const password = passwordRef.current?.value
         dispatch(login({ email, password }))
@@ -42,8 +43,8 @@ export default function LoginContext ({
                     onLogin()
                     onRegist()
                 }}
-            />
-            <form className="mt-8 flex flex-col gap-4" >
+            />  
+            <form className="mt-8 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
                 <Input
                     ref={emailRef}
                     type="text"
@@ -78,7 +79,6 @@ export default function LoginContext ({
                     type="submit"
                     title="Masuk"
                     className="mt-4 py-3"
-                    onClick={onButtonLogin}
                 />
             </form>
         </div>

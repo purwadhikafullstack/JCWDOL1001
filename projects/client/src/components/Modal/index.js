@@ -36,7 +36,17 @@ export default function Modal({
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
     };
+
+    
   }, [closeModal, showModal]);
+
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  }
+  
+  if (!showModal) {
+    document.body.style.overflow = "auto";
+  }
 
   return (
     <AnimatePresence>
