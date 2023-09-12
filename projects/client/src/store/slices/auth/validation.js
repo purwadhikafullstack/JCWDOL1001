@@ -37,5 +37,6 @@ export const VerifyValidationSchema = Yup.object({
     province : Yup.string().required("Province is required"),
     city : Yup.string().required("City is required") ,
     district : Yup.string().required("District is required") ,
-    postalCode : Yup.number().required("Postal Code is required")
+    postalCode : Yup.number().required("Postal Code is required"),
+    costId : Yup.number().required("CostId is required")
 })

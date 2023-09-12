@@ -36,6 +36,10 @@ const getProducts = async (req, res, next) => {
         {
           model : Product_Unit,
           as : "productUnits"
+        },
+        {
+          model : Product_Detail,
+          attributes : ["quantity"]
         }
       ]
       ,
@@ -260,7 +264,7 @@ const updateMainStock = async (req, res, next)=>{
           throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
         }
 
-        let status = "Penjumlahan"
+        let status = "Penambahan"
         // kalau besar perubahan > 0, tipe penambahan
         if(value < 0){
           status = "Pengurangan"

@@ -1,13 +1,14 @@
+import { useRef } from "react"
+
 function ListOfProvince({
-    province = [],
-    onProvinceChange = (provinceId,provinceName)=>{}
+    province = []
 }){
     return province.map((item)=>{
-
+       
         return(
-            <option value={item.province_id}
-            onClick={()=>{onProvinceChange (item.province_id,item.province)}}>
-                item.province
+            <option value={[ item.province_id, item.province]}
+            >
+                {item.province}
             </option>
             
         )
@@ -16,15 +17,23 @@ function ListOfProvince({
 
 export default function GetProvince({
     province = [],
-    onProvinceChange = (provinceId,provinceName)=>{}
+    onProvinceChange = (provinceParams)=>{}
 }){
+    const selectRef = useRef(null)
+    
     return(
-        <div>
-            <select>
+        <div className="flex flex-col w-full">
+            <span>
+                Province : 
+            </span>
+            <select 
+            className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
+            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
+            "
+            ref={selectRef} onChange={()=>{onProvinceChange(selectRef?.current?.value)}}>
             <option value={"Select Province :"} disabled>Select Province : </option>
                 <ListOfProvince
                 province={province}
-                onProvinceChange={onProvinceChange}
                 />
             </select>
         </div>
