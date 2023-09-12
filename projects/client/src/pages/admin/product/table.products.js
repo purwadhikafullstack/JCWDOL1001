@@ -15,6 +15,7 @@ export default function TableProducts({
   handleShowModal,
   products,
   isGetProductsLoading,
+  isSubmitProductLoading
 }) {
   return (
     <table className="text-gray-500 w-full text-left text-sm">
@@ -30,7 +31,7 @@ export default function TableProducts({
         </tr>
       </thead>
       <tbody>
-        {isGetProductsLoading ? (
+        {isGetProductsLoading || isSubmitProductLoading ? (
           <tr className="text-center">
             <td colSpan={7} className="p-3">
               <LoadingSpinner isLarge />

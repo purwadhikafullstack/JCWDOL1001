@@ -7,13 +7,13 @@ const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
   try{
-    const {page, id_cat, product_name, sort_price, sort_name} = req.query;
+    const {page, id_cat, product_name, sort_price, sort_name, limit} = req.query;
     
     const currentPage = page ? parseInt(page) : 1;
 
     const options = {
       offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
-      limit : 10,
+      limit : limit ? +limit : 10,
     }
 
     const filter = {id_cat, product_name}
@@ -65,6 +65,40 @@ const getProducts = async (req, res, next) => {
     next(error)
   }
 }
+
+const getProductById = async (req, res, next) => {
+  try{
+    const { id } = req.params;
+
+    const product = await Product_List?.findOne({
+      include : 
+      [
+        {
+          model : Categories,
+          attributes : ['categoryDesc','categoryId'],
+          as : "productCategories",
+        },
+        {
+          model : Product_Unit,
+          as : "productUnits"
+        }
+      ],
+      where: {productId : id},
+    });
+
+    if (!product) {
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+    }
+
+		res.status(200).json({
+			data : product
+		});
+
+  }catch(error){
+    next(error)
+  }
+}
+
 
 const createProduct = async (req, res, next) => {
   try {
@@ -266,6 +300,7 @@ const updateMainStock = async (req, res, next)=>{
 
 module.exports = {
     getProducts,
+    getProductById,
     createProduct,
     updateProduct,
     deleteProduct,

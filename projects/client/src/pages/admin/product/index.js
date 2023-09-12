@@ -19,14 +19,17 @@ import ModalDeleteProduct from "./modal.delete.product";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+
+import { HiPlus } from "react-icons/hi";
 import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
 import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
 import ModalMakeConvertion from "./unit/modal.unit.make.convertion";
 export default function AdminProducts({user}) {
+
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     success,
@@ -61,21 +64,19 @@ export default function AdminProducts({user}) {
   });
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchedProduct, setSearchedProduct] = useState(null);
   const searchedProductRef = useRef();
-  const [page, setPage] = useState(current_page);
+  const [page, setPage] = useState(1);
   const [options, setOptions] = useState({sortName : "", sortPrice : "", categoryId : ""})
   const [selectedUnit, setSelectedUnit] = useState({});
 
 
   const handleShowModal = ({context, productId, stockId}) => {
     setShowModal({ show: true, context });
-    
     document.body.style.overflow = "hidden";
-
+    
     if (productId) {
       const productData = products.find((item) => item.productId === productId);
       setSelectedProduct(productData);
@@ -93,7 +94,6 @@ export default function AdminProducts({user}) {
 
   const handleCloseModal = () => {
     setShowModal({ show: false, context: "" });
-    setShowCategoryModal(false);
     setSelectedCategories([]);
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
@@ -121,24 +121,32 @@ export default function AdminProducts({user}) {
   }
 
   useEffect(() => {
-    dispatch(getProducts({category_id : options.categoryId,
+
+    dispatch(
+      getProducts({
+      category_id : options.categoryId,
       product_name : searchedProduct,
       sort_name : options.sortName, 
       sort_price : options.sortPrice, 
-      page : page}));
+      page : page,
+      limit:10
+      })
+    );
   }, [searchedProduct, options, page, isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getCategory());
     dispatch(getUnits())
   }, [])
 
-  if(!user.role)return navigate("/","replace")
+
+  if (!user.role) return navigate("/", "replace");
 
   return (
     <>
-      <div className="container py-24 lg:px-8 lg:ml-[calc(5rem)]">
+      <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
         <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
+
           <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
 
           <form className="relative w-1/3">
@@ -148,11 +156,12 @@ export default function AdminProducts({user}) {
             </button>
           </form>
         </div>
-
-        <div className="mt-4 flex items-center justify-between">
+        
+        <div className="mt-4 grid lg:grid-cols-2">
           <Button
             isButton
             isPrimary
+            className="lg:justify-self-start"
             title="Add Product"
             onClick={() => handleShowModal({context:"Add Product"})}
           />
@@ -188,6 +197,7 @@ export default function AdminProducts({user}) {
               <option value=""></option>
               <option value="ASC">Lowest to highest</option>
               <option value="DESC">Highest to Lowest</option>
+
             </select>
           </div>
         </div>
@@ -197,14 +207,14 @@ export default function AdminProducts({user}) {
             products={products}
             handleShowModal={handleShowModal}
             isGetProductsLoading={isGetProductsLoading}
+            isSubmitProductLoading={isSubmitProductLoading}
             isDeleteProductLoading={isDeleteProductLoading}
             setSelectedProduct={setSelectedProduct}
           />
-
         </div>
         <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
           {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
-          <h1>current page : {current_page}</h1>
+          {total_page !== 1 && <h1>current page : {current_page}</h1>}
           {page!==total_page && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===total_page}> Next </button>}
         </div>
       </div>
@@ -223,8 +233,6 @@ export default function AdminProducts({user}) {
             productData={selectedProduct}
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
-            showCategoryModal={showCategoryModal}
-            setShowCategoryModal={setShowCategoryModal}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
             errorMessage={errorMessage}

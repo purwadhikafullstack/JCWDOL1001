@@ -5,27 +5,58 @@ export const getProducts = createAsyncThunk(
   "products/getProducts",
   async (payload, { rejectWithValue }) => {
     try {
-       const { category_id, page, sort_name, sort_price, product_name} = payload;
-       let query = "";
 
-       if(page){
-        query += `?page=${page}`;
-       }
-       if(category_id){
-        query += `${query ? '&' : '?'}id_cat=${category_id}`;
-       }
-       if(sort_name){
-        query += `${query ? '&' : '?'}sort_name=${sort_name}`;
-       }
-       if(sort_price){
-        query += `${query ? '&' : '?'}sort_price=${sort_price}`;
-       }
-       if(product_name){
-        query += `${query ? '&' : '?'}product_name=${product_name}`;
-       }
+      // const {
+      //   page,
+      //   id_cat,
+      //   product_name,
+      //   sort_price,
+      //   sort_name,
+      //   limit
+      // } = payload;
+      // const PARAMETER = `page=${page}&id_cat=${id_cat}&sort_name=${sort_name}&sort_price=${sort_price}&product_name=${product_name}&limit=${limit}`;
+      
+      // const { data } = await api.get(`/products?` + encodeURI(PARAMETER));
+
+
+      const { category_id, page, sort_name, sort_price, product_name, limit} = payload;
+      let query = "";
+
+      if(page){
+      query += `?page=${page}`;
+      }
+      if(category_id){
+      query += `${query ? '&' : '?'}id_cat=${category_id}`;
+      }
+      if(sort_name){
+      query += `${query ? '&' : '?'}sort_name=${sort_name}`;
+      }
+      if(sort_price){
+      query += `${query ? '&' : '?'}sort_price=${sort_price}`;
+      }
+      if(product_name){
+      query += `${query ? '&' : '?'}product_name=${product_name}`;
+      }
+      if(limit){
+      query += `${query ? '&' : '?'}limit=${limit}`;
+      }
       const { data } = await api.get(`/products${query}`);
       return data;
     } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getProductById = createAsyncThunk(
+  "products/getProductById",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/products/" + encodeURI(payload));
+
+      return data;
+    } catch (error) {
+      console.log(error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }

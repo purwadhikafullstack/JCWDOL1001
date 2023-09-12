@@ -17,9 +17,6 @@
     @apply text-base font-bold text-dark md:text-xl;
   }
 
-  .see-all {
-    @apply text-sm font-bold text-primary duration-300 hover:text-teal-700 lg:text-base;
-  }
 
   ::-webkit-scrollbar {
     @apply h-0 w-2;

@@ -58,6 +58,7 @@ const authSlice = createSlice({
                 uuid : action.payload?.UUID,
                 role : action.payload?.role,
                 email : action.payload?.email,
+                status : action.payload?.status,
                 profile : action.payload?.user_profile,
                 isKeepLoginLoading : false,
                 isLogin : true,

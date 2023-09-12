@@ -19,6 +19,7 @@ const DEFAULT_UNIT_UNAVAILABLE = "Default product unit is out of stock"
 const SECONDARY_PRODUCT_UNIT_NOT_FOUND = "Secondary product unit is not found! Please add secondary unit first"
 const PRODUCT_DONT_HAVE_DEFAULT_UNIT = "Default value of this product not declare yet, please declare first"
 const INPUT_MORE_THAN_STOCK = "Stock available is less than convertion time(s)"
+const PRODUCT_HAS_CATEGORY = "The Category you want to delete has Product used it."
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -74,4 +75,5 @@ module.exports = {
     PRODUCT_UNIT_NOT_FOUND,
     PRODUCT_DONT_HAVE_DEFAULT_UNIT,
     INPUT_MORE_THAN_STOCK,
+    PRODUCT_HAS_CATEGORY
 }

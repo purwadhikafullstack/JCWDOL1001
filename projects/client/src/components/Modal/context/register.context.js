@@ -64,7 +64,7 @@ export default function RegisterContext ({
         if(!email){
             setSubmit(false)
         }
-    },[email])
+    },[email,isRegister])
 
 
     return (
@@ -102,18 +102,19 @@ export default function RegisterContext ({
                             placeholder="e.g. helloworld"
                         />
                         <Input
-                            ref={emailRef}
-                            type="text"
-                            label="Email"
-                            placeholder="e.g. example@email.com"
-                        />
-                        <Input
                             ref={phoneRef}
                             required
                             type="text"
                             label="Phone Number"
                             placeholder="e.g. 08123456123"
                         />
+                        <Input
+                            ref={emailRef}
+                            type="text"
+                            label="Email"
+                            placeholder="e.g. example@email.com"
+                        />
+
                         <Input
                             ref={passwordRef}
                             required
