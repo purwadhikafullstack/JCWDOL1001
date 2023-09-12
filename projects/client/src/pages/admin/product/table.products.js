@@ -15,25 +15,23 @@ export default function TableProducts({
   handleShowModal,
   products,
   isGetProductsLoading,
+  isSubmitProductLoading
 }) {
-
   return (
     <table className="text-gray-500 w-full text-left text-sm">
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
         <tr>
           <th className="p-3">#</th>
-
           <th className="p-3">Product Name</th>
-
           <th className="p-3">Price</th>
-
+          <th className="p-3">Quantity</th>
+          <th className="p-3">Unit</th>
           <th className="p-3">Image</th>
-
           <th className="p-3">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {isGetProductsLoading ? (
+        {isGetProductsLoading || isSubmitProductLoading ? (
           <tr className="text-center">
             <td colSpan={7} className="p-3">
               <LoadingSpinner isLarge />
@@ -65,6 +63,8 @@ export default function TableProducts({
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
+              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
+              <td className="p-3">{product?.productUnits[0]?.name}</td>
               <td className="p-3">
                 <div className="aspect-[4/3] w-10">
                   <img
@@ -84,7 +84,7 @@ export default function TableProducts({
                     isSmall
                     isPrimaryOutline
                     onClick={() =>
-                      handleShowModal("Details Product", product?.productId)
+                      handleShowModal({context:"Details Product", productId:product?.productId})
                     }
 
                     title="Details"
@@ -94,7 +94,7 @@ export default function TableProducts({
                   isSmall
                   isDanger
                     onClick={() =>
-                      handleShowModal("Delete Product", product.productId)
+                      handleShowModal({context:"Delete Product", productId:product.productId})
                     }
 
                   >
@@ -113,7 +113,7 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Details", product.productId)
+                          handleShowModal({context:"Edit Details", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
@@ -126,7 +126,7 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Stock", product.productId)
+                          handleShowModal({context:"Edit Stock", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
@@ -139,7 +139,10 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal("Edit Unit", product.productId)
+                          handleShowModal({
+                            context : "Edit Unit", 
+                            productId : product.productId
+                          })
                         }
                       >
                         <span className="flex items-center gap-2 py-2">

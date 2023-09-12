@@ -14,16 +14,18 @@ export default function CategoryList(){
     const categoryNameRef = useRef()
     const formData = new FormData();
     
-    const {category, isLoading} = useSelector(state => {
+    const {category, isAddLoading, isDeleteLoading, isUpdateLoading} = useSelector(state => {
         return {
             category : state?.cat?.category,
-            isLoading : state?.cat?.isLoading
+            isAddLoading : state?.cat?.isAddLoading,
+            isDeleteLoading : state?.cat?.isDeleteLoading,
+            isUpdateLoading : state?.cat?.isUpdateLoading
         }
     })
     
     useEffect(()=>{
         dispatch(getCategory());
-    },[])
+    },[isAddLoading, isDeleteLoading, isUpdateLoading])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -64,7 +66,8 @@ export default function CategoryList(){
                             <label for="categoryImage" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Image</label>
                             <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
                         </div>
-                        <Button isButton isPrimary type="submit" title="Add!" className="mt-4 py-3" onClick={()=>onButtonClick("add")}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Add!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
                     </form>
                     </div>
                 </div>)
@@ -74,7 +77,8 @@ export default function CategoryList(){
                     <h2 class="font-semibold text-green-900 text-2xl">Delete Category</h2>
                     <h2 class="my-4">Are you sure you want to Delete category no. {categoryIndex} ?</h2>
                     <form class="space-y-4 md:space-y-6 font-medium text-xl">
-                        <Button isButton isPrimary type="submit" title="Delete!" className="mt-4 py-3" onClick={()=>onButtonClick("delete")}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Delete!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
                     </form></div>
                 </div>
             )
@@ -89,7 +93,8 @@ export default function CategoryList(){
                             <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Name</label>
                             <input type="text" class="sm:rounded-lg rounded-xl border" onChange={(e)=>setCategoryDesc(e.target.value)}/> 
                         </div>
-                        <Button isButton isPrimary type="submit" title="Update!" className="mt-4 py-3" onClick={()=>onButtonClick("update")}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Update!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
                     </form>
                     </div>                    
                 </div>
@@ -103,7 +108,8 @@ export default function CategoryList(){
                         <form class="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
                                 <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
-                                <Button isButton isPrimary type="submit" title="Change!" className="mt-4 py-3" onClick={()=>onButtonClick("updateImage")}/>
+                                <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                                <Button isButton isPrimary type="submit" title="Change!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
                             </div>
                         </form>
                         </div>
@@ -122,6 +128,9 @@ export default function CategoryList(){
 
     return(
         <div className="container py-24 ml-[calc(5rem)]">
+            <div>
+                {optionPage()}
+            </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg py-8">
                 <div class="flex flex-row border-b-4 border-double border-black">
                     <h1 class="font-serif text-4xl  flex-1"> Categories </h1>
@@ -178,9 +187,7 @@ export default function CategoryList(){
                     </tbody>
                 </table>
             </div>
-            <div>
-                {optionPage()}
-            </div>
+            
         </div>
     )
 }

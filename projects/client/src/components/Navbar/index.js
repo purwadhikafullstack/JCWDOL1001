@@ -13,12 +13,10 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
   
     const handleShowModal = (context) => {
         setShowModal({ show: true, context })
-        document.body.style.overflow = "hidden"
     }
 
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
-        document.body.style.overflow = "auto"
     }
 
     useEffect(()=>{
