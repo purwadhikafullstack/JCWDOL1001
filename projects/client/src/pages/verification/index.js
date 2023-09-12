@@ -28,29 +28,31 @@ export default function Verification() {
     const addressRef = useRef(null)
     const districtRef = useRef(null)
     
-    const [postalCodeState, setPostalCode] = useState("Choose province and city first")
-    const [cityRef,setCityRef] = useState(null)
-    const [costId,setCostId] = useState(null)
-    const [provinceRef,setProvinceRef] = useState(null)
-    const postalRef = useRef(null)
+    const [postalCodeState, setPostalCode] = useState(80351)
+    const [cityRef,setCityRef] = useState("Kabupaten Badung")
+    const [provinceRef,setProvinceRef] = useState("Bali")
+    const [refresh,setRefresh] = useState(5)
 
     const onProvinceChange = (provinceParams) =>{
         const result = provinceParams.split(",")
         setProvinceRef(result[1])
         dispatch(listCity({province : result[0]}))
     }
+
+    //logic, kalau pilihan pertama langsung cocok dengan alamat user
+    useEffect(()=>{
+        setPostalCode(dataCity[0]?.postal_code);
+        console.log(dataCity[0]?.type+" "+dataCity[0]?.city_name)
+        setCityRef(dataCity[0]?.type+" "+dataCity[0]?.city_name)
+    },[dataCity])
+
     const onCityChange = (cityParams) =>{
         const result = cityParams.split(",")
-        setPostalCode(result[2]);
-        setCityRef(result[1])
-        setCostId(result[0])
-
-        // dispatch(listCity({province : provinceId}))
+        setPostalCode(result[1]);
+        setCityRef(result[0])
     }
 
 
-    // const cityRef = useRef(null)
-    // const provinceRef = useRef(null)
 
     const onButtonSubmit = () =>{
         const otp = otpRef.current?.value
@@ -61,7 +63,6 @@ export default function Verification() {
         const city = cityRef
         const province = provinceRef
         const postal = postalCodeState
-        const cost = costId
         const token = location.pathname.split('reg-')[1]
 
         dispatch(verify({
@@ -74,15 +75,16 @@ export default function Verification() {
             city : city,
             province : province,
             postalCode : postal,
-            costId : cost
         }))
     }
 
     useEffect(()=>{
         dispatch(listProvince())
+        dispatch(listCity({province : 1 }))
     },[])
     
     useEffect(()=>{
+        //ada tombol setelah 5 detik, terus countdown ikutin dari verify aja
         if(user?.status === 1){
             const timeoutID = setTimeout(()=>{
             navigate("/")
@@ -92,20 +94,34 @@ export default function Verification() {
     }
     },[user])
 
+    useEffect(()=>{
+        const timeoutRefresh = setTimeout(() => {
+            if(refresh > 0){
+                setRefresh(refresh - 1)
+            }
+        }, 1000)
+        return () => clearTimeout(timeoutRefresh)
+    },[user])
+
   return (
       <div className="w-full flex flex-col items-center">
     {
         user?.status === 1 ? 
-        <div className="container pt-24 w-2/3 h-full">
-        <h3 className="text-2xl font-bold">
-                You have been verified.
+        <div className="container pt-24 w-2/3 h-full flex flex-col">
+            <h3 className="text-2xl font-bold">
+                    You have been verified.
             </h3>
-        
-        <span className="text-gray-500 font-semibold">
-                No need to verify more than once ;D
+            
+            <span className="text-gray-500 font-semibold">
+                    No need to verify more than once ;D
             </span>
-        <div>
-            </div>
+            <span className="text-gray-500 text-sm font-semibold mt-5">
+                    You will redirected to homepage in {refresh} s.
+            </span>
+            <span className="text-gray-500 text-sm font-semibold">
+                    or click <a href="/" className="font-bold text-primary">here</a>.
+            </span>
+
         </div>
 
         :
