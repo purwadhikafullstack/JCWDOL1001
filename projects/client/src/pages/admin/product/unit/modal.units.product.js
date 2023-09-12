@@ -6,8 +6,10 @@ export default function ModalUnitProduct({
   selectedProduct, 
   handleShowModal,
 }) {
-  const isCanAddNew = selectedProduct.productUnits.length >= 2
-
+  const dataUnitsAvailable = selectedProduct.productUnits.filter(
+    (unit) => unit.product_detail.isDeleted.toString() === "false"
+  )
+  const isCanAddNew = dataUnitsAvailable.length >= 2
   return (
     <div className="pt-4">
         <h3 className="title mt-4">Product Units</h3>

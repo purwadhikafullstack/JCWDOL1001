@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Button from "../../../../components/Button";
 import Input from "../../../../components/Input";
 import { useDispatch } from "react-redux";
-import { updateUnit } from "../../../../store/slices/product/unit/slices";
+import { getUnits, updateUnit } from "../../../../store/slices/product/unit/slices";
 import SuccessMessage from "../../../../components/Message";
 
 
@@ -20,7 +20,8 @@ export default function ModalEditProductUnit({
 
     const [unitSelected, setSelectedUnit] = useState({
         unitId : selectedUnit?.unitId,
-        unitName : selectedUnit?.name
+        unitName : selectedUnit?.name,
+        isSecondary : selectedUnit?.isSecondary
     });
 
     const unitBefore = selectedUnit.name
@@ -31,21 +32,24 @@ export default function ModalEditProductUnit({
     })
 
     const [confirmation, setConfirmation] = useState(false);
-
+    
     if (success) {
         return (
             <SuccessMessage
                 type="success"
-                message={`Change product unit from ${unitBefore} into ${unitSelected.unitName} success`}
+                message={`Change product unit from ${unitBefore} into ${ unitSelected.unitName } success`}
                 handleCloseModal={handleCloseModal}
             />
         );
     }
 
+    const dataUnits = units.filter((unit) => unit.isSecondary.toString() === unitSelected.isSecondary.toString())
+
     const handleChangeUnit = (event) => {
         setSelectedUnit({
             unitId :event.target.selectedOptions[0].className,
-            unitName :event.target.selectedOptions[0].value
+            unitName :event.target.selectedOptions[0].value,
+            isSecondary : event.target.selectedOptions[0].id
         })
     }
 
@@ -57,18 +61,21 @@ export default function ModalEditProductUnit({
         dispatch(
             updateUnit({
                 data :{
-                    unitId : unitSelected.unitId,
+                    unitId : unitSelected?.unitId ? unitSelected?.unitId : units.length + 1,
                     quantity : selectedUnit?.product_detail?.quantity,
-                    convertion : qtyPerUnitRef?.current?.value,
+                    convertion : qtyPerUnitRef?.current?.value ? qtyPerUnitRef?.current?.value : 0,
                     isDefault : isDefaultUnit.id,
-                    stockId : selectedUnit?.product_detail?.stockId
+                    stockId : selectedUnit?.product_detail?.stockId,
+                    isSecondary : unitSelected?.isSecondary ? unitSelected?.isSecondary : selectedUnit.isSecondary,
+                    unitName : unitRef?.current?.value ? unitRef?.current?.value : ""
                 },
                 productId : productData.productId
             })
         )
+        dispatch(getUnits())
         setConfirmation(false)
     }
-    
+
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
        | {productData.productName}
@@ -88,14 +95,14 @@ export default function ModalEditProductUnit({
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         >
                             <option >Choose an unit </option>
-                            {units.map((unit) => (
-                                <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
+                            {dataUnits.map((unit) => (
+                                <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name} id={unit.isSecondary.toString()}>{unit.name}</option>
                             ))}
                             <option value="other">Input Manual </option>
                         </select>
 
                     }
-                    
+{/*                     
                     <fieldset className="mt-4 hidden">
                         <legend>Is Default Unit?</legend>
                         <div>
@@ -109,7 +116,6 @@ export default function ModalEditProductUnit({
                                 
                             />
                             <label for="1" className="mr-4">Yes</label>
-
                             <input 
                                 type="radio" 
                                 id="0" 
@@ -120,7 +126,7 @@ export default function ModalEditProductUnit({
                             />
                             <label for="0">No</label>
                         </div>
-                    </fieldset>
+                    </fieldset> */}
 
                     { isDefaultUnit.name === "yes" ?
                         <div>
@@ -184,7 +190,6 @@ export default function ModalEditProductUnit({
                 </div>
             )}
         </form>
-
     </div>
   );
 }

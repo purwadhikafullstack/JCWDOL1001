@@ -142,7 +142,7 @@ const updateProductUnits = async( req, res, next ) => {
           message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
       })
 
-      const newUnit = await Product_Unit.create({name : req.body.unitName})
+      const newUnit = await Product_Unit.create({name : req.body.unitName, isSecondary : req.body.isSecondary ? 1 : 0})
 
       req.body.unitId = newUnit?.dataValues?.unitId
     }
@@ -188,7 +188,7 @@ const deleteProductUnits = async( req, res, next ) => {
       }
     })
 
-    if(!isDefaultUnit) throw ({
+    if(isDefaultUnit) throw ({
       status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
       message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
     })

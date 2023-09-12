@@ -29,6 +29,25 @@ export default function ModalAddProductUnit({
 
     const [confirmation, setConfirmation] = useState(false);
 
+    const canAddDefaultUnit = productData.productUnits.filter(
+        (unit) => unit.product_detail.isDefault.toString() === "true"
+    ).length < 1
+
+    const canAddSecondaryUnit = productData.productUnits.filter(
+        (unit) => unit.product_detail.isDefault.toString() === "false" && unit.product_detail.isDeleted.toString() === "false"
+    ).length < 1
+
+    let dataUnits = []
+    
+    if(canAddDefaultUnit && canAddSecondaryUnit ){
+        dataUnits = units
+    }else if(canAddSecondaryUnit){
+        dataUnits = units.filter((unit) => unit.isSecondary.toString() === canAddSecondaryUnit.toString())
+    }else{
+        dataUnits = units.filter((unit) => unit.isSecondary.toString() === (!canAddDefaultUnit).toString())
+    }
+
+
     if (success) {
         return (
             <SuccessMessage
@@ -63,7 +82,7 @@ export default function ModalAddProductUnit({
 
         output.data.unitId = unitRef?.current?.value ? units.length + 1 : unitSelected.unitId
 
-        output.data.isDefault= isDefaultUnit.id
+        output.data.isDefault= canAddDefaultUnit && canAddSecondaryUnit ? isDefaultUnit.id : canAddSecondaryUnit ? 0 : 1
 
         output.productId = productData.productId
         
@@ -76,7 +95,7 @@ export default function ModalAddProductUnit({
             if(output.data.isDefault == 1 && output.data.convertion === 0) throw(
                 alert("Default Unit must have qty per unit")
             )
-
+            
             dispatch(addUnit(output))
 
             setConfirmation(false)
@@ -103,7 +122,7 @@ export default function ModalAddProductUnit({
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         >
                             <option >Choose an unit </option>
-                            {units.map((unit) => (
+                            {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}
                             <option value="other">Manual Input </option>
@@ -111,7 +130,7 @@ export default function ModalAddProductUnit({
 
                     }
                     
-                    <fieldset className="mt-4">
+                    <fieldset className={`${canAddDefaultUnit && canAddSecondaryUnit ? "mt-4" : "hidden"}`}>
                         <legend>Is Default Unit?</legend>
                         <div>
                             <input
@@ -137,7 +156,7 @@ export default function ModalAddProductUnit({
                         </div>
                     </fieldset>
 
-                    { isDefaultUnit.name === "yes" ?
+                    { (canAddDefaultUnit && canAddSecondaryUnit && isDefaultUnit.name === "yes") || (canAddDefaultUnit && !canAddSecondaryUnit) ?
                         <div>
                             <h3 className="pt-2">Qty Unit : </h3>
                             <input
@@ -160,7 +179,7 @@ export default function ModalAddProductUnit({
                     }
                 </div>
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
                 <Button 
                     title="Back" 
                     isButton 

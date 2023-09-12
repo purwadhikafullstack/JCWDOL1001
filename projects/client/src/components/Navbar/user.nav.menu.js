@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
@@ -6,7 +6,7 @@ import UserNavMenuItems from "./user.nav.menu.items"
 import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
-import { logout } from "../../store/slices/auth/slices"
+import { logout, resendOtp } from "../../store/slices/auth/slices"
 
 export default function UserNavMenu({
   isLogin,
@@ -20,11 +20,22 @@ export default function UserNavMenu({
 
   const [isMenuVisible, setIsMenuVisible] = useState(false)
 
+  const isAccountVerified = user.status === 0 && isLogin
+
+  const [verify, setVerify] = useState(false)
+
+  const onClickVerified = ()=>{
+    dispatch(resendOtp({email : user.email}))
+    setVerify(true)
+  }
+
   const onClickKeluar = () => {
     dispatch(logout())
     setIsLogin(false)
     setIsMenuVisible(false)
   }
+
+  useEffect(()=>{},[user])
 
   return (
     <div className={`nav-menu-wrapper justify-end  ${isLogin ? "lg:w-1/3" :""}`} >
@@ -47,20 +58,31 @@ export default function UserNavMenu({
                 onClick={() => handleShowModal("register")}
               />
             </div>
-          : <UserNavMenuItems user={user} />
+          : <UserNavMenuItems user={user} isLogin={isLogin} />
         }
       </div>
 
       {
         isLogin ? 
           <div className="flex items-center gap-4 md:gap-8">
-            <div className="relative">
-              <Button isLink path="/cart">
+            <div className="relative flex gap-4">
+              <Button
+                isButton
+                isPrimary
+                isDisabled={verify}
+                onClick={onClickVerified}
+                className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
+              >
+                <span>Verify Account</span>
+              </Button>
+
+              <Button isLink path="/cart" className={`${isAccountVerified && !verify ? "mt-4" : ""}`} >
                 <FaCartShopping className="fill-primary text-2xl" />
-                <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white">
+                <span className={`absolute -right-2 ${isAccountVerified && !verify ? "-top-[-8px]" : "-top-2" } flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
                   4
                 </span>
               </Button>
+              
             </div>
 
             <div
