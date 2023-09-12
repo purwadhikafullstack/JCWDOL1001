@@ -12,7 +12,7 @@ const getProducts = async (req, res, next) => {
     const currentPage = page ? parseInt(page) : 1;
 
     const options = {
-      offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+      offset : currentPage > 1 ? parseInt(currentPage-1)*(limit ? +limit : 10) : 0,
       limit : limit ? +limit : 10,
     }
 

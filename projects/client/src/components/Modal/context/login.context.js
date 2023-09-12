@@ -36,7 +36,6 @@ export default function LoginContext ({
         <div>
             <span className="mr-2 text-slate-600">Belum punya akun?</span>
             <Button
-                isLink
                 title="Daftar"
                 className="text-primary underline"
                 onClick={() => {

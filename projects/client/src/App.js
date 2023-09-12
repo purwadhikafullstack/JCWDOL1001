@@ -17,6 +17,9 @@ import Products from "./pages/user/products";
 import NotFound from "./pages/NotFound";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ProductDetail from "./pages/user/product.detail";
+import { ToastContainer } from "react-toastify";
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { pathname } = useLocation();
@@ -60,7 +63,6 @@ function App() {
 
   return (
     <div>
-
       <Navbar user={user} isLogin={isLogin} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -96,6 +98,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       {/* <Footer /> */}
+      <ToastContainer />
     </div>
   );
 }
