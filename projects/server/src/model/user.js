@@ -107,10 +107,6 @@ const User_Address = db.sequelize.define("user_address", {
     postalCode: {
         type : db.Sequelize.INTEGER,
         allowNull : false
-    },
-    costId :{
-        type: db.Sequelize.INTEGER,
-        allownull : false
     }
 },{
   timestamps: false
