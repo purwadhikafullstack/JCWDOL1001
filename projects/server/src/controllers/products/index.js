@@ -7,13 +7,13 @@ const {ValidationError} = require("yup");
 
 const getProducts = async (req, res, next) => {
   try{
-    const {page, id_cat, product_name, sort_price, sort_name} = req.query;
+    const {page, id_cat, product_name, sort_price, sort_name, limit} = req.query;
     
     const currentPage = page ? parseInt(page) : 1;
 
     const options = {
       offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
-      limit : 10,
+      limit : limit ? +limit : 10,
     }
 
     const filter = {id_cat, product_name}

@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../store/slices/product/slices";
 import { getCategory } from "../../store/slices/cat/slices";
 import { useEffect, useRef, useState } from "react";
+import ReactPaginate from "react-paginate";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Footer from "../../components/Footer";
@@ -11,24 +12,26 @@ import SkeletonCard from "../../components/SkeletonCard";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
+import { HiChevronRight, HiChevronLeft} from "react-icons/hi";
 
 export default function Products({ user }) {
   const dispatch = useDispatch();
 
-  
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showModal, setShowModal] = useState({ show: false, context: "" });
-  const searchRef = useRef(null);
-  
-  const { products, categories, isGetProductsLoading } = useSelector(
+  const { products, categories, total_pages, current_page, isGetProductsLoading } = useSelector(
     (state) => {
       return {
         products: state.products.data,
         categories: state.cat.category,
+        total_pages: state.products.total_pages,
+        current_page: state.products.current_page,
         isGetProductsLoading: state.products.isGetProductsLoading,
       };
     }
   );
+  
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showModal, setShowModal] = useState({ show: false, context: "" });
+  const searchRef = useRef(null);  
 
   const handleCart = (productId) => {
     if (user.role) {
@@ -59,12 +62,9 @@ export default function Products({ user }) {
         product_name: searchRef.current?.value,
         sort_price: "",
         sort_name: "",
+        limit:12,
       })
     );
-  };
-
-  const resetSearch = () => {
-    searchRef.current.value = "";
   };
 
   const handleSelectCategory = (categoryId) => {
@@ -75,6 +75,25 @@ export default function Products({ user }) {
         product_name: "",
         sort_price: "",
         sort_name: "",
+        limit:12,
+      })
+    );
+  }
+
+  const handlePageClick = (type) =>{
+    window.scroll({
+      top:0,
+      left:0,
+      behavior:"smooth"
+    })
+    dispatch(
+      getProducts({
+        page: type === "prev" ? +current_page - 1 : type === "next" ? +current_page + 1 : type,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+        limit:12,
       })
     );
   }
@@ -87,12 +106,12 @@ export default function Products({ user }) {
         product_name: "",
         sort_price: "",
         sort_name: "",
+        limit:12,
       })
     );
-  }, []);
 
-  useEffect(() => {
     dispatch(getCategory());
+
   }, []);
 
   return (
@@ -108,7 +127,6 @@ export default function Products({ user }) {
                 onClick={() => {
                   setSelectedCategory(null);
                   handleSelectCategory("")
-                  resetSearch()
                 }}
               >
                 Semua Produk
@@ -123,7 +141,6 @@ export default function Products({ user }) {
                   onClick={() => {
                     setSelectedCategory(category)
                     handleSelectCategory(category.categoryId)
-                    resetSearch()
                   }}
                 >
                   {category.categoryDesc}
@@ -149,14 +166,7 @@ export default function Products({ user }) {
                 className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
                 type="submit"
               >
-                {searchRef.current?.value ? (
-                  <HiXMark
-                    className="text-2xl text-primary"
-                    onClick={resetSearch}
-                  />
-                ) : (
                   <HiMagnifyingGlass className="text-2xl text-primary" />
-                )}
               </button>
             </form>
 
@@ -194,6 +204,33 @@ export default function Products({ user }) {
                   />
                 ))
               )}
+            </div>
+
+            <div className="col-span-full mt-10 flex justify-center items-center gap-6 font-semibold select-none">
+              <Button
+              className={`flex items-center  ${+current_page === 1 ?"text-slate-400 cursor-auto":"text-dark hover:text-primary"}`}
+                onClick={()=>handlePageClick("prev")}
+                isDisabled={+current_page === 1}
+              >
+                <HiChevronLeft className=" text-xl "/> Prev
+              </Button>
+
+              {Array.from({length:total_pages}, (_, index)=>(
+                <Button key={index}
+                  className={+current_page === index+1 ?"text-slate-400 cursor-auto":"text-dark hover:text-primary"}
+                  onClick={()=>handlePageClick(index+1)}
+                  isDisabled={+current_page === index+1}
+                
+                >{index+1}</Button>
+              ))}
+
+              <Button
+              className={`flex items-center  ${+current_page === total_pages ?"text-slate-400 cursor-auto":"text-dark hover:text-primary"}`}
+                onClick={()=>handlePageClick("next")}
+                isDisabled={+current_page === total_pages}
+              >
+                Next <HiChevronRight className="text-xl "/>
+              </Button>
             </div>
           </div>
         </div>

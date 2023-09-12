@@ -11,8 +11,10 @@ export const getProducts = createAsyncThunk(
         product_name,
         sort_price,
         sort_name,
+        limit
       } = payload;
-      const PARAMETER = `page=${page}&id_cat=${id_cat}&sort_name=${sort_name}&sort_price=${sort_price}&product_name=${product_name}`;
+      const PARAMETER = `page=${page}&id_cat=${id_cat}&sort_name=${sort_name}&sort_price=${sort_price}&product_name=${product_name}&limit=${limit}`;
+      
       const { data } = await api.get(`/products?` + encodeURI(PARAMETER));
 
       return data;

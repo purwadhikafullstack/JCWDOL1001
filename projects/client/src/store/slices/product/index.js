@@ -38,10 +38,9 @@ const productsSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
-        // state.total_pages = action.payload.total_pages;
-        // state.current_page = action.payload.current_page;
-        // state.next_page = action.payload.next_page;
-      })
+        state.total_pages = action.payload.totalPage;
+        state.current_page = action.payload.currentPage;
+                })
       .addCase(getProducts.rejected, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
