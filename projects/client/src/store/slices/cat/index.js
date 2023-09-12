@@ -10,7 +10,10 @@ import {
 
 const INITIAL_STATE = {
     category : [],
-    isLoading : false
+    isLoading : false,
+    isAddLoading : false,
+    isDeleteLoading : false,
+    isUpdateLoading : false
 }
 
 const catSlice = createSlice({
@@ -35,40 +38,40 @@ const catSlice = createSlice({
             })
         },
         [addCategory.pending] : (state, action) => {
-            state.isLoading = true
+            state.isAddLoading = true
         },
         [addCategory.fulfilled] : (state, action) => {
-            state.isLoading = false
+            state.isAddLoading = false
         },
         [addCategory.rejected] : (state, action) => {
-            state.isLoading = false
+            state.isAddLoading = false
         },
         [deleteCategory.pending] : (state, action) => {
-            state.isLoading = true
+            state.isDeleteLoading = true
         },
         [deleteCategory.fulfilled] : (state, action) => {
-            state.isLoading = false
+            state.isDeleteLoading = false
         },
         [deleteCategory.rejected] : (state, action) => {
-            state.isLoading = false
+            state.isDeleteLoading = false
         },
         [updateCategory.pending] : (state, action) => {
-            state.isLoading = true
+            state.isUpdateLoading = true
         },
         [updateCategory.fulfilled] : (state, action) => {
-            state.isLoading = false
+            state.isUpdateLoading = false
         },
         [updateCategory.rejected] : (state, action) => {
-            state.isLoading = false
+            state.isUpdateLoading = false
         },
         [updateCategoryPicture.pending] : (state, action) => {
-            state.isLoading = true
+            state.isUpdateLoading = true
         },
         [updateCategoryPicture.fulfilled] : (state, action) => {
-            state.isLoading = false
+            state.isUpdateLoading = false
         },
         [updateCategoryPicture.rejected] : (state, action) => {
-            state.isLoading = false
+            state.isUpdateLoading = false
         }
     }
 })
