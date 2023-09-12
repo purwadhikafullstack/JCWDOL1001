@@ -135,6 +135,28 @@ const Input = React.forwardRef(({
       </div>
     );
   }
+  if (type === "numberSecondVariant") {
+    return (
+        <div className="">
+          {label && <label htmlFor={id}>{label}</label>}
+          <input
+            ref={ref}
+            value={value}
+            type="number"
+            name={name}
+            className={inputClass.join(" ")}
+            id={id}
+            placeholder={placeholder}
+            autoFocus={autoFocus}
+            onChange={onChange}
+            onBlur={onBlur}
+            onWheel={(e) => e.target.blur()}
+            disabled={isDisabled}
+        />
+      </div>
+    );
+  }
+
 })
 
 export default Input;

@@ -42,7 +42,7 @@ export default function Verification() {
     //logic, kalau pilihan pertama langsung cocok dengan alamat user
     useEffect(()=>{
         setPostalCode(dataCity[0]?.postal_code);
-        console.log(dataCity[0]?.type+" "+dataCity[0]?.city_name)
+
         setCityRef(dataCity[0]?.type+" "+dataCity[0]?.city_name)
     },[dataCity])
 

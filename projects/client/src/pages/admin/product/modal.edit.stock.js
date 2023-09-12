@@ -200,7 +200,7 @@ const inputStockChange = (e) => {
               <FaMinus/>
             </button>
             <Input
-                  type="number"
+                  type="numberSecondVariant"
                   value={(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "Remove")
                    ? productData?.product_details[0]?.quantity : 
                    quantity < 0 ? 0 : quantity }
