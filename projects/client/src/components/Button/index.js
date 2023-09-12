@@ -44,7 +44,7 @@ export default function Button(props) {
         to={props.path}
         className={className.join(" ")}
         onClick={(e) => {
-          e.stopPropagation()
+          // e.stopPropagation()
           onClick()
         }}
       >
@@ -57,9 +57,8 @@ export default function Button(props) {
     <button
       className={className.join(" ")}
       type={props.type ? props.type : "button"}
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
+      onClick={() => {
+        // e.preventDefault()
         onClick()
       }}
       disabled={props.isLoading}

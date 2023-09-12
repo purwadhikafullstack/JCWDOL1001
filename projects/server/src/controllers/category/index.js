@@ -1,6 +1,6 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Categories} = require("../../model/category.js");
 const cloudinary = require("cloudinary");
+const {Product_List,Categories,Product_Category} = require("../../model/relation.js")
 
 const getCategory = async (req, res, next) => {
     try{
@@ -68,6 +68,25 @@ const deleteCategory = async (req, res, next) => {
 
         const categoryStatus = categoryExists?.dataValues?.isDeleted;
         if(categoryStatus === 1) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
+
+        const productExists = await Product_List?.findAll({
+            where : {
+                '$categoryId$' : categoryId,
+                isDeleted : 0
+            },
+            include : [
+                {
+                    model : Product_Category,
+                    as : "product_categories",
+                    attributes:[],
+                }
+            ]
+        });
+        console.log(productExists);
+
+        if(productExists.length > 0){
+            throw ({ status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.PRODUCT_HAS_CATEGORY});
+        }
 
         const categoryDeleted = await categoryExists?.update({isDeleted : 1}, {where : {categoryId : categoryId}});
         res.status(200).json({message : "Category has been deleted", data : categoryDeleted});

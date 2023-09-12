@@ -188,7 +188,7 @@ const deleteProductUnits = async( req, res, next ) => {
       }
     })
 
-    if(isDefaultUnit) throw ({
+    if(!isDefaultUnit) throw ({
       status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
       message : middlewareErrorHandling.CANNOT_DELETE_DEFAULT_PRODUCT_UNIT 
     })

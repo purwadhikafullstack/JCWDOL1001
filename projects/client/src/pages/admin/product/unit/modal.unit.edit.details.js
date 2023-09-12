@@ -32,7 +32,6 @@ export default function ModalEditProductUnit({
     })
 
     const [confirmation, setConfirmation] = useState(false);
-    
     if (success) {
         return (
             <SuccessMessage

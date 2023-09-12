@@ -4,17 +4,20 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
+  getProductById,
   updateMainStock,
+
 } from "./slices";
 
 const INITIAL_STATE = {
   data: [],
+  productDetail: null,
   message: null,
   errorMessage:null,
   success: false,
-  total_pages: null,
+  total_page: null,
   current_page: null,
-  next_page: null,
+  //next_page: null,
   isGetProductsLoading: false,
   isSubmitProductLoading: false,
   isDeleteProductLoading: false,
@@ -38,11 +41,23 @@ const productsSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
-        // state.total_pages = action.payload.total_pages;
-        // state.current_page = action.payload.current_page;
+        state.total_page = action.payload.totalPage;
+        state.current_page = action.payload.currentPage;
         // state.next_page = action.payload.next_page;
       })
       .addCase(getProducts.rejected, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.data = action.payload.data;
+      })
+
+      .addCase(getProductById.pending, (state, action) => {
+        state.isGetProductsLoading = true;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.productDetail = action.payload.data;
+      })
+      .addCase(getProductById.rejected, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
       })

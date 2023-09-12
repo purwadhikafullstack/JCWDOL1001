@@ -15,25 +15,23 @@ export default function TableProducts({
   handleShowModal,
   products,
   isGetProductsLoading,
+  isSubmitProductLoading
 }) {
-
   return (
     <table className="text-gray-500 w-full text-left text-sm">
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
         <tr>
           <th className="p-3">#</th>
-
           <th className="p-3">Product Name</th>
-
           <th className="p-3">Price</th>
-
+          <th className="p-3">Quantity</th>
+          <th className="p-3">Unit</th>
           <th className="p-3">Image</th>
-
           <th className="p-3">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {isGetProductsLoading ? (
+        {isGetProductsLoading || isSubmitProductLoading ? (
           <tr className="text-center">
             <td colSpan={7} className="p-3">
               <LoadingSpinner isLarge />
@@ -65,6 +63,8 @@ export default function TableProducts({
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
+              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
+              <td className="p-3">{product?.productUnits[0]?.name}</td>
               <td className="p-3">
                 <div className="aspect-[4/3] w-10">
                   <img

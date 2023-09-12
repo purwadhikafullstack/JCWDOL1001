@@ -95,7 +95,6 @@ export default function ModalAddProductUnit({
             if(output.data.isDefault == 1 && output.data.convertion === 0) throw(
                 alert("Default Unit must have qty per unit")
             )
-            
             dispatch(addUnit(output))
 
             setConfirmation(false)

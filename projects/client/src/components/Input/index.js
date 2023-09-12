@@ -15,6 +15,16 @@ const Input = React.forwardRef(({
   onBlur,
   isDisabled
 },ref) => {
+
+  const handleChange = (e) => {
+    if (type === "number") {
+      const inputVal = e.target.value.replace(/[^0-9]/g, "");
+      e.target.value = inputVal
+    }
+
+    onChange()
+  };
+
   const [showPassword, setShowPassword] = useState(false);
 
   const inputClass = [className];
@@ -82,13 +92,14 @@ const Input = React.forwardRef(({
       );
     }
 
+  if (type === "text") {
     return (
         <div className="">
           {label && <label htmlFor={id}>{label}</label>}
           <input
             ref={ref}
             value={value}
-            type={type}
+            type="text"
             name={name}
             className={inputClass.join(" ")}
             id={id}
@@ -96,10 +107,34 @@ const Input = React.forwardRef(({
             autoFocus={autoFocus}
             onChange={onChange}
             onBlur={onBlur}
-          disabled={isDisabled}
+            onWheel={(e) => e.target.blur()}
+            disabled={isDisabled}
         />
       </div>
-  );
-});
+    );
+  }
+
+  if (type === "number") {
+    return (
+        <div className="">
+          {label && <label htmlFor={id}>{label}</label>}
+          <input
+            ref={ref}
+            value={value}
+            type="text"
+            name={name}
+            className={inputClass.join(" ")}
+            id={id}
+            placeholder={placeholder}
+            autoFocus={autoFocus}
+            onChange={handleChange}
+            onBlur={onBlur}
+            onWheel={(e) => e.target.blur()}
+            disabled={isDisabled}
+        />
+      </div>
+    );
+  }
+})
 
 export default Input;
