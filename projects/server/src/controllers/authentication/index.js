@@ -1,7 +1,5 @@
 const { ValidationError } = require("yup")
-
 const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
-
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
 const {RegisterValidationSchema, VerifyValidationSchema  } = require("./validation.js")
@@ -25,7 +23,8 @@ const login = async (req, res, next) => {
             {
                 where: {email},
                 include : {
-                    model : User_Profile
+                    model : User_Profile,
+                    as : "userProfile"
                 }
             }
         )
@@ -45,7 +44,8 @@ const login = async (req, res, next) => {
         const accessToken = helperToken.createToken({ 
             UUID: userExists?.dataValues?.UUID, 
             email : userExists?.dataValues?.email,
-            roleId : userExists?.dataValues?.role
+            roleId : userExists?.dataValues?.role,
+            userId : userExists?.dataValues?.userId,
         });
         
         delete userExists?.dataValues?.password;

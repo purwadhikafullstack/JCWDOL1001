@@ -1,9 +1,23 @@
 import { useNavigate } from "react-router-dom"
 import unggahImg from "../../../assets/unggah-resep.svg";
 import Button from "../../../components/Button";
+import { useState } from "react";
+import Modal from "../../../components/Modal";
 
-export default function UnggahResep() {
-  const navigate = useNavigate();
+export default function UnggahResep({user}) {
+  const navigate = useNavigate()
+
+  const [showModal, setShowModal] = useState({show:false, context:""})
+  
+  const handleCloseModal = () => {
+    setShowModal({ show: false, context: "" });
+  }
+
+  const handleButtonUpload = () => {
+    !user.uuid ? setShowModal({ show: true, context: "login" })
+    : navigate("/upload-recipe")
+  }
+
   return (
     <div>
       <h3 className="title lg:hidden">Punya resep Dokter?</h3>
@@ -25,12 +39,18 @@ export default function UnggahResep() {
           <Button
             isButton
             isPrimary
-            onClick={() => navigate("/upload-recipe")}
+            onClick={handleButtonUpload}
             title="Unggah Disini"
             className="mt-2 self-center lg:w-60"
           />
         </div>
       </div>
+      <Modal
+        showModal={showModal.show}
+        closeModal={handleCloseModal}
+        context={showModal.context}
+        title={`Login`}
+      />
     </div>
   );
 }
