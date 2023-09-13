@@ -62,6 +62,11 @@ const Product_Unit = db.sequelize.define("product_unit", {
     name : {
         type: db.Sequelize.STRING,
         allowNull: false
+    },
+    isSecondary : {
+        type: db.Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0
     }
 },{
     timestamps: false

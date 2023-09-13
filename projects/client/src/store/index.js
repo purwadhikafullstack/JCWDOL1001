@@ -4,6 +4,7 @@ import productsReducer from "./slices/product"
 import catReducer from "./slices/cat"
 import addressReducer from "./slices/address"
 import unitReducer from "./slices/product/unit"
+import uploadRecipeReducer from "./slices/upload-recipe"
 
 const store = configureStore({
     reducer : {
@@ -11,7 +12,8 @@ const store = configureStore({
         products: productsReducer,
         units: unitReducer,
         cat : catReducer,
-        address : addressReducer
+        address : addressReducer,
+        uploadRecipe : uploadRecipeReducer,
     },
 })
 

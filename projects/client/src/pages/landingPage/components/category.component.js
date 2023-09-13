@@ -1,7 +1,50 @@
+import { useEffect, useRef, useState } from "react";
 import Button from "../../../components/Button";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 export default function Categories({ categories }) {
+  const [categoryScroll, setCategoryScroll] = useState(0);
+  const [maxScroll, setMaxScroll] = useState(0);
 
+  const categoryWrapperRef = useRef(null);
+
+  const scrollLeft = () => {
+    if (categoryWrapperRef.current) {
+      categoryWrapperRef.current.scrollLeft -= 350;
+    }
+  };
+
+
+  const scrollRight = () => {
+    if (categoryWrapperRef.current) {
+      categoryWrapperRef.current.scrollLeft += 350;
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = categoryWrapperRef.current.scrollLeft;
+
+      setCategoryScroll(currentScroll);
+
+      const maxScrollValue =
+        categoryWrapperRef.current.scrollWidth -
+        categoryWrapperRef.current.clientWidth;
+
+      setMaxScroll(maxScrollValue);
+    };
+
+    if (categoryWrapperRef.current) {
+      categoryWrapperRef.current.addEventListener("scroll", handleScroll);
+      handleScroll();
+    }
+
+    return () => {
+      if (categoryWrapperRef.current) {
+        categoryWrapperRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
   return (
     <>
       <h3 className="title">Kategori</h3>
@@ -24,6 +67,24 @@ export default function Categories({ categories }) {
               </p>
             </Button>
           ))}
+
+          {categoryScroll > 0 && (
+            <div
+              className="scroll-button absolute left-0 top-1/2 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-slate-50 text-dark shadow-lg duration-300 hover:bg-slate-200 lg:-left-5 lg:flex"
+              onClick={scrollLeft}
+            >
+              <FaChevronLeft />
+            </div>
+          )}
+
+          {categoryScroll < maxScroll && maxScroll > 0 && (
+            <div
+              className="scroll-button right-button absolute right-0 top-1/2 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-slate-50 text-dark shadow-lg duration-300 hover:bg-slate-200 lg:-right-5 lg:flex"
+              onClick={scrollRight}
+            >
+              <FaChevronRight />
+            </div>
+          )}
         </div>
       </div>
     </>

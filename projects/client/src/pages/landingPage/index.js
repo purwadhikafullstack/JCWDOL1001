@@ -10,10 +10,9 @@ import {getCategory,} from "../../store/slices/cat/slices.js";
 import { getProducts } from "../../store/slices/product/slices";
 
 export default function LandingPage() {
-  const { user, status, role, categories, products  } = useSelector(state => {
+  const { user, role, categories, products  } = useSelector(state => {
 		return {
 			user : state?.auth,
-			status : state?.auth?.status,
 			role : state?.auth?.role,
 			categories : state?.cat?.category,
 			products : state?.products?.data,
@@ -27,13 +26,26 @@ export default function LandingPage() {
     if(role === 1){
       navigate("/admin/products", "replace")
     }
+  }, [role]);
+
+  useEffect(()=>{
     dispatch(getCategory())
-    dispatch(getProducts())
-  }, [user, status, role]);
+    dispatch(
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+        limit:12,
+      })
+    )
+  },[])
+
   return (
     <div>
       <div className="container pt-24">
-        <UnggahResep/>
+        <UnggahResep user={user}/>
 
         <div className="mt-4">
           <Categories categories={categories} />
