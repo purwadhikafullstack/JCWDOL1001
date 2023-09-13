@@ -23,7 +23,8 @@ const login = async (req, res, next) => {
             {
                 where: {email},
                 include : {
-                    model : User_Profile
+                    model : User_Profile,
+                    as : "userProfile"
                 }
             }
         )
@@ -43,7 +44,8 @@ const login = async (req, res, next) => {
         const accessToken = helperToken.createToken({ 
             UUID: userExists?.dataValues?.UUID, 
             email : userExists?.dataValues?.email,
-            roleId : userExists?.dataValues?.role
+            roleId : userExists?.dataValues?.role,
+            userId : userExists?.dataValues?.userId,
         });
         
         delete userExists?.dataValues?.password;

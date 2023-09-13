@@ -4,7 +4,7 @@ const { helperUploader } = require("../../helper/index.js");
 const { uploadRecipe } = require("./index.js");
 
 const router = express.Router()
-// @setup multer
+
 const storage = helperUploader.createCloudinaryStorage("Public/Upload-recipe")
 const uploader = helperUploader.createUploader(storage)
 
