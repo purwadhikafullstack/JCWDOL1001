@@ -2,6 +2,7 @@ const { User_Account, User_Profile, User_Address, User_Role, User_Status } = req
 const { Product_List, Product_Category, Product_Unit, Product_Detail,Product_History } = require("./product.js")
 const { Categories } = require("./category.js")
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./transaction.js")
+const { Cart} = require("./cart.js")
 
 // @define relation
 //acc-address, one to many
@@ -61,6 +62,11 @@ Transaction_Detail.belongsTo(Transaction_List, {foreignKey : "transactionId"})
 Product_Detail.hasMany(Transaction_Detail,{foreignKey : "productId", otherKey:"transactionId"})
 Transaction_Detail.belongsTo(Product_Detail,{foreignKey : "productId", otherKey:"unitId",as: "productDetail"})
 
+Product_Detail.hasMany(Cart,{sourceKey : "productId", foreignKey : "productId"})
+Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"})
+User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
+Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
+
 module.exports = { 
     User_Account, 
     User_Profile, 
@@ -75,5 +81,6 @@ module.exports = {
     Categories,
     Transaction_List,
     Transaction_Detail,
-    Transaction_Status
+    Transaction_Status,
+    Cart
 }
