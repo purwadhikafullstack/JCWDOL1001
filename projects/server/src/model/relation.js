@@ -93,5 +93,6 @@ module.exports = {
     Transaction_Status,
     Discount,
     Discount_Product,
-    Discount_Transaction
+    Discount_Transaction,
+    Transaction_Status
 }

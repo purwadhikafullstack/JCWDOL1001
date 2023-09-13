@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Button from "../Button";
+import { toast } from 'react-toastify';
 
 export default function InputImage({
   file,
@@ -15,7 +16,19 @@ export default function InputImage({
   const onDrop = (acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > 1000000) {
-      alert("file too large. Max 1 MB");
+      toast.error("file too large. Max 1 MB", 
+          {
+              position: "top-center",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+          }
+      )
+      // alert("file too large. Max 1 MB");
       return;
     }
     setFile(selectedFile);

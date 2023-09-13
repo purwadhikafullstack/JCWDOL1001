@@ -1,5 +1,6 @@
 const SOMETHING_WENT_WRONG = "Something went wrong";
 const EMAIL_NOT_FOUND = "Email not found"
+const USER_NOT_FOUND = "User not found"
 const INCORRECT_PASSWORD = "Password is incorrect"
 const BAD_REQUEST = "Bad request"
 const LINK_EXPIRED = "Gone. Your OTP is expired. Please ask for resend OTP code in previous page."
@@ -80,4 +81,5 @@ module.exports = {
     PRODUCT_HAS_CATEGORY,
     DISCOUNT_NOT_FOUND,
     DISCOUNT_NAME_ALREADY_EXIST,
+    USER_NOT_FOUND
 }
