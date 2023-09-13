@@ -4,6 +4,7 @@ export const inputProductValidationSchema = Yup.object({
   productName: Yup.string()
     .required("Product name is required"),
   productPrice: Yup.string()
+    .min(1, "Price must be greater than 0")
     .required("Price is required"),
   productDosage: Yup.string()
     .required("Dosage is required"),
@@ -16,21 +17,13 @@ export const inputProductValidationSchema = Yup.object({
     .required("Category is required"),
   productPicture: Yup.mixed()
     .required("Image is required")
-    // .test("fileFormat", "Invalid file format", (value) => {
-    //   if (!value) return false;
-    //   return value && value.type.startsWith("image/");
-    // })
-    // .test("fileSize", "File size is too large", (value) => {
-    //   if (!value) return false;
-    //   const maxSize = 1 * 1024 * 1024;
-    //   return value && value.size <= maxSize;
-    // }),
 });
 
 export const updateProductValidationSchema = Yup.object({
   productName: Yup.string()
     .required("Product name is required"),
   productPrice: Yup.string()
+    .min(1, "Price must be greater than 0")
     .required("Price is required"),
   productDosage: Yup.string()
     .required("Dosage is required"),
@@ -43,11 +36,6 @@ export const updateProductValidationSchema = Yup.object({
     .required("Category is required"),
   productPicture: Yup.mixed()
     .nullable()
-    // .test("fileSize", "File size is too large", (value) => {
-    //   if (!value) return true;
-    //   const maxSize = 1 * 1024 * 1024;
-    //   return value.size <= maxSize;
-    // }),
 });
 
 export const updateMainStockValidationSchema = Yup.object({
