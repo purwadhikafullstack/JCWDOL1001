@@ -1,11 +1,24 @@
-const { User_Account } = require("../../model/relation.js")
-const { middlewareErrorHandling } = require("../../middleware/index.js")
+const path = require("path")
+const fs = require("fs")
+const handlebars = require("handlebars")
 const cloudinary =require("cloudinary")
+const {GMAIL} = require("../../config/index.js")
+const {helperTransporter} = require("../../helper/index.js")
+const { User_Account, User_Profile } = require("../../model/relation.js")
+const { middlewareErrorHandling } = require("../../middleware/index.js")
 
 
 const uploadRecipe = async (req, res, next) => {
   try {
-    const isUserExist = await User_Account.findOne({where : { UUID : req.user.UUID }})
+    const isUserExist = await User_Account.findOne({
+      where : { UUID : req.user.UUID },
+      attributes : ["email","imgRecipe"],
+      include : {
+        model : User_Profile,
+        as : "userProfile",
+        attributes : ["name","gender","birthdate","phone"]
+      }
+    })
 
     if(!isUserExist) throw({
         status : middlewareErrorHandling.NOT_FOUND_STATUS, 
@@ -22,6 +35,26 @@ const uploadRecipe = async (req, res, next) => {
         { imgRecipe : req?.file?.filename },
         { where : { UUID : req.user.UUID } }
     )
+
+    const admin = await User_Account.findOne({where : {role : 1}})
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnRecipe.html"), "utf8")
+    const html = handlebars.compile(template)({ 
+      name: (isUserExist.userProfile.name), 
+      link :(process.env.CLOUDINARY_BASE_URL + req.file.filename) 
+    })
+
+    const mailOptions = {
+      from: `Apotech Team Support <${GMAIL}>`,
+      to: admin.email,
+      subject: `${isUserExist.userProfile.name} just uploaded an recipe`,
+      html: html
+    }
+    
+    helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+    })
     
     res.status(200).json({ 
         type : "success",

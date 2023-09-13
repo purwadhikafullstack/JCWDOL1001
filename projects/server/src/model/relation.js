@@ -10,7 +10,7 @@ User_Address.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId
 User_Role.hasMany(User_Account,{sourceKey : "role", foreignKey : "role"})
 User_Account.belongsTo(User_Role, {targetKey : "role", foreignKey : "role"})
 //acc-profiles
-User_Account.hasOne(User_Profile,{sourceKey : "userId", foreignKey : "userId"})
+User_Account.hasOne(User_Profile,{sourceKey : "userId", foreignKey : "userId", as :"userProfile"})
 User_Profile.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId"})
 //status-account
 User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})

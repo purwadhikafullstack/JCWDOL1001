@@ -1,7 +1,5 @@
 const { ValidationError } = require("yup")
-
 const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
-
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
 const {RegisterValidationSchema, VerifyValidationSchema  } = require("./validation.js")

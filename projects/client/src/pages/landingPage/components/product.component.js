@@ -1,23 +1,29 @@
-import React from "react"
+import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Button from "../../../components/Button"
 import formatNumber from "../../../utils/formatNumber"
+import Modal from "../../../components/Modal"
 
 export default function Produk({ products }) {
 
-  const { uuid, status,   } = useSelector(state => {
+  const { uuid, status, } = useSelector(state => {
 		return {
 			uuid : state?.auth?.uuid,
 			status : state?.auth?.status,
 		}
 	})
 
+  const [showModal, setShowModal] = useState({ show: false, context: "" });
+
   const handleCart = ({id,name}) => {
-    !uuid ? alert("You must login first")
+    !uuid ? setShowModal({ show: true, context: "login" })
     : status === 0 ? alert("Your account is unverified, please verify first")
     : alert(`Produk ${name} berhasil ditambahkan ke keranjang!`) // dan akan sekalian add to cart produk yg diinginkan
-  };
+  }
 
+  const handleCloseModal = () => {
+    setShowModal({ show: false, context: "" });
+  }
   
   return (
     <>
@@ -51,6 +57,12 @@ export default function Produk({ products }) {
           />
         </div>
       ))}
+      <Modal
+        showModal={showModal.show}
+        closeModal={handleCloseModal}
+        context={showModal.context}
+        title={`Login`}
+      />
     </>
   );
 }
