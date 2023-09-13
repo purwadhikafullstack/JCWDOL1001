@@ -180,7 +180,7 @@ const checkDiscount = async (req, res, next) =>{
 
         const filter = { code, nominal, productId }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
-        if(nominal) filter.nominal = {minimalTransaction: {[Op.like]: `${nominal}`}}
+        if(nominal) filter.nominal = {minimalTransaction: {[Op.gte]: `${nominal}`}}
         if(productId) filter.productId = {productId: {[Op.like]: `${productId}`}}
 
         const isDiscountExist = await Discount.findAll({ 
