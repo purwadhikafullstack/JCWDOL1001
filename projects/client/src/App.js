@@ -20,6 +20,7 @@ import ProductDetail from "./pages/user/product.detail";
 import { ToastContainer } from "react-toastify";
 
 import 'react-toastify/dist/ReactToastify.css';
+import UploadRecipePage from "./pages/user/upload-recipe";
 
 function App() {
   const { pathname } = useLocation();
@@ -95,6 +96,7 @@ function App() {
           )}
 
           <Route path="/verify/*" element={<Verification/>} />
+          <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       {/* <Footer /> */}
