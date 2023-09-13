@@ -71,7 +71,6 @@ const productsSlice = createSlice({
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.isSubmitProductLoading = false;
-        state.errorMessage = action.payload;
       })
 
       .addCase(updateProduct.pending, (state, action) => {
@@ -83,7 +82,6 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.isSubmitProductLoading = false;
-        state.errorMessage = action.payload;
       })
 
       .addCase(deleteProduct.pending, (state, action) => {

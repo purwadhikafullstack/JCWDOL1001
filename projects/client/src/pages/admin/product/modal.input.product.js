@@ -7,6 +7,7 @@ import { getCategory } from "../../../store/slices/cat/slices";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiXMark } from "react-icons/hi2";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
+import { toast } from "react-toastify";
 import {
   createProduct,
   updateProduct,
@@ -27,7 +28,6 @@ export default function ModalInputProduct({
   setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
-  errorMessage,
 }) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
 
@@ -133,13 +133,9 @@ export default function ModalInputProduct({
       });
       setError(errors);
 
-      window.alert("Check your input field!")
+      toast.error("Check your input field!")
     }
   };
-
-  if (isSubmitProductLoading) {
-    return <LoadingSpinner isLarge />;
-  }
 
   if (success) {
     return (
@@ -150,16 +146,6 @@ export default function ModalInputProduct({
             ? "Product Updated Successfully"
             : "Product Added Successfully!"
           }
-        handleCloseModal={handleCloseModal}
-      />
-    );
-  }
-
-  if (errorMessage) {
-    return (
-      <Message
-        type="error"
-        message={errorMessage}
         handleCloseModal={handleCloseModal}
       />
     );
@@ -313,8 +299,7 @@ export default function ModalInputProduct({
           </div>
         </div>
 
-        {confirmAdd && (
-          <div className={``}>
+          <div className={`${!confirmAdd ? "hidden" : null}`}>
             {productData ? (
               <p className="modal-text">
                 Are you sure you want to update this product?
@@ -341,22 +326,16 @@ export default function ModalInputProduct({
                 />
               )}
 
-              <button
-                className="mt-4
-                select-none rounded-lg
-                bg-primary
-                px-6 py-2
-                text-sm
-                text-white
-                duration-300
-                hover:bg-teal-700"
+              <Button 
+                isButton
+                isPrimary
+                title={"Sure"}
+                className="mt-4"
                 type="submit"
-              >
-                Sure
-              </button>
+                isLoading={isSubmitProductLoading}
+              />
             </div>
           </div>
-        )}
       </form>
 
       <AnimatePresence>
