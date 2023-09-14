@@ -184,9 +184,9 @@ const deleteProductCart = async (req, res, next) => {
                 //deleteProductCart => drop table pake destroy where userId dan productId
 
                 //grab data from req.body
-                const {productId} = req.body;
-                //do validation
-                await DeleteCartValidationSchema.validate(req.body)
+                const {productId} = req.params;
+                // //do validation
+                // await DeleteCartValidationSchema.validate(req.body)
                 //grab user from UUid
                 const user = await User_Account.findOne({where : {UUID : req?.user?.UUID}})
                 //find all product in cart from userId 
