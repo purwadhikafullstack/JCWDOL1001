@@ -1,7 +1,52 @@
 const Axios = require("axios");
 const path = require("path")
 const fs = require("fs")
+const {middlewareErrorHandling} = require("../../middleware/index.js");
 
+const { User_Address } = require("../../model/relation.js");
+const { Op } = require("sequelize");
+
+const getAddress = async (req, res, next) =>{
+    try {
+        const userId = req.user.userId
+        
+        const address = await User_Address.findAll({where: { userId }})
+
+        if (!address) {
+            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
+        }
+
+        res.status(200).json({ 
+            message : "Address fetched!",
+            data: address
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteAddress = async (req, res, next) =>{
+    try {
+        const addressId = req.params.addressId
+        const userId = req.user.userId
+        
+        const addressExists = await User_Address.findOne({
+            where : {[Op.and] : [{ addressId }, { userId }]},
+        })
+
+        if (!addressExists) {
+            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
+        }
+
+        await addressExists.update({ isDeleted: 1 });
+
+        res.status(200).json({ 
+            message : "Address Deleted!",
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 const getListProvince = async (req, res, next) => {
     try {
@@ -73,7 +118,9 @@ const getCost = async (req, res, next) => {
 }
 
 module.exports = {
+    getAddress,
+    deleteAddress,
     getListProvince,
     getListCity,
-    getCost
+    getCost,
  }

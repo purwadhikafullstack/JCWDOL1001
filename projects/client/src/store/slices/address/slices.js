@@ -3,13 +3,41 @@ import api from "../../utils/api.instance";
 import Axios from "axios";
 
 
-export const listProvince = createAsyncThunk(
-    "address/province",
-     
+export const getAddress = createAsyncThunk(
+    "address/userAddress",
     async (payload, { rejectWithValue }) => {
         try {
 
-           const response = await api.get("address")
+            const { data } = await api.get("/address/user-address")
+
+            return data
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const deleteAddress = createAsyncThunk(
+    "address/deleteAddress",
+    async (payload, { rejectWithValue }) => {
+        try {
+
+            const { data } = await api.patch("/address/delete/" + payload)
+
+            return data
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const listProvince = createAsyncThunk(
+    "address/province",
+
+    async (payload, { rejectWithValue }) => {
+        try {
+
+          const response = await api.get("address")
 
             const {data} = response
 
@@ -24,13 +52,13 @@ export const listProvince = createAsyncThunk(
 
 export const listCity = createAsyncThunk(
     "address/city",
-     
+
     async (payload, { rejectWithValue }) => {
         try {
             const response = await api.get(`address/city?province=${payload?.province}`)
 
             const {data} = response
- 
+
             return data
             
         } catch (error) {
@@ -43,7 +71,6 @@ export const listCity = createAsyncThunk(
 
 export const cost = createAsyncThunk(
     "address/cost",
-     
     async (payload, { rejectWithValue }) => {
         try {
             //teruntuk siapapun yang ngerjain ongkir

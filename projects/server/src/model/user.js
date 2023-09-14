@@ -107,7 +107,12 @@ const User_Address = db.sequelize.define("user_address", {
     postalCode: {
         type : db.Sequelize.INTEGER,
         allowNull : false
-    }
+    },
+    isDeleted : {
+        type : db.Sequelize.INTEGER,
+        allowNull : false,
+        defaultValue : 0
+    },
 },{
   timestamps: false
 });

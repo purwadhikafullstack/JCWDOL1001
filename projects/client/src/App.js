@@ -22,6 +22,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import UploadRecipePage from "./pages/user/upload-recipe";
 import Profile from "./pages/user/profile/profile";
+import Address from "./pages/user/profile/address";
 
 function App() {
   const { pathname } = useLocation();
@@ -97,10 +98,13 @@ function App() {
           )}
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/address" element={<Address />} />
+
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+
       {/* <Footer /> */}
       <ToastContainer 
         position="top-center"
