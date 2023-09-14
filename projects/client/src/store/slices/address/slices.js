@@ -8,7 +8,7 @@ export const getAddress = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-            const { data } = await api.get("/address/user-address")
+            const { data } = await api.get("/")
 
             return data
         } catch (error) {
@@ -37,7 +37,7 @@ export const listProvince = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-          const response = await api.get("address")
+          const response = await api.get("address/province")
 
             const {data} = response
 
