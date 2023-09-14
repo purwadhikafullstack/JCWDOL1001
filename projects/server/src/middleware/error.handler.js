@@ -23,6 +23,8 @@ const INPUT_MORE_THAN_STOCK = "Stock available is less than convertion time(s)"
 const PRODUCT_HAS_CATEGORY = "The Category you want to delete has Product used it."
 const DISCOUNT_NOT_FOUND = "Discount not found"
 const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
+const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
+const VOUCHER_CANT_WITH_AMOUNT  ="Discount amount can't be use with voucher code"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -81,5 +83,7 @@ module.exports = {
     PRODUCT_HAS_CATEGORY,
     DISCOUNT_NOT_FOUND,
     DISCOUNT_NAME_ALREADY_EXIST,
-    USER_NOT_FOUND
+    USER_NOT_FOUND,
+    VOUCHER_CODE_EMPTY,
+    VOUCHER_CANT_WITH_AMOUNT
 }

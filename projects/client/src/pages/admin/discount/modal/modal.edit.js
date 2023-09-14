@@ -7,19 +7,19 @@ import ProductList from "./product.list"
 import { createDiscount, updateDiscount } from "../../../../store/slices/discount/slices"
 import SuccessMessage from "../../../../components/Message"
 import {formatDate, formatDateValue} from "../../../../utils/formatDate"
+import { toast } from "react-toastify"
 
 export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,products,isNew,success}) {
     const dispatch = useDispatch()
-
-    const nameRef = useRef()
-    const codeRef = useRef()
-    const descRef = useRef()
-    const expiredRef = useRef()
-    const amountRef = useRef()
-    const minimumRef = useRef()
+    const nameRef = useRef("")
+    const codeRef = useRef("")
+    const descRef = useRef("")
+    const expiredRef = useRef("")
+    const amountRef = useRef("0")
+    const minimumRef = useRef("0")
 
     const [onEdit, setEdit] = useState(isNew)
-
+    
     const [isPercentage, setIsPercentage] = useState({
         id : `${selectedId?.isPercentage ?  1: 0 }`,
         name : `${selectedId?.isPercentage ? "yes": "no" }`
@@ -31,9 +31,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     })
 
     const onButtonCancel = () => {
-        if(!selectedId){
-            handleCloseModal()
-        }
+        if(!selectedId){ handleCloseModal()}
         handleShowModal({context:"Details Discount", id:selectedId.discountId})
         setEdit(false)
     }
@@ -41,23 +39,36 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     const [selectedProducts, setSelectedProducts] = useState([]);
     const output = {}
 
-    const onButtonSave = () => {
-        output.data = {
-            "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-            "isPercentage" : isPercentage.id ,
-            "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
-            "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-            "oneGetOne" : isOneGetOne.id,
-            "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : selectedId?.minimalTransaction,
-            "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
-            "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode
-        }
-        output.products =selectedProducts?.map(({productId}) => { return {productId} })
-        console.log(output)
-        if(!selectedId){
-            dispatch(createDiscount(output))
-        }else {dispatch(updateDiscount({discountId : selectedId?.discountId,output}))}
+    const onButtonSave = async () => {
+        try {
+            if((isOneGetOne.id === 1 || minimumRef?.current?.value =="0") && codeRef?.current?.value === "" ){
+                return toast.error("Voucher code can't be empty")
+            }
+            if((amountRef?.current?.value === "" || amountRef?.current?.value == "0" ) && codeRef?.current?.value !== "" ){
+                return toast.error("Discount amount can't be use with voucher code")
+            }
+            output.data = {
+                "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
+                "isPercentage" : isPercentage.id ,
+                "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
+                "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
+                "oneGetOne" : isOneGetOne.id,
+                "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : selectedId?.minimalTransaction,
+                "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
+                "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode
+            }
+            if(!selectedId){
+                output.products = selectedProducts.map(({productId, productPrice}) => { return {productId, productPrice} })
+                dispatch(createDiscount(output))
+            }else {
+                output.products = selectedProducts
+                dispatch(updateDiscount({discountId : selectedId?.discountId,output}))
+            }
+        }catch(error){}
     }
+    useEffect(() => {
+        setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
+    }, [])
     if (success) {  
         return ( 
             <SuccessMessage 
@@ -67,7 +78,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             /> 
         ) 
     }
-
   return (
     <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
         <Button
@@ -93,7 +103,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 onClick = {onButtonSave}
             />
         </div>
-
         <div className="flex items-center justify-between max-w-[80%] gap-8">
             <div className="">
                 <h3 className={`${onEdit ? "title mt-2" : "title mt-4" }`}>Name : </h3>
@@ -103,7 +112,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     placeholder = {selectedId?.discountName}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountName}</h1>
-
                 <h3 className="title mt-4">Description : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "textarea" }`}
@@ -111,7 +119,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     placeholder = {selectedId?.discountDesc}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountDesc}</h1>
-
                 <h3 className={`${onEdit ? "title mt-5" : "title mt-4" }`}>Is Percentage : </h3>
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? "Yes" : "No" }</h1>
                 <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="percentage">
@@ -123,10 +130,8 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                             value="yes"
                             checked = {isPercentage?.name === "yes" ? true : false}
                             onChange={()=>{setIsPercentage({id:"1",name:"yes"})}}
-                            
                         />
                         <label for="1" className="mr-4">Yes</label>
-
                         <input 
                             type="radio" 
                             id="0" 
@@ -138,7 +143,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                         <label for="0">No</label>
                     </div>
                 </fieldset>
-
                 <h3 className="title mt-4">Is One Get One : </h3>
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Yes" : "No" }</h1>
                 <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="oneGetOne">
@@ -173,17 +177,14 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     placeholder = {selectedId?.discountCode ? selectedId?.discountCode : "-"}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountCode ? selectedId?.discountCode : "-"}</h1>
-
                 <h3 className="title mt-4">Expired Date : </h3>
                 <input 
                     type = {`${!onEdit ? "hidden" : "date" }`}
                     ref = {expiredRef}
-                    value = {selectedId?.discountExpired ? formatDateValue(selectedId?.discountExpired).toString() : "-"}
-                    // value = "2023-09-14"
+                    defaultValue = {selectedId?.discountExpired ? formatDateValue(selectedId?.discountExpired).toString() : "-"}
                     className="w-full rounded-lg border bg-inherit px-2 py-2  focus:ring-2"
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? formatDate(selectedId?.discountExpired) : "-"}</h1>
-               
                 <h3 className="title mt-4">Amount : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
@@ -191,7 +192,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `IDR ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? `${selectedId?.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
-
                 <h3 className="title mt-4">Minimum Transaction : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}

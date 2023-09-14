@@ -59,6 +59,18 @@ const createDiscount = async (req, res, next) => {
     try{
         await DiscountInfoValidationSchema.validate(req.body.data)
 
+        const {discountCode,discountAmount,oneGetOne,minimalTransaction,isPercentage,} = req.body.data
+
+        if((oneGetOne === 0 || (minimalTransaction === "" || minimalTransaction =="0")) && discountCode === "" ) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
+        })
+
+        if((discountAmount === "" || discountAmount == "0" ) && discountCode !== "" ) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_CANT_WITH_AMOUNT
+        })
+
         const isNameExist = await Discount.findAll({ where : { discountName : req.body.data.discountName } })
 
         if(isNameExist>0) throw({
@@ -68,15 +80,22 @@ const createDiscount = async (req, res, next) => {
 
         const discountData = await Discount.create(req.body.data)
 
-        if(req.body.products > 0){
-            req.body.products.map((product)=>product.discountId = discountData.discountId)
-            await Discount_Product.bulkCreate(req.body.products)
+        if(req.body.products.length > 0){
+            if(isPercentage == 1 ){
+                req.body.products.map((product)=>product.endingPrice = ((1 - (discountAmount/100) )* product.productPrice))
+            }
+            if(isPercentage == 0 && discountAmount > 0){
+                req.body.products.map((product)=>product.endingPrice = product.productPrice - discountAmount)
+            }
+            await req.body.products.map((product)=>product.discountId = discountData.discountId)
+            const outputProducts = req.body.products.map(({productId, endingPrice,discountId}) => { return {productId, endingPrice,discountId} })
+            await Discount_Product.bulkCreate(outputProducts)
         }
 
 		res.status(200).json({
 			type : "success",
 			message : "Data berhasil dimuat",
-            discountData
+            
 		})
 	}catch(error){
 		next(error)
@@ -86,6 +105,8 @@ const createDiscount = async (req, res, next) => {
 const updateDiscount = async (req, res, next) =>{
     try{
         await DiscountInfoValidationSchema.validate(req.body.data)
+        
+        const {discountCode,discountAmount,oneGetOne,minimalTransaction,isPercentage,} = req.body.data
 
         const discountId = req.params.discountId
 
@@ -102,17 +123,33 @@ const updateDiscount = async (req, res, next) =>{
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.DISCOUNT_NAME_ALREADY_EXIST
         })
-        
-        await DiscountInfoValidationSchema.validate(req.body.data)
+
+        if((oneGetOne === 0 || (minimalTransaction === "" || minimalTransaction =="0")) && discountCode === "" ) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
+        })
+
+        if((discountAmount === "" || discountAmount == "0" ) && discountCode !== "" ) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_CANT_WITH_AMOUNT
+        })
 
         await Discount.update(req.body.data, { where : { discountId } })
 
-        if(req.body.products){
+        if(req.body.products.length > 0){
             await Discount_Product.destroy({ where : { discountId } })
-
-            req.body.products.map((product)=>product.discountId = discountId)
-
-            await Discount_Product.bulkCreate(req.body.products)
+            
+            if(isPercentage == 1 ){
+                req.body.products.map((product)=>product.endingPrice = ((1 - (discountAmount/100) )* product.detailProduct.productPrice))
+            }
+            if(isPercentage == 0 && discountAmount > 0){
+                req.body.products.map((product)=>product.endingPrice = product.detailProduct.productPrice - discountAmount)
+            }
+            await req.body.products.map((product)=>product.discountId = discountId)
+            
+            const outputProducts = req.body.products.map(({productId, endingPrice,discountId}) => { return {productId, endingPrice,discountId} })
+            
+            await Discount_Product.bulkCreate(outputProducts)
         }
 
         const discountData = await Discount.findOne({ 
@@ -176,7 +213,6 @@ const deleteDiscount = async (req, res, next) =>{
     }
 }
 
-
 const checkDiscount = async (req, res, next) =>{
     try{
         const { code, nominal, productId } = req.body
@@ -184,7 +220,8 @@ const checkDiscount = async (req, res, next) =>{
         const filter = { code, nominal, productId }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
         if(nominal) filter.nominal = {minimalTransaction: {[Op.gte]: `${nominal}`}}
-        if(productId) filter.productId = {productId: {[Op.like]: `${productId}`}}
+        if(productId) filter.productId = {productId: {[Op.or]: productId}}
+
 
         const isDiscountExist = await Discount.findAll({ 
             include : {
@@ -194,7 +231,7 @@ const checkDiscount = async (req, res, next) =>{
                 where : filter.productId
             },
             where : {
-                [Op.and]: [
+                [Op.or]: [
                     { isDeleted : 0 },
                     { [Op.or] :[
                         filter.nominal,

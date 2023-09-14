@@ -46,9 +46,9 @@ export default function DiscountPage(){
 
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
-        setSelected()
+        setSelected([])
         dispatch(
-            getDiscount({page : 0,discountName : discountRef?.current.value})
+            getDiscount({page : currentPage,discountName : discountRef?.current.value})
         )
         document.body.style.overflow = "auto"
     };
@@ -64,7 +64,7 @@ export default function DiscountPage(){
 
     useEffect(()=>{
         dispatch(
-            getDiscount({page : 0,discountName : discountRef?.current.value})
+            getDiscount({page : currentPage,discountName : discountRef?.current.value})
         )
         dispatch(getProducts({page:0}))
     },[])
@@ -117,8 +117,7 @@ export default function DiscountPage(){
                 >
                     {showModal.context === "Delete Discount" && (
                         <ModalDeleteDiscount
-                            name={showModal.name}
-                            id={showModal.id}
+                            selectedDiscount={selectedId}
                             success={success}
                             handleCloseModal={handleCloseModal}
                             isDeleteLoading={isDeleteLoading}
