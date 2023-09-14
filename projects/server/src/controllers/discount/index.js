@@ -8,8 +8,8 @@ const getDiscount = async (req, res, next) => {
         const { page, discountName } = req.query
 
         const options = {
-            offset: page > 1 ? parseInt(page - 1) * 2 : 0,
-            limit : 2,
+            offset: page > 1 ? parseInt(page - 1) * 5 : 0,
+            limit : 5,
         }
 
         const filter = { discountName }
@@ -22,19 +22,16 @@ const getDiscount = async (req, res, next) => {
                 attributes : ["productId"],
                 as : "productDiscount",
                 include : {
-                    model : Product_Detail,
-                    attributes : ["quantity","convertion"],
-                    as : "productDetail",
-                    include : {
-                        model : Product_List,
-                        as : "productList",
-                        attributes : {
-                            exclude : ["productId","isDeleted","productPicture"]
-                        }
-                    }
+                    model : Product_List,
+                    as: "detailProduct"
                 }
             },
-            where : filter.discountName,
+            where : {
+                [Op.and]: [
+                    filter.discountName,
+                    {"isDeleted" : 0}
+                ]
+            },
         })
 
         if(discount.length === 0) throw({
@@ -42,9 +39,15 @@ const getDiscount = async (req, res, next) => {
             message : middlewareErrorHandling.DISCOUNT_NOT_FOUND
         })
 
+        const total = discountName || page ?  await Discount?.count({where : { [Op.and]: [ filter.discountName, {"isDeleted" : 0} ] }}) : await Discount?.count({where : {"isDeleted" :0}})
+
+        const pages = Math.ceil(total / options.limit)
+
 		res.status(200).json({
 			type : "success",
 			message : "Data berhasil dimuat",
+            currentPage : page ? page : 1,
+            totalPage : pages,
 			discount : discount
 		})
 	}catch(error){
@@ -65,7 +68,7 @@ const createDiscount = async (req, res, next) => {
 
         const discountData = await Discount.create(req.body.data)
 
-        if(req.body.products){
+        if(req.body.products.length > 0){
             req.body.products.map((product)=>product.discountId = discountData.discountId)
             await Discount_Product.bulkCreate(req.body.products)
         }
@@ -93,9 +96,9 @@ const updateDiscount = async (req, res, next) =>{
             message : middlewareErrorHandling.DISCOUNT_NOT_FOUND
         })
 
-        const isNameExist = await Discount.findAll({ where : { discountName : req.body.data.discountName } })
+        const isNameExist = await Discount.count({ where : { discountName : req.body.data.discountName,[Op.not]:[{discountId}] } })
 
-        if(isNameExist) throw({
+        if(isNameExist>0) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.DISCOUNT_NAME_ALREADY_EXIST
         })
@@ -164,7 +167,7 @@ const deleteDiscount = async (req, res, next) =>{
 
         res.status(200).json({
 			type : "success",
-			message : "Data berhasil diupdate",
+			message : "Data diskon berhasil didelete",
             data : discountData
 		})
 

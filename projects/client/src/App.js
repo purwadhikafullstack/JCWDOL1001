@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 
 import 'react-toastify/dist/ReactToastify.css';
 import UploadRecipePage from "./pages/user/upload-recipe";
+import DiscountPage from "./pages/admin/discount";
 
 function App() {
   const { pathname } = useLocation();
@@ -86,6 +87,7 @@ function App() {
             <>
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
               <Route path="/admin/categories" element={<CategoryList />}/>
+              <Route path="/admin/discount" element={<DiscountPage />}/>
             </>
           )}
 

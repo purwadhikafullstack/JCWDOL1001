@@ -1,6 +1,6 @@
-const Yup = require("yup")
+import Yup from "yup"
 
-const DiscountInfoValidationSchema = Yup.object({
+export const DiscountInfoValidationSchema = Yup.object({
     discountDesc : Yup.string()
         .required("Description is required"),
     discountName : Yup.string()
@@ -16,7 +16,3 @@ const DiscountInfoValidationSchema = Yup.object({
     minimalTransaction : Yup.number("Minimum transaction must be a number").nullable(),
     
 })
-
-module.exports = {
-    DiscountInfoValidationSchema
-}
