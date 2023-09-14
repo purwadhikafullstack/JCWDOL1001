@@ -110,7 +110,7 @@ export default function UserNavMenu({
                         originX: 1,
                       }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.1 }}
                       exit={{
                         opacity: 0,
                         scale: 0,
@@ -132,7 +132,7 @@ export default function UserNavMenu({
                             <div className="">
                               <h3>{user.profile.name}</h3>
                               <p className="text-sm font-normal text-slate-500">
-                                Cek Profil
+                                Profil & Pengaturan
                               </p>
                             </div>
                             <div className="ml-auto flex h-8 w-8 items-center justify-center rounded-full shadow-md">
@@ -144,7 +144,7 @@ export default function UserNavMenu({
                         <div className="flex flex-col gap-2 pt-4">
                           <Button
                             isLink
-                            title="Pengaturan"
+                            title="Unggah Resep"
                             className="hover:text-primary"
                           />
                           <Button
