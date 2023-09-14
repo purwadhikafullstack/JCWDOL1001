@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getAddress } from "../../../../store/slices/address/slices";
 import Button from "../../../../components/Button";
 
-export default function Address() {
+export default function Address({user}) {
   const dispatch = useDispatch()
 
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -24,7 +24,7 @@ export default function Address() {
   return (
     <div className="container py-24">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-4 lg:gap-4">
-        <ProfileCard profile={profile}/>
+        <ProfileCard profile={profile} user={user}/>
         <div className="col-span-3 h-screen">
           <h3 className="title">Alamat</h3>
           {address.map((data, index) => (

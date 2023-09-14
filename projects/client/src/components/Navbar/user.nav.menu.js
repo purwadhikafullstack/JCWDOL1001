@@ -66,19 +66,11 @@ export default function UserNavMenu({
         isLogin ? 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="relative flex gap-4">
-              <Button
-                isButton
-                isPrimary
-                isDisabled={verify}
-                onClick={onClickVerified}
-                className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
-              >
-                <span>Verify Account</span>
-              </Button>
+              
 
-              <Button isLink path="/cart" className={`${isAccountVerified && !verify ? "mt-4" : ""}`} >
+              <Button isLink path="/cart" className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
-                <span className={`absolute -right-2 ${isAccountVerified && !verify ? "-top-[-8px]" : "-top-2" } flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
+                <span className={`absolute -right-2 -top-[8px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
                   4
                 </span>
               </Button>
@@ -86,7 +78,7 @@ export default function UserNavMenu({
             </div>
 
             <div
-              className="profile-img-wrapper relative row-start-2 flex w-full items-center gap-2"
+              className={`profile-img-wrapper relative row-start-2 flex w-full items-center gap-2 ${isAccountVerified ? "lg:border lg:border-danger lg:rounded-full lg:p-0.5" : null }`}
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
               onClick={() => navigate("/profile")}
@@ -153,6 +145,15 @@ export default function UserNavMenu({
                             className="hover:text-primary"
                             onClick={onClickKeluar}
                           />
+                          <Button
+                            isButton
+                            isPrimary
+                            isDisabled={verify}
+                            onClick={onClickVerified}
+                            className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
+                          >
+                            <span>Verify Account</span>
+                          </Button>
                         </div>
                       </div>
                     </motion.div>

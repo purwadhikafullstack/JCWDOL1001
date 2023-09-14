@@ -99,8 +99,8 @@ function App() {
             </>
           )}
 
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/address" element={<Address />} />
+          <Route path="/profile" element={<Profile user={user}/>} />
+          <Route path="/address" element={<Address user={user}/>} />
 
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />

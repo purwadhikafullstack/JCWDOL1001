@@ -49,7 +49,7 @@ export default function UserNavMenuItems({ user }) {
         path="/profile"
         className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/profile" ? "text-primary" : "text-slate-500"}`}
       >
-        <div className="profile-img-wrapper ">
+        <div className={`profile-img-wrapper ${user.status === 0 && "border-2 border-danger rounded-full"}`}>
           <div
             className={`nav-profile-img aspect-square w-7 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 `}
           >

@@ -3,7 +3,7 @@ import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed,
 import { FaPowerOff } from "react-icons/fa6";
 import Button from '../../../components/Button';
 
-export default function ProfileCard({ profile }) {
+export default function ProfileCard({ profile, user }) {
   return (
     <div className="lg:col-span-1 border rounded-lg p-4 shadow-md w-full h-fit">
           <div className="flex justify-between border-b-2 pb-4">
@@ -23,7 +23,17 @@ export default function ProfileCard({ profile }) {
             </Button>
           </div>
 
-          <div className="border-b-2 py-4">
+          <div className="border-b-2 py-4 flex gap-2">
+            {user.status === 0 &&
+              <Button
+                isButton
+                isPrimary
+                isBLock
+                title="Verify Account"
+                className="lg:hidden"
+              />
+            }
+
             <Button
               isButton
               isBLock
