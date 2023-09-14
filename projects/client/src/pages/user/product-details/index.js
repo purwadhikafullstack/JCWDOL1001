@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getProductById, getProducts } from "../../store/slices/product/slices";
-import formatNumber from "../../utils/formatNumber";
+import { getProductById, getProducts } from "../../../store/slices/product/slices";
+import formatNumber from "../../../utils/formatNumber";
 import { BsDashLg, BsPlusLg } from "react-icons/bs";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import Footer from "../../components/Footer";
-import Card from "../../components/Card";
-import Modal from "../../components/Modal";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Footer from "../../../components/Footer";
+import Card from "../../../components/Card";
+import Modal from "../../../components/Modal";
+import UploadRecipeButton from "../../../components/UploadRecipeButton";
 
 export default function ProductDetail({user}) {
   const dispatch = useDispatch()
@@ -194,7 +195,6 @@ export default function ProductDetail({user}) {
                   productDiscount={product?.discount}
                   productPicture={product?.productPicture}
                   productStock={product?.stock}
-                  onClick={()=>handleCart(product.productId)}
                 />
               ))
               .slice(0, 6)}
@@ -209,6 +209,8 @@ export default function ProductDetail({user}) {
         context={showModal.context}
         title={`Login`}
       />
+
+      <UploadRecipeButton />
     </>
   );
 } 
