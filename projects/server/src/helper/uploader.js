@@ -29,7 +29,7 @@ const createCloudinaryStorage = (directory, id=1) => new CloudinaryStorage({
         public_id: (req, file) => {
             const type = directory.split("/")[1]
             if(type === "Profiles")
-            return `IMG-${req?.user?.id}`
+            return `IMG-${req?.user?.userId}`
             if(type !== "Profiles")
             return 'IMG-' + Date.now()
         },
