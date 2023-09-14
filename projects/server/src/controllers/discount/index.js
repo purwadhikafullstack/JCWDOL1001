@@ -13,7 +13,7 @@ const getDiscount = async (req, res, next) => {
         }
 
         const filter = { discountName }
-        if(discountName) filter.discountName = {discountName: {[Op.like]: `${discountName}`}}
+        if(discountName) filter.discountName = {discountName: {[Op.like]: `%${discountName}%`}}
         
 		const discount = await Discount.findAll({
             ...options,
@@ -61,14 +61,14 @@ const createDiscount = async (req, res, next) => {
 
         const isNameExist = await Discount.findAll({ where : { discountName : req.body.data.discountName } })
 
-        if(isNameExist) throw({
+        if(isNameExist>0) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.DISCOUNT_NAME_ALREADY_EXIST
         })
 
         const discountData = await Discount.create(req.body.data)
 
-        if(req.body.products.length > 0){
+        if(req.body.products > 0){
             req.body.products.map((product)=>product.discountId = discountData.discountId)
             await Discount_Product.bulkCreate(req.body.products)
         }

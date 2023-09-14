@@ -78,13 +78,14 @@ Discount.hasMany(Discount_Product,{foreignKey : "discountId", as : "productDisco
 Discount_Product.belongsTo(Discount, {foreignKey : "discountId"})
 
 Discount_Product.belongsTo(Product_List, {through : Product_Detail, foreignKey : "productId", otherKey : "discountId", as : "detailProduct"})
-Product_List.hasMany(Discount_Product,{foreignKey : "productId"})
+Product_List.hasMany(Discount_Product,{foreignKey : "productId", as: "discountProducts" })
 
 Product_Detail.hasMany(Cart,{sourceKey : "productId", foreignKey : "productId"})
 Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"})
 
 User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
 Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
+
 
 module.exports = { 
     User_Account, 

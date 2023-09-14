@@ -2,10 +2,11 @@ import { HiOutlineTrash } from "react-icons/hi2"
 import Button from "../../../components/Button"
 import { motion } from "framer-motion"
 import formatNumber from "../../../utils/formatNumber"
+import {formatDate, formatDateValue} from "../../../utils/formatDate"
 
 export default function TableDiscount({
   discountList,
-  handleShowModal
+  handleShowModal,
 }) {
   return (
     <table className="text-gray-500 w-full text-left text-sm">
@@ -42,7 +43,7 @@ export default function TableDiscount({
                     <td className="p-3">{list.discountName}</td>
                     <td className="p-3">{list.discountCode}</td>
                     <td className="p-3">{list.discountDesc}</td>
-                    <td className="p-3">{list.discountExpired ? Date(list.discountExpired) : "-"}</td>
+                    <td className="p-3">{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
                     <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `IDR ${formatNumber(list.discountAmount)}` }</td>
                     <td className="p-3">{list.oneGetOne ? "Yes" : "No" }</td>
                     <td className="p-3">{list.minimalTransaction ? `IDR ${formatNumber(list.minimalTransaction)}` : "-"}</td>

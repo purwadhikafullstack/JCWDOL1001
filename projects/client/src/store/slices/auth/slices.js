@@ -34,7 +34,7 @@ export const login = createAsyncThunk(
             
             return data
         } catch (error) {
-            alert(error.response?.data?.message)
+            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }

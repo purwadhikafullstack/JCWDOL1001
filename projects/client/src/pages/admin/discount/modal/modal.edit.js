@@ -5,8 +5,10 @@ import Input from "../../../../components/Input"
 import { useDispatch, useSelector } from "react-redux"
 import ProductList from "./product.list"
 import { createDiscount, updateDiscount } from "../../../../store/slices/discount/slices"
+import SuccessMessage from "../../../../components/Message"
+import {formatDate, formatDateValue} from "../../../../utils/formatDate"
 
-export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,products,isNew}) {
+export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,products,isNew,success}) {
     const dispatch = useDispatch()
 
     const nameRef = useRef()
@@ -50,15 +52,22 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
             "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode
         }
-        output.products =selectedProducts.map(({productId}) => { return {productId} })
+        output.products =selectedProducts?.map(({productId}) => { return {productId} })
+        console.log(output)
         if(!selectedId){
             dispatch(createDiscount(output))
         }else {dispatch(updateDiscount({discountId : selectedId?.discountId,output}))}
     }
+    if (success) {  
+        return ( 
+            <SuccessMessage 
+                type="success" 
+                message={`${selectedId ? "Update discount success" : "Add new discount success"}`} 
+                handleCloseModal={handleCloseModal} 
+            /> 
+        ) 
+    }
 
-    useEffect(() => {
-        setSelectedProducts([]);
-    }, [])
   return (
     <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
         <Button
@@ -85,7 +94,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             />
         </div>
 
-        <div className="flex items-center justify-between max-w-[80%] ">
+        <div className="flex items-center justify-between max-w-[80%] gap-8">
             <div className="">
                 <h3 className={`${onEdit ? "title mt-2" : "title mt-4" }`}>Name : </h3>
                 <Input 
@@ -97,7 +106,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
 
                 <h3 className="title mt-4">Description : </h3>
                 <Input 
-                    type = {`${!onEdit ? "hidden" : "text" }`}
+                    type = {`${!onEdit ? "hidden" : "textarea" }`}
                     ref = {descRef}
                     placeholder = {selectedId?.discountDesc}
                 />
@@ -144,7 +153,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                             
                         />
                         <label for="1" className="mr-4">Yes</label>
-
                         <input 
                             type="radio" 
                             id="0" 
@@ -167,18 +175,20 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountCode ? selectedId?.discountCode : "-"}</h1>
 
                 <h3 className="title mt-4">Expired Date : </h3>
-                <Input 
-                    type = {`${!onEdit ? "hidden" : "text" }`}
+                <input 
+                    type = {`${!onEdit ? "hidden" : "date" }`}
                     ref = {expiredRef}
-                    placeholder = {selectedId?.discountExpired ? Date(selectedId?.discountExpired) : "-"}
+                    value = {selectedId?.discountExpired ? formatDateValue(selectedId?.discountExpired).toString() : "-"}
+                    // value = "2023-09-14"
+                    className="w-full rounded-lg border bg-inherit px-2 py-2  focus:ring-2"
                 />
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? Date(selectedId?.discountExpired) : "-"}</h1>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? formatDate(selectedId?.discountExpired) : "-"}</h1>
                
                 <h3 className="title mt-4">Amount : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {amountRef}
-                    placeholder = {selectedId?.isPercentage ? `${selectedId.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }
+                    placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `IDR ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? `${selectedId?.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
 
@@ -192,7 +202,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             </div>
         </div>
         <ProductList data={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} products={products} />
-        
     </div>
   )
 }

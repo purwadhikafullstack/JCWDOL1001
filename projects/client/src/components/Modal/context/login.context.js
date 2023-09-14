@@ -1,8 +1,10 @@
-import { React, useRef } from "react"
+import { React, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Button from "../../Button"
 import Input from "../../Input"
 import { login } from "../../../store/slices/auth/slices"
+import { LoginValidationSchema } from "../../../store/slices/auth/validation"
+import { toast } from "react-toastify"
 
 export default function LoginContext ({
     onLogin = ()=>{},
@@ -18,14 +20,26 @@ export default function LoginContext ({
 		}
 	})
 
-    const emailRef = useRef()
-    const passwordRef = useRef()
+    const emailRef = useRef(null)
+    const passwordRef = useRef(null)
+    const [error, setError] = useState("")
 
-    const handleLogin = (e) => {
-        e.preventDefault()
-        const email = emailRef.current?.value
-        const password = passwordRef.current?.value
-        dispatch(login({ email, password }))
+    const handleLogin = async (e) => {
+        try{
+            e.preventDefault()
+            const output = {email :emailRef.current?.value ,password:passwordRef.current?.value}
+            await LoginValidationSchema.validate(output)
+            dispatch(login(output))
+
+        }catch(error) {
+            const errors = {}
+
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+
+            setError(errors)
+        }
     }
 
     if(isLogin){
@@ -44,13 +58,21 @@ export default function LoginContext ({
                 }}
             />  
             <form className="mt-8 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
-                <Input
-                    ref={emailRef}
-                    type="text"
-                    label="Email"
-                    placeholder="example@email.com"
-                />
-
+                <div>
+                    <Input
+                        ref={emailRef}
+                        type="text"
+                        label="Email"
+                        placeholder="example@email.com"
+                        // errorInput={emailRef.current?.value === "" }
+                        // onChange={()=>setError("")}
+                    />
+                    {/* {emailRef.current?.value === "" && (
+                        <div className="text-sm text-red-500 dark:text-red-400">
+                            Email is required
+                        </div>
+                    )} */}
+                </div>
                 <div>
                     <Input
                         ref={passwordRef}
@@ -58,6 +80,8 @@ export default function LoginContext ({
                         type="password"
                         label="Password"
                         placeholder="··············"
+                        errorInput={error}
+                        onChange={()=>setError("")}
                     />
 
                     <Button

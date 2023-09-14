@@ -44,6 +44,7 @@ const getProducts = async (req, res, next) => {
         {
           model : Discount_Product,
           attributes : ["discountId"],
+          as: "discountProducts",
           include : {
             model : Discount
           }

@@ -47,7 +47,8 @@ export const updateDiscount = createAsyncThunk(
     "discount/updateDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            await DiscountInfoValidationSchema.validate(payload.output)
+            console.log(payload)
+            await DiscountInfoValidationSchema.validate(payload.output.data)
             const { data } = await api.patch("/discount/update/" +encodeURI(payload.discountId), payload.output)
 
             toast.success(data?.message)
@@ -63,8 +64,9 @@ export const createDiscount = createAsyncThunk(
     "discount/createDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            await DiscountInfoValidationSchema.validate(payload)
-            const { data } = await api.patch("/discount/create/", payload)
+            console.log(payload)
+            await DiscountInfoValidationSchema.validate(payload.data)
+            const { data } = await api.post("/discount/create/", payload)
 
             toast.success(data?.message)
             return data

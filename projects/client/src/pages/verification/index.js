@@ -162,7 +162,7 @@ export default function Verification() {
                     <option value="Female">Female</option>
                 </select>
                 </div>
-                <Input
+                <input
                 ref={dateRef}
                 required
                 type="date"
