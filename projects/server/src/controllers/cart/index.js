@@ -22,14 +22,19 @@ const getCart = async (req, res, next) => {
                 include : 
                 [
                   {
-                    model : Product_Detail,
-                    as: "cartDetail",
-                    // include:[
-                    //     {
-                    //         model:Product_List,
-                    //         as: "productList"
-                    //     }
-                    // ]
+                    model : Product_List,
+                    as: "cartList",
+                    attributes : ["productName","productPicture","productPrice"], 
+                    include:[
+                        {
+                            model:Product_Detail,
+                            attributes : ["quantity"],
+                            where:{
+                                isDefault : 1,
+                                isDeleted : 0
+                            }
+                        }
+                    ]
                   }
                 ],
             
@@ -63,7 +68,12 @@ const updateCart = async (req, res, next) => {
                 //do validation
                  await UpdateCartValidationSchema.validate(req.body)
                 //grab product details
-                 const product = await Product_Detail?.findOne({where : {productId: productId, isDefault : 1}})
+                 const product = await Product_Detail?.findOne({where :
+                     {
+                        productId: productId, 
+                        isDefault : 1, 
+                        isDeleted : 0}
+                    })
                 //error handling kalau quantity > productStock.quantity, dan no product exist
                  if(!product) throw ({
                     status : middlewareErrorHandling.NOT_FOUND_STATUS, 
