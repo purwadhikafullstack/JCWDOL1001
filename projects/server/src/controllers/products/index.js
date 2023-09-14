@@ -1,5 +1,5 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
-const {Product_Category, Product_List, Product_Unit, Categories, Product_Detail, Product_History } = require("../../model/relation.js")
+const {Product_Category, Product_List, Product_Unit, Categories, Product_Detail, Product_History, Discount_Product, Discount } = require("../../model/relation.js")
 const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
@@ -40,7 +40,15 @@ const getProducts = async (req, res, next) => {
         {
           model : Product_Detail,
           attributes : ["quantity"]
-        }
+        },
+        {
+          model : Discount_Product,
+          attributes : ["discountId"],
+          as: "discountProducts",
+          include : {
+            model : Discount
+          }
+        },
       ]
       ,
       where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},

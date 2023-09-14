@@ -2,6 +2,7 @@ const { User_Account, User_Profile, User_Address, User_Role, User_Status } = req
 const { Product_List, Product_Category, Product_Unit, Product_Detail,Product_History } = require("./product.js")
 const { Categories } = require("./category.js")
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./transaction.js")
+const { Discount, Discount_Product, Discount_Transaction } = require("./discount.js")
 const { Cart} = require("./cart.js")
 
 // @define relation
@@ -62,10 +63,29 @@ Transaction_Detail.belongsTo(Transaction_List, {foreignKey : "transactionId"})
 Product_Detail.hasMany(Transaction_Detail,{foreignKey : "productId", otherKey:"transactionId"})
 Transaction_Detail.belongsTo(Product_Detail,{foreignKey : "productId", otherKey:"unitId",as: "productDetail"})
 
+Transaction_List.belongsToMany(Discount, {through : Discount_Transaction, foreignKey : "transactionId", otherKey : "discountId"})
+Transaction_List.hasMany(Discount_Transaction, {foreignKey : "transactionId", as : "transactionDiscount"})
+Discount_Transaction.belongsTo(Transaction_List, {foreignKey : "transactionId"})
+
+Discount.hasMany(Discount_Transaction,{foreignKey : "discountId"})
+Discount_Transaction.belongsTo(Discount, {foreignKey : "discountId"})
+
+Product_Detail.belongsToMany(Discount, {through : Discount_Product, foreignKey : "productId", otherKey : "discountId"})
+Product_Detail.hasMany(Discount_Product, {foreignKey : "productId", as : "productDiscount"})
+Discount_Product.belongsTo(Product_Detail, {foreignKey : "productId", as : "productDetail"})
+
+Discount.hasMany(Discount_Product,{foreignKey : "discountId", as : "productDiscount"})
+Discount_Product.belongsTo(Discount, {foreignKey : "discountId"})
+
+Discount_Product.belongsTo(Product_List, {through : Product_Detail, foreignKey : "productId", otherKey : "discountId", as : "detailProduct"})
+Product_List.hasMany(Discount_Product,{foreignKey : "productId", as: "discountProducts" })
+
 Product_Detail.hasMany(Cart,{sourceKey : "productId", foreignKey : "productId"})
 Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"})
+
 User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
 Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
+
 
 module.exports = { 
     User_Account, 
@@ -81,6 +101,10 @@ module.exports = {
     Categories,
     Transaction_List,
     Transaction_Detail,
+    Transaction_Status,
+    Discount,
+    Discount_Product,
+    Discount_Transaction,
     Transaction_Status,
     Cart
 }
