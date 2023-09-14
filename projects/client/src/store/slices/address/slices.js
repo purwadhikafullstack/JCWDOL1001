@@ -37,7 +37,7 @@ export const listProvince = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-          const response = await api.get("address/province")
+          const response = await api.get("/address/province")
 
             const {data} = response
 
@@ -55,7 +55,7 @@ export const listCity = createAsyncThunk(
 
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await api.get(`address/city?province=${payload?.province}`)
+            const response = await api.get(`/address/city?province=${payload?.province}`)
 
             const {data} = response
 
