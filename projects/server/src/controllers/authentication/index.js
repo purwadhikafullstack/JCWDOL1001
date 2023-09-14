@@ -77,7 +77,8 @@ const keepLogin = async (req, res, next) => {
                     UUID : req.user.UUID
                 },
                 include : {
-                    model : User_Profile
+                    model : User_Profile,
+                    as : "userProfile"
                 },
                 attributes : {
                     exclude : ["password"]
