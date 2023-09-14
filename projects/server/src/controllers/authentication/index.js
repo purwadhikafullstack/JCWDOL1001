@@ -253,6 +253,7 @@ const resendOtp = async (req, res, next) => {
         // @create transaction
         const transaction = await db.sequelize.transaction(async()=>{   
         const {email} = req.body
+        // const email = req.user.email
         // @grab req.user 
         const otpToken =  helperOTP.generateOtp()
 
@@ -264,7 +265,8 @@ const resendOtp = async (req, res, next) => {
         const user = await User_Account.findOne({
             where: {email},
             include : {
-                    model : User_Profile
+                    model : User_Profile,
+                    as : "userProfile"
                 }
         })
         // const profile = await User_Profile.findOne({where: {userId :user?.userId}})
