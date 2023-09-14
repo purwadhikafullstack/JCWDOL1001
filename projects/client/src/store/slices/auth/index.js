@@ -59,7 +59,7 @@ const authSlice = createSlice({
                 role : action.payload?.role,
                 email : action.payload?.email,
                 status : action.payload?.status,
-                profile : action.payload?.user_profile,
+                profile : action.payload?.userProfile,
                 isKeepLoginLoading : false,
                 isLogin : true,
             })

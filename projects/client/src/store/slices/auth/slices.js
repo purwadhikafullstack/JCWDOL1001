@@ -25,7 +25,7 @@ export const login = createAsyncThunk(
             
             return data
         } catch (error) {
-            alert(error.response?.data?.message)
+            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
@@ -53,9 +53,9 @@ export const logout = createAsyncThunk(
         try {
             localStorage.removeItem("token")
 
-            alert("Logout Sucess")
+            toast.success("Logout Sucess")
         } catch (error) {
-            alert(error.response ? error.response.data : error)
+            toast.error(error.response ? error.response.data : error)
 
             return rejectWithValue(error.response ? error.response.data : error)
         }
