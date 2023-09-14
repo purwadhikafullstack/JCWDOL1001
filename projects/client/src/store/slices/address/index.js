@@ -3,14 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
     listCity,
     cost,
-    listProvince
+    listProvince,
+    getAddress
 } from "./slices"
 
 const INITIAL_STATE = {
+    data : [],
     province : [],
     city : [],
-    isLoading : false
-
+    isLoading : false,
+    success: false
 }
 
 const addressSlice = createSlice({
@@ -34,6 +36,7 @@ const addressSlice = createSlice({
                 isLoading : false,
             })
         },
+
         [listCity.pending] : (state, action) => {
             state.isLoading = true
         },
@@ -44,6 +47,21 @@ const addressSlice = createSlice({
             })
         },
         [listCity.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isLoading : false,
+            })
+        },
+
+        [getAddress.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [getAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                data : action.payload?.data,
+                isLoading : false,
+            })
+        },
+        [getAddress.rejected] : (state, action) => {
             state = Object.assign(state, {
                 isLoading : false,
             })

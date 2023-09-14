@@ -92,28 +92,6 @@ const Input = React.forwardRef(({
       );
     }
 
-  if (type === "text") {
-    return (
-        <div className="">
-          {label && <label htmlFor={id}>{label}</label>}
-          <input
-            ref={ref}
-            value={value}
-            type="text"
-            name={name}
-            className={inputClass.join(" ")}
-            id={id}
-            placeholder={placeholder}
-            autoFocus={autoFocus}
-            onChange={onChange}
-            onBlur={onBlur}
-            onWheel={(e) => e.target.blur()}
-            disabled={isDisabled}
-        />
-      </div>
-    );
-  }
-
   if (type === "number") {
     return (
         <div className="">
@@ -135,6 +113,7 @@ const Input = React.forwardRef(({
       </div>
     );
   }
+
   if (type === "numberSecondVariant") {
     return (
         <div className="">
@@ -156,6 +135,26 @@ const Input = React.forwardRef(({
       </div>
     );
   }
+
+  return (
+      <div className="">
+        {label && <label htmlFor={id}>{label}</label>}
+        <input
+          ref={ref}
+          value={value}
+          type={type}
+          name={name}
+          className={inputClass.join(" ")}
+          id={id}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          onChange={handleChange}
+          onBlur={onBlur}
+          onWheel={(e) => e.target.blur()}
+          disabled={isDisabled}
+      />
+    </div>
+  );
 
 })
 

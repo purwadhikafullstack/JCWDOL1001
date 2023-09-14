@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
+import { toast } from "react-toastify"
 
 export const getProducts = createAsyncThunk(
   "products/getProducts",
@@ -56,7 +57,7 @@ export const getProductById = createAsyncThunk(
 
       return data;
     } catch (error) {
-      console.log(error.response.data.message);
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -66,9 +67,9 @@ export const createProduct = createAsyncThunk(
   "products/createProduct",
   async (payload, { rejectWithValue }) => {
     try {
-      const { data } = await api.post("/products", payload);
-      return data.message;
+      await api.post("/products", payload);
     } catch (error) {
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -78,9 +79,9 @@ export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const { data } = await api.patch(`/products/${encodeURI(id)}`, formData);
-      return data.message;
+      await api.patch(`/products/${encodeURI(id)}`, formData);
     } catch (error) {
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -91,8 +92,8 @@ export const deleteProduct = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       await api.patch("/products/delete/" + encodeURI(payload));
-      // Toast.success("Category deleted successfully");
     } catch (error) {
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message);
     }
   }

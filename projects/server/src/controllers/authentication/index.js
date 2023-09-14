@@ -2,7 +2,7 @@ const { ValidationError } = require("yup")
 const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
-const {RegisterValidationSchema, VerifyValidationSchema  } = require("./validation.js")
+const {RegisterValidationSchema, VerifyValidationSchema, UpdatePasswordValidationSchema  } = require("./validation.js")
 const db = require("../../model/index.js")
 const {helperToken, helperEncryption, helperOTP, helperTransporter} = require("../../helper/index.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
@@ -10,6 +10,7 @@ const moment = require ("moment")
 const path = require("path")
 const fs = require("fs")
 const handlebars = require("handlebars")
+const cloudinary = require("cloudinary");
 const { LINK_EXPIRED_STATUS, LINK_EXPIRED } = require("../../middleware/error.handler.js")
 
 
@@ -77,7 +78,8 @@ const keepLogin = async (req, res, next) => {
                     UUID : req.user.UUID
                 },
                 include : {
-                    model : User_Profile
+                    model : User_Profile,
+                    as : "userProfile"
                 },
                 attributes : {
                     exclude : ["password"]
@@ -310,10 +312,172 @@ const resendOtp = async (req, res, next) => {
     }
 }
 
+const changePassword = async (req, res, next) => {
+    try{
+        const {userId} = req.params;
+        const {oldPassword, newPassword} = req.body;
+
+        await validation.UpdatePasswordValidationSchema.validate(req.body);
+
+        const users = await User_Account.findOne({where : {userId : userId}});
+        if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS})
+
+        const isPasswordCorrect = helperEncryption.comparePassword(oldPassword, users?.dataValues?.password)
+        if (!isPasswordCorrect) throw ({ 
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.INCORRECT_PASSWORD 
+        });
+
+        const hashedPassword = helperEncryption.hashPassword(newPassword);
+
+        const userUpdated = await User_Account?.update({password : hashedPassword},{where : {userId : userId}})
+        delete userUpdated?.dataValues?.password;
+        res.status(200).json({ message : "Password changed!"});
+    }catch(error){
+        next(error);
+    }
+}
+
+const changeProfilePicture = async (req, res, next) => {
+    try{
+        const {userId} = req.params;
+
+        const userExists = await User_Profile?.findOne({where : {userId : userId}})
+        if(!userExists) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS})
+
+        if(!req.file){
+            return next({
+                status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+                message : middlewareErrorHandling.IMAGE_NOT_FOUND
+            });
+        } 
+
+        if(userExists?.dataValues?.profilePicture){
+            cloudinary.v2.api.delete_resources([`${userExists?.dataValues?.profilePicture}`],{type : `upload`,resource_type : 'image'});
+        }
+
+        await User_Profile?.update({profilePicture : req?.file?.filename},{where : {userId : userId}});
+        res.status(200).json({type : "success", message : "Profile picture uploaded.", imageURL : req?.file?.filename});
+
+    }catch(error){
+        cloudinary.v2.api.delete_resources([`${req?.file?.filename}`],{type : `upload`,resource_type : 'image'});
+        next(error);
+    }
+}
+
+const changeEmailOtp = async (req, res, next) => {
+    try{
+        const{userId} = req.params;
+        const{email} = req.body;
+
+        await validation.UpdateEmailValidationSchema.validate(req.body);
+
+        const otpToken =  helperOTP.generateOtp();
+
+        const users = await User_Account.findOne({where : {userId : userId}});
+        if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
+
+        await User_Account?.update({
+            otp : otpToken,
+            expiredOtp : moment().add(7,'h').add(30,'m').format("YYYY-MM-DD HH:mm:ss")
+        }, {where : {userId : userId}});
+
+        const user = await User_Account.findOne({
+            where: {userId : userId},
+            include : {
+                    model : User_Profile,
+                    as : "userProfile"
+                }
+        })
+
+        const accessToken = helperToken.createToken({ 
+            name : user?.user_profile?.name,
+            UUID: user?.UUID, 
+            email : email,
+            roleId : user?.role,
+        });
+
+        const template = fs.readFileSync(path.join(process.cwd(), "templates", "emailverify.html"), "utf8");
+        const html = handlebars.compile(template)({otp : (otpToken)})
+    
+        const mailOptions = {
+            from: `Apotech Team Support <${GMAIL}>`,
+            to: email,
+            subject: "OTP for change email",
+            html: html}
+    
+            helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+                if (error) throw error;
+        })
+        res.status(200).json({message : "Please check your new email to get the OTP."}); 
+    }catch(error){
+        next(error);
+    }
+}
+
+const changeEmail = async (req, res, next) => {
+    try{
+        const{userId} = req.params;
+        const{email, otp} = req.body;
+        
+        await validation.UpdateEmailValidationSchema.validate(req.body);
+
+        const users = await User_Account.findOne({where : {userId : userId}});
+        if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
+        
+        if (otp !== users?.dataValues?.otp) throw (
+            { status : 400, 
+            message : middlewareErrorHandling.INVALID_CREDENTIALS_OTP });
+
+        // @check if otp is expired
+        const isExpired = moment().isAfter(users?.dataValues?.expiredOtp);
+        if (isExpired) throw ({ status : middlewareErrorHandling.LINK_EXPIRED_STATUS,
+             message : middlewareErrorHandling.LINK_EXPIRED });
+
+        const userUpdated = await User_Account?.update({email : email},{where : {userId : userId}});
+        res.status(200).json({message : "Email changed!"});
+
+        
+    }catch(error){
+        next(error);
+    }
+}
+
+const changeProfileData = async (req, res, next) => {
+    try{
+        const {userId} = req.params;
+        const {name, gender, birthdate, phone} = req.body;
+
+        await validation.UpdateProfileValidationSchema.validate(req.body);
+
+        const users = await User_Profile.findOne({where : {userId : userId}});
+        if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
+
+        const newProfile = {
+            name : name,
+            gender : gender,
+            birthdate : birthdate,
+            phone : phone
+        }
+
+        const profileAdded = User_Profile.update({newProfile},{where : {userId : userId}});
+        res.status(200).json({message : "Data changed!"});
+    }catch(error){
+        next(error)
+    }
+}
+
+
+
 module.exports = {
    login,
    keepLogin,
    register,
    verify,
-   resendOtp
+   resendOtp,
+   changeEmail,
+   changePassword,
+   changeProfileData,
+   changeProfilePicture,
+   changeEmailOtp
 }

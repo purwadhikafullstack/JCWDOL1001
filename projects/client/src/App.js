@@ -13,14 +13,17 @@ import { keepLogin } from "./store/slices/auth/slices";
 import CategoryList from "./pages/admin/category";
 import "./App.css";
 import AdminProducts from "./pages/admin/product";
-import Products from "./pages/user/products";
 import NotFound from "./pages/NotFound";
 import LoadingSpinner from "./components/LoadingSpinner";
-import ProductDetail from "./pages/user/product.detail";
+import Products from "./pages/user/products";
+import ProductDetail from "./pages/user/product-details";
 import { ToastContainer } from "react-toastify";
 
 import 'react-toastify/dist/ReactToastify.css';
 import UploadRecipePage from "./pages/user/upload-recipe";
+import DiscountPage from "./pages/admin/discount";
+import Profile from "./pages/user/profile/profile";
+import Address from "./pages/user/profile/address";
 
 function App() {
   const { pathname } = useLocation();
@@ -86,6 +89,7 @@ function App() {
             <>
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
               <Route path="/admin/categories" element={<CategoryList />}/>
+              <Route path="/admin/discount" element={<DiscountPage />}/>
             </>
           )}
 
@@ -95,12 +99,25 @@ function App() {
             </>
           )}
 
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/address" element={<Address />} />
+
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+
       {/* <Footer /> */}
-      <ToastContainer />
+      <ToastContainer 
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={true}
+        closeOnClick={true}
+        pauseOnHover={false}
+        draggable={true}
+        progress={undefined}
+        theme="light"
+      />
     </div>
   );
 }

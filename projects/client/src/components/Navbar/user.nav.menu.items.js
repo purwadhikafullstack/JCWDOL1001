@@ -1,20 +1,13 @@
 import { useLocation } from "react-router-dom"
 import Button from "../Button"
-import { HiDocumentText, HiMiniSquares2X2 } from "react-icons/hi2"
+import { HiDocumentText, HiMiniChatBubbleOvalLeftEllipsis, HiMiniSquares2X2 } from "react-icons/hi2"
 import { BiSolidDiscount } from "react-icons/bi"
 
 export default function UserNavMenuItems({ user }) {
   const { pathname } = useLocation()
 
   return (
-    <div className="flex w-full items-center lg:justify-end gap-10">
-      <Button
-        isLink
-        path="/"
-        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/" ? "text-primary" : "text-slate-500" } `}
-      >
-      </Button>
-
+    <div className="flex w-full justify-between items-center lg:justify-end gap-10">
       <Button
         isLink
         path="/products"
@@ -26,20 +19,29 @@ export default function UserNavMenuItems({ user }) {
 
       <Button
         isLink
-        path="/upload-recipe"
-        className={`flex flex-col items-center gap-1 text-xs lg:hidden ${ pathname === "/upload-recipe" ? "text-primary" : "text-slate-500"}`}
-      >
-        <HiDocumentText className="text-2xl" />
-        <span>Unggah Resep</span>
-      </Button>
-
-      <Button
-        isLink
         path="/promo"
         className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/promo" ? "text-primary" : "text-slate-500" }`}
       >
         <BiSolidDiscount className="text-2xl" />
         <span>Promo</span>
+      </Button>
+
+      <Button
+        isLink
+        path="/upload-recipe"
+        className={`text-center flex flex-col items-center gap-1 text-xs lg:hidden ${ pathname === "/upload-recipe" ? "text-primary" : "text-slate-500"}`}
+      >
+        <HiDocumentText className="text-2xl" />
+        <span className="">Unggah Resep</span>
+      </Button>
+
+      <Button
+        isLink
+        path="/"
+        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/" ? "text-primary" : "text-slate-500" } `}
+      >
+        <HiMiniChatBubbleOvalLeftEllipsis className="text-2xl"/>
+        QnA
       </Button>
 
       <Button
