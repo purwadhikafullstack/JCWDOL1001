@@ -178,7 +178,7 @@ export default function ModalAddProductUnit({
                     }
                 </div>
             </div>
-            <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
+            <div className={`${!confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
                 <Button 
                     title="Back" 
                     isButton 
