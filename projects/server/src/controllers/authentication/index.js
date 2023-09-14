@@ -195,7 +195,7 @@ const verify = async (req, res, next) => {
         // @verify otp
         if (otp !== users?.dataValues?.otp) throw (
             { status : 400, 
-            message : middlewareErrorHandling.INVALID_CREDENTIALS_OTP });
+            message : middlewareErrorHandling.INVALID_CREDENTIALS_OTP});
 
         // @check if otp is expired
         const isExpired = moment().isAfter(users?.dataValues?.expiredOtp);

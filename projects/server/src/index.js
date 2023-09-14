@@ -43,12 +43,14 @@ const CatRouters = require("./controllers/category/routers.js")
 const ProductsRouters = require("./controllers/products/routers.js")
 const AddressRouters = require("./controllers/address/routers.js")
 const RecipeRouters = require("./controllers/upload-recipe/routers.js")
+const CartRouters = require("./controllers/cart/routers.js")
 
 app.use("/api/auth", AuthRouters)
 app.use("/api/category",CatRouters)
 app.use("/api/products", ProductsRouters)
 app.use("/api/address", AddressRouters)
 app.use("/api/upload-recipe", RecipeRouters)
+app.use("/api/cart", CartRouters)
 app.use(errorHandler)
 
 // ===========================
