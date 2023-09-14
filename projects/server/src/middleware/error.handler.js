@@ -21,6 +21,7 @@ const SECONDARY_PRODUCT_UNIT_NOT_FOUND = "Secondary product unit is not found! P
 const PRODUCT_DONT_HAVE_DEFAULT_UNIT = "Default value of this product not declare yet, please declare first"
 const INPUT_MORE_THAN_STOCK = "Stock available is less than convertion time(s)"
 const PRODUCT_HAS_CATEGORY = "The Category you want to delete has Product used it."
+const ADDRESS_NOT_FOUND = "Address not found."
 const DISCOUNT_NOT_FOUND = "Discount not found"
 const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 
@@ -79,6 +80,8 @@ module.exports = {
     PRODUCT_DONT_HAVE_DEFAULT_UNIT,
     INPUT_MORE_THAN_STOCK,
     PRODUCT_HAS_CATEGORY,
+    USER_NOT_FOUND,
+    ADDRESS_NOT_FOUND,
     DISCOUNT_NOT_FOUND,
     DISCOUNT_NAME_ALREADY_EXIST,
     USER_NOT_FOUND
