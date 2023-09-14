@@ -4,15 +4,15 @@ import Modal from "../Modal";
 import formatNumber from "../../utils/formatNumber";
 import { useNavigate } from "react-router-dom";
 
-export default function Card({ productId, productName, productPrice, productPicture, productStock, productDiscount, onClick }) {
+export default function Card({ productId, productName, productPrice, productPicture, productStock, productDiscount, productCategories }) {
   const navigate = useNavigate();
 
   return (
     <div
-      className="place-self-stretch group flex cursor-pointer flex-col gap-2 aspect-[2/1] rounded-lg border p-3 text-dark shadow-lg"
+      className="hover:scale-[102%] duration-300 place-self-stretch group flex cursor-pointer flex-col gap-2 aspect-[2/1] rounded-lg border p-3 text-dark shadow-lg"
+      onClick={() => navigate(`/products/${productId}`)}
     >
       <div className="aspect-[4/3] w-full overflow-hidden rounded-md bg-primary"
-      onClick={() => navigate(`/products/${productId}`)}
       >
         <img
           src={process.env.REACT_APP_CLOUDINARY_BASE_URL + productPicture}
@@ -22,7 +22,6 @@ export default function Card({ productId, productName, productPrice, productPict
       </div>
 
       <h3 className="text-sm font-bold uppercase duration-300 hover:text-primary lg:text-base line-clamp-2" title={productName}
-      onClick={() => navigate(`/products/${productId}`)}
       >
         {productName}
       </h3>
@@ -44,14 +43,22 @@ export default function Card({ productId, productName, productPrice, productPict
           ? formatNumber(productDiscount * productPrice)
           : formatNumber(productPrice)}
       </h3>
-      <Button
+
+      <p className="text-xs line-clamp-1 text-slate-500">
+      {productCategories && productCategories.map((category,index)=>(
+        <>
+          {category.categoryDesc}{index !== productCategories.length - 1 &&<span>,&nbsp;</span>}
+        </>
+      ))}
+        </p>
+      {/* <Button
         isButton
         isPrimaryOutline
         isBLock
         title="Keranjang"
         className="font-semibold"
         onClick={onClick}
-      />
+      /> */}
     </div>
   );
 }

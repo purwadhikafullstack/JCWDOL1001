@@ -21,16 +21,7 @@ export const login = createAsyncThunk(
             localStorage.setItem("token", token)
 
             // alert(response?.data?.message)
-            toast.success(response?.data?.message, {
-                position: "top-center",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
+            toast.success(response?.data?.message);
             
             return data
         } catch (error) {

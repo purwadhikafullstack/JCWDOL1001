@@ -1,5 +1,4 @@
 import React from 'react'
-import getCategoryByName from '../../../utils/getCategoryByName';
 import formatNumber from '../../../utils/formatNumber';
 
 export default function ModalDetailsProduct({selectedProduct, categories}) {
