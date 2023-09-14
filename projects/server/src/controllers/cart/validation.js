@@ -15,13 +15,13 @@ const UpdateCartValidationSchema = Yup.object({
         return context.originalValue && !context.originalValue.startsWith(0);})
   });
 
-const DeleteCartValidationSchema = Yup.object({
-    productId: Yup.string()
-      .required("productId is required")
-      .matches(/^[0-9]+$/, "productId must contain only numbers")
-  });
+// const DeleteCartValidationSchema = Yup.object({
+//     productId: Yup.string()
+//       .required("productId is required")
+//       .matches(/^[0-9]+$/, "productId must contain only numbers")
+//   });
 
 module.exports = {
     UpdateCartValidationSchema,
-    DeleteCartValidationSchema
+    // DeleteCartValidationSchema
 }
