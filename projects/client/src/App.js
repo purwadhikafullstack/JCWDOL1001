@@ -21,7 +21,7 @@ import { ToastContainer } from "react-toastify";
 
 import 'react-toastify/dist/ReactToastify.css';
 import UploadRecipePage from "./pages/user/upload-recipe";
-import Profile from "./pages/user/profile";
+import Profile from "./pages/user/profile/profile";
 
 function App() {
   const { pathname } = useLocation();
