@@ -40,8 +40,31 @@ const VerifyValidationSchema = Yup.object({
     postalCode : Yup.number().required("Postal Code is required")
 })
 
+const UpdatePasswordValidationSchema = Yup.object({
+    oldPassword : Yup.string().required("Old password is required"),
+    newPassword : Yup.string().required("New password is required")
+})
+
+const UpdateProfileValidationSchema = Yup.object({
+    name : Yup.string().required("Name is required"),
+    phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
+        .min(11, "Phone number must at least 11 characters")
+        .max(13, "Phone number must less than 14 characters"),
+    gender : Yup.string().required("Gender is required"),
+    birthdate : Yup.date().transform(parseDateString).required("Birthdate is required") ,   
+})
+
+const UpdateEmailValidationSchema = Yup.object({
+    email : Yup.string()
+        .email("Email is invalid")
+        .required("Email is required"),
+})
+
 module.exports = {
     LoginValidationSchema,
     RegisterValidationSchema,
-    VerifyValidationSchema
+    VerifyValidationSchema,
+    UpdatePasswordValidationSchema,
+    UpdateProfileValidationSchema,
+    UpdateEmailValidationSchema
 }
