@@ -32,7 +32,7 @@ export default function UserPage({ user }) {
     <div className="container py-24">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-4 lg:gap-4">
         <Sidebar profile={profile} user={user}/>
-        <div className="col-span-3 bg-red-500 h-screen">
+        <div className="col-span-3 border rounded-lg shadow-md p-4">
         { renderPageContext(context) }
         </div>
       </div>
