@@ -7,14 +7,10 @@ import Password from "./password";
 import Transaction from "./transaction";
 import Email from "./email";
 
-export default function UserPage({user}) {
+export default function UserPage({ user }) {
   const { context } = useParams()
 
-  const {profile} = useSelector(state=>{
-    return {
-      profile : state.auth.profile
-    }
-  })
+  const profile = user.profile
 
   const renderPageContext = (context) => {
     const pageContext = {
