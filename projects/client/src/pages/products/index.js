@@ -1,17 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../../../store/slices/product/slices";
-import { getCategory } from "../../../store/slices/cat/slices";
+import { getProducts } from "../../store/slices/product/slices";
+import { getCategory } from "../../store/slices/cat/slices";
 import { useEffect, useRef, useState } from "react";
 import { HiMagnifyingGlass, HiOutlineFunnel, HiXMark } from "react-icons/hi2";
 import { HiChevronRight, HiChevronLeft } from "react-icons/hi";
 
-import Button from "../../../components/Button";
-import Card from "../../../components/Card";
-import Footer from "../../../components/Footer";
-import SkeletonCard from "../../../components/SkeletonCard";
-import Modal from "../../../components/Modal";
-import Input from "../../../components/Input";
-import UploadRecipeButton from "../../../components/UploadRecipeButton";
+import Button from "../../components/Button";
+import Card from "../../components/Card";
+import Footer from "../../components/Footer";
+import SkeletonCard from "../../components/SkeletonCard";
+import Modal from "../../components/Modal";
+import Input from "../../components/Input";
+import UploadRecipeButton from "../../components/UploadRecipeButton";
 import "./index.css";
 import FilterDropdownMenu from "./filter.dropdown.menu";
 

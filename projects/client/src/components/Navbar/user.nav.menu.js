@@ -81,7 +81,7 @@ export default function UserNavMenu({
               className={`profile-img-wrapper relative row-start-2 flex w-full items-center gap-2 ${isAccountVerified ? "lg:border lg:border-danger lg:rounded-full lg:p-0.5" : null }`}
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate("/user/profile")}
             >
               <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
                 <img

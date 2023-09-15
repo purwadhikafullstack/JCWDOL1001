@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import Button from "../../../components/Button/index.js"
-import InputImage from "../../../components/InputImage"
-import Modal from "../../../components/Modal";
-import { uploadRecipe } from "../../../store/slices/upload-recipe/slices.js"
+import Button from "../../components/Button/index.js"
+import InputImage from "../../components/InputImage/index.js"
+import Modal from "../../components/Modal/index.js";
+import { uploadRecipe } from "../../store/slices/upload-recipe/slices.js"
 
 export default function UploadRecipePage(){
 

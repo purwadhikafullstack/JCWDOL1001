@@ -46,7 +46,7 @@ export default function UserNavMenuItems({ user }) {
 
       <Button
         isLink
-        path="/profile"
+        path="/user/profile"
         className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/profile" ? "text-primary" : "text-slate-500"}`}
       >
         <div className={`profile-img-wrapper ${user.status === 0 && "border-2 border-danger rounded-full"}`}>

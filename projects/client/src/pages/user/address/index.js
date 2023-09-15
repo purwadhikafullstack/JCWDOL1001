@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
-import ProfileCard from "../component.profile.card";
 import { useEffect, useState } from "react";
-import { getAddress } from "../../../../store/slices/address/slices";
-import Button from "../../../../components/Button";
+import { getAddress } from "../../../store/slices/address/slices";
+import Button from "../../../components/Button";
 
 export default function Address({user}) {
   const dispatch = useDispatch()
@@ -18,13 +17,9 @@ export default function Address({user}) {
 
   useEffect(()=>{
     dispatch(getAddress())
-    console.log(selectedAddress);
   }, [selectedAddress])
 
   return (
-    <div className="container py-24">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-4 lg:gap-4">
-        <ProfileCard profile={profile} user={user}/>
         <div className="col-span-3 h-screen">
           <h3 className="title">Alamat</h3>
           {address.map((data, index) => (
@@ -48,8 +43,6 @@ export default function Address({user}) {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
+        </div>  
   )
 }
