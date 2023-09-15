@@ -60,15 +60,20 @@ const createDiscount = async (req, res, next) => {
         await DiscountInfoValidationSchema.validate(req.body.data)
 
         const {discountCode,discountAmount,oneGetOne,minimalTransaction,isPercentage,} = req.body.data
-
-        if((oneGetOne === 0 || (minimalTransaction === "" || minimalTransaction =="0")) && discountCode === "" ) throw({
+        
+        if( ( ( (discountAmount === "" || discountAmount == "0" ) && (minimalTransaction === "" || minimalTransaction =="0") ) || oneGetOne === 1 )  && discountCode === "" ) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
         })
 
-        if((discountAmount === "" || discountAmount == "0" ) && discountCode !== "" ) throw({
+        if((discountAmount === "" || discountAmount == "0" ) && (minimalTransaction === "" || minimalTransaction =="0")) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-            message : middlewareErrorHandling.VOUCHER_CANT_WITH_AMOUNT
+            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
+        })
+
+        if( oneGetOne === 1 && req.body.products.length == 0 ) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_NEED_PRODUCT
         })
 
         const isNameExist = await Discount.findAll({ where : { discountName : req.body.data.discountName } })

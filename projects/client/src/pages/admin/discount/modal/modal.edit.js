@@ -41,12 +41,27 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
 
     const onButtonSave = async () => {
         try {
-            if((isOneGetOne.id === 1 || minimumRef?.current?.value =="0") && codeRef?.current?.value === "" ){
+            // minimum transaksi atau produk buy one get one harus ada kode voucher
+            if(
+                (
+                    ( (amountRef?.current?.value === "" || amountRef?.current?.value == "0" ) && (minimumRef?.current?.value !== "" || minimumRef?.current?.value != "0" ) )
+                    || (isOneGetOne.id === 1)
+                )
+                && codeRef?.current?.value === ""
+            ){
                 return toast.error("Voucher code can't be empty")
             }
-            if((amountRef?.current?.value === "" || amountRef?.current?.value == "0" ) && codeRef?.current?.value !== "" ){
-                return toast.error("Discount amount can't be use with voucher code")
+            
+            // minimum transaction harus ada amount utk dipotong
+            if((minimumRef?.current?.value !== "" || minimumRef?.current?.value != "0" ) && (amountRef?.current?.value === "" || amountRef?.current?.value == "0" )){
+                return toast.error("Minimum transaction voucher must have a reduced amount")
             }
+
+            // buy one get one harus ada produk
+            if(isOneGetOne.id === 1 && selectedProducts.length === 0 ){
+                return toast.error("Buy One Get One must have product")
+            }
+            
             output.data = {
                 "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
                 "isPercentage" : isPercentage.id ,
