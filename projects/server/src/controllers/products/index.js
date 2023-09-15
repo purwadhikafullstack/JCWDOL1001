@@ -43,10 +43,11 @@ const getProducts = async (req, res, next) => {
         },
         {
           model : Discount_Product,
-          attributes : ["discountId"],
+          attributes : {exclude : ["discountProductId","discountId"]},
           as: "discountProducts",
           include : {
-            model : Discount
+            model : Discount,
+            where : { isDeleted : 0 }
           }
         },
       ]
