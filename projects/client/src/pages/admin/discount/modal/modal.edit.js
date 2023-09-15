@@ -57,11 +57,10 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
                 "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode
             }
-            if(!selectedId){
-                output.products = selectedProducts.map(({productId, productPrice}) => { return {productId, productPrice} })
+            output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
+            if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
-                output.products = selectedProducts
                 dispatch(updateDiscount({discountId : selectedId?.discountId,output}))
             }
         }catch(error){}
@@ -201,7 +200,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
             </div>
         </div>
-        <ProductList data={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} products={products} />
+        <ProductList dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} />
     </div>
   )
 }

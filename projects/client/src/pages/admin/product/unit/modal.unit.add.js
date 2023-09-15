@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from 'react-toastify'
 import Button from "../../../../components/Button";
 import Input from "../../../../components/Input";
-import { useDispatch } from "react-redux";
 import SuccessMessage from "../../../../components/Message";
 import { addUnit } from "../../../../store/slices/product/unit/slices";
 
@@ -39,14 +40,11 @@ export default function ModalAddProductUnit({
 
     let dataUnits = []
     
-    if(canAddDefaultUnit && canAddSecondaryUnit ){
-        dataUnits = units
-    }else if(canAddSecondaryUnit){
+    if((canAddSecondaryUnit && !canAddDefaultUnit) || isDefaultUnit.id ==0 ){
         dataUnits = units.filter((unit) => unit.isSecondary.toString() === canAddSecondaryUnit.toString())
-    }else{
+    }else {
         dataUnits = units.filter((unit) => unit.isSecondary.toString() === (!canAddDefaultUnit).toString())
     }
-
 
     if (success) {
         return (
@@ -66,7 +64,10 @@ export default function ModalAddProductUnit({
     }
 
     const handleChangeDefault = (type) => {
-        setIsDefaultUnit(type)
+        setIsDefaultUnit({
+            id : type.id,
+            name : type.name
+        })
     }
 
     const output = {data:{},productId:""}
@@ -87,14 +88,14 @@ export default function ModalAddProductUnit({
         output.productId = productData.productId
         
         try {
-
-            if(output.data.isDefault == 1 && output.data.quantity === 0) throw(
-                alert("Default Unit must have qty")
-            )
+            if(output.data.isDefault == 1 && output.data.quantity === 0) {
+                return toast.error("Default Unit must have qty")
+            }
     
-            if(output.data.isDefault == 1 && output.data.convertion === 0) throw(
-                alert("Default Unit must have qty per unit")
-            )
+            if(output.data.isDefault == 1 && output.data.convertion === 0) {
+                return toast.error("Default Unit must have qty per unit")
+            }
+
             dispatch(addUnit(output))
 
             setConfirmation(false)

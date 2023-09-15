@@ -47,9 +47,8 @@ export default function DiscountPage(){
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
         setSelected([])
-        dispatch(
-            getDiscount({page : currentPage,discountName : discountRef?.current.value})
-        )
+        dispatch( getDiscount({page : currentPage,discountName : discountRef?.current.value}))
+        dispatch(getProducts({page:0}))
         document.body.style.overflow = "auto"
     };
 
