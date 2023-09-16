@@ -134,3 +134,79 @@ export const resendOtp= createAsyncThunk(
         }
     }
 )
+
+export const changePassword = createAsyncThunk (
+    "auth/admin/changePassword",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const userId = payload.userId;
+            delete payload.userId;
+            const response = await api.patch(`auth/change-password/${userId}`,payload)
+            toast.success("Password has been changed.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeProfilePicture = createAsyncThunk(
+    "auth/admin/changeProfilePicture",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
+            toast.success("Your profile picture has been updated.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeEmailOtp = createAsyncThunk(
+    "auth/admin/changeEmailOtp",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const response = await api.post(`auth/changeOtp/${payload.userId}`)
+            toast.success("We are sending you the OTP, please check your mail.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeEmail = createAsyncThunk (
+    "auth/admin/changeEmail",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const userId = payload.userId;
+            delete payload.userId;
+            const response = await api.patch(`auth/change-email/${userId}`,payload)
+            toast.success("Email has been changed.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeProfileData = createAsyncThunk (
+    "auth/admin/changePassword",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const userId = payload.userId;
+            delete payload.userId;
+            const response = await api.patch(`auth/change-profile/${userId}`,payload)
+            toast.success("Your profile data has been updated.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)

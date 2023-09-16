@@ -1,12 +1,18 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
 import { CategoryValidationSchema } from "./validation";
+import { toast } from 'react-toastify';
 
 export const getCategory = createAsyncThunk(
     "category/allcat",
     async(payload, {rejectWithValue}) => {
         try{
-            const response = await api.get("/category");
+            const {page} = payload
+            let query = "";
+            if(page){
+                query += `?page=${page}`;
+            }
+            const response = await api.get(`/category${query}`);
             return response.data;
         }catch(error){
             return rejectWithValue(error.response.data);
@@ -19,9 +25,10 @@ export const addCategory = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.post("/category",payload)
-            alert("Category added!")
+            toast.success("Category Added")
             return{}
         }catch(error){
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response.data);
         }
     }
@@ -32,9 +39,10 @@ export const deleteCategory = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch("/category/delete-category",payload)
-            alert("Category deleted")
+            toast.success("Category deleted")
             return{}
         }catch(error){
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response.data);
         }
     }
@@ -44,11 +52,12 @@ export const updateCategory = createAsyncThunk(
     "category/updatecat",
     async(payload, {rejectWithValue}) => {
         try{
-            CategoryValidationSchema.validateSync(payload)
+            await CategoryValidationSchema.validate(payload)
             const response = await api.patch("/category",payload)
-            alert("Category updated")
+            toast.success("Category updated")
             return{}
         }catch(error){
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response.data);
         }
     }
@@ -59,9 +68,10 @@ export const updateCategoryPicture = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch(`/category/category-picture/${payload.categoryId}`,payload.formData)
-            alert("Category Image updated")
+            toast.success("Category Image updated")
             return{}
         }catch(error){
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response.data);
         }
     }
