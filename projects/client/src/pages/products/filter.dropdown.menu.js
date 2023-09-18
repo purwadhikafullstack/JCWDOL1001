@@ -111,7 +111,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
             setFilterType(null)
           }}
         >
-          <HiOutlineTrash />
+          <HiOutlineTrash className="text-danger"/>
           Hapus Filter
         </div>
       </div>

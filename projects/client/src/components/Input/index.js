@@ -13,7 +13,8 @@ const Input = React.forwardRef(({
   className,
   errorInput,
   onBlur,
-  isDisabled
+  isDisabled,
+  readOnly
 },ref) => {
 
   const handleChange = (e) => {
@@ -109,6 +110,7 @@ const Input = React.forwardRef(({
             onBlur={onBlur}
             onWheel={(e) => e.target.blur()}
             disabled={isDisabled}
+            readOnly={readOnly}
         />
       </div>
     );
@@ -152,6 +154,7 @@ const Input = React.forwardRef(({
           onBlur={onBlur}
           onWheel={(e) => e.target.blur()}
           disabled={isDisabled}
+          readOnly={readOnly}
       />
     </div>
   );
