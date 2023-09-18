@@ -1,17 +1,33 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
+import { toast } from "react-toastify"
 import Axios from "axios";
 
 
 export const getAddress = createAsyncThunk(
-    "address/userAddress",
+    "address/getAddress",
     async (payload, { rejectWithValue }) => {
         try {
 
-            const { data } = await api.get("/")
+            const { data } = await api.get("/address/")
 
             return data
         } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const addAddress = createAsyncThunk(
+    "address/addAddress",
+    async (payload, { rejectWithValue }) => {
+        try {
+
+            await api.post("/address/", payload)
+            toast.success("Yay! Alamat berhasil ditambahkan!")
+
+        } catch (error) {
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response?.data?.message)
         }
     }
@@ -22,9 +38,9 @@ export const deleteAddress = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-            const { data } = await api.patch("/address/delete/" + payload)
+            await api.patch("/address/delete/" + payload)
+            toast.success("Yay! Alamat berhasil dihapus!")
 
-            return data
         } catch (error) {
             return rejectWithValue(error.response?.data?.message)
         }
@@ -87,3 +103,7 @@ export const cost = createAsyncThunk(
         }
     }
 )
+
+export const resetSuccessAddress = () => ({
+    type: "address/resetSuccessAddress",
+});

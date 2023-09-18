@@ -1,20 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../../../store/slices/product/slices";
-import { getCategory } from "../../../store/slices/cat/slices";
+import { getProducts } from "../../store/slices/product/slices";
+import { getCategory } from "../../store/slices/cat/slices";
 import { useEffect, useRef, useState } from "react";
 import { HiMagnifyingGlass, HiOutlineFunnel, HiXMark } from "react-icons/hi2";
 import { HiChevronRight, HiChevronLeft } from "react-icons/hi";
 
-import Button from "../../../components/Button";
-import Card from "../../../components/Card";
-import Footer from "../../../components/Footer";
-import SkeletonCard from "../../../components/SkeletonCard";
-import Modal from "../../../components/Modal";
-import Input from "../../../components/Input";
-import UploadRecipeButton from "../../../components/UploadRecipeButton";
+import Button from "../../components/Button";
+import Card from "../../components/Card";
+import Footer from "../../components/Footer";
+import SkeletonCard from "../../components/SkeletonCard";
+import Modal from "../../components/Modal";
+import Input from "../../components/Input";
+import UploadRecipeButton from "../../components/UploadRecipeButton";
 import "./index.css";
 import FilterDropdownMenu from "./filter.dropdown.menu";
-import { totalProductCart } from "../../../store/slices/cart/slices";
+import { totalProductCart } from "../../store/slices/cart/slices";
 
 export default function Products({ user }) {
   const dispatch = useDispatch();
@@ -115,6 +115,7 @@ export default function Products({ user }) {
                 onClick={() => {
                   setSelectedCategory(null);
                   setSearch(null)
+                  setPage(1)
                   searchRef.current.value = ""
                 }}
               >
@@ -130,6 +131,7 @@ export default function Products({ user }) {
                   onClick={() => {
                     setSelectedCategory(category);
                     setSearch(null)
+                    setPage(1)
                     searchRef.current.value = ""
                   }}
                 >
@@ -231,7 +233,7 @@ export default function Products({ user }) {
                 <HiChevronLeft className=" text-xl " /> Prev
               </Button>
 
-              {Array.from({ length: total_page }, (_, index) => (
+              {/* {Array.from({ length: total_page }, (_, index) => (
                 <Button
                   key={index}
                   className={
@@ -244,7 +246,7 @@ export default function Products({ user }) {
                 >
                   {index + 1}
                 </Button>
-              ))}
+              ))} */}
 
               <Button
                 className={`flex items-center  ${

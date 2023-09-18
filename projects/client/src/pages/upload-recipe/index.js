@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import Button from "../../../components/Button/index.js"
-import InputImage from "../../../components/InputImage"
-import Modal from "../../../components/Modal";
-import { uploadRecipe } from "../../../store/slices/upload-recipe/slices.js"
+import Button from "../../components/Button/index.js"
+import InputImage from "../../components/InputImage/index.js"
+import Modal from "../../components/Modal/index.js";
+import { uploadRecipe } from "../../store/slices/upload-recipe/slices.js"
 
 export default function UploadRecipePage(){
 
@@ -49,7 +49,7 @@ export default function UploadRecipePage(){
     return(
         <div className="container max-w-3xl pt-24">
             <div className="flex flex-col gap-5">
-                <span className="title text-2xl">Upload Resep</span>
+                <h3 className="title">Upload Resep</h3>
                 <span className="title text-md text-slate-500">Foto tidak boleh lebih dari 1Mb.</span>
             </div>
             <InputImage
