@@ -19,9 +19,6 @@ import Products from "./pages/products";
 import ProductDetail from "./pages/product-details";
 import UploadRecipePage from "./pages/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
-import Profile from "./pages/user/profile/profile";
-import ProfileEmail from "./pages/user/profile/email";
-import ProfilePassword from "./pages/user/profile/password";
 import UserPage from "./pages/user";
 
 function App() {
@@ -94,20 +91,13 @@ function App() {
 
           {!user?.role || user?.role == 2 && (
             <>
-              {/* <Route path="/products" element={<Products />} /> */}
+              <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
+              <Route path="/user/:context" element={<UserPage user={user}/>} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
             </>
           )}
-
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/email" element={<ProfileEmail />} />
-          <Route path="/profile/password" element={<ProfilePassword />} />
-          <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
-          <Route path="/user/:context" element={<UserPage user={user}/>} />
-
-          <Route path="/cart" element={<Cart />} />
-
-          <Route path="/verify/*" element={<Verification/>} />
-          <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
+          <Route path="/verify/*" element={<Verification/>} />     
           <Route path="*" element={<NotFound />} />
         </Routes>
 

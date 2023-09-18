@@ -156,6 +156,7 @@ export const changeProfilePicture = createAsyncThunk(
     "auth/user/changeProfilePicture",
     async(payload, {rejectWithValue}) => {
         try{
+            console.log(payload)
             const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
             toast.success("Your profile picture has been updated.")
             return {}
@@ -184,9 +185,9 @@ export const changeEmail = createAsyncThunk (
     "auth/user/changeEmail",
     async(payload, {rejectWithValue}) => {
         try{
-            await changeEmailValidationSchema(payload)
             const userId = payload.userId;
             delete payload.userId;
+            console.log(payload);
             const response = await api.patch(`auth/change-email/${userId}`,payload)
             toast.success("Email has been changed.")
             return {}
