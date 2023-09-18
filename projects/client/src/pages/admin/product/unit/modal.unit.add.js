@@ -80,11 +80,13 @@ export default function ModalAddProductUnit({
         if( unitRef?.current?.value ){
             output.data.unitName = unitRef?.current?.value
         }
-
+        
         output.data.unitId = unitRef?.current?.value ? units.length + 1 : unitSelected.unitId
-
+        
         output.data.isDefault= canAddDefaultUnit && canAddSecondaryUnit ? isDefaultUnit.id : canAddSecondaryUnit ? 0 : 1
-
+        
+        output.data.isSecondary = output.data.isDefault == 1 ? 0 : 1
+        
         output.productId = productData.productId
         
         try {
@@ -139,7 +141,7 @@ export default function ModalAddProductUnit({
                                 name="isDefault"
                                 value="yes"
                                 checked = {isDefaultUnit.name === "yes" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:"1",name:"yes"})}}
+                                onChange={()=>{handleChangeDefault({id:1,name:"yes"})}}
                                 
                             />
                             <label for="1" className="mr-4">Yes</label>
@@ -150,7 +152,7 @@ export default function ModalAddProductUnit({
                                 name="isDefault" 
                                 value="no" 
                                 checked = {isDefaultUnit.name === "no" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:"0",name:"no"})}}
+                                onChange={()=>{handleChangeDefault({id:0,name:"no"})}}
                             />
                             <label for="0">No</label>
                         </div>
