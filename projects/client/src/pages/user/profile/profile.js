@@ -1,12 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import ProfileCard from "./component.profile.card";
+import { useEffect } from "react";
+import { totalProductCart } from "../../../store/slices/cart/slices";
 
 export default function Profile() {
   const {profile} = useSelector(state=>{
     return {
-      profile : state.auth.profile
+      profile : state.auth.profile,
+      total : state.cart.total
     }
   })
+  const dispatch = useDispatch()
+  useEffect(()=>{
+    dispatch(totalProductCart())
+  },[])
 
   return (
     <div className="container py-24">

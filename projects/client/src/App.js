@@ -5,7 +5,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
-
+import Cart from "./pages/user/cart";
 // import AdminPage from "./components/Navbar/admin.nav.menu.js";
 import Verification from "./pages/verification";
 
@@ -101,7 +101,7 @@ function App() {
 
           <Route path="/profile" element={<Profile />} />
           <Route path="/address" element={<Address />} />
-
+          <Route path="/cart" element={<Cart />} />
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
