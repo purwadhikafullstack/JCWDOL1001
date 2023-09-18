@@ -8,6 +8,7 @@ import UnggahResep from "./components/unggah.resep.component"
 import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
 import { getProducts } from "../../store/slices/product/slices";
+import { getCart, totalProductCart } from "../../store/slices/cart/slices";
 
 export default function LandingPage() {
   const { user, role, categories, products  } = useSelector(state => {
@@ -40,6 +41,8 @@ export default function LandingPage() {
         limit:12,
       })
     )
+    dispatch(getCart())
+    dispatch(totalProductCart())
   },[])
 
   return (

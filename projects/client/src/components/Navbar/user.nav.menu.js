@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import UserNavMenuItems from "./user.nav.menu.items"
@@ -14,6 +14,12 @@ export default function UserNavMenu({
   user,
   handleShowModal,
 }) {
+  const {total}= useSelector(state=>{
+    return {
+      total : state?.cart?.total
+    }
+  })
+
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
@@ -71,9 +77,11 @@ export default function UserNavMenu({
 
               <Button isLink path="/cart" className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
-                <span className={`absolute -right-2 -top-[8px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
-                  4
-                </span>
+                {total > 0 &&
+                  <span className={`absolute -right-2 ${isAccountVerified && !verify ? "-top-[-8px]" : "-top-2" } flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
+                  {total}
+                  </span>
+                }
               </Button>
               
             </div>

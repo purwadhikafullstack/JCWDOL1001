@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
+import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
 import { keepLogin } from "./store/slices/auth/slices";
 import CategoryList from "./pages/admin/category";
@@ -97,8 +98,7 @@ function App() {
           <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
           <Route path="/user/:context" element={<UserPage user={user}/>} />
 
-          {/* <Route path="/profile" element={<Profile user={user}/>} />
-          <Route path="/address" element={<Address user={user}/>} /> */}
+          <Route path="/cart" element={<Cart />} />
 
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
