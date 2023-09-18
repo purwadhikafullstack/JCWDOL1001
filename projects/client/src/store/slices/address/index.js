@@ -3,20 +3,29 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
     listCity,
     cost,
-    listProvince
+    listProvince,
+    getAddress,
+    deleteAddress,
+    addAddress
 } from "./slices"
 
 const INITIAL_STATE = {
+    data : [],
     province : [],
     city : [],
-    isLoading : false
-
+    isLoading : false,
+    isGetAddressLoading : false,
+    isSubmitAddressLoading : false,
+    success: false
 }
 
 const addressSlice = createSlice({
     name : "address",
     initialState : INITIAL_STATE,
-    reducers : {
+    reducers: {
+        resetSuccessAddress: (state, action) => {
+            state.success = false;
+        },
     },
     extraReducers : {
 
@@ -34,6 +43,7 @@ const addressSlice = createSlice({
                 isLoading : false,
             })
         },
+
         [listCity.pending] : (state, action) => {
             state.isLoading = true
         },
@@ -48,6 +58,47 @@ const addressSlice = createSlice({
                 isLoading : false,
             })
         },
+
+        [getAddress.pending] : (state, action) => {
+            state.isGetAddressLoading = true
+        },
+        [getAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                data : action.payload?.data,
+                isGetAddressLoading : false,
+            })
+        },
+        [getAddress.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isGetAddressLoading : false,
+            })
+        },
+
+        [addAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true
+        },
+        [addAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                data : action.payload?.data,
+                isSubmitAddressLoading : false,
+            })
+        },
+        [addAddress.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isSubmitAddressLoading : false,
+            })
+        },
+
+        [deleteAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true;
+        },
+        [deleteAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state.isSubmitAddressLoading = false;
+            state.success = true;
+        },
+        [deleteAddress.rejected] : (state, action) => {
+            state.isSubmitAddressLoading = false;
+        }
     }
 })
 

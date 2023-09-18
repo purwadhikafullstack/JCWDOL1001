@@ -1,15 +1,59 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
+import { toast } from "react-toastify"
 import Axios from "axios";
 
 
-export const listProvince = createAsyncThunk(
-    "address/province",
-     
+export const getAddress = createAsyncThunk(
+    "address/getAddress",
     async (payload, { rejectWithValue }) => {
         try {
 
-           const response = await api.get("address")
+            const { data } = await api.get("/address/")
+
+            return data
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const addAddress = createAsyncThunk(
+    "address/addAddress",
+    async (payload, { rejectWithValue }) => {
+        try {
+
+            await api.post("/address/", payload)
+            toast.success("Yay! Alamat berhasil ditambahkan!")
+
+        } catch (error) {
+            toast.error(error.response.data.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const deleteAddress = createAsyncThunk(
+    "address/deleteAddress",
+    async (payload, { rejectWithValue }) => {
+        try {
+
+            await api.patch("/address/delete/" + payload)
+            toast.success("Yay! Alamat berhasil dihapus!")
+
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const listProvince = createAsyncThunk(
+    "address/province",
+
+    async (payload, { rejectWithValue }) => {
+        try {
+
+          const response = await api.get("/address/province")
 
             const {data} = response
 
@@ -24,13 +68,13 @@ export const listProvince = createAsyncThunk(
 
 export const listCity = createAsyncThunk(
     "address/city",
-     
+
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await api.get(`address/city?province=${payload?.province}`)
+            const response = await api.get(`/address/city?province=${payload?.province}`)
 
             const {data} = response
- 
+
             return data
             
         } catch (error) {
@@ -43,7 +87,6 @@ export const listCity = createAsyncThunk(
 
 export const cost = createAsyncThunk(
     "address/cost",
-     
     async (payload, { rejectWithValue }) => {
         try {
             //teruntuk siapapun yang ngerjain ongkir
@@ -60,3 +103,7 @@ export const cost = createAsyncThunk(
         }
     }
 )
+
+export const resetSuccessAddress = () => ({
+    type: "address/resetSuccessAddress",
+});

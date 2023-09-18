@@ -2,29 +2,27 @@ import axios from "axios";
 import { useEffect,useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
-
-// import AdminPage from "./components/Navbar/admin.nav.menu.js";
+import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
-
 import { keepLogin } from "./store/slices/auth/slices";
 import CategoryList from "./pages/admin/category";
-import "./App.css";
 import AdminProducts from "./pages/admin/product";
 import NotFound from "./pages/NotFound";
 import LoadingSpinner from "./components/LoadingSpinner";
-import Products from "./pages/user/products";
-import ProductDetail from "./pages/user/product-details";
-import { ToastContainer } from "react-toastify";
-
-import 'react-toastify/dist/ReactToastify.css';
-import UploadRecipePage from "./pages/user/upload-recipe";
+import Products from "./pages/products";
+import ProductDetail from "./pages/product-details";
+import UploadRecipePage from "./pages/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
 import Profile from "./pages/user/profile/profile";
 import ProfileEmail from "./pages/user/profile/email";
 import ProfilePassword from "./pages/user/profile/password";
+import UserPage from "./pages/user";
 
 function App() {
   const { pathname } = useLocation();
@@ -103,15 +101,21 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/email" element={<ProfileEmail />} />
           <Route path="/profile/password" element={<ProfilePassword />} />
+          <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
+          <Route path="/user/:context" element={<UserPage user={user}/>} />
+
+          <Route path="/cart" element={<Cart />} />
+
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+
       {/* <Footer /> */}
       <ToastContainer 
         position="top-center"
         autoClose={1000}
-        hideProgressBar={true}
+        hideProgressBar={false}
         closeOnClick={true}
         pauseOnHover={false}
         draggable={true}

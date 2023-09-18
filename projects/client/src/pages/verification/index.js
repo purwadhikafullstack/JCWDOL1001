@@ -52,8 +52,6 @@ export default function Verification() {
         setCityRef(result[0])
     }
 
-
-
     const onButtonSubmit = () =>{
         const otp = otpRef.current?.value
         const gender = genderRef.current?.value
@@ -103,8 +101,8 @@ export default function Verification() {
         return () => clearTimeout(timeoutRefresh)
     },[user])
 
-  return (
-      <div className="w-full flex flex-col items-center">
+    return (
+    <div className="w-full flex flex-col items-center">
     {
         user?.status === 1 ? 
         <div className="container pt-24 w-2/3 h-full flex flex-col">
@@ -125,7 +123,8 @@ export default function Verification() {
         </div>
 
         :
-      <div className="container pt-24 w-2/3 h-full">
+
+        <div className="container pt-24 w-2/3 h-full">
         <h3 className="text-2xl font-bold">
                 Verification
             </h3>

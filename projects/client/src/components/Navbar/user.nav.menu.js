@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import UserNavMenuItems from "./user.nav.menu.items"
@@ -14,6 +14,12 @@ export default function UserNavMenu({
   user,
   handleShowModal,
 }) {
+  const {total}= useSelector(state=>{
+    return {
+      total : state?.cart?.total
+    }
+  })
+
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
@@ -58,7 +64,8 @@ export default function UserNavMenu({
                 onClick={() => handleShowModal("register")}
               />
             </div>
-          : <UserNavMenuItems user={user} isLogin={isLogin} />
+          : 
+            <UserNavMenuItems user={user} isLogin={isLogin} />
         }
       </div>
 
@@ -66,30 +73,24 @@ export default function UserNavMenu({
         isLogin ? 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="relative flex gap-4">
-              <Button
-                isButton
-                isPrimary
-                isDisabled={verify}
-                onClick={onClickVerified}
-                className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
-              >
-                <span>Verify Account</span>
-              </Button>
+              
 
-              <Button isLink path="/cart" className={`${isAccountVerified && !verify ? "mt-4" : ""}`} >
+              <Button isLink path="/cart" className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
-                <span className={`absolute -right-2 ${isAccountVerified && !verify ? "-top-[-8px]" : "-top-2" } flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
-                  4
-                </span>
+                {total > 0 &&
+                  <span className={`absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
+                  {total}
+                  </span>
+                }
               </Button>
               
             </div>
 
             <div
-              className="profile-img-wrapper relative row-start-2 flex w-full items-center gap-2"
+              className={`profile-img-wrapper relative row-start-2 flex w-full items-center gap-2 ${isAccountVerified ? "lg:border lg:border-danger lg:rounded-full lg:p-0.5" : null }`}
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate("/user/profile")}
             >
               <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
                 <img
@@ -153,6 +154,15 @@ export default function UserNavMenu({
                             className="hover:text-primary"
                             onClick={onClickKeluar}
                           />
+                          <Button
+                            isButton
+                            isPrimary
+                            isDisabled={verify}
+                            onClick={onClickVerified}
+                            className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
+                          >
+                            <span>Verify Account</span>
+                          </Button>
                         </div>
                       </div>
                     </motion.div>

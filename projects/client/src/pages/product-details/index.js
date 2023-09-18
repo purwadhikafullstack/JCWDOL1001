@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getProductById, getProducts } from "../../../store/slices/product/slices";
-import formatNumber from "../../../utils/formatNumber";
+import { getProductById, getProducts } from "../../store/slices/product/slices";
+import formatNumber from "../../utils/formatNumber";
 import { BsDashLg, BsPlusLg } from "react-icons/bs";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import Footer from "../../../components/Footer";
-import Card from "../../../components/Card";
-import Modal from "../../../components/Modal";
-import UploadRecipeButton from "../../../components/UploadRecipeButton";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import Footer from "../../components/Footer";
+import Card from "../../components/Card";
+import Modal from "../../components/Modal";
+import UploadRecipeButton from "../../components/UploadRecipeButton";
+import { getCart, totalProductCart, updateCart } from "../../store/slices/cart/slices";
 
 export default function ProductDetail({user}) {
   const dispatch = useDispatch()
   const { id } = useParams()
 
-  const { product, products } = useSelector((state)=>{
+  const { product, products,cart } = useSelector((state)=>{
     return {
-      product: state.products.productDetail,
-      products: state.products.data,
+      product: state?.products.productDetail,
+      products: state?.products.data,
+      cart: state?.cart?.cart
     }
   })
-
   const [qty, setQty] = useState(1);
+  const [stock, setStock] = useState(1);
+
+  useEffect(()=>{
+    const result = cart?.filter((element) => element?.productId == id)
+    setStock(result[0]?.cartList?.product_details[0]?.quantity)
+    if(result[0]?.quantity > 0 && result[0]?.quantity <= stock){
+      setQty(result[0]?.quantity)
+    }
+    dispatch(totalProductCart())
+  },[cart])
 
   const handleQty = (type) => {
     if (type === "add") {
@@ -35,17 +46,21 @@ export default function ProductDetail({user}) {
   };
 
   const handleQtyInput = (event) => {
+    event.preventDefault()
     const newQty = event.target.value;
 
-    if (newQty === "" || +newQty > 0) {
+    if (newQty === "" || +newQty > 0 && +newQty <= stock) {
       setQty(newQty === "" ? "" : +newQty);
+    }
+    if(+newQty === "" || +newQty === 0) {
+      setQty(1);
     }
   };
 
   const handleBlur = (event) => {
     const newQty = event.target.value;
 
-    if (newQty === "") {
+    if (+newQty === "") {
       setQty(1);
     }
   };
@@ -54,7 +69,16 @@ export default function ProductDetail({user}) {
 
   const handleCart = (productId) => {
     if (user.role) {
-      alert(`Produk ${productId} berhasil ditambahkan ke keranjang!`);
+      try{
+        dispatch(updateCart({productId: productId , quantity : String(qty)}))
+        alert(`Produk ${productId} berhasil ditambahkan ke keranjang!`);
+        return
+      }
+      catch(err){
+        alert("error dalam cart update!")
+        return
+      }
+      //harus diubah ke toastify
     }
 
     if (!user.role) {
@@ -77,7 +101,9 @@ export default function ProductDetail({user}) {
         sort_name: "",
       })
     );
+    dispatch(getCart())
   },[id])
+
 
   return (
     <>
@@ -119,6 +145,7 @@ export default function ProductDetail({user}) {
             <h3 className="text-2xl font-bold text-primary">
               Rp.{" "}
               {product?.discount
+              //bisa letakin product.endingPrice disini
                 ? formatNumber(product?.discount * product?.productPrice)
                 : formatNumber(product?.productPrice)}
             </h3>
@@ -139,8 +166,8 @@ export default function ProductDetail({user}) {
                 onClick={() => handleQty("reduce")}
               />
               <Input
-                type="text"
-                className="text-center "
+                type="numberSecondVariant"
+                className="text-center"
                 value={qty}
                 onChange={handleQtyInput}
                 onBlur={handleBlur}
@@ -154,11 +181,17 @@ export default function ProductDetail({user}) {
             </div>
 
             <div className="flex items-center justify-between">
+              <h3 className="text-sm text-gray-600 ">Stock : {stock}</h3>
+
+            </div>
+            
+            <div className="flex items-center justify-between">
               <h3 className="">Subtotal</h3>
               <h3 className="text-lg font-bold text-primary">
                 Rp.{" "}
                 {product?.discount
                   ? formatNumber(
+                    //bisa letakin ending price disini
                       product?.discount * product?.productPrice * qty)
                   : formatNumber(product?.productPrice * qty)}
               </h3>
@@ -201,7 +234,7 @@ export default function ProductDetail({user}) {
           </div>
         </div>
       </div>
-      <Footer />
+      <Footer/>
 
       <Modal
         showModal={showModal.show}

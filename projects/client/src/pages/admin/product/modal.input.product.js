@@ -3,7 +3,6 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import InputImage from "../../../components/InputImage";
 import { useDispatch, useSelector } from "react-redux";
-import { getCategory } from "../../../store/slices/cat/slices";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiXMark } from "react-icons/hi2";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
@@ -16,9 +15,7 @@ import {
   inputProductValidationSchema,
   updateProductValidationSchema,
 } from "../../../store/slices/product/validation";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import Message from "../../../components/Message";
-
 
 export default function ModalInputProduct({
   success,
@@ -40,28 +37,38 @@ export default function ModalInputProduct({
 
   const [error, setError] = useState("");
   const [confirmAdd, setConfirmAdd] = useState(false);
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   const [file, setFile] = useState(null);
   const [dataImage, setDataImage] = useState(null);
 
-
   const handleSelectCategory = (e) => {
-  const categoryId = +e.target.value;
+    const categoryId = +e.target.value;
 
-  const isCategorySelected = selectedCategories.some((category) => category.categoryId === categoryId);
+    const isCategorySelected = selectedCategories.some(
+      (category) => category.categoryId === categoryId
+    );
 
-  if (isCategorySelected) {
-    setSelectedCategories(selectedCategories.filter((category) => category.categoryId !== categoryId));
-  } else {
-    const selectedCategory = categories.find((category) => category.categoryId === categoryId);
-    setSelectedCategories([...selectedCategories, selectedCategory]);
-  }
+    if (isCategorySelected) {
+      setSelectedCategories(
+        selectedCategories.filter(
+          (category) => category.categoryId !== categoryId
+        )
+      );
+    } else {
+      const selectedCategory = categories.find(
+        (category) => category.categoryId === categoryId
+      );
+      setSelectedCategories([...selectedCategories, selectedCategory]);
+    }
 
-  setError({ ...error, categoryId: "" });
+    setError({ ...error, categoryId: "" });
   };
 
   const handleRemoveCategory = (categoryId) => {
-    setSelectedCategories(selectedCategories.filter((item) => item.categoryId !== categoryId));
+    setSelectedCategories(
+      selectedCategories.filter((item) => item.categoryId !== categoryId)
+    );
   };
 
   useEffect(() => {
@@ -79,7 +86,9 @@ export default function ModalInputProduct({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const categoryIds = selectedCategories.map((category) => category.categoryId);
+    const categoryIds = selectedCategories.map(
+      (category) => category.categoryId
+    );
 
     // Data product (JSON)
     const inputProductData = {
@@ -96,7 +105,6 @@ export default function ModalInputProduct({
     if (file) formData.append("file", file);
 
     try {
-
       if (productData) {
         await updateProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
@@ -107,9 +115,6 @@ export default function ModalInputProduct({
 
         if (confirmAdd) {
           dispatch(updateProduct({ id: productData.productId, formData }));
-          // for (let pair of formData.entries()) {
-          //   console.log(pair[0], pair[1]);
-          // }
         }
       }
 
@@ -133,7 +138,13 @@ export default function ModalInputProduct({
       });
       setError(errors);
 
-      toast.error("Check your input field!")
+      toast.error("Check your input field!");
+
+      setIsToastVisible(true);
+
+      setTimeout(() => {
+        setIsToastVisible(false);
+      }, 2000);
     }
   };
 
@@ -145,7 +156,7 @@ export default function ModalInputProduct({
           productData
             ? "Product Updated Successfully"
             : "Product Added Successfully!"
-          }
+        }
         handleCloseModal={handleCloseModal}
       />
     );
@@ -153,7 +164,7 @@ export default function ModalInputProduct({
 
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
-      <form onSubmit={(e)=>handleSubmit(e)}>
+      <form onSubmit={(e) => handleSubmit(e)}>
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="">
             {selectedCategories.length === 0 ? (
@@ -289,53 +300,54 @@ export default function ModalInputProduct({
               title="Cancel"
               onClick={handleCloseModal}
             />
-            <Button 
-            isButton
-            isPrimary
-            isBLock
-            title={productData? "Update" : "Add Product"}
-            type="submit"
+            <Button
+              isButton
+              isPrimary
+              isBLock
+              isDisabled={isToastVisible}
+              title={productData ? "Update" : "Add Product"}
+              type={isToastVisible ? "button" : "submit"}
             />
           </div>
         </div>
 
-          <div className={`${!confirmAdd ? "hidden" : null}`}>
-            {productData ? (
-              <p className="modal-text">
-                Are you sure you want to update this product?
-              </p>
-            ) : (
-              <p className="modal-text">
-                Are you sure you want to add{" "}
-                <span className="font-bold">
-                  {capitalizeEachWords(productNameRef.current?.value)}
-                </span>{" "}
-                to the product list?
-              </p>
+        <div className={`${!confirmAdd ? "hidden" : null}`}>
+          {productData ? (
+            <p className="modal-text">
+              Are you sure you want to update this product?
+            </p>
+          ) : (
+            <p className="modal-text">
+              Are you sure you want to add{" "}
+              <span className="font-bold">
+                {capitalizeEachWords(productNameRef.current?.value)}
+              </span>{" "}
+              to the product list?
+            </p>
+          )}
+
+          <div className="flex justify-end gap-2">
+            {!isSubmitProductLoading && (
+              <Button
+                isButton
+                isPrimaryOutline
+                title="Back"
+                className="mt-4"
+                type="button"
+                onClick={() => setConfirmAdd(false)}
+              />
             )}
 
-            <div className="flex justify-end gap-2">
-              {!isSubmitProductLoading && (
-                <Button
-                  isButton
-                  isPrimaryOutline
-                  title="Back"
-                  className="mt-4"
-                  type="button"
-                  onClick={() => setConfirmAdd(false)}
-                />
-              )}
-
-              <Button 
-                isButton
-                isPrimary
-                title={"Sure"}
-                className="mt-4"
-                type="submit"
-                isLoading={isSubmitProductLoading}
-              />
-            </div>
+            <Button
+              isButton
+              isPrimary
+              title={"Sure"}
+              className="mt-4"
+              type="submit"
+              isLoading={isSubmitProductLoading}
+            />
           </div>
+        </div>
       </form>
 
       <AnimatePresence>
@@ -382,7 +394,9 @@ export default function ModalInputProduct({
                       name={category.categoryDesc}
                       value={category.categoryId}
                       onChange={handleSelectCategory}
-                      checked={selectedCategories.some(item => item.categoryId === category.categoryId)}
+                      checked={selectedCategories.some(
+                        (item) => item.categoryId === category.categoryId
+                      )}
                       className="cursor-pointer"
                     />
                   </div>

@@ -37,7 +37,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                     initial={{ translateY: -50, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     animate={{ translateY: 0, opacity: 1 }}
-                    className="nav"
+                    className={`nav ${user.role === 1 ? "z-20" : "z-[999]"}`}
                 >
                     <div className="navbar container flex">
                         <div className="lg:block">

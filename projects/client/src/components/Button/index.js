@@ -20,7 +20,7 @@ export default function Button(props) {
 
   props.isPrimaryOutline &&
     className.push(
-      "bg-inherit text-primary border border-primary hover:bg-primary hover:text-white duration-300"
+      "bg-inherit text-primary border border-primary hover:bg-slate-100 duration-300"
     );
 
   props.isDanger &&

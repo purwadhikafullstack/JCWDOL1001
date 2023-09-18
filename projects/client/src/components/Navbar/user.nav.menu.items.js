@@ -46,10 +46,10 @@ export default function UserNavMenuItems({ user }) {
 
       <Button
         isLink
-        path="/profile"
+        path="/user/profile"
         className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/profile" ? "text-primary" : "text-slate-500"}`}
       >
-        <div className="profile-img-wrapper ">
+        <div className={`profile-img-wrapper`}>
           <div
             className={`nav-profile-img aspect-square w-7 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 `}
           >
@@ -60,7 +60,7 @@ export default function UserNavMenuItems({ user }) {
             />
           </div>
         </div>
-        <a>Profil</a>
+        <span className={user.status === 0 && "text-danger"}>Saya</span>
       </Button>
     </div>
   );
