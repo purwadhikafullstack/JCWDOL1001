@@ -35,7 +35,8 @@ export default function InputAddressPage({
 
   const addressRef = useRef(null);
   const districtRef = useRef(null);
-  const [postalCodeState, setPostalCode] = useState(80351);
+  const postalCodeRef = useRef(null)
+  // const [postalCodeState, setPostalCode] = useState(80351);
   const [cityRef, setCityRef] = useState("Kabupaten Badung");
   const [provinceRef, setProvinceRef] = useState("Bali");
   const [isToastVisible, setIsToastVisible] = useState(false);
@@ -51,7 +52,7 @@ export default function InputAddressPage({
 
   const onCityChange = (cityParams) => {
     const result = cityParams.split(",");
-    setPostalCode(result[1]);
+    // setPostalCode(result[1]);
     setCityRef(result[0]);
   };
 
@@ -67,7 +68,7 @@ export default function InputAddressPage({
       district: districtRef.current?.value,
       city: cityRef,
       province: provinceRef,
-      postalCode: postalCodeState,
+      postalCode: postalCodeRef.current?.value,
     };
 
     try {
@@ -115,7 +116,7 @@ export default function InputAddressPage({
   };
 
   useEffect(() => {
-    setPostalCode(dataCity[0]?.postal_code);
+    // setPostalCode(dataCity[0]?.postal_code);
 
     setCityRef(dataCity[0]?.type + " " + dataCity[0]?.city_name);
   }, [dataCity]);
@@ -171,6 +172,15 @@ export default function InputAddressPage({
               </div>
             )}
           </div>
+          
+          <div className="mb-4">
+            <Input
+              ref={postalCodeRef}
+              type="number"
+              label="Kode Pos"
+              placeholder="Contoh: 12345"
+            />
+          </div>
 
           <div className="mb-4">
             <Input
@@ -189,25 +199,6 @@ export default function InputAddressPage({
             )}
           </div>
 
-          <div className="mb-4">
-            <Input
-              type="text"
-              value={postalCodeState}
-              readOnly={true}
-              label={
-                <>
-                  <span>Kode Pos</span>{" "}
-                  <span className="text-sm text-slate-500">
-                    (Terisi Otomatis)
-                  </span>
-                </>
-              }
-            />
-            <span className="text-sm text-slate-500">
-              Jangan khawatir! Jika Kode Pos kamu tidak sesuai, kamu bisa
-              menambahkan Kode Pos di Detail Alamat
-            </span>
-          </div>
 
           <div className="mt-8 flex gap-2">
             <Button
