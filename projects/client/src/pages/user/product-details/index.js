@@ -181,6 +181,11 @@ export default function ProductDetail({user}) {
             </div>
 
             <div className="flex items-center justify-between">
+              <h3 className="text-sm text-gray-600 ">Stock : {stock}</h3>
+
+            </div>
+            
+            <div className="flex items-center justify-between">
               <h3 className="">Subtotal</h3>
               <h3 className="text-lg font-bold text-primary">
                 Rp.{" "}

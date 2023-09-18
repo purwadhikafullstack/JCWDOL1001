@@ -186,6 +186,8 @@ export default function Cart() {
                         //  / 100
                          )}
                     </h3>
+                    <h3 className="text-gray-600 text-sm">Stock : {cart.find((cartItem) => cartItem?.productId === item?.productId)
+                        ?.cartList?.product_details[0]?.quantity}</h3>
                   </div>
                 </div>
 
@@ -223,8 +225,8 @@ export default function Cart() {
               </div>
 
               <div className="h-full flex flex-row items-start
-              lg:items-center justify-center ">
-                <button className="lg:mb-3 p-2 rounded-md text-gray-700
+               justify-center ">
+                <button className="lg:mt-[6px] p-[10px] rounded-md text-gray-700
                   duration-200
                 hover:bg-red-600 hover:text-white text-lg"
                 onClick={()=>{
