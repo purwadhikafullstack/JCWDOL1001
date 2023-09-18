@@ -13,7 +13,9 @@ const INITIAL_STATE = {
     isLoading : false,
     isAddLoading : false,
     isDeleteLoading : false,
-    isUpdateLoading : false
+    isUpdateLoading : false,
+    currentPage : null,
+    totalPage : null
 }
 
 const catSlice = createSlice({
@@ -29,6 +31,8 @@ const catSlice = createSlice({
         [getCategory.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 category : action.payload?.data?.category,
+                currentPage : action.payload?.currentPage,
+                totalPage : action.payload.totalPage,
                 isLoading : false
             })
         },

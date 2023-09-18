@@ -4,10 +4,23 @@ const {Product_List,Categories,Product_Category} = require("../../model/relation
 
 const getCategory = async (req, res, next) => {
     try{
-		const category = await Categories?.findAll({where : {isDeleted : 0}});
+        const {page} = req.query;
+        const currentPage = page ? parseInt(page) : 1;
+        const options = {
+            offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+            limit : 10
+        }
+		const category = await Categories?.findAll({...options,where : {isDeleted : 0}});
+
+        const total = await Categories?.count();
+        const pages = Math.ceil(total / options.limit);
+
 		res.status(200).json({
 			type : "success",
 			message : "categoryGet",
+            currentPage : page ? page : 1,
+            totalPage : pages,
+            totalCategory : total,
 			data : {category}
 		});
 	}catch(error){
