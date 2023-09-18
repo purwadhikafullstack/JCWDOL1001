@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
 
-import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
 
 export const login = createAsyncThunk(
@@ -136,9 +136,10 @@ export const resendOtp= createAsyncThunk(
 )
 
 export const changePassword = createAsyncThunk (
-    "auth/admin/changePassword",
+    "auth/user/changePassword",
     async(payload, {rejectWithValue}) => {
         try{
+            await changePasswordValidationSchema.validate(payload);
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-password/${userId}`,payload)
@@ -152,7 +153,7 @@ export const changePassword = createAsyncThunk (
 )
 
 export const changeProfilePicture = createAsyncThunk(
-    "auth/admin/changeProfilePicture",
+    "auth/user/changeProfilePicture",
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
@@ -166,7 +167,7 @@ export const changeProfilePicture = createAsyncThunk(
 )
 
 export const changeEmailOtp = createAsyncThunk(
-    "auth/admin/changeEmailOtp",
+    "auth/user/changeEmailOtp",
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.post(`auth/changeOtp/${payload.userId}`)
@@ -180,9 +181,10 @@ export const changeEmailOtp = createAsyncThunk(
 )
 
 export const changeEmail = createAsyncThunk (
-    "auth/admin/changeEmail",
+    "auth/user/changeEmail",
     async(payload, {rejectWithValue}) => {
         try{
+            await changeEmailValidationSchema(payload)
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-email/${userId}`,payload)
@@ -196,7 +198,7 @@ export const changeEmail = createAsyncThunk (
 )
 
 export const changeProfileData = createAsyncThunk (
-    "auth/admin/changePassword",
+    "auth/user/changeProfile",
     async(payload, {rejectWithValue}) => {
         try{
             const userId = payload.userId;

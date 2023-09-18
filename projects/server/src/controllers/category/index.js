@@ -14,7 +14,6 @@ const getCategory = async (req, res, next) => {
 
         const total = await Categories?.count();
         const pages = Math.ceil(total / options.limit);
-        console.log(total)
 
 		res.status(200).json({
 			type : "success",

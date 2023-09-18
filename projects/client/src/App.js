@@ -23,6 +23,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import UploadRecipePage from "./pages/user/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
 import Profile from "./pages/user/profile/profile";
+import ProfileEmail from "./pages/user/profile/email";
+import ProfilePassword from "./pages/user/profile/password";
 
 function App() {
   const { pathname } = useLocation();
@@ -99,6 +101,8 @@ function App() {
           )}
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/email" element={<ProfileEmail />} />
+          <Route path="/profile/password" element={<ProfilePassword />} />
           <Route path="/verify/*" element={<Verification/>} />
           <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
           <Route path="*" element={<NotFound />} />
