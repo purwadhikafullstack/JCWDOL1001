@@ -14,7 +14,7 @@ import Input from "../../components/Input";
 import UploadRecipeButton from "../../components/UploadRecipeButton";
 import "./index.css";
 import FilterDropdownMenu from "./filter.dropdown.menu";
-import { totalProductCart } from "../../../store/slices/cart/slices";
+import { totalProductCart } from "../../store/slices/cart/slices";
 
 export default function Products({ user }) {
   const dispatch = useDispatch();

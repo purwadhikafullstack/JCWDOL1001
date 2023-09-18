@@ -78,7 +78,7 @@ export default function UserNavMenu({
               <Button isLink path="/cart" className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
                 {total > 0 &&
-                  <span className={`absolute -right-2 ${isAccountVerified && !verify ? "-top-[-8px]" : "-top-2" } flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
+                  <span className={`absolute -right-2 top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
                   {total}
                   </span>
                 }
