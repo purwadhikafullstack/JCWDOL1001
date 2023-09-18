@@ -6,6 +6,7 @@ import addressReducer from "./slices/address"
 import unitReducer from "./slices/product/unit"
 import uploadRecipeReducer from "./slices/upload-recipe"
 import discounteReducer from "./slices/discount"
+import cartReducer from "./slices/cart"
 
 const store = configureStore({
     reducer : {
@@ -16,6 +17,7 @@ const store = configureStore({
         address : addressReducer,
         uploadRecipe : uploadRecipeReducer,
         discount : discounteReducer,
+        cart : cartReducer,
     },
 })
 
