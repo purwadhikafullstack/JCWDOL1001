@@ -8,7 +8,6 @@ import { useRef } from "react";
 import ModalUnitsProduct from "./unit/modal.units.product";
 import ModalEditStock from "./modal.edit.stock.js";
 import {
-  deleteProduct,
   getProducts,
   resetSuccessProduct,
 } from "../../../store/slices/product/slices";
@@ -20,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
-import { HiPlus } from "react-icons/hi";
 import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
 import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";

@@ -6,6 +6,8 @@ const router = express.Router()
 
 
 router.get("/", verifyUser, AddressControllers.getAddress)
+router.post("/", verifyUser, AddressControllers.addAddress)
+router.patch("/:addressId", verifyUser, AddressControllers.updateAddress)
 router.get("/province", AddressControllers.getListProvince)
 router.get("/city", AddressControllers.getListCity)
 router.patch("/delete/:addressId", verifyUser, AddressControllers.deleteAddress)

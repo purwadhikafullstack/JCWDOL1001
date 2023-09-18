@@ -3,6 +3,7 @@ const path = require("path")
 const fs = require("fs")
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 
+const { InputAddressValidationSchema } = require("./validation.js")
 const { User_Address } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 
@@ -10,7 +11,7 @@ const getAddress = async (req, res, next) =>{
     try {
         const userId = req.user.userId
         
-        const address = await User_Address.findAll({where: { userId }})
+        const address = await User_Address.findAll({where: { userId, isDeleted : 0 }})
 
         if (!address) {
             throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
@@ -19,6 +20,69 @@ const getAddress = async (req, res, next) =>{
         res.status(200).json({ 
             message : "Address fetched!",
             data: address
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const addAddress = async (req, res, next) =>{
+    try {
+        const { userId } = req.user
+        const { address, province, city, district, postalCode } = req.body
+
+        const addressData = {
+            userId,
+            address,
+            province,
+            city,
+            district,
+            postalCode
+        }
+
+        await InputAddressValidationSchema.validate(addressData);
+
+        const newAddress = await User_Address.create(addressData)
+        
+        res.status(200).json({ 
+            message : "Address created successfully!",
+            data: newAddress
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const updateAddress = async (req, res, next) =>{
+    try {
+        const { userId } = req.user;
+        const { addressId } = req.params;
+        const { address, province, city, district, postalCode } = req.body;
+
+        const addressExists = await User_Address.findOne({
+            where : {[Op.and] : [{ addressId }, { userId }]},
+        })
+
+        if (!addressExists) {
+            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
+        }
+
+        const addressData = {
+            userId,
+            address,
+            province,
+            city,
+            district,
+            postalCode
+        }
+
+        await InputAddressValidationSchema.validate(addressData);
+
+        const updatedAddress = await addressExists.update(addressData)
+        
+        res.status(200).json({ 
+            message : "Address updated successfully!",
+            data: updatedAddress
         })
     } catch (error) {
         next(error)
@@ -119,6 +183,8 @@ const getCost = async (req, res, next) => {
 
 module.exports = {
     getAddress,
+    addAddress,
+    updateAddress,
     deleteAddress,
     getListProvince,
     getListCity,

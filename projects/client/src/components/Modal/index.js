@@ -13,7 +13,8 @@ export default function Modal({
   title,
   context,
   children,
-  disableOutside
+  disableOutside,
+  fullWidth
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -40,11 +41,15 @@ export default function Modal({
     
   }, [closeModal, showModal]);
 
-  if (showModal) {
+  const modalBodyClassName = []
+
+  fullWidth && modalBodyClassName.push("w-full h-full")
+
+  !fullWidth && modalBodyClassName.push("md:w-1/2 lg:w-1/3 w-5/6 h-fit rounded-lg")
+
+  if (showModal && !fullWidth) {
     document.body.style.overflow = "hidden";
-  }
-  
-  if (!showModal) {
+  } else {
     document.body.style.overflow = "auto";
   }
 
@@ -52,28 +57,30 @@ export default function Modal({
     <AnimatePresence>
       {showModal &&
         <div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            exit={{ opacity: 0 }}
-            onClick={() => {
-              if (!disableOutside) {
-                closeModal();
-                setTitle("");
-                setLogin(false);
-                setRegist(false);
-              }
-            }}
-            className="fixed inset-0 z-20 bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
-          />
+          {!fullWidth && 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                if (!disableOutside) {
+                  closeModal();
+                  setTitle("");
+                  setLogin(false);
+                  setRegist(false);
+                }
+              }}
+              className="fixed inset-0 z-20 bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
+            />
+          }
 
           <motion.div
             initial={{ translateY: -20, opacity: 0 }}
             animate={{ translateY: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
             exit={{ translateY: -20, opacity: 0 }}
-            className="fixed inset-0 z-20 m-auto h-fit w-5/6 overflow-hidden rounded-lg bg-slate-100 p-6 shadow-lg dark:bg-slate-800 md:w-1/2 lg:w-1/3"
+            className={["fixed inset-0 z-20 m-auto overflow-hidden bg-slate-100 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">

@@ -113,6 +113,7 @@ export default function Products({ user }) {
                 onClick={() => {
                   setSelectedCategory(null);
                   setSearch(null)
+                  setPage(1)
                   searchRef.current.value = ""
                 }}
               >
@@ -128,6 +129,7 @@ export default function Products({ user }) {
                   onClick={() => {
                     setSelectedCategory(category);
                     setSearch(null)
+                    setPage(1)
                     searchRef.current.value = ""
                   }}
                 >
@@ -229,7 +231,7 @@ export default function Products({ user }) {
                 <HiChevronLeft className=" text-xl " /> Prev
               </Button>
 
-              {Array.from({ length: total_page }, (_, index) => (
+              {/* {Array.from({ length: total_page }, (_, index) => (
                 <Button
                   key={index}
                   className={
@@ -242,7 +244,7 @@ export default function Products({ user }) {
                 >
                   {index + 1}
                 </Button>
-              ))}
+              ))} */}
 
               <Button
                 className={`flex items-center  ${

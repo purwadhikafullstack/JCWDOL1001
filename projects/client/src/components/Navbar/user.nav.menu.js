@@ -58,7 +58,8 @@ export default function UserNavMenu({
                 onClick={() => handleShowModal("register")}
               />
             </div>
-          : <UserNavMenuItems user={user} isLogin={isLogin} />
+          : 
+            <UserNavMenuItems user={user} isLogin={isLogin} />
         }
       </div>
 
