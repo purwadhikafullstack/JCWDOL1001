@@ -6,6 +6,10 @@ import {
     logout,
     register,
     verify,
+    changePassword,
+    changeEmail,
+    changeProfilePicture,
+    changeProfileData
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -20,7 +24,11 @@ const INITIAL_STATE = {
     isRegisterLoading : false,
     isVerifyLoading : false,
     isKeepLoginLoading : false,
-    isLogoutLoading : false
+    isLogoutLoading : false,
+    isChangePasswordLoading : false,
+    isChangeEmailLoading : false,
+    isChangePictureLoading : false,
+    isChangeProfileLoading : false
 }
 
 const authSlice = createSlice({
@@ -102,7 +110,43 @@ const authSlice = createSlice({
         },
         [verify.rejected] : (state, action) => {
             state.isVerifyLoading = false
-        }, 
+        },
+        [changePassword.pending] : (state, action) => {
+            state.isChangePasswordLoading = true
+        },
+        [changePassword.rejected] : (state, action) => {
+            state.isChangePasswordLoading = false
+        },
+        [changePassword.fulfilled] : (state, action) => {
+            state.isChangePasswordLoading = false
+        },
+        [changeEmail.pending] : (state, action) => {
+            state.isChangeEmailLoading = true
+        },
+        [changeEmail.rejected] : (state, action) => {
+            state.isChangeEmailLoading = false
+        },
+        [changeEmail.fulfilled] : (state, action) => {
+            state.isChangeEmailLoading = false
+        },
+        [changeProfilePicture.pending] : (state, action) => {
+            state.isChangePictureLoading = true
+        },
+        [changeProfilePicture.rejected] : (state, action) => {
+            state.isChangePictureLoading = false
+        },
+        [changeProfilePicture.fulfilled] : (state, action) => {
+            state.isChangePictureLoading = false
+        },
+        [changeProfileData.pending] : (state, action) => {
+            state.isChangeProfileLoading = true
+        },
+        [changeProfileData.rejected] : (state, action) => {
+            state.isChangeProfileLoading = false
+        },
+        [changeProfileData.fulfilled] : (state, action) => {
+            state.isChangeProfileLoading = false
+        }
     }
 })
 
