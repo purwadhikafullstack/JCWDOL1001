@@ -35,11 +35,13 @@ export const updateCart = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
 
-          const response = await api.post("/cart",payload)
+            await api.post("/cart",payload)
             // const {data} = response
             // alert(data?.message)
-            // const { data } = await api.get("/cart")
-            // return data
+            const response = await api.get("/cart/total")
+            const total = response.data
+            const { data } = await api.get("/cart")
+            return {data : data, total : total}
         } catch (error) {
             alert(error.response?.data?.message)
 
@@ -53,11 +55,12 @@ export const deleteCart = createAsyncThunk(
 
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await api.delete(`/cart/${payload?.productId}`)
+            await api.delete(`/cart/${payload?.productId}`)
 
-            // const {data} = response
-
-            // return data
+            const response = await api.get("/cart/total")
+            const total = response.data
+            const { data } = await api.get("/cart")
+            return {data : data, total : total}
             
         } catch (error) {
             alert(error.response?.data?.message)
