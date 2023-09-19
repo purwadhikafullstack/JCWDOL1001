@@ -9,33 +9,11 @@ export const uploadRecipe = createAsyncThunk(
     try {
       const { data } = await api.post("/upload-recipe",payload)
 
-      toast.success(data?.message, 
-          {
-              position: "top-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-          }
-      )
+      toast.success(data?.message)
 
       return data
     } catch (error) {
-      toast.error(error.response.data.message, 
-          {
-              position: "top-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-          }
-      )
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }

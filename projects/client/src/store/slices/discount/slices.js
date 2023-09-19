@@ -47,7 +47,6 @@ export const updateDiscount = createAsyncThunk(
     "discount/updateDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            console.log(payload)
             await DiscountInfoValidationSchema.validate(payload.output.data)
             const { data } = await api.patch("/discount/update/" +encodeURI(payload.discountId), payload.output)
 
@@ -64,7 +63,6 @@ export const createDiscount = createAsyncThunk(
     "discount/createDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            console.log(payload)
             await DiscountInfoValidationSchema.validate(payload.data)
             const { data } = await api.post("/discount/create/", payload)
 

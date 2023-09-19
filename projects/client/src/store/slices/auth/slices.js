@@ -20,12 +20,11 @@ export const login = createAsyncThunk(
 
             localStorage.setItem("token", token)
 
-            // alert(response?.data?.message)
             toast.success(response?.data?.message);
             
             return data
         } catch (error) {
-            // alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
@@ -40,7 +39,6 @@ export const keepLogin = createAsyncThunk (
             const {data} = await api.get("/auth/keep-login")
             return data.user
         } catch (error) {
-            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response.data.message)
         }
