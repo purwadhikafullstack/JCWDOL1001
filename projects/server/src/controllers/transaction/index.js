@@ -47,7 +47,7 @@ const createTransactions = async (req, res, next) => {
                     as : "cartList"
                 }
             ],
-            where : {[Op.and] : [{userId : userId},{isCheckOut : 1}]}
+            where : {[Op.and] : [{userId : userId},{inCheckOut : 1}]}
         })
 
         const newTransactionList = {
@@ -72,7 +72,7 @@ const createTransactions = async (req, res, next) => {
             await Transaction_Detail?.create(newTransactionDetail)
         }
 
-        const finishTransaction = await Cart?.destroy({where : {[Op.and] : [{userId : userId},{isCheckOut : 1}]}})
+        const finishTransaction = await Cart?.destroy({where : {[Op.and] : [{userId : userId},{inCheckOut : 1}]}})
 
         res.status(200).json({
             type : "success",
