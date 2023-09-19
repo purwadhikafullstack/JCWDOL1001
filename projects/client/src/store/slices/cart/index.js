@@ -78,6 +78,8 @@ const cartSlice = createSlice({
             state = Object.assign(state, {
                 isLoading : false,
                 isDeleteLoading : false,
+                cart : action.payload?.data.data,
+                total : action.payload?.total.total,
             })
         },
         [deleteCart.rejected] : (state, action) => {

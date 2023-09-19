@@ -55,11 +55,12 @@ export const deleteCart = createAsyncThunk(
 
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await api.delete(`/cart/${payload?.productId}`)
+            await api.delete(`/cart/${payload?.productId}`)
 
-            // const {data} = response
-
-            // return data
+            const response = await api.get("/cart/total")
+            const total = response.data
+            const { data } = await api.get("/cart")
+            return {data : data, total : total}
             
         } catch (error) {
             alert(error.response?.data?.message)
