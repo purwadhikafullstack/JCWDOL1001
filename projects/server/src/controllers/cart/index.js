@@ -4,6 +4,33 @@ const {UpdateCartValidationSchema, DeleteCartValidationSchema} = require("./vali
 const db = require("../../model/index.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
 
+async function dataCart (userId){
+    return await Cart?.findAll(
+        {
+            where : {
+            userId : userId
+        },
+        include : 
+        [
+          {
+            model : Product_List,
+            as: "cartList",
+            attributes : ["productName","productPicture","productPrice"], 
+            include:[
+                {
+                    model:Product_Detail,
+                    attributes : ["quantity"],
+                    where:{
+                        isDefault : 1,
+                        isDeleted : 0
+                    }
+                }
+            ]
+          }
+        ],
+    });
+}
+
 const getCart = async (req, res, next) => {
     try {
         //show any active product in cart for specific user
@@ -14,31 +41,32 @@ const getCart = async (req, res, next) => {
             //grab user from UUid
             const user = await User_Account.findOne({where : {UUID : req?.user?.UUID}})
             //findall product in cart from userId 
-            const cartExists = await Cart?.findAll(
-                {
-                    where : {
-                    userId : user?.userId
-                },
-                include : 
-                [
-                  {
-                    model : Product_List,
-                    as: "cartList",
-                    attributes : ["productName","productPicture","productPrice"], 
-                    include:[
-                        {
-                            model:Product_Detail,
-                            attributes : ["quantity"],
-                            where:{
-                                isDefault : 1,
-                                isDeleted : 0
-                            }
-                        }
-                    ]
-                  }
-                ],
-            
-            });
+            // const cartExists = await Cart?.findAll(
+            //     {
+            //         where : {
+            //         userId : user?.userId
+            //     },
+            //     include : 
+            //     [
+            //       {
+            //         model : Product_List,
+            //         as: "cartList",
+            //         attributes : ["productName","productPicture","productPrice"], 
+            //         include:[
+            //             {
+            //                 model:Product_Detail,
+            //                 attributes : ["quantity"],
+            //                 where:{
+            //                     isDefault : 1,
+            //                     isDeleted : 0
+            //                 }
+            //             }
+            //         ]
+            //       }
+            //     ],
+            // });
+            const cartExists = await dataCart(user?.userId)
+          
             //try to connect any data needed, like product Name, etc according to ui/ux
             if(!cartExists){
                 res.status(200).json({ 

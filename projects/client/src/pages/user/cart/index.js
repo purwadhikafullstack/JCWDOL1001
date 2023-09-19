@@ -8,14 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import { useNavigate } from "react-router-dom";
-import { getAddress } from "../../../store/slices/address/slices";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function Cart() {
-  const {cart,products,address} = useSelector(state=>{
+  const {cart,products,isDeleteLoading,isUpdateLoading} = useSelector(state=>{
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
-      address : state?.address.data,
+      isUpdateLoading : state?.cart?.isUpdateLoading,
+      isDeleteLoading : state?.cart?.isDeleteLoading
     }
   })
   const navigate = useNavigate()
@@ -23,16 +24,18 @@ export default function Cart() {
   let status = []
   const selectedProduct = cart.map((item,index) => {
     status.push(false)
-    return item.productId
+    return item.cartList?.productName
   });
 
+  //
   const cartItems = products.filter((product) =>
-    selectedProduct.includes(product.productId)
+    selectedProduct.includes(product.productName)
   );
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
+  const [trigger, setTrigger] = useState(true);
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -64,12 +67,13 @@ export default function Cart() {
     if (type === "add") {
       // console.log(qty + 1);
       dispatch(updateCart({productId : productId, quantity : String(qty + 1)}))
-
+      setTrigger(!trigger)
     }
 
     if (type === "reduce" && qty > 1) {
       // console.log(qty - 1);
       dispatch(updateCart({productId : productId, quantity : String(qty - 1)}))
+      setTrigger(!trigger)
     }
   };
 
@@ -78,19 +82,26 @@ export default function Cart() {
     const newQty = event?.target?.value;
     if (newQty === "" || (+newQty > 0 && +newQty <= productStock )) {
       if(+newQty !== 0){
+
         dispatch(updateCart({productId : productId, quantity : String(+newQty)}))
+        setTrigger(!trigger)
       }
       else{
+
         dispatch(updateCart({productId : productId, quantity : String(1)}))
+        setTrigger(!trigger)
       }
     }
     if((+newQty > productStock)){
+   
       dispatch(updateCart({productId : productId, quantity : String(productStock)}))
+      setTrigger(!trigger)
     }
   };
 
   const handleDeleteStock = (productId) => {
         dispatch(deleteCart({productId : productId}))
+        setTrigger(!trigger)
   };
 
   const handleBlur = (event) => {
@@ -98,7 +109,7 @@ export default function Cart() {
 
     if (newQty === "") {
       console.log(1)
-      setQty(1);
+      // setQty(1);
     }
   };
 
@@ -118,14 +129,10 @@ export default function Cart() {
     dispatch(getAddress())
   },[])
 
-  useEffect(() => {
-    dispatch(getCart())
-    dispatch(totalProductCart())
-    },[cart])
-
   const checkOut = () => {
     navigate("/checkout")
   }
+
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
@@ -173,16 +180,27 @@ export default function Cart() {
                 <div className="">
                   <h3 className="text-teal-600">{item?.productName}</h3>
                   <div className="items-center gap-2">
-                    {item.discount > 0 && (
+                    {item.discountProducts[0]?.endingPrice ? 
+                    <div>
                       <div className="mt-auto flex items-center gap-2">
                         <span className="rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-                          {item?.discount}%
+                          {item?.discountProducts[0]?.discount?.discountAmount}%
                         </span>
                         <h3 className="text-sm text-slate-400 line-through">
                           Rp. {formatNumber(item?.productPrice)}
                         </h3>
                       </div>
-                    )}
+
+                      <h3 className="font-bold">
+                      Rp.{" "}
+                      {formatNumber((
+                        // (100 - item?.discount) *
+                        item?.discountProducts[0]?.endingPrice)
+                        //  / 100
+                         )}
+                      </h3>
+                    </div>
+                    :
                     <h3 className="font-bold">
                       Rp.{" "}
                       {formatNumber((
@@ -191,19 +209,23 @@ export default function Cart() {
                         //  / 100
                          )}
                     </h3>
-                    <h3 className="text-gray-600 text-sm">Stock : {cart.find((cartItem) => cartItem?.productId === item?.productId)
-                        ?.cartList?.product_details[0]?.quantity}</h3>
-                  </div>
+}
+                    
                 </div>
-
-                <div className="h-full w-1/2 lg:ml-auto lg:w-1/4 flex flex-row">
-                  <div className="flex h-full justify-center gap-2">
+                </div>
+          
+                <div className="h-full w-full lg:ml-auto lg:w-2/5 flex flex-col lg:border-l-2 lg:pl-14">
+                <h3 className="text-gray-600 text-sm">Stock : {cart.find((cartItem) => cartItem?.productId === item?.productId)
+                        ?.cartList?.product_details[0]?.quantity}
+                  </h3>
+                  <div className="flex flex-row h-full justify-center gap-2">
                     <Button
                       isSmall
                       isSecondary
-                      title={<BsDashLg className="text-white" />}
+                      title={ isUpdateLoading ? <LoadingSpinner isSuperSmall/> : <BsDashLg className="text-white mx-[1px]" />}
                       onClick={() => handleQty("reduce",cart.find((cartItem) => cartItem?.productId === item?.productId)
                       ?.quantity, item?.productId)}
+                      isDisabled={isUpdateLoading}
                     />
                     <Input
                       type="numberSecondVariant"
@@ -216,22 +238,20 @@ export default function Cart() {
                         cart.find((cartItem) => cartItem?.productId === item?.productId)
                         ?.cartList?.product_details[0]?.quantity)}}
                       onBlur={handleBlur}
+                      isDisabled={isUpdateLoading}
+                    
                     />
                     <Button
                       isSmall
                       isPrimary
-                      title={<BsPlusLg className="text-white" />}
+                      title={isUpdateLoading ? <LoadingSpinner isSuperSmall/> : <BsPlusLg className="text-white mx-[1px]" />}
                       onClick={() => handleQty("add", cart.find((cartItem) => cartItem?.productId === item?.productId)
                       ?.quantity,  item?.productId)}
+                      isDisabled={isUpdateLoading}
                     />
-
-              </div>
-                </div>
-              </div>
-
-              <div className="h-full flex flex-row items-start
-               justify-center ">
-                <button className="lg:mt-[6px] p-[10px] rounded-md text-gray-700
+                <div className="h-full flex flex-row items-start
+               justify-center">
+                <button className=" p-[10px] rounded-md text-gray-700
                   duration-200
                 hover:bg-red-600 hover:text-white text-lg"
                 onClick={()=>{
@@ -241,6 +261,12 @@ export default function Cart() {
                     <BsTrashFill/>
                 </button>
               </div>
+              </div>
+
+                </div>
+              </div>
+
+
             </div>
           ))}
         </div>
@@ -252,12 +278,14 @@ export default function Cart() {
               const cartItem = cart.find(
                 (cartItem) => cartItem?.productId === item?.productId
               );
-              const price = (
-                // (100 - item?.discount) * 
-              item?.productPrice) 
+              const price = ( item?.discountProducts[0]?.endingPrice ?
+                item?.discountProducts[0]?.endingPrice :
+                 item?.productPrice) 
               // / 100;
               const totalItemPrice = cartItem?.quantity * price;
-
+                // if(totalItemPrice === NaN){
+                
+                // }
               return (
                 <motion.div
                   initial={{
@@ -295,8 +323,8 @@ export default function Cart() {
                       (cartItem) => cartItem?.productId === item?.productId
                     );
                     const discountPrice =
-                      (
-                        // (100 - item?.discount) *
+                      ( item?.discountProducts[0]?.endingPrice ?
+                        item?.discountProducts[0]?.endingPrice :
                          item?.productPrice) 
                       // / 100;
                     return cartItem?.quantity * discountPrice;
