@@ -13,7 +13,7 @@ module.exports = {
       colors: {
         primary: "#0d9488", //teal-600
         danger: "#ef4444", //red-500
-        warning: "#eab308", // yellow-500
+        warning: "#f59e0b", // amber-500
         secondary: "#64748b", //slate-500
         dark: "#213360",
       },

@@ -6,6 +6,7 @@ import Button from "../../../components/Button";
 import DeleteAddressPage from "./page.delete.address";
 import InputAddressPage from "./page.input.address";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import ChangePrimaryAddressPage from "./page.change.primary.address";
 
 export default function Address({
   user,
@@ -55,7 +56,7 @@ export default function Address({
 
   if (!showHandleAddressPage.show) {
     return (
-      <>
+      <div className=" pb-24 lg:pb-0">
         {isGetAddressLoading ? (
           <>
             <div className="mt-40 flex items-center justify-center">
@@ -77,49 +78,69 @@ export default function Address({
               />
             </div>
 
-            {address?.map((data, index) => (
-              <div key={index} className="mt-4 rounded-lg border p-4 shadow-md">
-                <p>{data.district}</p>
-                <p>{data.city}</p>
-                <p>{data.province}</p>
-                <p>{data.postalCode}</p>
+            {address?.length === 0 ?
+            <div className="text-center">
+              <h3 className="mt-20 text-slate-500">Kamu belum memiliki data alamat!</h3>
+              <h3 className="text-slate-500">Silakan tambahkan alamatmu agar kami dapat mengirim pesananmu :)</h3>
+            </div>
+            :
+              address?.map((data, index) => (
+                <div key={index} className={`mt-4 rounded-lg border p-4 shadow-md ${data.isPrimary === 1 && "border-primary"}`}>
+                  {data.isPrimary === 1 &&
+                    <p className="font-semibold text-primary mb-2">Alamat Utama</p>
+                  }
 
-                <h3 className="font-bold mt-4">Detail Alamat:</h3>
-                <p>{data.address}</p>
-                <div className="flex justify-end gap-2    ">
-                  <Button
-                    isButton
-                    isPrimaryOutline
-                    title="Ubah Alamat"
-                    onClick={() =>
-                      handleShowAddressPageAction("Ubah Alamat", data.addressId)
-                    }
-                  />
-                  {address.length > 1 && (
+                  <p>{data.address}</p>
+                  <p>{data.district}, {data.city}, {data.province}, {data.postalCode}</p>
+                  <p>{data.contactPhone} ({data.contactName})</p>
+                  <div className="flex justify-end gap-2 mt-4">
                     <Button
                       isButton
-                      isDanger
-                      title="Hapus Alamat"
+                      isPrimaryOutline
+                      title="Ubah Alamat"
                       onClick={() =>
-                        handleShowAddressPageAction(
-                          "Hapus Alamat",
-                          data.addressId
-                        )
+                        handleShowAddressPageAction("Ubah Alamat", data.addressId)
                       }
                     />
-                  )}
+                    {data.isPrimary !== 1 && (
+                      <>
+                        <Button
+                          isButton
+                          isWarningOutline
+                          title="Jadikan Alamat Utama"
+                          onClick={() =>
+                            handleShowAddressPageAction(
+                              "Ubah Alamat Utama",
+                              data.addressId
+                              )
+                            }
+                        />
+
+                        <Button
+                          isButton
+                          isDanger
+                          title="Hapus Alamat"
+                          onClick={() =>
+                            handleShowAddressPageAction(
+                              "Hapus Alamat",
+                              data.addressId
+                            )
+                          }
+                        />
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            }    
           </>
         )}
-      </>
+      </div>
     );
   }
 
   if (
-    showHandleAddressPage.show &&
-    showHandleAddressPage.action === "Tambah Alamat Baru"
+    showHandleAddressPage.action === "Tambah Alamat Baru" || showHandleAddressPage.action === "Ubah Alamat"
   ) {
     return (
       <InputAddressPage
@@ -130,12 +151,19 @@ export default function Address({
     );
   }
 
-  if (
-    showHandleAddressPage.show &&
-    showHandleAddressPage.action === "Hapus Alamat"
-  ) {
+  if (showHandleAddressPage.action === "Hapus Alamat") {
     return (
       <DeleteAddressPage
+        selectedAddress={selectedAddress}
+        isSubmitAddressLoading={isSubmitAddressLoading}
+        handleCloseAddressPageAction={handleCloseAddressPageAction}
+      />
+    );
+  }
+
+  if (showHandleAddressPage.action === "Ubah Alamat Utama") {
+    return (
+      <ChangePrimaryAddressPage
         selectedAddress={selectedAddress}
         isSubmitAddressLoading={isSubmitAddressLoading}
         handleCloseAddressPageAction={handleCloseAddressPageAction}
