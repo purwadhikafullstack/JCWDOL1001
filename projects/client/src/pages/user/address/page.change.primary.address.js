@@ -18,13 +18,8 @@ export default function ChangePrimaryAddressPage({
       <h3 className="title">Ubah Alamat Utama</h3>
 
       <div className="mt-4 rounded-lg border border-warning p-4 shadow-md">
-        <p>{selectedAddress.district}</p>
-        <p>{selectedAddress.city}</p>
-        <p>{selectedAddress.province}</p>
-        <p>{selectedAddress.postalCode}</p>
-
-        <h3 className="font-bold mt-4">Detail Alamat:</h3>
         <p>{selectedAddress.address}</p>
+        <p>{selectedAddress.district}, {selectedAddress.city}, {selectedAddress.province}, {selectedAddress.postalCode}</p>
         <p>{selectedAddress.contactPhone} ({selectedAddress.contactName})</p>
       </div>
 

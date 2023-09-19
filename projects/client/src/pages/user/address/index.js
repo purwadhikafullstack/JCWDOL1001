@@ -89,13 +89,9 @@ export default function Address({
                   {data.isPrimary === 1 &&
                     <p className="font-semibold text-primary mb-2">Alamat Utama</p>
                   }
-                  <p>{data.district}</p>
-                  <p>{data.city}</p>
-                  <p>{data.province}</p>
-                  <p>{data.postalCode}</p>
 
-                  <h3 className="font-bold mt-4">Detail Alamat:</h3>
                   <p>{data.address}</p>
+                  <p>{data.district}, {data.city}, {data.province}, {data.postalCode}</p>
                   <p>{data.contactPhone} ({data.contactName})</p>
                   <div className="flex justify-end gap-2 mt-4">
                     <Button
