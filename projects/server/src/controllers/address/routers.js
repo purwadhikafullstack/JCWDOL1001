@@ -11,6 +11,7 @@ router.get("/province", AddressControllers.getListProvince)
 router.get("/city", AddressControllers.getListCity)
 router.patch("/delete/:addressId", verifyUser, AddressControllers.deleteAddress)
 router.patch("/:addressId", verifyUser, AddressControllers.updateAddress)
+router.patch("/update-primary/:addressId", verifyUser, AddressControllers.updatePrimaryAddress)
 
 
 module.exports = router

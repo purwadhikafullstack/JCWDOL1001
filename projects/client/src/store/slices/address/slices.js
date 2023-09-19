@@ -33,6 +33,21 @@ export const addAddress = createAsyncThunk(
     }
 )
 
+export const updatePrimaryAddress = createAsyncThunk(
+    "address/updatePrimaryAddress",
+    async (payload, { rejectWithValue }) => {
+        try {
+
+            await api.patch("/address/update-primary/" + payload)
+            toast.success("Yay! Alamat utama berhasil diubah!")
+
+        } catch (error) {
+            toast.error(error.response.data.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
 export const deleteAddress = createAsyncThunk(
     "address/deleteAddress",
     async (payload, { rejectWithValue }) => {
@@ -42,6 +57,7 @@ export const deleteAddress = createAsyncThunk(
             toast.success("Yay! Alamat berhasil dihapus!")
 
         } catch (error) {
+            toast.error(error.response.data.message)
             return rejectWithValue(error.response?.data?.message)
         }
     }

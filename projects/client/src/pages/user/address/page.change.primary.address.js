@@ -1,23 +1,23 @@
 import { useDispatch } from "react-redux";
 import Button from "../../../components/Button";
-import { deleteAddress } from "../../../store/slices/address/slices";
+import { updatePrimaryAddress } from "../../../store/slices/address/slices";
 
-export default function DeleteAddressPage({
+export default function ChangePrimaryAddressPage({
   selectedAddress,
   isSubmitAddressLoading,
   handleCloseAddressPageAction,
 }) {
   const dispatch = useDispatch();
 
-  const handleDeleteProduct = (id) => {
-    dispatch(deleteAddress(id));
+  const handleChangePrimaryAddress = (id) => {
+    dispatch(updatePrimaryAddress(id));
   };
 
   return (
     <>
-      <h3 className="title">Hapus Alamat</h3>
+      <h3 className="title">Ubah Alamat Utama</h3>
 
-      <div className="mt-4 rounded-lg border border-danger p-4 shadow-md">
+      <div className="mt-4 rounded-lg border border-warning p-4 shadow-md">
         <p>{selectedAddress.district}</p>
         <p>{selectedAddress.city}</p>
         <p>{selectedAddress.province}</p>
@@ -30,10 +30,7 @@ export default function DeleteAddressPage({
 
       <div className="flex flex-col items-center justify-center mt-4">
         <p className="text-center">
-          Apa kamu yakin ingin menghapus alamat ini?
-        </p>
-        <p className="text-center text-danger">
-          Kamu tidak akan bisa melakukan perubahan setelah menghapus alamat ini.
+          Apa kamu yakin ingin menjadikan alamat ini sebagai alamat utama?
         </p>
 
         <div className="mt-4 flex justify-end gap-2">
@@ -46,11 +43,11 @@ export default function DeleteAddressPage({
             />
           )}
           <Button
-            title="Ya, Hapus Alamat Ini"
+            title="Ya, Jadikan Alamat Utama"
             isButton
-            isDanger
+            isWarning
             isLoading={isSubmitAddressLoading}
-            onClick={() => handleDeleteProduct(selectedAddress.addressId)}
+            onClick={() => handleChangePrimaryAddress(selectedAddress.addressId)}
           />
         </div>
       </div>
