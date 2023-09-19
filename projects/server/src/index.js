@@ -46,6 +46,7 @@ const AddressRouters = require("./controllers/address/routers.js")
 const DiscountRouters = require("./controllers/discount/routers.js")
 const RecipeRouters = require("./controllers/upload-recipe/routers.js")
 const CartRouters = require("./controllers/cart/routers.js")
+const TransactionRouters = require("./controllers/transaction/routers.js")
 
 app.use("/api/auth", AuthRouters)
 app.use("/api/category",CatRouters)
@@ -54,6 +55,7 @@ app.use("/api/address", AddressRouters)
 app.use("/api/discount", DiscountRouters)
 app.use("/api/upload-recipe", RecipeRouters)
 app.use("/api/cart", CartRouters)
+app.use("/api/transaction",TransactionRouters)
 app.use(errorHandler)
 
 // ===========================
