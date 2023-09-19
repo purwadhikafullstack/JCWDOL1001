@@ -1,5 +1,6 @@
 const { User_Account, User_Profile, User_Address, User_Role, User_Status } = require("./user.js")
-const { Product_List, Product_Category, Product_Unit, Product_Detail,Product_History } = require("./product.js")
+const { Product_List, Product_Category, Product_Unit,
+     Product_Detail,Product_History, Product_Recipe } = require("./product.js")
 const { Categories } = require("./category.js")
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./transaction.js")
 const { Discount, Discount_Product, Discount_Transaction } = require("./discount.js")
@@ -90,6 +91,11 @@ Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"
 User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
 Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
 
+Product_List.hasMany(Product_Recipe,{sourceKey : "productId", foreignKey : "productId"})
+Product_Recipe.belongsTo(Product_List, {targetKey : "productId", foreignKey : "productId"})
+Product_List.hasMany(Product_Recipe,{sourceKey : "productId", foreignKey : "ingredientProductId"})
+Product_Recipe.belongsTo(Product_List, {targetKey : "productId", foreignKey : "ingredientProductId"})
+
 
 module.exports = { 
     User_Account, 
@@ -102,6 +108,7 @@ module.exports = {
     Product_Unit,
     Product_Detail,
     Product_History,
+    Product_Recipe,
     Categories,
     Transaction_List,
     Transaction_Detail,
