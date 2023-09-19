@@ -80,6 +80,10 @@ const Discount_Product = db.sequelize.define("discount_product", {
     productId : {
         type : db.Sequelize.INTEGER,
         allowNull : false
+    },
+    endingPrice : {
+        type : db.Sequelize.INTEGER,
+        allowNull : true
     }
 },{
     timestamps:false
