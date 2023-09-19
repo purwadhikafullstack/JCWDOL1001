@@ -9,6 +9,8 @@ import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store
 import { getProducts } from "../../../store/slices/product/slices";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { getAddress } from "../../../store/slices/address/slices";
+import ShippingAddress from "./component.address";
 
 export default function Cart() {
   const {cart,products,isDeleteLoading,isUpdateLoading} = useSelector(state=>{
@@ -36,6 +38,8 @@ export default function Cart() {
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [trigger, setTrigger] = useState(true);
+
+  const [selectedAddress, setSelectedAddress] = useState(address[0])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -108,8 +112,7 @@ export default function Cart() {
     const newQty = event.target.value;
 
     if (newQty === "") {
-      console.log(1)
-      // setQty(1);
+      setQty(1);
     }
   };
 
@@ -129,6 +132,11 @@ export default function Cart() {
     dispatch(getAddress())
   },[])
 
+  // useEffect(() => {
+  //   dispatch(getCart())
+  //   dispatch(totalProductCart())
+  //   },[cart])
+
   const checkOut = () => {
     navigate("/checkout")
   }
@@ -136,22 +144,21 @@ export default function Cart() {
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
-      <a>Dikirim ke : </a>
-      <a>{address[0].address}</a>
-            <div className=" mt-3 gap-3 flex flex-row items-center">
-              <input
-                className="h-5 w-5"
-                type="checkbox"
-                checked={!allSelected}
-                onChange={()=>{
-                  setAllSelected(!allSelected);
-                  handleAllSelector(allSelected)
-                }}
-              />
-              <span className="">
-                Pilih Semua
-              </span>
-            </div>
+      <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={selectedAddress} />
+      <div className=" mt-3 gap-3 flex flex-row items-center">
+        <input
+          className="h-5 w-5"
+          type="checkbox"
+          checked={!allSelected}
+          onChange={()=>{
+            setAllSelected(!allSelected);
+            handleAllSelector(allSelected)
+          }}
+        />
+        <span className="">
+          Pilih Semua
+        </span>
+      </div>
       <div className="grid grid-cols-1 gap-20 pb-32 lg:grid-cols-3 lg:pb-0">
         <div className="col-span-2 flex flex-col">
           {cartItems.map((item,index) => (

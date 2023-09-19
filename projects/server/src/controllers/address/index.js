@@ -13,13 +13,13 @@ const getAddress = async (req, res, next) =>{
         
         const address = await User_Address.findAll({where: { userId, isDeleted : 0 }, order:[["isPrimary" , "DESC"]]})
 
-        if (!addresses) {
+        if (!address) {
             throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
         }
 
         res.status(200).json({ 
             message : "Address fetched!",
-            data: addresses
+            data: address
         })
     } catch (error) {
         next(error)
