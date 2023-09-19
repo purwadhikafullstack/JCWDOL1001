@@ -82,9 +82,9 @@ export default function AdminProducts({user}) {
     }
     
     if({stockId}){
-      const unitFinder = selectedProduct.productUnits
+      const unitFinder = selectedProduct?.productUnits
 
-      const unitData = unitFinder.find( (unit) => unit.product_detail.stockId === stockId)
+      const unitData = unitFinder?.find( (unit) => unit.product_detail.stockId === stockId)
       
       Object.assign(selectedUnit,unitData!==undefined ? unitData : {})
     }

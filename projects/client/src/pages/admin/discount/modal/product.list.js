@@ -1,16 +1,28 @@
 import { HiXMark } from "react-icons/hi2"
-import Button from "../../../../components/Button"
-import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import Button from "../../../../components/Button"
+import Pagination from "../../../../components/Pagination/index.js"
+import { getProducts } from "../../../../store/slices/product/slices"
+import { useDispatch, useSelector } from "react-redux"
 
 export default function ProductList({
-    data,
+    dataDiscount,
     onEdit,
     selectedProducts,
     setSelectedProducts,
-    products
 }) {
     const [showAllProduct, setShowAllProduct] = useState(false)
+    
+    const dispatch = useDispatch()
+
+    const {  totalPage, currentPage, products } = useSelector((state) => {
+        return {
+            totalPage : state?.products?.total_page,
+            currentPage : state?.products?.current_page,
+            products : state?.products?.data,
+        }
+    })
 
     const handleSelectProducts = (event) => {
         
@@ -28,10 +40,19 @@ export default function ProductList({
 
     const handleRemoveProduct = (productId) => {
         setSelectedProducts(selectedProducts.filter((item) => item?.productId !== productId));
-    };
+    }
+
+    const onChangePagination = (type) => {
+        dispatch(
+            getProducts({ 
+                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1
+            })
+        )
+    }
+
     useEffect(() => {
-        setSelectedProducts(data?.productDiscount);
-    }, [data])
+        setSelectedProducts(dataDiscount?.productDiscount);
+    }, [dataDiscount])
     
     return (
         <div className=" px-2 mt-5 rounded-md">
@@ -49,7 +70,7 @@ export default function ProductList({
                             isPrimaryOutline={onEdit}
                             className="flex items-center rounded-md px-2 py-1 text-sm"
                         >
-                            {selectedProduct.productName}
+                            {item?.detailProduct?.productName|| item?.productName}
                             <span
                                 className="ml-2 cursor-pointer"
                                 onClick={() => handleRemoveProduct(item.productId)}
@@ -116,6 +137,15 @@ export default function ProductList({
                             />
                         </div>
                         ))}
+                        <div className="flex justify-center pt-4">
+                            <Pagination 
+                                onChangePagination={onChangePagination}
+                                disabledPrev={Number(currentPage) === 1}
+                                disabledNext={currentPage >= totalPage}
+                                currentPage={currentPage}
+                                className = "text-center"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex gap-2">

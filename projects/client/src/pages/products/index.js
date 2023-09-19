@@ -161,7 +161,7 @@ export default function Products({ user }) {
               </button>
             </form>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-4">
               <h3 className="title mt-4">
                 {searchRef.current?.value
                   ? `Hasil Pencarian: ${searchRef.current?.value}`
@@ -170,7 +170,7 @@ export default function Products({ user }) {
                   : "Semua Produk"}
               </h3>
 
-              <div className="group relative w-1/5">
+              <div className="group relative w-1/2 md:w-1/3 lg:w-1/5">
                 <Button
                   isButton
                   isBLock
@@ -220,46 +220,48 @@ export default function Products({ user }) {
               )}
             </div>
 
-            <div className="col-span-full mt-10 flex select-none items-center justify-center gap-6 font-semibold">
-              <Button
-                className={`flex items-center  ${
-                  +current_page === 1
-                    ? "cursor-auto text-slate-400"
-                    : "text-dark hover:text-primary"
-                }`}
-                onClick={() => handlePageClick("prev")}
-                isDisabled={+current_page === 1}
-              >
-                <HiChevronLeft className=" text-xl " /> Prev
-              </Button>
-
-              {/* {Array.from({ length: total_page }, (_, index) => (
+            {total_page > 1 &&
+              <div className="col-span-full mt-10 flex select-none items-center justify-center gap-6 font-semibold">
                 <Button
-                  key={index}
-                  className={
-                    +current_page === index + 1
+                  className={`flex items-center  ${
+                    +current_page === 1
                       ? "cursor-auto text-slate-400"
                       : "text-dark hover:text-primary"
-                  }
-                  onClick={() => setPage(index + 1)}
-                  isDisabled={+current_page === index + 1}
+                  }`}
+                  onClick={() => handlePageClick("prev")}
+                  isDisabled={+current_page === 1}
                 >
-                  {index + 1}
+                  <HiChevronLeft className=" text-xl " /> Prev
                 </Button>
-              ))} */}
 
-              <Button
-                className={`flex items-center  ${
-                  +current_page === total_page
-                    ? "cursor-auto text-slate-400"
-                    : "text-dark hover:text-primary"
-                }`}
-                onClick={() => handlePageClick("next")}
-                isDisabled={+current_page === total_page}
-              >
-                Next <HiChevronRight className="text-xl " />
-              </Button>
-            </div>
+                {/* {Array.from({ length: total_page }, (_, index) => (
+                  <Button
+                    key={index}
+                    className={
+                      +current_page === index + 1
+                        ? "cursor-auto text-slate-400"
+                        : "text-dark hover:text-primary"
+                    }
+                    onClick={() => setPage(index + 1)}
+                    isDisabled={+current_page === index + 1}
+                  >
+                    {index + 1}
+                  </Button>
+                ))} */}
+
+                <Button
+                  className={`flex items-center  ${
+                    +current_page === total_page
+                      ? "cursor-auto text-slate-400"
+                      : "text-dark hover:text-primary"
+                  }`}
+                  onClick={() => handlePageClick("next")}
+                  isDisabled={+current_page === total_page}
+                >
+                  Next <HiChevronRight className="text-xl " />
+                </Button>
+              </div>
+            }
           </div>
         </div>
       </div>

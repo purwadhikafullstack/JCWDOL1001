@@ -37,7 +37,7 @@ const setProductUnits = async( req, res, next ) => {
         message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
     })
 
-    if(!isDefaultUnitExist && Number(req.body.isDefault) ===0) throw ({
+    if(!isDefaultUnitExist && Number(req.body.isDefault) ===0 && isExceedMaxUnit > 0) throw ({
         status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
         message : middlewareErrorHandling.PRODUCT_DONT_HAVE_DEFAULT_UNIT 
     })
@@ -62,7 +62,7 @@ const setProductUnits = async( req, res, next ) => {
           message : middlewareErrorHandling.PRODUCT_UNIT_NAME_ALREADY_EXISTS 
       })
 
-      const newUnit = await Product_Unit.create({name : req.body.unitName})
+      const newUnit = await Product_Unit.create({name : req.body.unitName, isSecondary : req.body.isSecondary})
       
       req.body.unitId = newUnit?.dataValues?.unitId
     }

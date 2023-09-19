@@ -6,8 +6,7 @@ import { deleteDiscount, getDiscount } from "../../../../store/slices/discount/s
 
 export default function ModalDeleteDiscount({
   success,
-  name,
-  id,
+  selectedDiscount,
   handleCloseModal,
   isDeleteLoading
 }) {
@@ -18,7 +17,7 @@ export default function ModalDeleteDiscount({
     return (
       <SuccessMessage
         type="success"
-        message={`${name} discount has been delete`}
+        message={`${selectedDiscount.discountName} discount has been delete`}
         handleCloseModal={handleCloseModal}
       />
     )
@@ -28,7 +27,7 @@ export default function ModalDeleteDiscount({
     <>  
         <p className="modal-text">
             Are you sure to delete discount name : 
-            <span className="font-bold"> {name}</span>?
+            <span className="font-bold"> {selectedDiscount.discountName}</span>?
             <p className="modal-text">
             You won't be able to undo the changes after deleting.
             </p>
@@ -42,7 +41,7 @@ export default function ModalDeleteDiscount({
                 isButton
                 isDanger
                 isLoading={isDeleteLoading}
-                onClick={() => dispatch(deleteDiscount(id))}
+                onClick={() => dispatch(deleteDiscount(selectedDiscount.discountId))}
             />
         </div>
     </>

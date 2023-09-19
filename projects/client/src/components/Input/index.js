@@ -23,7 +23,9 @@ const Input = React.forwardRef(({
       e.target.value = inputVal
     }
 
-    onChange()
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);

@@ -117,7 +117,12 @@ const User_Address = db.sequelize.define("user_address", {
         allowNull : false
     },
     isDeleted : {
-        type : db.Sequelize.INTEGER,
+        type : db.Sequelize.TINYINT,
+        allowNull : false,
+        defaultValue : 0
+    },
+    isPrimary : {
+        type : db.Sequelize.TINYINT,
         allowNull : false,
         defaultValue : 0
     },
