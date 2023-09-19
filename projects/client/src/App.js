@@ -91,17 +91,13 @@ function App() {
 
           {!user?.role || user?.role == 2 && (
             <>
-              {/* <Route path="/products" element={<Products />} /> */}
+              <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
+              <Route path="/user/:context" element={<UserPage user={user}/>} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
             </>
           )}
-
-          <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
-          <Route path="/user/:context" element={<UserPage user={user}/>} />
-
-          <Route path="/cart" element={<Cart />} />
-
-          <Route path="/verify/*" element={<Verification/>} />
-          <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
+          <Route path="/verify/*" element={<Verification/>} />     
           <Route path="*" element={<NotFound />} />
         </Routes>
 

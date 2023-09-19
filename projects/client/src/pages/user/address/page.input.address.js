@@ -139,7 +139,7 @@ export default function InputAddressPage({
 
   useEffect(() => {
     dispatch(listProvince());
-    dispatch(listCity({province : 1}));
+    dispatch(listCity({ province: 1 }));
   }, []);
 
   return (

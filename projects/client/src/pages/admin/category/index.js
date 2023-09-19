@@ -7,25 +7,28 @@ import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCateg
 export default function CategoryList(){
     const dispatch = useDispatch()
     const [categoryDesc, setCategoryDesc] = useState(null)
-    const [currentPage, setCurrentPage] = useState(null);
+    const [newPage, setNewPage] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
     const [categoryIndex, setCategoryIndex] = useState(null);
     const [fileImage, setFileImage] = useState(null);
-    const categoryNameRef = useRef()
+    const [page, setPage] = useState(1);
+    const categoryNameRef = useRef();
     const formData = new FormData();
     
-    const {category, isAddLoading, isDeleteLoading, isUpdateLoading} = useSelector(state => {
+    const {category, isAddLoading, isDeleteLoading, isUpdateLoading, currentPage, totalPage} = useSelector(state => {
         return {
             category : state?.cat?.category,
             isAddLoading : state?.cat?.isAddLoading,
             isDeleteLoading : state?.cat?.isDeleteLoading,
-            isUpdateLoading : state?.cat?.isUpdateLoading
+            isUpdateLoading : state?.cat?.isUpdateLoading,
+            currentPage : state?.cat?.currentPage,
+            totalPage : state?.cat?.totalPage
         }
     })
     
     useEffect(()=>{
-        dispatch(getCategory());
-    },[isAddLoading, isDeleteLoading, isUpdateLoading])
+        dispatch(getCategory({page : page}));
+    },[page, isAddLoading, isDeleteLoading, isUpdateLoading])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -34,25 +37,37 @@ export default function CategoryList(){
             formData.append('file',fileImage)
             formData.append('data',appendData)
             dispatch(addCategory(formData))
-            setCurrentPage(null)
+            setNewPage(null)
         }
         else if(context === "delete"){
             dispatch(deleteCategory({categoryId : categoryId}));
-            setCurrentPage(null)
+            setNewPage(null)
         }
         else if(context === "update"){
             dispatch(updateCategory({categoryId : categoryId, categoryDesc : categoryDesc}))
-            setCurrentPage(null)
+            setNewPage(null)
         }
         else{
             formData.append('file',fileImage)
             dispatch(updateCategoryPicture({formData, categoryId}))
-            setCurrentPage(null)
+            setNewPage(null)
         }
     }
 
+    const handlePreviousPage = () => {
+        if(page > 1){
+          setPage(page-1);
+        }
+      }
+    
+      const handleNextPage = () => {
+        if(page < totalPage){
+          setPage(page+1);
+        }
+      }
+
     const optionPage = () => {
-        switch(currentPage){
+        switch(newPage){
             case 'add' : 
                 return(<div class="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
                     <div class="m-4">
@@ -66,7 +81,7 @@ export default function CategoryList(){
                             <label for="categoryImage" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Image</label>
                             <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
                         </div>
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Add!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
                     </form>
                     </div>
@@ -77,7 +92,7 @@ export default function CategoryList(){
                     <h2 class="font-semibold text-green-900 text-2xl">Delete Category</h2>
                     <h2 class="my-4">Are you sure you want to Delete category no. {categoryIndex} ?</h2>
                     <form class="space-y-4 md:space-y-6 font-medium text-xl">
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Delete!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
                     </form></div>
                 </div>
@@ -93,7 +108,7 @@ export default function CategoryList(){
                             <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Name</label>
                             <input type="text" class="sm:rounded-lg rounded-xl border" onChange={(e)=>setCategoryDesc(e.target.value)}/> 
                         </div>
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Update!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
                     </form>
                     </div>                    
@@ -108,7 +123,7 @@ export default function CategoryList(){
                         <form class="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
                                 <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
-                                <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setCurrentPage(null)}/>
+                                <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                                 <Button isButton isPrimary type="submit" title="Change!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
                             </div>
                         </form>
@@ -121,7 +136,7 @@ export default function CategoryList(){
 
     const handleButtonClick = (categoryId, categoryIndex, context) => {
         setFileImage(null);
-        setCurrentPage(context);
+        setNewPage(context);
         setCategoryId(categoryId);
         setCategoryIndex(categoryIndex);
     }
@@ -134,7 +149,7 @@ export default function CategoryList(){
             <div class="overflow-x-auto shadow-md sm:rounded-lg py-8">
                 <div class="flex flex-row border-b-4 border-double border-black">
                     <h1 class="font-serif text-4xl  flex-1"> Categories </h1>
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4" onClick={()=>setCurrentPage('add')}>Add Category</button>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4" onClick={()=>setNewPage('add')}>Add Category</button>
                 </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -186,6 +201,11 @@ export default function CategoryList(){
                         }
                     </tbody>
                 </table>
+                <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
+                    {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
+                    {totalPage !== 1 && <h1>current page : {currentPage}</h1>}
+                    {page!==totalPage && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===totalPage}> Next </button>}
+                </div>
             </div>
             
         </div>

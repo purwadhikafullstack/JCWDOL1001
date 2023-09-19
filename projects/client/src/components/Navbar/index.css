@@ -11,7 +11,7 @@
 }
 
 .nav-menu {
-  @apply fixed bottom-0 left-0 right-0 z-[999] flex w-full flex-col items-start gap-2 bg-slate-200 px-4 py-2 font-semibold duration-300 lg:static lg:bg-transparent lg:p-0
+  @apply fixed bottom-0 left-0 right-0 z-20 flex w-full flex-col items-start gap-2 bg-slate-200 px-4 py-2 font-semibold duration-300 lg:static lg:bg-transparent lg:p-0
 }
 
 .nav-menu-item {

@@ -32,8 +32,9 @@ export default function InputImage({
       return;
     }
     setFile(selectedFile);
-    setError("")
-
+    if(setError){
+      setError("")
+    }
     // show prev image
     const reader = new FileReader();
     reader.onload = () => {
