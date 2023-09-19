@@ -25,6 +25,9 @@ const PRODUCT_HAS_CATEGORY = "The Category you want to delete has Product used i
 const ADDRESS_NOT_FOUND = "Address not found."
 const DISCOUNT_NOT_FOUND = "Discount not found"
 const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
+const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
+const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
+const VOUCHER_NEED_AMOUNT  ="Amount is required"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -86,5 +89,8 @@ module.exports = {
     ADDRESS_NOT_FOUND,
     DISCOUNT_NOT_FOUND,
     DISCOUNT_NAME_ALREADY_EXIST,
-    USER_NOT_FOUND
+    USER_NOT_FOUND,
+    VOUCHER_CODE_EMPTY,
+    VOUCHER_NEED_PRODUCT,
+    VOUCHER_NEED_AMOUNT
 }

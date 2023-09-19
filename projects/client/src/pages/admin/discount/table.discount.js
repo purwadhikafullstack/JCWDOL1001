@@ -64,7 +64,6 @@ export default function TableDiscount({
                                 onClick={() =>
                                     handleShowModal({
                                         context: "Delete Discount", 
-                                        name: list.discountName, 
                                         id: list.discountId
                                     })
                                 }
