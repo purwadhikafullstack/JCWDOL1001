@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import api from "../../../utils/api.instance"
 import { DeleteProductUnitValidationSchema, MakeConvertionProductUnitValidationSchema, ProductUnitValidationSchema, ReactivateProductUnitValidationSchema } from "./validation";
+import { toast } from "react-toastify";
 
 export const getUnits = createAsyncThunk(
   "units/getUnits",
@@ -10,7 +11,7 @@ export const getUnits = createAsyncThunk(
 
       return data
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }
@@ -24,10 +25,11 @@ export const deleteUnit = createAsyncThunk(
       
       const { data } = await api.patch("/products/unit/delete/" + encodeURI(payload.productId),payload)
 
+      toast.success(data.message)   
+
       return data
-      
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }
@@ -41,10 +43,11 @@ export const updateUnit = createAsyncThunk(
 
       const { data } = await api.patch("/products/unit/update/" + encodeURI(payload.productId),payload.data)
 
-      return data
+      toast.success(data.message) 
 
+      return data
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }
@@ -69,9 +72,11 @@ export const addUnit = createAsyncThunk(
       
       const { data } = await api.post("/products/unit/" + encodeURI(payload.productId),payload.data)
 
+      toast.success(data.message) 
+
       return data
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }
@@ -85,10 +90,11 @@ export const reactivateUnit = createAsyncThunk(
 
       const { data } = await api.patch("/products/unit/reactivate/" ,payload)
 
+      toast.success(data.message) 
+
       return data
-      
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }
@@ -102,10 +108,11 @@ export const convertUnit = createAsyncThunk(
 
       const { data } = await api.patch("/products/unit/make-convertion/" ,payload)
 
-      return data
+      toast.success(data.message) 
       
+      return data
     } catch (error) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       return rejectWithValue(error.response.data.message)
     }
   }

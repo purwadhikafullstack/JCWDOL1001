@@ -30,8 +30,8 @@ export default function GetCity({
             ref={selectRef} onChange={()=>{onCityChange(selectRef?.current?.value)}}>
                 <option disabled>Select City : </option>
                 <ListOfCity
-                city={city}
-                onCityChange={onCityChange}
+                    city={city}
+                    onCityChange={onCityChange}
                 />
             </select>
         </div>

@@ -20,14 +20,24 @@ export default function Button(props) {
 
   props.isPrimaryOutline &&
     className.push(
-      "bg-inherit text-primary border border-primary hover:bg-primary hover:text-white duration-300"
+      "bg-inherit text-primary border border-primary hover:bg-slate-100 duration-300"
+    );
+
+  props.isWarningOutline &&
+    className.push(
+      "bg-inherit text-warning border border-warning hover:bg-slate-100 duration-300"
+    );
+
+  props.isDangerOutline &&
+    className.push(
+      "bg-inherit text-danger border border-danger hover:bg-slate-100 duration-300"
     );
 
   props.isDanger &&
-    className.push("bg-red-500 hover:bg-red-600 text-white duration-300")
+    className.push("bg-danger hover:bg-red-600 text-white duration-300")
 
   props.isWarning &&
-    className.push("bg-yellow-500 hover:bg-yellow-600 text-white duration-300")
+    className.push("bg-warning hover:bg-[#e8960c] text-white duration-300")
 
   props.isSecondary &&
     className.push("bg-slate-400 hover:bg-slate-500 text-white duration-300")
@@ -92,6 +102,8 @@ Button.propTypes = {
   isSmall: propTypes.bool,
   isPrimary: propTypes.bool,
   isPrimaryOutline: propTypes.bool,
+  isDangerOutline: propTypes.bool,
+  isWarningOutline: propTypes.bool,
   isDanger: propTypes.bool,
   isWarning: propTypes.bool,
   isSecondary: propTypes.bool,

@@ -49,7 +49,6 @@ export default function Cart() {
 
   const [qty, setQty] = useState(1);
 
-
   const handleAllSelector = (allStatus) => {
     const status = []
     for(let i = 0; i < cartItems.length; i++){

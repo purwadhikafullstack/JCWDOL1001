@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
 
-import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema } from "./validation";
+import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
 
 export const login = createAsyncThunk(
@@ -20,12 +20,11 @@ export const login = createAsyncThunk(
 
             localStorage.setItem("token", token)
 
-            // alert(response?.data?.message)
             toast.success(response?.data?.message);
             
             return data
         } catch (error) {
-            // alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
@@ -40,7 +39,6 @@ export const keepLogin = createAsyncThunk (
             const {data} = await api.get("/auth/keep-login")
             return data.user
         } catch (error) {
-            // alert(error.response?.data?.message)
 
             return rejectWithValue(error.response.data.message)
         }
@@ -130,6 +128,85 @@ export const resendOtp= createAsyncThunk(
         } catch (error) {
             alert(error.response?.data?.message)
 
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changePassword = createAsyncThunk (
+    "auth/user/changePassword",
+    async(payload, {rejectWithValue}) => {
+        try{
+            await changePasswordValidationSchema.validate(payload);
+            const userId = payload.userId;
+            delete payload.userId;
+            const response = await api.patch(`auth/change-password/${userId}`,payload)
+            toast.success("Password has been changed.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeProfilePicture = createAsyncThunk(
+    "auth/user/changeProfilePicture",
+    async(payload, {rejectWithValue}) => {
+        try{
+            console.log(payload)
+            const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
+            toast.success("Your profile picture has been updated.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeEmailOtp = createAsyncThunk(
+    "auth/user/changeEmailOtp",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const response = await api.post(`auth/changeOtp/${payload.userId}`)
+            toast.success("We are sending you the OTP, please check your mail.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeEmail = createAsyncThunk (
+    "auth/user/changeEmail",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const userId = payload.userId;
+            delete payload.userId;
+            console.log(payload);
+            const response = await api.patch(`auth/change-email/${userId}`,payload)
+            toast.success("Email has been changed.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const changeProfileData = createAsyncThunk (
+    "auth/user/changeProfile",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const userId = payload.userId;
+            delete payload.userId;
+            const response = await api.patch(`auth/change-profile/${userId}`,payload)
+            toast.success("Your profile data has been updated.")
+            return {}
+        }catch(error){
+            toast.error(error.response?.data?.message)
             return rejectWithValue(error.response?.data?.message)
         }
     }

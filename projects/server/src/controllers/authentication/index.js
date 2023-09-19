@@ -368,9 +368,6 @@ const changeProfilePicture = async (req, res, next) => {
 const changeEmailOtp = async (req, res, next) => {
     try{
         const{userId} = req.params;
-        const{email} = req.body;
-
-        await validation.UpdateEmailValidationSchema.validate(req.body);
 
         const otpToken =  helperOTP.generateOtp();
 
@@ -393,7 +390,7 @@ const changeEmailOtp = async (req, res, next) => {
         const accessToken = helperToken.createToken({ 
             name : user?.user_profile?.name,
             UUID: user?.UUID, 
-            email : email,
+            email : user?.email,
             roleId : user?.role,
         });
 
@@ -402,7 +399,7 @@ const changeEmailOtp = async (req, res, next) => {
     
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
-            to: email,
+            to: user?.email,
             subject: "OTP for change email",
             html: html}
     
@@ -446,28 +443,18 @@ const changeEmail = async (req, res, next) => {
 const changeProfileData = async (req, res, next) => {
     try{
         const {userId} = req.params;
-        const {name, gender, birthdate, phone} = req.body;
 
         await validation.UpdateProfileValidationSchema.validate(req.body);
 
         const users = await User_Profile.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
 
-        const newProfile = {
-            name : name,
-            gender : gender,
-            birthdate : birthdate,
-            phone : phone
-        }
-
-        const profileAdded = User_Profile.update({newProfile},{where : {userId : userId}});
+        const profileAdded = User_Profile.update(req.body,{where : {userId : userId}});
         res.status(200).json({message : "Data changed!"});
     }catch(error){
         next(error)
     }
 }
-
-
 
 module.exports = {
    login,
@@ -479,5 +466,5 @@ module.exports = {
    changePassword,
    changeProfileData,
    changeProfilePicture,
-   changeEmailOtp
+   changeEmailOtp,
 }

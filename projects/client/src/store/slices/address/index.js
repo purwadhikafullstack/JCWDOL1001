@@ -4,7 +4,10 @@ import {
     listCity,
     cost,
     listProvince,
-    getAddress
+    getAddress,
+    deleteAddress,
+    addAddress,
+    updatePrimaryAddress
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -12,13 +15,18 @@ const INITIAL_STATE = {
     province : [],
     city : [],
     isLoading : false,
+    isGetAddressLoading : false,
+    isSubmitAddressLoading : false,
     success: false
 }
 
 const addressSlice = createSlice({
     name : "address",
     initialState : INITIAL_STATE,
-    reducers : {
+    reducers: {
+        resetSuccessAddress: (state, action) => {
+            state.success = false;
+        },
     },
     extraReducers : {
 
@@ -53,19 +61,56 @@ const addressSlice = createSlice({
         },
 
         [getAddress.pending] : (state, action) => {
-            state.isLoading = true
+            state.isGetAddressLoading = true
         },
         [getAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
                 data : action.payload?.data,
-                isLoading : false,
+                isGetAddressLoading : false,
             })
         },
         [getAddress.rejected] : (state, action) => {
             state = Object.assign(state, {
-                isLoading : false,
+                isGetAddressLoading : false,
             })
         },
+
+        [addAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true
+        },
+        [addAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                data : action.payload?.data,
+                isSubmitAddressLoading : false,
+            })
+        },
+        [addAddress.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isSubmitAddressLoading : false,
+            })
+        },
+
+        [deleteAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true;
+        },
+        [deleteAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state.isSubmitAddressLoading = false;
+            state.success = true;
+        },
+        [deleteAddress.rejected] : (state, action) => {
+            state.isSubmitAddressLoading = false;
+        },
+
+        [updatePrimaryAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true;
+        },
+        [updatePrimaryAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state.isSubmitAddressLoading = false;
+            state.success = true;
+        },
+        [updatePrimaryAddress.rejected] : (state, action) => {
+            state.isSubmitAddressLoading = false;
+        }
     }
 })
 

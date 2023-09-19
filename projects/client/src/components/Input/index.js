@@ -13,7 +13,8 @@ const Input = React.forwardRef(({
   className,
   errorInput,
   onBlur,
-  isDisabled
+  isDisabled,
+  readOnly
 },ref) => {
 
   const handleChange = (e) => {
@@ -22,7 +23,9 @@ const Input = React.forwardRef(({
       e.target.value = inputVal
     }
 
-    onChange()
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -109,6 +112,7 @@ const Input = React.forwardRef(({
             onBlur={onBlur}
             onWheel={(e) => e.target.blur()}
             disabled={isDisabled}
+            readOnly={readOnly}
         />
       </div>
     );
@@ -152,6 +156,7 @@ const Input = React.forwardRef(({
           onBlur={onBlur}
           onWheel={(e) => e.target.blur()}
           disabled={isDisabled}
+          readOnly={readOnly}
       />
     </div>
   );

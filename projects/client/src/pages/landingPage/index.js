@@ -31,16 +31,16 @@ export default function LandingPage() {
 
   useEffect(()=>{
     dispatch(getCategory())
-    dispatch(
-      getProducts({
-        page: 1,
-        id_cat: "",
-        product_name: "",
-        sort_price: "",
-        sort_name: "",
-        limit:12,
-      })
-    )
+    // dispatch(
+    //   getProducts({
+    //     page: 1,
+    //     id_cat: "",
+    //     product_name: "",
+    //     sort_price: "",
+    //     sort_name: "",
+    //     limit:12,
+    //   })
+    // )
     dispatch(getCart())
     dispatch(totalProductCart())
   },[])

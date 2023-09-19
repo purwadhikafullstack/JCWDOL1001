@@ -43,10 +43,11 @@ const getProducts = async (req, res, next) => {
         },
         {
           model : Discount_Product,
-          attributes : ["discountId" , "endingPrice"],
+          attributes : {exclude : ["discountProductId"]},
           as: "discountProducts",
           include : {
-            model : Discount
+            model : Discount,
+            where : { isDeleted : 0 }
           }
         },
       ]
@@ -55,14 +56,14 @@ const getProducts = async (req, res, next) => {
       order : sort}
       );
     
-    const total = id_cat || id_cat && page ? await products.length : await Product_List?.count();
+    const total = id_cat || product_name ? await Product_List?.count({include :{ model : Categories,as : "productCategories",where : filter.id_cat},where : {[Op.and] : [filter.product_name,{isDeleted : 0}]}}) : await Product_List?.count();
 
     const pages = Math.ceil(total / options.limit);
 
 		res.status(200).json({
 			type : "success",
 			message : "Products fetched",
-      currentPage : page ? page : 1,
+      currentPage : +page ? +page : 1,
       totalPage : pages,
       totalProducts : total,
       productLimit : options.limit,
