@@ -18,10 +18,10 @@ const Cart = db.sequelize.define("cart",{
         type : db.Sequelize.INTEGER,
         allowNull : false,
     },
-    // isDeleted : {
-    //     type : db.Sequelize.TINYINT,
-    //     allowNull : false,
-    // }
+    isCheckOut: {
+        type : db.Sequelize.TINYINT,
+        allowNull : false,
+    }
 },{
     timestamps : false
 });
