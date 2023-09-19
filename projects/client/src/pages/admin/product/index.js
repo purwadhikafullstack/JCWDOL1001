@@ -43,6 +43,8 @@ export default function AdminProducts({user}) {
     units,
     unitsSuccess,
     isLoading,
+    categoriesCurrentPage,
+    categoriesTotalPage
   } = useSelector((state) => {
     return {
       success: state.products.success,
@@ -58,6 +60,8 @@ export default function AdminProducts({user}) {
       units : state?.units?.data,
       unitsSuccess : state?.units?.success,
       isLoading : state.units.isLoading,
+      categoriesCurrentPage : state?.cat?.currentPage,
+      categoriesTotalPage : state?.cat?.totalPage
     };
   });
 
@@ -67,6 +71,7 @@ export default function AdminProducts({user}) {
   const [searchedProduct, setSearchedProduct] = useState(null);
   const searchedProductRef = useRef();
   const [page, setPage] = useState(1);
+  const [categoriesPage, setCategoriesPage] = useState(1);
   const [options, setOptions] = useState({sortName : "", sortPrice : "", categoryId : ""})
   const [selectedUnit, setSelectedUnit] = useState({});
 
@@ -138,9 +143,9 @@ export default function AdminProducts({user}) {
   }, [searchedProduct, options, page, isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
 
   useEffect(() => {
-    dispatch(getCategory());
+    dispatch(getCategory({page : categoriesPage}));
     dispatch(getUnits())
-  }, [])
+  }, [categoriesPage])
 
 
   if (!user.role) return navigate("/", "replace");
@@ -233,6 +238,9 @@ export default function AdminProducts({user}) {
           <ModalInputProduct
             success={success}
             categories={categories}
+            categoriesPage={categoriesPage}
+            setCategoriesPage={setCategoriesPage}
+            categoriesTotalPage={categoriesTotalPage}
             productData={selectedProduct}
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}

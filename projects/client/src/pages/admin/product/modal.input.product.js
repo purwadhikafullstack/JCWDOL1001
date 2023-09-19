@@ -4,7 +4,7 @@ import Input from "../../../components/Input";
 import InputImage from "../../../components/InputImage";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiXMark } from "react-icons/hi2";
+import { HiChevronLeft, HiChevronRight, HiXMark } from "react-icons/hi2";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
 import { toast } from "react-toastify";
 import {
@@ -20,6 +20,9 @@ import Message from "../../../components/Message";
 export default function ModalInputProduct({
   success,
   categories,
+  categoriesPage,
+  setCategoriesPage,
+  totalCategoriesPage,
   productData,
   selectedCategories,
   setSelectedCategories,
@@ -70,6 +73,14 @@ export default function ModalInputProduct({
       selectedCategories.filter((item) => item.categoryId !== categoryId)
     );
   };
+
+    const handlePreviousPage = () => {
+      setCategoriesPage(categoriesPage - 1);
+  }
+
+  const handleNextPage = () => {
+      setCategoriesPage(categoriesPage + 1);
+  }
 
   useEffect(() => {
     if (productData) {
@@ -402,6 +413,32 @@ export default function ModalInputProduct({
                   </div>
                 ))}
               </div>
+
+              {/* <div className="flex gap-2">
+                <Button
+                  className={`flex items-center  ${
+                    +categoriesPage === 1
+                      ? "cursor-auto text-slate-400"
+                      : "text-dark hover:text-primary"
+                  }`}
+                  onClick={() => handlePreviousPage()}
+                  isDisabled={+categoriesPage === 1}
+                >
+                  <HiChevronLeft className=" text-xl " /> Prev
+                </Button>
+
+                <Button
+                  className={`flex items-center  ${
+                    +categoriesPage === totalCategoriesPage
+                      ? "cursor-auto text-slate-400"
+                      : "text-dark hover:text-primary"
+                  }`}
+                  onClick={() => handleNextPage()}
+                  isDisabled={+categoriesPage === totalCategoriesPage}
+                >
+                  Next <HiChevronRight className="text-xl " />
+                </Button>
+              </div> */}
 
               <div className="flex gap-2">
                 <Button
