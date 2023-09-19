@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import GetProvince from "../../verification/components/component.province";
-import GetCity from "../../verification/components/component.city";
+import GetProvince from "./components/component.province";
+import GetCity from "./components/component.city";
 import Input from "../../../components/Input";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -36,9 +36,11 @@ export default function InputAddressPage({
   const addressRef = useRef(null);
   const districtRef = useRef(null);
   const postalCodeRef = useRef(null)
+  const contactPhoneRef = useRef(null)
+  const contactNameRef = useRef(null)
   // const [postalCodeState, setPostalCode] = useState(80351);
   const [cityRef, setCityRef] = useState("Kabupaten Badung");
-  const [provinceRef, setProvinceRef] = useState("Bali");
+  const [provinceRef, setProvinceRef] = useState(null);
   const [isToastVisible, setIsToastVisible] = useState(false);
 
   const [error, setError] = useState("");
@@ -56,6 +58,18 @@ export default function InputAddressPage({
     setCityRef(result[0]);
   };
 
+  useEffect(() => {
+    if (addressData) {
+      addressRef.current.value = addressData.address || "";
+      districtRef.current.value = addressData.district || "";
+      postalCodeRef.current.value = addressData.postalCode || "";
+      contactPhoneRef.current.value = addressData.contactPhone || "";
+      contactNameRef.current.value = addressData.contactName || "";
+      setProvinceRef(addressData.province);
+      setCityRef(addressData.city);
+    }
+  }, [addressData]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -69,6 +83,8 @@ export default function InputAddressPage({
       city: cityRef,
       province: provinceRef,
       postalCode: postalCodeRef.current?.value,
+      contactPhone: contactPhoneRef.current?.value,
+      contactName: contactNameRef.current?.value,
     };
 
     try {
@@ -149,6 +165,7 @@ export default function InputAddressPage({
             <GetProvince
               onProvinceChange={onProvinceChange}
               province={dataProvince}
+              selected={provinceRef}
             />
           </div>
 
@@ -179,7 +196,46 @@ export default function InputAddressPage({
               type="number"
               label="Kode Pos"
               placeholder="Contoh: 12345"
+              errorInput={error.postalCode}
+              onChange={() => setError({ ...error, postalCode: false })}
             />
+            {error.postalCode && (
+              <div className="text-sm text-red-500 dark:text-red-400">
+                {error.postalCode}
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <Input
+              ref={contactPhoneRef}
+              type="number"
+              label="Nomor Telpon Kontak"
+              placeholder="Contoh: 081234567890"
+              errorInput={error.contactPhone}
+              onChange={() => setError({ ...error, contactPhone: false })}
+            />
+            {error.contactPhone && (
+              <div className="text-sm text-red-500 dark:text-red-400">
+                {error.contactPhone}
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <Input
+              ref={contactNameRef}
+              type="text"
+              label="Nama Kontak"
+              placeholder="Contoh: Asep Subagja"
+              errorInput={error.contactName}
+              onChange={() => setError({ ...error, contactName: false })}
+            />
+            {error.contactName && (
+              <div className="text-sm text-red-500 dark:text-red-400">
+                {error.contactName}
+              </div>
+            )}
           </div>
 
           <div className="mb-4">

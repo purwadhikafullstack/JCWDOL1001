@@ -6,7 +6,8 @@ import {
     listProvince,
     getAddress,
     deleteAddress,
-    addAddress
+    addAddress,
+    updatePrimaryAddress
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -97,6 +98,17 @@ const addressSlice = createSlice({
             state.success = true;
         },
         [deleteAddress.rejected] : (state, action) => {
+            state.isSubmitAddressLoading = false;
+        },
+
+        [updatePrimaryAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true;
+        },
+        [updatePrimaryAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state.isSubmitAddressLoading = false;
+            state.success = true;
+        },
+        [updatePrimaryAddress.rejected] : (state, action) => {
             state.isSubmitAddressLoading = false;
         }
     }

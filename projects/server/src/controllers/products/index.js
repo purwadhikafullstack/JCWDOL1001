@@ -55,7 +55,7 @@ const getProducts = async (req, res, next) => {
       order : sort}
       );
     
-    const total = id_cat || id_cat && page ? await products.length : await Product_List?.count();
+    const total = id_cat || (id_cat || product_name) && page ? await products.length : await Product_List?.count();
 
     const pages = Math.ceil(total / options.limit);
 
