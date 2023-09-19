@@ -4,6 +4,7 @@ const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
+const { trimString, capitalizeEachWords } = require("../../helper/index.js")
 
 const getProducts = async (req, res, next) => {
   try{
@@ -107,7 +108,6 @@ const getProductById = async (req, res, next) => {
   }
 }
 
-
 const createProduct = async (req, res, next) => {
   try {
     const { data } = req.body;
@@ -122,10 +122,10 @@ const createProduct = async (req, res, next) => {
     }
 
     const productData = {
-      productName: body?.productName,
+      productName: capitalizeEachWords(trimString(body?.productName)),
       productPrice: +body?.productPrice,
-      productDosage: body?.productDosage,
-      productDescription: body?.productDescription,
+      productDosage: capitalizeEachWords(trimString(body?.productDosage)),
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)),
       categoryId: body?.categoryId,
       productPicture: req.file?.filename,
     };
@@ -165,7 +165,6 @@ const createProduct = async (req, res, next) => {
   }
 };
 
-
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -190,10 +189,10 @@ const updateProduct = async (req, res, next) => {
     }
 
     const productData = {
-      productName: body.productName || product.productName,
+      productName: capitalizeEachWords(trimString(body?.productName)) || product.productName,
       productPrice: +body.productPrice || product.productPrice,
-      productDosage: body.productDosage || product.productDosage,
-      productDescription: body.productDescription || product.productDescription,
+      productDosage: capitalizeEachWords(trimString(body?.productDosage)) || product.productDosage,
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)) || product.productDescription,
       categoryId: body.categoryId || product.categoryId,
     };
 
@@ -237,7 +236,6 @@ const updateProduct = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const deleteProduct = async (req, res, next)=>{
   try {
