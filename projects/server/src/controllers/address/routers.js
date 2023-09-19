@@ -10,6 +10,7 @@ router.post("/", verifyUser, AddressControllers.addAddress)
 router.get("/province", AddressControllers.getListProvince)
 router.get("/city", AddressControllers.getListCity)
 router.patch("/delete/:addressId", verifyUser, AddressControllers.deleteAddress)
+router.post("/shipping-cost", AddressControllers.shippingCost)
 router.patch("/:addressId", verifyUser, AddressControllers.updateAddress)
 
 

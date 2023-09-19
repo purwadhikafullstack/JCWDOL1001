@@ -108,7 +108,20 @@ const User_Address = db.sequelize.define("user_address", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    contactPhone: {
+        type : db.Sequelize.INTEGER,
+        allowNull : false
+    },
+    contactName: {
+        type : db.Sequelize.STRING,
+        allowNull : false
+    },
     isDeleted : {
+        type : db.Sequelize.INTEGER,
+        allowNull : false,
+        defaultValue : 0
+    },
+    isPrimary : {
         type : db.Sequelize.INTEGER,
         allowNull : false,
         defaultValue : 0

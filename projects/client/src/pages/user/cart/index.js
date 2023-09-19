@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import { useNavigate } from "react-router-dom";
+import { getAddress } from "../../../store/slices/address/slices";
 
 export default function Cart() {
-  const {cart,products} = useSelector(state=>{
+  const {cart,products,address} = useSelector(state=>{
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
+      address : state?.address.data,
     }
   })
   const navigate = useNavigate()
@@ -113,6 +115,7 @@ export default function Cart() {
       limit: 12,
     })
   )
+    dispatch(getAddress())
   },[])
 
   useEffect(() => {
@@ -126,6 +129,8 @@ export default function Cart() {
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
+      <a>Dikirim ke : </a>
+      <a>{address[0].address}</a>
             <div className=" mt-3 gap-3 flex flex-row items-center">
               <input
                 className="h-5 w-5"
