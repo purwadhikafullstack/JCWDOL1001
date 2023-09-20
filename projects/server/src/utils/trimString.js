@@ -6,6 +6,6 @@ const trimString = (str) => {
     return trimmedStr.trim();
 };
 
-module.exports = {
-    trimString
+module.exports = { 
+    trimString 
 };

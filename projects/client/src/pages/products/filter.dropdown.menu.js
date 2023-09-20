@@ -5,7 +5,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
   const [activeFilter, setActiveFilter] = useState(null);
 
   return (
-    <div className="absolute z-50 w-full opacity-0 group-hover:opacity-100">
+    <div className="absolute z-50 w-full invisible group-hover:visible">
       <div className="mt-1 h-fit rounded-lg border border-primary bg-slate-100 p-2 shadow-md">
         <div
           className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"

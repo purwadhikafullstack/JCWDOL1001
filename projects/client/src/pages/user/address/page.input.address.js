@@ -8,13 +8,13 @@ import {
   getAddress,
   listCity,
   listProvince,
+  updateAddress,
 } from "../../../store/slices/address/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Button from "../../../components/Button";
 import { HiArrowLongLeft } from "react-icons/hi2";
 import { InputAddressValidationSchema } from "../../../store/slices/address/validation";
 import { toast } from "react-toastify";
-import Message from "../../../components/Message";
 
 export default function InputAddressPage({
   addressData,
@@ -39,7 +39,7 @@ export default function InputAddressPage({
   const contactPhoneRef = useRef(null)
   const contactNameRef = useRef(null)
   // const [postalCodeState, setPostalCode] = useState(80351);
-  const [cityRef, setCityRef] = useState("Kabupaten Badung");
+  const [cityRef, setCityRef] = useState(null);
   const [provinceRef, setProvinceRef] = useState(null);
   const [isToastVisible, setIsToastVisible] = useState(false);
 
@@ -47,6 +47,7 @@ export default function InputAddressPage({
   const [confirmAdd, setConfirmAdd] = useState(false);
 
   const onProvinceChange = (provinceParams) => {
+    console.log(provinceParams);
     const result = provinceParams.split(",");
     setProvinceRef(result[1]);
     dispatch(listCity({ province: result[0] }));
@@ -60,6 +61,7 @@ export default function InputAddressPage({
 
   useEffect(() => {
     if (addressData) {
+      const getProvinceData = dataProvince?.find(province => province.province === addressData.province);
       addressRef.current.value = addressData.address || "";
       districtRef.current.value = addressData.district || "";
       postalCodeRef.current.value = addressData.postalCode || "";
@@ -67,6 +69,8 @@ export default function InputAddressPage({
       contactNameRef.current.value = addressData.contactName || "";
       setProvinceRef(addressData.province);
       setCityRef(addressData.city);
+
+      dispatch(listCity({ province : getProvinceData?.province_id }))
     }
   }, [addressData]);
 
@@ -97,7 +101,7 @@ export default function InputAddressPage({
         setConfirmAdd(true);
 
         if (confirmAdd) {
-          // dispatch(updateProduct({ id: productData.productId, formData }));
+          dispatch(updateAddress({ addressId: addressData.addressId, inputAddressData }));
         }
       }
 
@@ -132,14 +136,7 @@ export default function InputAddressPage({
   };
 
   useEffect(() => {
-    // setPostalCode(dataCity[0]?.postal_code);
-
-    setCityRef(dataCity[0]?.type + " " + dataCity[0]?.city_name);
-  }, [dataCity]);
-
-  useEffect(() => {
     dispatch(listProvince());
-    dispatch(listCity({ province: 1 }));
   }, []);
 
   return (
@@ -170,7 +167,11 @@ export default function InputAddressPage({
           </div>
 
           <div className="mb-4">
-            <GetCity onCityChange={onCityChange} city={dataCity} />
+            <GetCity
+              onCityChange={onCityChange}
+              city={dataCity}
+              selected={cityRef}
+              />
           </div>
 
           <div className="mb-4">

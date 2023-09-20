@@ -6,6 +6,7 @@ const {middlewareErrorHandling} = require("../../middleware/index.js");
 const { InputAddressValidationSchema } = require("./validation.js")
 const { User_Address } = require("../../model/relation.js");
 const { Op } = require("sequelize");
+const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
 const getAddress = async (req, res, next) =>{
     try {
@@ -47,13 +48,13 @@ const addAddress = async (req, res, next) => {
 
         const addressData = {
             userId,
-            address,
+            address : capitalizeEachWords(trimString(address)),
             province,
             city,
-            district,
+            district : capitalizeEachWords(trimString(district)),
             postalCode,
             contactPhone,
-            contactName,
+            contactName : capitalizeEachWords(trimString(contactName)),
             isPrimary,
         };
 
@@ -75,7 +76,15 @@ const updateAddress = async (req, res, next) =>{
     try {
         const { userId } = req.user;
         const { addressId } = req.params;
-        const { address, province, city, district, postalCode } = req.body;
+        const {
+            address,
+            province,
+            city,
+            district,
+            postalCode,
+            contactPhone,
+            contactName,
+        } = req.body;
 
         const addressExists = await User_Address.findOne({
             where : {[Op.and] : [{ addressId }, { userId }]},
@@ -86,12 +95,13 @@ const updateAddress = async (req, res, next) =>{
         }
 
         const addressData = {
-            userId,
-            address,
+            address : capitalizeEachWords(trimString(address)),
             province,
             city,
-            district,
-            postalCode
+            district : capitalizeEachWords(trimString(district)),
+            postalCode,
+            contactPhone,
+            contactName : capitalizeEachWords(trimString(contactName)),
         }
 
         await InputAddressValidationSchema.validate(addressData);

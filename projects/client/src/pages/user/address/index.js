@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getAddress } from "../../../store/slices/address/slices";
+import { getAddress, listProvince } from "../../../store/slices/address/slices";
 
 import Button from "../../../components/Button";
 import DeleteAddressPage from "./page.delete.address";
@@ -47,6 +47,8 @@ export default function Address({
 
   useEffect(() => {
     setShowHandleAddressPage({ show: false, action: "" });
+    dispatch(listProvince());
+
   }, []);
 
   useEffect(() => {
