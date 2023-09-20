@@ -32,8 +32,8 @@ const getUser = async( req, res, next ) => {
         //validate email address
           //todo : validate
         //ingrdient isinya productId dan quantity
-        const getResult = async() => {
-        return await data.map(async (item) =>{ 
+        
+        const result = await data.map(async (item) =>{ 
         const {ingredients, productName,
         productPrice, productDosage, quantity} = item
         //validation for data
@@ -85,25 +85,23 @@ const getUser = async( req, res, next ) => {
           }
         }
         if(availability){
-          console.log(availability)
-          console.log(productName, product?.productId)
-          return [{name : productName, productId : product?.product}]
+          return ({name : productName, productId : product?.productId})
         }
-      })}
-      
+      })
+
       // -kirim email untuk respond user
       //kalau gak ready smua gmn
 
       //kalau ready sebagian
 
       //kalau ready semua gimana
-
-        const result = getResult()
+      console.log(result)
       res.status(200).json({ 
         type : "success",
         message : "Data berhasil dibuat",
         data : result
       })
+      
   
     } catch (error){
       next(error)
