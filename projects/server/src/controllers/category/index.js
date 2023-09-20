@@ -10,7 +10,7 @@ const getCategory = async (req, res, next) => {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
             limit : 10
         }
-		const category = await Categories?.findAll({...options,where : {isDeleted : 0}});
+		const category = await Categories?.findAll({...options, where : {isDeleted : 0}, order : [["categoryDesc", "ASC"]]});
 
         const total = await Categories?.count();
         const pages = Math.ceil(total / options.limit);
