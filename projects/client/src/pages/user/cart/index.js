@@ -13,12 +13,13 @@ import { getAddress } from "../../../store/slices/address/slices";
 import ShippingAddress from "./component.address";
 
 export default function Cart() {
-  const {cart,products,isDeleteLoading,isUpdateLoading} = useSelector(state=>{
+  const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
     return{
+      address : state?.address?.data,
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
-      isDeleteLoading : state?.cart?.isDeleteLoading
+      isDeleteLoading : state?.cart?.isDeleteLoading,
     }
   })
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ export default function Cart() {
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [trigger, setTrigger] = useState(true);
 
-  const [selectedAddress, setSelectedAddress] = useState(address[0])
+  const [selectedAddress, setSelectedAddress] = useState([])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -129,22 +130,21 @@ export default function Cart() {
       limit: 12,
     })
   )
-    dispatch(getAddress())
-  },[])
+  dispatch(getAddress())
+},[])
 
-  // useEffect(() => {
-  //   dispatch(getCart())
-  //   dispatch(totalProductCart())
-  //   },[cart])
-
+// useEffect(() => {
+//     dispatch(getCart())
+//     dispatch(totalProductCart())
+//     },[cart])
+  
   const checkOut = () => {
     navigate("/checkout")
   }
-
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
-      <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={selectedAddress} />
+      <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"

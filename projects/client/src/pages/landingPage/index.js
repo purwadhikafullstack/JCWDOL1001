@@ -30,7 +30,7 @@ export default function LandingPage() {
   }, [role]);
 
   useEffect(()=>{
-    dispatch(getCategory())
+    dispatch(getCategory({page : 1}))
     dispatch(
         getProducts({
           page: 1,

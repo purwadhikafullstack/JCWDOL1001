@@ -59,7 +59,7 @@ export default function InputAddressPage({
   };
 
   useEffect(() => {
-    if (addressData) {
+    if (addressData && addressData.length !== 0 ) {
       addressRef.current.value = addressData.address || "";
       districtRef.current.value = addressData.district || "";
       postalCodeRef.current.value = addressData.postalCode || "";
@@ -101,7 +101,7 @@ export default function InputAddressPage({
         }
       }
 
-      if (!addressData) {
+      if (!addressData || addressData.length === 0) {
         await InputAddressValidationSchema.validate(inputAddressData, {
           abortEarly: false,
         });
@@ -141,7 +141,7 @@ export default function InputAddressPage({
     dispatch(listProvince());
     dispatch(listCity({ province: 1 }));
   }, []);
-
+  
   return (
     <form className="px-1 pb-24 lg:pb-8" onSubmit={handleSubmit}>
       <>
@@ -270,7 +270,7 @@ export default function InputAddressPage({
               isBLock
               isLoading={isSubmitAddressLoading}
               isDisabled={isToastVisible}
-              title={addressData ? "Ubah Alamat" : "Tambah Alamat"}
+              title={addressData && addressData.length !== 0 ? "Ubah Alamat" : "Tambah Alamat"}
               type={isToastVisible ? "button" : "submit"}
             />
           </div>
@@ -283,7 +283,7 @@ export default function InputAddressPage({
               : "mt-[10%] flex flex-col items-center justify-center"
           }`}
         >
-          {addressData ? (
+          {addressData && addressData.length !== 0 ? (
             <p className="text-center">
               Apa kamu yakin ingin mengubah alamat ini?
             </p>
@@ -298,7 +298,7 @@ export default function InputAddressPage({
               <Button
                 isButton
                 isPrimaryOutline
-                title={addressData ? "Gak" : "Cek lagi"}
+                title={addressData && addressData.length !== 0 ? "Gak" : "Cek lagi"}
                 className="mt-4"
                 type="button"
                 onClick={() => setConfirmAdd(false)}
@@ -308,7 +308,7 @@ export default function InputAddressPage({
             <Button
               isButton
               isPrimary
-              title={addressData ? "Ya, ubah" : "Ya, tambahkan alamat"}
+              title={addressData && addressData.length !== 0 ? "Ya, ubah" : "Ya, tambahkan alamat"}
               className="mt-4"
               type="submit"
               isLoading={isSubmitAddressLoading}
