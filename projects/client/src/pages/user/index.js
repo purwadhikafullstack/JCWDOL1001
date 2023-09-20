@@ -38,14 +38,6 @@ export default function UserPage({ user }) {
     window.scrollTo({
       top: 0,
     });
-
-  //   if (mobileContextActive) {
-  //   document.body.style.overflow = "hidden";
-  // }
-  
-  // if (!mobileContextActive) {
-  //   document.body.style.overflow = "auto";
-  // }
   }, [mobileContextActive]);
 
   return (
