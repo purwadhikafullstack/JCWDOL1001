@@ -4,7 +4,7 @@ const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
-
+const { capitalizeEachWords, trimString } = require("../../utils/index.js")
 const getProducts = async (req, res, next) => {
   try{
     const {page, id_cat, product_name, sort_price, sort_name, limit} = req.query;
@@ -41,22 +41,29 @@ const getProducts = async (req, res, next) => {
           model : Product_Detail,
           attributes : ["quantity"]
         },
-        {
-          model : Discount_Product,
-          attributes : {exclude : ["discountProductId"]},
-          as: "discountProducts",
-          include : {
-            model : Discount,
-            where : { isDeleted : 0 }
-          }
-        },
+        // {
+        //   model : Discount_Product,
+        //   attributes : {exclude : ["discountProductId"]},
+        //   as: "discountProducts",
+        //   include : {
+        //     model : Discount,
+        //     where : { isDeleted : 0 }
+        //   }
+        // },
       ]
       ,
-      where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
+      where : {[Op.and] : [filter.product_name, {isDeleted : 0}]},
       order : sort}
       );
     
-    const total = id_cat || product_name ? await Product_List?.count({include :{ model : Categories,as : "productCategories",where : filter.id_cat},where : {[Op.and] : [filter.product_name,{isDeleted : 0}]}}) : await Product_List?.count();
+    const total = id_cat || product_name ? await Product_List?.count({
+      include :{ 
+        model : Categories,as : "productCategories",
+        where : filter.id_cat},
+        where : {[Op.and] : [filter.product_name,{isDeleted : 0}]}
+      }) 
+      : 
+      await Product_List?.count();
 
     const pages = Math.ceil(total / options.limit);
 
@@ -108,7 +115,6 @@ const getProductById = async (req, res, next) => {
   }
 }
 
-
 const createProduct = async (req, res, next) => {
   try {
     const { data } = req.body;
@@ -123,10 +129,10 @@ const createProduct = async (req, res, next) => {
     }
 
     const productData = {
-      productName: body?.productName,
+      productName: capitalizeEachWords(trimString(body?.productName)),
       productPrice: +body?.productPrice,
-      productDosage: body?.productDosage,
-      productDescription: body?.productDescription,
+      productDosage: capitalizeEachWords(trimString(body?.productDosage)),
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)),
       categoryId: body?.categoryId,
       productPicture: req.file?.filename,
     };
@@ -166,7 +172,6 @@ const createProduct = async (req, res, next) => {
   }
 };
 
-
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -191,12 +196,14 @@ const updateProduct = async (req, res, next) => {
     }
 
     const productData = {
-      productName: body.productName || product.productName,
+      productName: capitalizeEachWords(trimString(body?.productName)) || product.productName,
       productPrice: +body.productPrice || product.productPrice,
-      productDosage: body.productDosage || product.productDosage,
-      productDescription: body.productDescription || product.productDescription,
+      productDosage: capitalizeEachWords(trimString(body?.productDosage)) || product.productDosage,
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)) || product.productDescription,
       categoryId: body.categoryId || product.categoryId,
     };
+
+    console.log(productData);
 
     await updateProductValidationSchema.validate(productData);
 
@@ -238,7 +245,6 @@ const updateProduct = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const deleteProduct = async (req, res, next)=>{
   try {

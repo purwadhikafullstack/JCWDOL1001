@@ -9,5 +9,5 @@ module.exports = {
     helperEncryption,
     helperOTP,
     helperTransporter,
-    helperUploader
+    helperUploader,
 }

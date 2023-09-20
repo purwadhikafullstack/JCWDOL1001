@@ -8,7 +8,7 @@
   import PesananDiterima from "./pesanan-diterima"
 import { useState } from "react";
 
-  export default function Transaction() {
+  export default function AdminTransaction() {
     const tabs = [
       { 
         title : "Menunggu Pembayaran",
@@ -61,7 +61,7 @@ import { useState } from "react";
     }
 
     return (
-      <div>
+      <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
         <h3 className="title">Transaksi</h3>
         <div className="flex gap-2 mt-2 w-full overflow-auto border-b pb-2 border-primary/30">
           {tabs.map((tab, index) => (
