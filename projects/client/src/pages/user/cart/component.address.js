@@ -100,8 +100,7 @@ export default function ShippingAddress({
                                         key={list.addressId}
                                         className={`flex w-48 flex-shrink-0 cursor-pointer flex-col rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6 ${list.addressId == selectedAddress.addressId ? "border-2 border-teal-700" : ""} `}
                                         onClick={()=>{
-                                            setSelectedAddress(list) 
-                                            handleCloseModal()
+                                            setSelectedAddress(list)
                                         }}
                                     >
                                         <p className="text-sm font-bold text-dark md:text-base">
