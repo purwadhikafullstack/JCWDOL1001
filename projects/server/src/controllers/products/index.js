@@ -132,7 +132,7 @@ const createProduct = async (req, res, next) => {
       productName: capitalizeEachWords(trimString(body?.productName)),
       productPrice: +body?.productPrice,
       productDosage: capitalizeEachWords(trimString(body?.productDosage)),
-      productDescription: trimString(body?.productDescription),
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)),
       categoryId: body?.categoryId,
       productPicture: req.file?.filename,
     };
@@ -196,10 +196,10 @@ const updateProduct = async (req, res, next) => {
     }
 
     const productData = {
-      productName: body?.productName || product.productName,
+      productName: capitalizeEachWords(trimString(body?.productName)) || product.productName,
       productPrice: +body.productPrice || product.productPrice,
-      productDosage: body?.productDosage || product.productDosage,
-      productDescription: body?.productDescription || product.productDescription,
+      productDosage: capitalizeEachWords(trimString(body?.productDosage)) || product.productDosage,
+      productDescription: capitalizeEachWords(trimString(body?.productDescription)) || product.productDescription,
       categoryId: body.categoryId || product.categoryId,
     };
 
