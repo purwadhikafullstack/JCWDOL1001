@@ -47,8 +47,9 @@ const getProducts = async (req, res, next) => {
           as: "discountProducts",
           include : {
             model : Discount,
-            where : { isDeleted : 0 }
-          }
+            where : { isDeleted : 0 },
+            required: false,
+          },
         },
       ]
       ,
