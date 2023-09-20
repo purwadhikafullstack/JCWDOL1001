@@ -4,7 +4,9 @@ const {verifyUser, verifyAdmin} = require("../../middleware/token.verify.js")
 
 const router = express.Router()
 
-router.get("/:userId",transaction.getTransactions)
-router.post("/checkout/:userId",transaction.createTransactions)
+router.get("/:userId",verifyUser,transaction.getTransactions)
+router.post("/checkout/:userId",verifyUser,transaction.createTransactions)
+router.get("/cart/:userId",verifyUser, transaction.getCheckoutProducts)
+
 
 module.exports = router

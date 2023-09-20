@@ -84,6 +84,9 @@ Discount_Product.belongsTo(Discount, {foreignKey : "discountId"})
 Discount_Product.belongsTo(Product_List, {through : Product_Detail, foreignKey : "productId", otherKey : "discountId", as : "detailProduct"})
 Product_List.hasMany(Discount_Product,{foreignKey : "productId", as: "discountProducts" })
 
+Transaction_Detail.belongsTo(Product_List, {foreignKey : "productId", as : "listedTransaction"})
+Product_List.hasMany(Transaction_Detail,{foreignKey : "productId", as : "transactionListed"})
+
 Product_Detail.hasMany(Cart,{sourceKey : "productId", foreignKey : "productId"})
 Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"})
 
