@@ -20,6 +20,7 @@ import ProductDetail from "./pages/product-details";
 import UploadRecipePage from "./pages/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
 import UserPage from "./pages/user";
+import AdminTransaction from "./pages/admin/transaction";
 
 function App() {
   const { pathname } = useLocation();
@@ -86,6 +87,7 @@ function App() {
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
+              <Route path="/admin/transaction" element={<AdminTransaction />}/>
             </>
           )}
 

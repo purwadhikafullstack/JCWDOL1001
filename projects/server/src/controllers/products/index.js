@@ -41,15 +41,15 @@ const getProducts = async (req, res, next) => {
           model : Product_Detail,
           attributes : ["quantity"]
         },
-        {
-          model : Discount_Product,
-          attributes : {exclude : ["discountProductId"]},
-          as: "discountProducts",
-          include : {
-            model : Discount,
-            where : { isDeleted : 0 }
-          }
-        },
+        // {
+        //   model : Discount_Product,
+        //   attributes : {exclude : ["discountProductId"]},
+        //   as: "discountProducts",
+        //   include : {
+        //     model : Discount,
+        //     where : { isDeleted : 0 }
+        //   }
+        // },
       ]
       ,
       where : {[Op.and] : [filter.product_name, {isDeleted : 0}]},
