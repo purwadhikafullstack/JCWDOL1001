@@ -6,7 +6,8 @@ export const getCheckoutProducts = createAsyncThunk(
     "transactions/getCheckout",
     async (payload, {rejectWithValue}) => {
         try{
-            const {data} = await api.get(`/transaction/cart`);
+            const {userId} = payload.userId;
+            const {data} = await api.get(`/transaction/cart/${userId}`);
             return data;
         }catch(error){
             toast.error(error.response.data.message);
@@ -33,7 +34,7 @@ export const createTransaction = createAsyncThunk(
     "transactions/createTransaction",
     async (payload, {rejectWithValue}) => {
         try{
-            await api.post(`/transaction/checkout/${userId}`,payload);
+            await api.post(`/transaction/checkout`,payload);
             toast.success("Please check your payment")
             return{}
         }catch(error){
