@@ -5,21 +5,22 @@ const { Product_Detail, Product_List } = require("../../model/product");
 
 const getTransactions = async (req, res, next) => {
     try{
-    const {userId} = req.params;
+    const { userId } = req.user;
+    const { statusId } = req.params;
 
     const transaction = await Transaction_List?.findAll({
         include : 
         [
             {
-                    model : Transaction_Status,
-                    as : "transactionStatus"
+                model : Transaction_Status,
+                as : "transactionStatus"
             },
             {
                 model : Transaction_Detail,
                 as : "transactionDetail",
             } 
         ],
-        where : {userId : userId}
+        where : {[Op.and] : [{ userId }, { statusId }]}
     })
     res.status(200).json({
         type : "success",
@@ -33,8 +34,8 @@ const getTransactions = async (req, res, next) => {
 
 const createTransactions = async (req, res, next) => {
     try{
-        const {userId} = req.params;
-        const {transport, totalPrice} = req.body;
+        const { userId } = req.user;
+        const { transport, totalPrice } = req.body;
 
         const startTransaction = await Cart?.findAll({
             include : [
@@ -47,7 +48,7 @@ const createTransactions = async (req, res, next) => {
                     as : "cartList"
                 }
             ],
-            where : {[Op.and] : [{userId : userId},{inCheckOut : 1}]}
+            where : {[Op.and] : [{ userId }, {inCheckOut : 1}]}
         })
 
         const newTransactionList = {
