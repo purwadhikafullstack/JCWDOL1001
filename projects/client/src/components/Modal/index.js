@@ -71,7 +71,7 @@ export default function Modal({
                   setRegist(false);
                 }
               }}
-              className="fixed inset-0 z-20 bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
+              className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
             />
           }
 
@@ -80,7 +80,7 @@ export default function Modal({
             animate={{ translateY: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
             exit={{ translateY: -20, opacity: 0 }}
-            className={["fixed inset-0 z-20 m-auto overflow-hidden bg-slate-100 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
+            className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-100 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">

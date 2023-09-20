@@ -7,7 +7,8 @@ import {
     getAddress,
     deleteAddress,
     addAddress,
-    updatePrimaryAddress
+    updatePrimaryAddress,
+    updateAddress
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -85,6 +86,21 @@ const addressSlice = createSlice({
             })
         },
         [addAddress.rejected] : (state, action) => {
+            state = Object.assign(state, {
+                isSubmitAddressLoading : false,
+            })
+        },
+
+        [updateAddress.pending] : (state, action) => {
+            state.isSubmitAddressLoading = true
+        },
+        [updateAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state = Object.assign(state, {
+                data : action.payload?.data,
+                isSubmitAddressLoading : false,
+            })
+        },
+        [updateAddress.rejected] : (state, action) => {
             state = Object.assign(state, {
                 isSubmitAddressLoading : false,
             })

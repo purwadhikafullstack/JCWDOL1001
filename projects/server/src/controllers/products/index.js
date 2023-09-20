@@ -4,8 +4,7 @@ const {Op} = require("sequelize")
 const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
-const { trimString, capitalizeEachWords } = require("../../helper/index.js")
-
+const { capitalizeEachWords, trimString } = require("../../utils/index.js")
 const getProducts = async (req, res, next) => {
   try{
     const {page, id_cat, product_name, sort_price, sort_name, limit} = req.query;
@@ -42,18 +41,18 @@ const getProducts = async (req, res, next) => {
           model : Product_Detail,
           attributes : ["quantity"]
         },
-        {
-          model : Discount_Product,
-          attributes : {exclude : ["discountProductId"]},
-          as: "discountProducts",
-          include : {
-            model : Discount,
-            where : { isDeleted : 0 }
-          }
-        },
+        // {
+        //   model : Discount_Product,
+        //   attributes : {exclude : ["discountProductId"]},
+        //   as: "discountProducts",
+        //   include : {
+        //     model : Discount,
+        //     where : { isDeleted : 0 }
+        //   }
+        // },
       ]
       ,
-      where : {[Op.and] : [filter.product_name,{isDeleted : 0}]},
+      where : {[Op.and] : [filter.product_name, {isDeleted : 0}]},
       order : sort}
       );
     
@@ -203,6 +202,8 @@ const updateProduct = async (req, res, next) => {
       productDescription: capitalizeEachWords(trimString(body?.productDescription)) || product.productDescription,
       categoryId: body.categoryId || product.categoryId,
     };
+
+    console.log(productData);
 
     await updateProductValidationSchema.validate(productData);
 
