@@ -1,12 +1,20 @@
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("../../model/transaction");
 const { Cart } = require("../../model/cart.js")
-const {Op} = require("sequelize");
+const { Op } = require("sequelize");
 const { Product_Detail, Product_List } = require("../../model/product");
 
 const getTransactions = async (req, res, next) => {
     try{
     const { userId } = req.user;
     const { statusId } = req.params;
+
+    let whereCondition = {};
+
+    if (userId === 1) {
+        whereCondition = { userId: { [Op.not]: 1 }, statusId };
+    } else {
+        whereCondition = { userId, statusId };
+    }
 
     const transaction = await Transaction_List?.findAll({
         include : 
@@ -20,11 +28,12 @@ const getTransactions = async (req, res, next) => {
                 as : "transactionDetail",
             } 
         ],
-        where : {[Op.and] : [{ userId }, { statusId }]}
+        where : whereCondition
     })
     res.status(200).json({
         type : "success",
         message : "Here are your order lists",
+        userId,
         data : transaction
     })
     }catch(error){
@@ -48,7 +57,7 @@ const createTransactions = async (req, res, next) => {
                     as : "cartList"
                 }
             ],
-            where : {[Op.and] : [{ userId }, {inCheckOut : 1}]}
+            where : {[Op.and] : [{ userId },{inCheckOut : 1}]}
         })
 
         const newTransactionList = {
