@@ -11,6 +11,7 @@ router.patch("/update-primary/:addressId", verifyUser, AddressControllers.update
 router.patch("/delete/:addressId", verifyUser, AddressControllers.deleteAddress)
 router.get("/province", AddressControllers.getListProvince)
 router.get("/city", AddressControllers.getListCity)
+router.post("/shipping-cost", AddressControllers.shippingCost)
 router.patch("/:addressId", verifyUser, AddressControllers.updateAddress)
 
 

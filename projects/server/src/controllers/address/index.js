@@ -12,13 +12,11 @@ const getAddress = async (req, res, next) =>{
     try {
         const userId = req.user.userId
         
-        const addresses = await User_Address.findAll({where: { userId, isDeleted : 0 }})
+        const addresses = await User_Address.findAll({where: { userId, isDeleted : 0 }, order:[["isPrimary" , "DESC"]]})
 
         if (!addresses) {
             throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
         }
-
-        addresses.sort((a, b) => b.isPrimary - a.isPrimary);
 
         res.status(200).json({ 
             message : "Address fetched!",
@@ -223,23 +221,23 @@ const getListCity = async (req, res, next) => {
     }
 }
 
-const getCost = async (req, res, next) => {
+const shippingCost = async (req, res, next) => {
     try {
-        const {province} = req.params
-        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + 
-            `city?province=${province}`,
-        { 
-            headers : 
-            {
-                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-                "Content-Type": "application/x-www-form-urlencoded"
-        }
-    })
+
+        const {data:{rajaongkir:{results}}} = await Axios.post(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL_COST,
+            { 
+                key : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
+                origin: 151, 
+                destination: req.body.destination, 
+                weight: req.body.weight, 
+                courier: req.body.courier
+            }
+        )
 
         res.status(200).json({ 
             type : "success",
             message : "Data berhasil dimuat",
-            data : response
+            data : results
         })
     } catch (error) {
         next(error)
@@ -254,5 +252,5 @@ module.exports = {
     deleteAddress,
     getListProvince,
     getListCity,
-    getCost,
+    shippingCost,
  }
