@@ -26,6 +26,10 @@ const getTransactions = async (req, res, next) => {
             {
                 model : Transaction_Detail,
                 as : "transactionDetail",
+                include : {
+                    model : Product_List,
+                    as : "listedTransaction"
+                }
             } 
         ],
         where : whereCondition
@@ -67,7 +71,6 @@ const createTransactions = async (req, res, next) => {
             subtotal : totalPrice,
             statusId : 1
         }
-        console.log(newTransactionList)
 
         const newTransaction = await Transaction_List?.create(newTransactionList);
 
@@ -94,7 +97,35 @@ const createTransactions = async (req, res, next) => {
     }
 }
 
+const getCheckoutProducts= async (req, res, next) => {
+    try{
+        const {userId} = req.params;
+        const startTransaction = await Cart?.findAll({
+            include : [
+                {
+                    model : Product_Detail,
+                    as : "product_detail"
+                },
+                {
+                    model : Product_List,
+                    as : "cartList"
+                }
+            ],
+            where : {[Op.and] : [{userId : userId},{inCheckOut : 1}]}
+        })
+        res.status(200).json({
+            type : "success",
+            message : "Done!",
+            data : startTransaction
+        })
+
+    }catch(error){
+        next(error)
+    }
+}
+
 module.exports = {
     getTransactions,
-    createTransactions
+    createTransactions,
+    getCheckoutProducts
 }

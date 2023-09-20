@@ -7,6 +7,7 @@ import unitReducer from "./slices/product/unit"
 import uploadRecipeReducer from "./slices/upload-recipe"
 import discounteReducer from "./slices/discount"
 import cartReducer from "./slices/cart"
+import transactionReducer from "./slices/transaction"
 
 const store = configureStore({
     reducer : {
@@ -18,6 +19,7 @@ const store = configureStore({
         uploadRecipe : uploadRecipeReducer,
         discount : discounteReducer,
         cart : cartReducer,
+        transaction: transactionReducer
     },
 })
 
