@@ -78,7 +78,7 @@ export default function Products({ user }) {
   };
 
   useEffect(() => {
-    dispatch(getCategory());
+    dispatch(getCategory({ page: 1 }));
     dispatch(totalProductCart())
   }, []);
 
@@ -101,6 +101,16 @@ export default function Products({ user }) {
     );
 
   }, [selectedCategory, search, sort, page ]);
+
+  // --------------------- PAGINATION SECTION -----------------------
+  const pagesToShow = 4;
+  const pagesBeforeAndAfter = Math.floor(pagesToShow / 2);
+
+  let startPage = current_page - pagesBeforeAndAfter;
+  let endPage = current_page + pagesBeforeAndAfter;
+
+  startPage = Math.max(1, startPage);
+  endPage = Math.min(total_page, endPage);
   
   return (
     <>
@@ -234,20 +244,20 @@ export default function Products({ user }) {
                   <HiChevronLeft className=" text-xl " /> Prev
                 </Button>
 
-                {/* {Array.from({ length: total_page }, (_, index) => (
+                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                   <Button
-                    key={index}
-                    className={
-                      +current_page === index + 1
+                    key={startPage + index}
+                    className={`flex items-center ${
+                      current_page === startPage + index
                         ? "cursor-auto text-slate-400"
                         : "text-dark hover:text-primary"
-                    }
-                    onClick={() => setPage(index + 1)}
-                    isDisabled={+current_page === index + 1}
+                    }`}
+                    onClick={() => setPage(startPage + index)}
+                    isDisabled={current_page === startPage + index}
                   >
-                    {index + 1}
+                    {startPage + index}
                   </Button>
-                ))} */}
+                ))}
 
                 <Button
                   className={`flex items-center  ${

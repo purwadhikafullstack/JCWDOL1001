@@ -12,7 +12,7 @@ export default function Card({ productId, productName, productPrice, productPict
       className="hover:scale-[102%] duration-300 place-self-stretch group flex cursor-pointer flex-col gap-2 aspect-[2/1] rounded-lg border p-3 text-dark shadow-lg"
       onClick={() => navigate(`/products/${productId}`)}
     >
-      <div className="aspect-[4/3] w-full overflow-hidden rounded-md bg-primary"
+      <div className="aspect-[4/3] w-full overflow-hidden rounded-md"
       >
         <img
           src={process.env.REACT_APP_CLOUDINARY_BASE_URL + productPicture}

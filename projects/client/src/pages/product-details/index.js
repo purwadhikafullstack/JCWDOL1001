@@ -65,7 +65,7 @@ export default function ProductDetail({user}) {
     }
   };
   
-  const [showModal, setShowModal] = useState({show:false, context:""})
+  const [showModal, setShowModal] = useState({ show:false, context:"" })
 
   const handleCart = (productId) => {
     if (user.role) {
@@ -82,7 +82,7 @@ export default function ProductDetail({user}) {
     }
 
     if (!user.role) {
-      setShowModal({show:true, context:"login"})
+      setShowModal({ show:true, context:"login" })
     }
   };
 
@@ -122,13 +122,13 @@ export default function ProductDetail({user}) {
         <div className="grid grid-cols-1 lg:mt-8 lg:grid-cols-5 lg:gap-8">
           <div className="col-span-2 aspect-[5/4] w-full">
             <img
-              src={product?.productPicture}
+              src={process.env.REACT_APP_CLOUDINARY_BASE_URL + product?.productPicture}
               alt=""
               className="h-full w-full object-contain"
             />
           </div>
 
-          <div className="col-span-2 flex w-full flex-col gap-4">
+          <div className="col-span-2 flex w-full flex-col gap-2">
             <h3 className="title">{product?.productName}</h3>
             {product?.discount ? (
               <div className="flex items-center gap-2">
@@ -139,10 +139,10 @@ export default function ProductDetail({user}) {
                   Rp. {formatNumber(product?.productPrice)}
                 </h3>
               </div>
-            ) : (
-              <div className="" />
-            )}
-            <h3 className="text-2xl font-bold text-primary">
+            ) : 
+              null
+            }
+            <h3 className="text-xl lg:text-2xl font-bold text-primary">
               Rp.{" "}
               {product?.discount
               //bisa letakin product.endingPrice disini
@@ -150,8 +150,8 @@ export default function ProductDetail({user}) {
                 : formatNumber(product?.productPrice)}
             </h3>
 
-            <div className="hidden lg:block">
-              <h3 className="title">Detail</h3>
+            <div className="mt-4">
+              <h3 className="title">Deskripsi</h3>
               <p>{product?.productDescription}</p>
             </div>
           </div>
@@ -199,11 +199,6 @@ export default function ProductDetail({user}) {
 
             <Button isBLock isButton isPrimary title="Masukkan Keranjang" onClick={()=>handleCart(product.productId)}/>
           </div>
-        </div>
-
-        <div className="mt-8 lg:hidden">
-          <h3 className="title">Detail</h3>
-          <p>{product?.productDescription}</p>
         </div>
 
         <div className="mt-8 border-t-2 pt-8">
