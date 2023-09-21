@@ -191,8 +191,11 @@ export default function Cart() {
                     <div>
                       <div className="mt-auto flex items-center gap-2">
                         <span className="rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-                         ( item?.discountProducts[0]?.discount?.isPercentage &&
-                          {item?.discountProducts[0]?.discount?.discountAmount}% )
+                         {item?.discountProducts[0]?.discount?.isPercentage ?
+                         <div>{item?.discountProducts[0]?.discount?.discountAmount}% </div> :
+                         <div>Rp. {item?.discountProducts[0]?.discount?.discountAmount} off</div>
+                        
+                        }
                         </span>
                         <h3 className="text-sm text-slate-400 line-through">
                           Rp. {formatNumber(item?.productPrice)}
