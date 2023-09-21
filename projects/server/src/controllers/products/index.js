@@ -5,6 +5,7 @@ const cloudinary = require("cloudinary");
 const {inputProductValidationSchema, updateProductValidationSchema, updateMainStockValidationSchema } = require("./validation.js")
 const {ValidationError} = require("yup");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js")
+
 const getProducts = async (req, res, next) => {
   try{
     const {page, id_cat, product_name, sort_price, sort_name, limit} = req.query;

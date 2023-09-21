@@ -1,7 +1,7 @@
 export function formatDate(date) {
     const dateObj = new Date(date);//"2023-12-31"
     const options = { month: "long", day: "numeric", year: "numeric" };
-    return dateObj.toLocaleString("en-US", options);
+    return dateObj.toLocaleString("id-ID", options);
 }
 
 export function formatDateValue(date) {

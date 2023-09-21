@@ -14,7 +14,8 @@ export default function Modal({
   context,
   children,
   disableOutside,
-  fullWidth
+  fullWidth = false,
+  halfWidth = false
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -43,11 +44,13 @@ export default function Modal({
 
   const modalBodyClassName = []
 
-  fullWidth && modalBodyClassName.push("w-full h-full")
+  fullWidth === true && modalBodyClassName.push("w-full h-full")
 
-  !fullWidth && modalBodyClassName.push("md:w-1/2 lg:w-1/3 w-5/6 h-fit rounded-lg")
+  halfWidth === true && modalBodyClassName.push("lg:w-3/4 md:w-3/4 w-5/6 h-fit rounded-lg")
 
-  if (showModal && !fullWidth) {
+  !fullWidth && !halfWidth && modalBodyClassName.push("md:w-1/2 lg:w-1/3 w-5/6 h-fit rounded-lg")
+
+  if (showModal === true && fullWidth === false) {
     document.body.style.overflow = "hidden";
   } else {
     document.body.style.overflow = "auto";
@@ -83,7 +86,7 @@ export default function Modal({
             className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-100 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold">
+              <h3 className="title">
                 {titleModal ? titleModal : title}
               </h3>
               <span

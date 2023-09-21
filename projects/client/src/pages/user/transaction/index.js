@@ -1,82 +1,119 @@
-  import Button from "../../../components/Button";
-  import MenungguPembayaran from "./menunggu-pembayaran"
-  import MenungguKonfirmasi from "./menunggu-konfirmasi"
-  import PembayaranDiterima from "./pembayaran-diterima"
-  import PesananDiproses from "./pesanan-diproses"
-  import PesananDikirim from "./pesanan-dikirim"
-  import PesananDibatalkan from "./pesanan-dibatalkan"
-  import PesananDiterima from "./pesanan-diterima"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getTransactionStatus } from "../../../store/slices/transaction/slices";
 
-  export default function Transaction() {
-    const tabs = [
-      { 
-        title : "Menunggu Pembayaran",
-        tabKey : "menungguPembayaran" 
-      },
-      { 
-        title : "Menunggu Konfirmasi",
-        tabKey : "menungguKonfirmasi" 
-      },
-      { 
-        title : "Pembayaran Diterima",
-        tabKey : "pembayaranDiterima" 
-      },
-      { 
-        title : "Pesanan Diproses",
-        tabKey : "pesananDiproses" 
-      },
-      { 
-        title : "Pesanan Dikirim",
-        tabKey : "pesananDikirim" 
-      },
-      { 
-        title : "Pesanan Dibatalkan",
-        tabKey : "pesananDibatalkan" 
-      },
-      { 
-        title : "Pesanan Diterima",
-        tabKey : "pesananDiterima" 
-      },
-    ]
+import Button from "../../../components/Button";
+import MenungguPembayaran from "./menunggu-pembayaran";
+import MenungguKonfirmasi from "./menunggu-konfirmasi";
+import PembayaranDiterima from "./pembayaran-diterima";
+import PesananDiproses from "./pesanan-diproses";
+import PesananDikirim from "./pesanan-dikirim";
+import PesananDibatalkan from "./pesanan-dibatalkan";
+import PesananDiterima from "./pesanan-diterima";
 
-    const [activeTab, setActiveTab] = useState("menungguPembayaran");
+export default function Transaction({
+  showHandlePageContext,
+  setShowHandlePageContext,
+}) {
+  const dispatch = useDispatch();
+  const { transactionStatus } = useSelector((state) => {
+    return {
+      transactionStatus: state.transaction?.transactionStatus,
+    };
+  });
 
-    function renderTabContent(tab) {
-      const tabContent = {
-        menungguPembayaran : <MenungguPembayaran />,
-        menungguKonfirmasi : <MenungguKonfirmasi />,
-        pembayaranDiterima : <PembayaranDiterima />,
-        pesananDiproses : <PesananDiproses />,
-        pesananDikirim : <PesananDikirim />,
-        pesananDibatalkan : <PesananDibatalkan />,
-        pesananDiterima : <PesananDiterima />
-      };
+  useEffect(() => {
+    dispatch(getTransactionStatus());
+  }, []);
 
-      if (tab in tabContent) {
-        return tabContent[tab];
-      } else {
-        return <div>Something was wrong</div>;
-      }
+  const [activeTab, setActiveTab] = useState(1);
+  const [showStatusButton, setShowStatusButton] = useState(true);
+
+  function renderTabContent(tabId) {
+    const tabStatus = transactionStatus.find((status) => status.statusId === tabId);
+
+    if (!tabStatus) {
+      return <div>Something was wrong</div>;
     }
 
-    return (
-      <div>
-        <h3 className="title">Transaksi</h3>
-        <div className="flex gap-2 mt-2 w-full overflow-auto border-b pb-2 border-primary/30">
-          {tabs.map((tab, index) => (
-            <Button
-              isButton
-              isPrimaryOutline
-              key={index}
-              title={tab.title}
-              onClick={() => setActiveTab(tab.tabKey)}
-            />
-          ))}
-        </div>
-        <div className="mt-2">
-            {renderTabContent(activeTab)}
-        </div>
-      </div>
-    )
+    switch (tabId) {
+      case 1:
+        return (
+          <MenungguPembayaran
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
+          />
+        );
+      case 2:
+        return (
+          <MenungguKonfirmasi
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      case 3:
+        return (
+          <PembayaranDiterima
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      case 4:
+        return (
+          <PesananDiproses
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      case 5:
+        return (
+          <PesananDibatalkan
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      case 6:
+        return (
+          <PesananDikirim
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      case 7:
+        return (
+          <PesananDiterima
+            statusId={tabStatus.statusId}
+            statusDesc={tabStatus.statusDesc}
+          />
+        );
+      default:
+        return <div>Something was wrong</div>;
+    }
   }
+
+  return (
+    <div>
+      {showStatusButton && (
+        <>
+          <h3 className="title">Transaksi</h3>
+          <div className="mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
+            {transactionStatus.map((tab) => (
+              <Button
+                key={tab.statusId}
+                isButton
+                isPrimaryOutline={tab.statusId !== activeTab}
+                isPrimary={tab.statusId === activeTab}
+                title={tab.statusDesc}
+                onClick={() => setActiveTab(tab.statusId)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+      <div className="">{renderTabContent(activeTab)}</div>
+    </div>
+  );
+}
