@@ -114,7 +114,7 @@ export default function MenungguKonfirmasi({ statusId, statusDesc }) {
         closeModal={()=>handleCloseModal()}
         title={`Detail Transaksi ${selectedTransaction?.createdAt}`}
       >
-        <div className="grid gap-2 md:grid-cols-2 max-h-[50vh] overflow-y-auto">
+        <div className="grid gap-2 md:grid-cols-2 max-h-[50vh] lg:max-h-screen overflow-y-auto">
           <div className="">
             <div
               key={selectedTransaction?.transactionId}
