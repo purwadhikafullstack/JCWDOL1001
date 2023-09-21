@@ -125,12 +125,7 @@ const User_Address = db.sequelize.define("user_address", {
         type : db.Sequelize.TINYINT,
         allowNull : false,
         defaultValue : 0
-    },
-    isPrimary : {
-        type : db.Sequelize.INTEGER,
-        allowNull : false,
-        defaultValue : 0
-    },
+    }
 },{
   timestamps: false
 });
