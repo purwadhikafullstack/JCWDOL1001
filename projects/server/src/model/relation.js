@@ -56,6 +56,8 @@ Transaction_List.belongsTo(User_Account, {foreignKey : "userId"})
 Transaction_Status.hasMany(Transaction_List,{foreignKey : "statusId", otherKey:"userId"})
 Transaction_List.belongsTo(Transaction_Status,{foreignKey:"statusId", as: "transactionStatus"})
 
+Transaction_List.belongsTo(User_Address,{foreignKey :"addressId", otherKey:"userId"})
+
 Transaction_List.belongsToMany(Product_Detail, {through : Transaction_Detail, foreignKey : "transactionId", otherKey : "productId"})
 Transaction_List.hasMany(Transaction_Detail, {foreignKey : "transactionId",as : "transactionDetail"})
 Transaction_Detail.belongsTo(Transaction_List, {foreignKey : "transactionId"})
@@ -64,9 +66,7 @@ Product_Detail.hasMany(Transaction_Detail,{foreignKey : "productId", otherKey:"t
 Transaction_Detail.belongsTo(Product_Detail,{foreignKey : "productId", otherKey:"unitId",as: "productDetail"})
 
 Cart.belongsTo(Product_List, {through : Product_Detail, foreignKey : "productId", otherKey : "userId", as : "cartList"})
-// Product_List.hasMany(Cart,{foreignKey : "productId", as: "listCart" })
-// Product_Detail.hasMany(Cart, {sourceKey : "productId", foreignKey : "productId", as : "detailCart"})
-//Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId", otherKey: "userId", as: "cartDetail"})
+
 Transaction_List.belongsToMany(Discount, {through : Discount_Transaction, foreignKey : "transactionId", otherKey : "discountId"})
 Transaction_List.hasMany(Discount_Transaction, {foreignKey : "transactionId", as : "transactionDiscount"})
 Discount_Transaction.belongsTo(Transaction_List, {foreignKey : "transactionId"})

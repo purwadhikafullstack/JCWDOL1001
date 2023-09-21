@@ -2,15 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
     getCheckoutProducts,
     getTransactionList,
-    createTransaction
+    createTransaction,
+    getTransactionStatus
 } from "./slices";
 
 const INITIAL_STATE = {
     transactions : [],
     cart : [],
+    transactionStatus : [],
     isCreateTransactionLoading : false,
     isGetTransactionLoading : false,
-    isGetCheckoutLoading : false
+    isGetCheckoutLoading : false,
+    isGetTransactionStatusLoading : false,
 }
 
 const transactionsSlice = createSlice({
@@ -23,21 +26,23 @@ const transactionsSlice = createSlice({
         [getTransactionList.pending] : (state, action) => {
             state.isGetTransactionLoading = true
         },
-        [getTransactionList.rejected] : (state, action) => {
+        [getTransactionList.fulfilled] : (state, action) => {
             state = Object.assign(state, {transactions : action.payload?.data, isGetTransactionLoading : false})
         },
-        [getTransactionList.fulfilled] : (state, action) => {
-            state = Object.assign(state, {transactions : [], isGetTransactionLoading : false})
+        [getTransactionList.rejected] : (state, action) => {
+            state = Object.assign(state, {isGetTransactionLoading : false})
         },
+
         [getCheckoutProducts.pending] : (state, action) => {
             state.isGetCheckoutLoading = true
         },
-        [getCheckoutProducts.rejected] : (state, action) => {
+        [getCheckoutProducts.fulfilled] : (state, action) => {
             state = Object.assign(state, {cart : action.payload?.data, isGetCheckoutLoading : false})
         },
-        [getCheckoutProducts.fulfilled] : (state, action) => {
-            state = Object.assign(state, {cart : [], isGetCheckoutLoading : false})
+        [getCheckoutProducts.rejected] : (state, action) => {
+            state = Object.assign(state, {isGetCheckoutLoading : false})
         },
+        
         [createTransaction.pending] : (state, action) => {
             state.isCreateTransactionLoading = true
         },
@@ -46,6 +51,16 @@ const transactionsSlice = createSlice({
         },
         [createTransaction.fulfilled] : (state, action) => {
             state.isCreateTransactionLoading = false
+        },
+
+        [getTransactionStatus.pending] : (state, action) => {
+            state.isGetTransactionStatusLoading = true
+        },
+        [getTransactionStatus.fulfilled] : (state, action) => {
+            state = Object.assign(state, {transactionStatus : action.payload?.data, isGetTransactionStatusLoading : false})
+        },
+        [getTransactionStatus.rejected] : (state, action) => {
+            state = Object.assign(state, {isGetTransactionStatusLoading : false})
         },
     }
 })

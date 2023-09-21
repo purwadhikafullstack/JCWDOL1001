@@ -10,15 +10,15 @@ export default function Card({ productId, productName, productPrice, productPict
 
   return (
     <div
-      className="hover:scale-[102%] duration-300 place-self-stretch group flex cursor-pointer flex-col gap-2 aspect-[2/1] rounded-lg border p-3 text-dark shadow-lg"
+      className="hover:scale-[102%] hover:border-primary duration-300 place-self-stretch group flex cursor-pointer flex-col gap-2 aspect-[2/1] rounded-lg border p-3 text-dark shadow-lg"
       onClick={() => navigate(`/products/${productId}`)}
     >
-      <div className="aspect-[4/3] w-full overflow-hidden rounded-md"
+      <div className="aspect-square w-full overflow-hidden rounded-md"
       >
         <img
           src={process.env.REACT_APP_CLOUDINARY_BASE_URL + productPicture}
           alt={productName}
-          className="h-full w-full object-cover duration-300 group-hover:scale-110"
+          className="h-full w-full object-cover duration-300"
         />
       </div>
 
