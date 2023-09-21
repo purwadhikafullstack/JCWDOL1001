@@ -117,19 +117,16 @@ export const listCity = createAsyncThunk(
     }
 )
 
-export const cost = createAsyncThunk(
+export const getShippingCost= createAsyncThunk(
     "address/cost",
     async (payload, { rejectWithValue }) => {
         try {
-            //teruntuk siapapun yang ngerjain ongkir
-            //cukup grab costId dari address user, sebagai alamat tujuan;
-            // jadi bisa langsung dapet ongkosnya
-            //nanti tanya wellington aja kalau bingung, trims
-            
-            // return data
+            const {data} = await api.post("/address/shipping-cost", payload)
+
+            return data
 
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }

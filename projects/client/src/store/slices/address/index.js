@@ -8,16 +8,19 @@ import {
     deleteAddress,
     addAddress,
     updatePrimaryAddress,
-    updateAddress
+    updateAddress,
+    getShippingCost,
 } from "./slices"
 
 const INITIAL_STATE = {
     data : [],
     province : [],
     city : [],
+    shippingCost : [],
     isLoading : false,
     isGetAddressLoading : false,
     isSubmitAddressLoading : false,
+    isGetCostLoading : false,
     success: false
 }
 
@@ -126,6 +129,16 @@ const addressSlice = createSlice({
         },
         [updatePrimaryAddress.rejected] : (state, action) => {
             state.isSubmitAddressLoading = false;
+        },
+        [getShippingCost.pending] : (state, action) => {
+            state.isGetCostLoading = true;
+        },
+        [getShippingCost.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            state.isGetCostLoading = false;
+            state.shippingCost = action.payload?.data[0].costs;
+        },
+        [getShippingCost.rejected] : (state, action) => {
+            state.isGetCostLoading = false;
         }
     }
 })
