@@ -28,6 +28,7 @@ const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
+const TRANSACTION_NOT_FOUND = "Transaction not found"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -92,5 +93,6 @@ module.exports = {
     USER_NOT_FOUND,
     VOUCHER_CODE_EMPTY,
     VOUCHER_NEED_PRODUCT,
-    VOUCHER_NEED_AMOUNT
+    VOUCHER_NEED_AMOUNT,
+    TRANSACTION_NOT_FOUND
 }
