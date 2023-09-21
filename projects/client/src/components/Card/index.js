@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Card({ productId, productName, productPrice, productPicture, productStock, productDiscount, productCategories }) {
   const navigate = useNavigate();
+  console.log(productDiscount)
 
   return (
     <div
@@ -38,10 +39,29 @@ export default function Card({ productId, productName, productPrice, productPict
         <div className="mt-auto" />
       )} */}
       <h3 className="font-bold mt-auto">
-        Rp.{" "}
-        {productDiscount
-          ? formatNumber(productDiscount * productPrice)
-          : formatNumber(productPrice)}
+        {" "}
+        {productDiscount && productDiscount.length !== 0 && !productDiscount[0]?.discount.oneGetOne
+          ? 
+            <div className="flex flex-col max-w-md">
+              <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
+                {productDiscount[0].discount.isPercentage ? `${productDiscount[0].discount.discountAmount}%` : `${Math.round((productDiscount[0].discount.discountAmount/productPrice)*100)}%` }
+              </span>
+              <>
+                <h3 className="text-sm text-slate-400 line-through">
+                Rp.  {formatNumber(productPrice)}
+                </h3>
+                Rp. {formatNumber(productDiscount[0]?.endingPrice)}
+              </>
+            </div>
+            
+          : productDiscount[0]?.discount.oneGetOne ?
+            <div className="flex flex-col max-w-md">
+              <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
+                Buy One Get One
+              </span>
+              Rp.  {formatNumber(productPrice)}
+            </div>
+          : `Rp.${formatNumber(productPrice)}`}
       </h3>
 
       <p className="text-xs line-clamp-1 text-slate-500">
