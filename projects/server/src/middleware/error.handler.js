@@ -29,7 +29,7 @@ const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
 const NO_STOCK = "Insufficient stocks for desired product"
-
+const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
 
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
@@ -94,5 +94,6 @@ module.exports = {
     VOUCHER_CODE_EMPTY,
     VOUCHER_NEED_PRODUCT,
     VOUCHER_NEED_AMOUNT,
-    NO_STOCK
+    NO_STOCK,
+    PRODUCT_ALREADY_CHECKEDOUT
 }

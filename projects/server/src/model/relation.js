@@ -61,8 +61,9 @@ Transaction_List.belongsToMany(Product_Detail, {through : Transaction_Detail, fo
 Transaction_List.hasMany(Transaction_Detail, {foreignKey : "transactionId",as : "transactionDetail"})
 Transaction_Detail.belongsTo(Transaction_List, {foreignKey : "transactionId"})
 
-Product_Detail.hasMany(Transaction_Detail,{foreignKey : "productId", otherKey:"transactionId"})
-Transaction_Detail.belongsTo(Product_Detail,{foreignKey : "productId", otherKey:"unitId",as: "productDetail"})
+// Product_Detail.hasMany(Transaction_Detail,{foreignKey : "productId", otherKey:"transactionId"})
+// Transaction_Detail.belongsTo(Product_Detail,{foreignKey : "productId", otherKey:"unitId",as: "productDetail"})
+
 
 Cart.belongsTo(Product_List, {through : Product_Detail, foreignKey : "productId", otherKey : "userId", as : "cartList"})
 // Product_List.hasMany(Cart,{foreignKey : "productId", as: "listCart" })
