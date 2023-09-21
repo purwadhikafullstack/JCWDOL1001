@@ -16,15 +16,28 @@ export default function UserPage({ user }) {
   const profile = user.profile;
 
   const [mobileContextActive, setMobileContextActive] = useState(false);
-  const [showHandleAddressPage, setShowHandleAddressPage] = useState({ show: false, context: "" });
+  const [showHandlePageContext, setShowHandlePageContext] = useState({
+    show: false,
+    context: "",
+  });
 
   const renderPageContext = (context) => {
     const pageContext = {
       profile: <Profile />,
-      address: <Address showHandleAddressPage={showHandleAddressPage} setShowHandleAddressPage={setShowHandleAddressPage}/>,
+      address: (
+        <Address
+          showHandlePageContext={showHandlePageContext}
+          setShowHandlePageContext={setShowHandlePageContext}
+        />
+      ),
       email: <Email />,
       password: <Password />,
-      transaction: <Transaction />,
+      transaction: (
+        <Transaction
+          showHandlePageContext={showHandlePageContext}
+          setShowHandlePageContext={setShowHandlePageContext}
+        />
+      ),
     };
 
     if (context in pageContext) {
@@ -56,23 +69,22 @@ export default function UserPage({ user }) {
               : "-translate-x-full lg:translate-x-0"
           }`}
         >
-          {!showHandleAddressPage.show &&
-            <div className="mb-4 lg:mb-0 w-full border-b-2 lg:border-b-0 lg:border-none bg-slate-50">
+          {!showHandlePageContext.show && (
+            <div className="mb-4 w-full border-b-2 bg-slate-50 lg:mb-0 lg:border-b-0 lg:border-none">
               <Button
                 isBLock
                 className={`mb-3 flex items-center gap-2 lg:hidden`}
                 onClick={() => {
                   setMobileContextActive(false);
                 }}
-                >
+              >
                 <HiXMark className="text-2xl" />
                 <span className="font-semibold">Close</span>
               </Button>
             </div>
-          }
+          )}
 
-            {renderPageContext(context)} 
-
+          {renderPageContext(context)}
         </div>
       </div>
     </div>
