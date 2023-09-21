@@ -10,6 +10,10 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    addressId : {
+        type : db.Sequelize.INTEGER,
+        allowNull : false
+    },
     total : {
         type : db.Sequelize.INTEGER,
         allowNull : false

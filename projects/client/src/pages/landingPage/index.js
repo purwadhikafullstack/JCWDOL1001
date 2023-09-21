@@ -9,6 +9,7 @@ import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
 import { getProducts } from "../../store/slices/product/slices";
 import { getCart, totalProductCart } from "../../store/slices/cart/slices";
+import Products from "../products";
 
 export default function LandingPage() {
   const { user, role, categories, products  } = useSelector(state => {
@@ -38,7 +39,7 @@ export default function LandingPage() {
           product_name: "",
           sort_price: "",
           sort_name: "",
-          limit:12,
+          limit:15,
         })
       )
     dispatch(getCart())
@@ -54,9 +55,29 @@ export default function LandingPage() {
           <Categories categories={categories} />
         </div>
 
+        <div className="mt-10">
+          <div className="flex items-center justify-between">
+            <h3 className="title text-2xl">Promo Buy One Get One</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <Produk products={products} context={"bogo"}/>
+          </div>
+        </div>
+
         <div className="mt-4">
           <div className="flex items-center justify-between">
             <h3 className="title text-2xl">Produk Diskon</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <Produk products={products} context="produkDiskon"/>
+          </div>
+        </div>
+
+        <div className="mt-10">
+          <div className="flex items-center justify-between">
+            <h3 className="title text-2xl">Semua Produk</h3>
             <Button
               isLink
               path="/products"

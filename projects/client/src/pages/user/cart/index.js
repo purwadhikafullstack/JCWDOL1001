@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { getAddress } from "../../../store/slices/address/slices";
 import ShippingAddress from "./component.address";
+import ShippingCost from "./component.shipping";
 
 export default function Cart() {
   const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
@@ -145,6 +146,7 @@ export default function Cart() {
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
       <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
+      <ShippingCost selectedAddress={selectedAddress} />
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"
