@@ -114,79 +114,72 @@ export default function MenungguKonfirmasi({ statusId, statusDesc }) {
         closeModal={()=>handleCloseModal()}
         title={`Detail Transaksi ${selectedTransaction?.createdAt}`}
       >
-        <div className="grid gap-2 md:grid-cols-2 max-h-[50vh] lg:max-h-screen overflow-y-auto">
-          <div className="">
-            <div
-              key={selectedTransaction?.transactionId}
-              className="border p-4 shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <p className="mb-4 text-sm">
-                  {formatDate(selectedTransaction?.createdAt)}
-                </p>
-                <p className="mb-4 text-sm font-semibold text-primary">
-                  {selectedTransaction?.createdAt}
-                </p>
-              </div>
-              <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-                {selectedTransactionDetail?.map((product, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <img
-                      className="w-14 border"
-                      src={
-                        process.env.REACT_APP_CLOUDINARY_BASE_URL +
-                        product.listedTransaction.productPicture
-                      }
-                      alt={product.listedTransaction.productName}
-                    />
-                    <div className="">
-                      <p>{product.listedTransaction.productName}</p>
-                      <div className="flex gap-2">
-                        <p>{formatNumber(product.price)}</p>
-                        <span>x</span>
-                        <p>{product.quantity}</p>
-                      </div>
+        <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
+          <div
+            key={selectedTransaction?.transactionId}
+            className="border p-4 rounded-md h-fit border-primary"
+          >
+            <div className="flex items-center justify-between">
+              <p className="mb-4 text-sm">
+                {formatDate(selectedTransaction?.createdAt)}
+              </p>
+              <p className="mb-4 text-sm font-semibold text-primary">
+                {selectedTransaction?.createdAt}
+              </p>
+            </div>
+            <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
+              {selectedTransactionDetail?.map((product, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm">
+                  <img
+                    className="w-14 border"
+                    src={
+                      process.env.REACT_APP_CLOUDINARY_BASE_URL +
+                      product.listedTransaction.productPicture
+                    }
+                    alt={product.listedTransaction.productName}
+                  />
+                  <div className="">
+                    <p>{product.listedTransaction.productName}</p>
+                    <div className="flex gap-2">
+                      <p>{formatNumber(product.price)}</p>
+                      <span>x</span>
+                      <p>{product.quantity}</p>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
-                <div className="">
-                  <p className="text-sm">Total Belanja</p>
-                  <p className="font-bold">
-                    {formatNumber(selectedTransaction?.total)}
-                  </p>
                 </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between gap-2 border-t-2 pt-2">
+              <div className="">
+                <p className="text-sm">Total Belanja</p>
+                <p className="font-bold">
+                  {formatNumber(selectedTransaction?.total)}
+                </p>
               </div>
             </div>
           </div>
+
           <div className="w-full h-fit mt-8 md:mt-0">
             <h3 className="title">Bukti Pembayaran</h3>
             <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
           </div>
+
         </div>
-        <div className="mt-4 flex justify-between gap-2">
+        <div className="mt-4 flex justify-end gap-2">
           <Button
             isButton
-            isPrimaryOutline
-            title={`Tutup`}
+            isDangerOutline
+            title={`Tolak Pembayaran`}
             onClick={() => handleCloseModal()}
-          />
-          <div className="flex gap-2">
-            <Button
-              isButton
-              isDangerOutline
-              title={`Tolak Pembayaran`}
-              onClick={() => handleCloseModal()}
-              />
-            <Button
-              isButton
-              isPrimary
-              title={`Terima Pembayaran`}
-              onClick={() => handleCloseModal()}
-              />
-          </div>
+            />
+
+          <Button
+            isButton
+            isPrimary
+            title={`Terima Pembayaran`}
+            onClick={() => handleCloseModal()}
+            />
         </div>
       </Modal>
     </>

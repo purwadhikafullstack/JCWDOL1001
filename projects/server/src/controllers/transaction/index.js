@@ -157,7 +157,7 @@ const uploadPaymentProof = async (req, res, next) => {
       });
     }
 
-    await transaction.update({ paymentProof: req?.file?.filename });
+    await transaction.update({ paymentProof: req?.file?.filename, statusId : 2 });
 
     res
       .status(200)
@@ -171,6 +171,37 @@ const uploadPaymentProof = async (req, res, next) => {
       type: `upload`,
       resource_type: "image",
     });
+    next(error);
+  }
+};
+
+const confirmPayment = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+
+    const transaction = await Transaction_Detail?.findAll({
+      where: { transactionId },
+    });
+
+    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+
+    // if (!req.file) {
+    //   return next({
+    //     type: "error",
+    //     status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+    //     message: middlewareErrorHandling.IMAGE_NOT_FOUND,
+    //   });
+    // }
+
+    res
+      .status(200)
+      .json({
+        type: "success",
+        message: "Transaction accepted!",
+        data: transaction
+      });
+  } catch (error) {
+
     next(error);
   }
 };
@@ -193,5 +224,6 @@ module.exports = {
   createTransactions,
   getCheckoutProducts,
   uploadPaymentProof,
+  confirmPayment,
   getTransactionStatus,
 };
