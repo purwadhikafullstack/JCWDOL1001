@@ -28,8 +28,13 @@ const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
+
 const NO_STOCK = "Insufficient stocks for desired product"
 const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
+
+const TRANSACTION_NOT_FOUND = "Transaction not found"
+
+
 
 const DEFAULT_ERROR_STATUS = 500
 const BAD_REQUEST_STATUS = 400
@@ -95,5 +100,6 @@ module.exports = {
     VOUCHER_NEED_PRODUCT,
     VOUCHER_NEED_AMOUNT,
     NO_STOCK,
-    PRODUCT_ALREADY_CHECKEDOUT
+    PRODUCT_ALREADY_CHECKEDOUT,
+    TRANSACTION_NOT_FOUND
 }

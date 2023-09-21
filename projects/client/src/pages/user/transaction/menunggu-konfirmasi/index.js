@@ -1,4 +1,5 @@
-export default function MenungguKonfirmasi() {
+export default function MenungguKonfirmasi({ statusId, statusDesc }) {
+  console.log(statusId);
   return (
     <div>MenungguKonfirmasi</div>
   )
