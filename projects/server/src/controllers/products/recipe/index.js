@@ -53,14 +53,14 @@ const getUser = async( req, res, next ) => {
           productDescription : String(quantity)
         }
         )
-        await Product_Detail.create({
-          productId: product?.productId,
-          unitId : 5,
-          quantity : quantity,
-          convertion : 0,
-          isDefault : 1,
-          isDeleted : 1
-        })
+        // await Product_Detail.create({
+        //   productId: product?.productId,
+        //   unitId : 0,
+        //   quantity : quantity,
+        //   convertion : 0,
+        //   isDefault : 1,
+        //   isDeleted : 1
+        // })
 
         // looping boleh [{productId,qty},...]
         let availability = false;
@@ -206,7 +206,7 @@ const getUser = async( req, res, next ) => {
         const product = await Product_List.findOne({
           where :{
             productId : productId,
-            productPicture : "review"
+            // productPicture : "review"
           }
         })
         if(!product) throw ({ status : 404, 
@@ -374,7 +374,7 @@ const getUser = async( req, res, next ) => {
 
       res.status(200).json({ 
         type : "success",
-        message : `Order ${listResult?.transactionId} berhasil dibuat!`,
+        message : `Order #${listResult?.transactionId} berhasil dibuat!`,
         data : listResult
       })
   
