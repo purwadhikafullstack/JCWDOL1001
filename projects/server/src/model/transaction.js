@@ -30,6 +30,10 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    message : {
+        type : db.Sequelize.STRING,
+        allowNull : true
+    },
 },{
     timestamps:true
 })

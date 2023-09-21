@@ -4,7 +4,7 @@ const fs = require("fs")
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 
 const { InputAddressValidationSchema } = require("./validation.js")
-const { User_Address } = require("../../model/relation.js");
+const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities, Rajaongkir_Subdistricts } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
@@ -178,44 +178,40 @@ const deleteAddress = async (req, res, next) =>{
 const getListProvince = async (req, res, next) => {
     try {
         
-        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + "province",
-        { 
-            headers : 
-            {
-                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-                "Content-Type": "application/x-www-form-urlencoded"
-        }
-        }
-        )
-        const {data} = response;
-        const {rajaongkir} = data
+        const provinces = await Rajaongkir_Provinces.findAll()
+
         res.status(200).json({ 
-            message : "Data Province from RajaOngkir",
-            data: rajaongkir.results
+            message : "Data Provinces from RajaOngkir",
+            data: provinces
         })
     } catch (error) {
         next(error)
     }
 }
+
 const getListCity = async (req, res, next) => {
     try {
-        const {province} = req.query
-        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + 
-            `city?province=${province}`,
-        { 
-            headers : 
-            {
-                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-                "Content-Type": "application/x-www-form-urlencoded"
-        }
-    })
+        const { province } = req.query
+        const cities = await Rajaongkir_Cities.findAll({where : { province_id : province}})
 
-    const {data} = response;
-    const {rajaongkir} = data
-    res.status(200).json({ 
-        message : "Data City based on Province from RajaOngkir",
-        data: rajaongkir.results
-    })
+        res.status(200).json({ 
+            message : "Data Cities based on Province from RajaOngkir",
+            data: cities
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getListSubdistrict = async (req, res, next) => {
+    try {
+        const { city } = req.query
+        const subdistricts = await Rajaongkir_Subdistricts.findAll({where : { city_id : city }})
+
+        res.status(200).json({ 
+            message : "Data Subdistricts based on Province from RajaOngkir",
+            data: subdistricts
+        })
     } catch (error) {
         next(error)
     }
@@ -252,5 +248,6 @@ module.exports = {
     deleteAddress,
     getListProvince,
     getListCity,
+    getListSubdistrict,
     shippingCost,
  }

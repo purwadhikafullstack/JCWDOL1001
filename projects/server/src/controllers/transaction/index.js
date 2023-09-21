@@ -179,19 +179,13 @@ const confirmPayment = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
 
-    const transaction = await Transaction_Detail?.findAll({
+    const transaction = await Transaction_List?.findOne({
       where: { transactionId },
     });
 
     if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
 
-    // if (!req.file) {
-    //   return next({
-    //     type: "error",
-    //     status: middlewareErrorHandling.BAD_REQUEST_STATUS,
-    //     message: middlewareErrorHandling.IMAGE_NOT_FOUND,
-    //   });
-    // }
+    await transaction.update({ statusId : 3 })
 
     res
       .status(200)

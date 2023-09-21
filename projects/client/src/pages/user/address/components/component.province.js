@@ -4,10 +4,10 @@ function ListOfProvince({ province = [], selected }) {
   return province.map((item) => {
     return (
       <option
-        value={[item.province_id, item.province]}
-        selected={item.province === selected ? "selected" : ""}
+        value={[item.province_id, item.province_name]}
+        selected={item.province_name === selected ? "selected" : ""}
       >
-        {item.province}
+        {item.province_name}
       </option>
     );
   });

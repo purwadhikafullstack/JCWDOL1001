@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 function ListOfCity({ city = [], selected }) {
   return city.map((item) => {
-    const name = item.type + " " + item.city_name;
     return (
       <option 
-        value={name}
-        selected={ name === selected }
+        value={[item.city_id, item.city_name]}
+        selected={ item.city_name === selected }
         >
-        {name}
+        {item.city_name}
       </option>
     );
   });

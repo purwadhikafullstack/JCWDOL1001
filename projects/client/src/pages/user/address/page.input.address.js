@@ -61,7 +61,7 @@ export default function InputAddressPage({
 
   useEffect(() => {
     if (addressData && addressData.length !== 0 ) {
-      const getProvinceData = dataProvince?.find(province => province.province === addressData.province);
+      const getProvinceData = dataProvince?.find(province => province.province_name === addressData.province);
       addressRef.current.value = addressData.address || "";
       districtRef.current.value = addressData.district || "";
       postalCodeRef.current.value = addressData.postalCode || "";
