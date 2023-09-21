@@ -114,7 +114,7 @@ export default function MenungguKonfirmasi({ statusId, statusDesc }) {
         closeModal={()=>handleCloseModal()}
         title={`Detail Transaksi ${selectedTransaction?.createdAt}`}
       >
-        <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid gap-2 md:grid-cols-2 max-h-[50vh] overflow-y-auto">
           <div className="">
             <div
               key={selectedTransaction?.transactionId}
@@ -161,7 +161,8 @@ export default function MenungguKonfirmasi({ statusId, statusDesc }) {
               </div>
             </div>
           </div>
-          <div className="bg-danger w-full h-fit">
+          <div className="w-full h-fit mt-8 md:mt-0">
+            <h3 className="title">Bukti Pembayaran</h3>
             <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
           </div>
         </div>
