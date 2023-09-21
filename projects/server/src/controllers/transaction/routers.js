@@ -4,7 +4,7 @@ const {verifyUser, verifyAdmin} = require("../../middleware/token.verify.js")
 
 const router = express.Router()
 
-router.get("/cart/:userId",verifyUser, transaction.getCheckoutProducts)
+router.get("/cart",verifyUser, transaction.getCheckoutProducts)
 router.post("/checkout", verifyUser, transaction.createTransactions)
 router.get("/:statusId", verifyUser, transaction.getTransactions)
 

@@ -6,8 +6,7 @@ export const getCheckoutProducts = createAsyncThunk(
     "transactions/getCheckout",
     async (payload, {rejectWithValue}) => {
         try{
-            const {userId} = payload.userId;
-            const {data} = await api.get(`/transaction/cart/${userId}`);
+            const {data} = await api.get(`/transaction/cart`);
             return data;
         }catch(error){
             toast.error(error.response.data.message);

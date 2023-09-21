@@ -32,10 +32,10 @@ const transactionsSlice = createSlice({
         [getCheckoutProducts.pending] : (state, action) => {
             state.isGetCheckoutLoading = true
         },
-        [getCheckoutProducts.rejected] : (state, action) => {
+        [getCheckoutProducts.fulfilled] : (state, action) => {
             state = Object.assign(state, {cart : action.payload?.data, isGetCheckoutLoading : false})
         },
-        [getCheckoutProducts.fulfilled] : (state, action) => {
+        [getCheckoutProducts.rejected] : (state, action) => {
             state = Object.assign(state, {cart : [], isGetCheckoutLoading : false})
         },
         [createTransaction.pending] : (state, action) => {

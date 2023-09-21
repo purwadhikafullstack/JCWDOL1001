@@ -99,7 +99,7 @@ const createTransactions = async (req, res, next) => {
 
 const getCheckoutProducts= async (req, res, next) => {
     try{
-        const {userId} = req.params;
+        const {userId} = req.user;
         const startTransaction = await Cart?.findAll({
             include : [
                 {
