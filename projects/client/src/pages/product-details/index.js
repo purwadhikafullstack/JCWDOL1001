@@ -216,13 +216,14 @@ export default function ProductDetail({user}) {
             {products
               .map((product) => (
                 <Card
-                  key={product?.productId}
-                  productId={product?.productId}
-                  productName={product?.productName}
-                  productPrice={product?.productPrice}
-                  productDiscount={product?.discount}
-                  productPicture={product?.productPicture}
-                  productStock={product?.stock}
+                  key={product.productId}
+                  productId={product.productId}
+                  productName={product.productName}
+                  productPrice={product.productPrice}
+                  productDiscount={product.discountProducts}
+                  productPicture={product.productPicture}
+                  productStock={product.productStock}
+                  productCategories={product.productCategories}
                 />
               ))
               .slice(0, 6)}
