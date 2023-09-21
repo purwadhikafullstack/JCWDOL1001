@@ -109,7 +109,7 @@ const User_Address = db.sequelize.define("user_address", {
         allowNull : false
     },
     contactPhone: {
-        type : db.Sequelize.STRING,
+        type : db.Sequelize.INTEGER,
         allowNull : false
     },
     contactName: {
@@ -123,6 +123,11 @@ const User_Address = db.sequelize.define("user_address", {
     },
     isPrimary : {
         type : db.Sequelize.TINYINT,
+        allowNull : false,
+        defaultValue : 0
+    },
+    isPrimary : {
+        type : db.Sequelize.INTEGER,
         allowNull : false,
         defaultValue : 0
     },
