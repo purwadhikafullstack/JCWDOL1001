@@ -20,7 +20,7 @@ export const getTransactionList = createAsyncThunk(
     "transactions/getTransactionList",
     async (payload, {rejectWithValue}) => {
         try{
-            const {statusId} = payload;
+            const { statusId } = payload;
             const {data} = await api.get(`/transaction/${statusId}`);
             return data;
         }catch(error){
@@ -43,3 +43,16 @@ export const createTransaction = createAsyncThunk(
         }
     }
 )
+
+    export const getTransactionStatus = createAsyncThunk(
+        "transactions/getTransactionStatus",
+        async (payload, {rejectWithValue}) => {
+            try{
+                const { data } = await api.get(`/transaction/status`);
+                return data;
+            }catch(error){
+                toast.error(error.response.data.message);
+                return rejectWithValue(error.response.data.message);
+            }
+        }
+    )

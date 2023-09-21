@@ -10,8 +10,8 @@ import ChangePrimaryAddressPage from "./page.change.primary.address";
 
 export default function Address({
   user,
-  showHandleAddressPage,
-  setShowHandleAddressPage,
+  showHandlePageContext,
+  setShowHandlePageContext,
 }) {
   const dispatch = useDispatch();
 
@@ -28,7 +28,7 @@ export default function Address({
   const [selectedAddress, setSelectedAddress] = useState(null);
 
   const handleShowAddressPageAction = (action, addressId) => {
-    setShowHandleAddressPage({ show: true, action });
+    setShowHandlePageContext({ show: true, action });
 
     window.scrollTo({
       top: 0,
@@ -41,22 +41,22 @@ export default function Address({
   };
 
   const handleCloseAddressPageAction = () => {
-    setShowHandleAddressPage({ show: false, action: "" });
+    setShowHandlePageContext({ show: false, action: "" });
     setSelectedAddress(null);
   };
 
   useEffect(() => {
-    setShowHandleAddressPage({ show: false, action: "" });
+    setShowHandlePageContext({ show: false, action: "" });
     dispatch(listProvince());
 
   }, []);
 
   useEffect(() => {
     dispatch(getAddress());
-    setShowHandleAddressPage({ show: false, action: "" });
+    setShowHandlePageContext({ show: false, action: "" });
   }, [isSubmitAddressLoading]);
 
-  if (!showHandleAddressPage.show) {
+  if (!showHandlePageContext.show) {
     return (
       <div className=" pb-24 lg:pb-0">
         {isGetAddressLoading ? (
@@ -142,18 +142,18 @@ export default function Address({
   }
 
   if (
-    showHandleAddressPage.action === "Tambah Alamat Baru" || showHandleAddressPage.action === "Ubah Alamat"
+    showHandlePageContext.action === "Tambah Alamat Baru" || showHandlePageContext.action === "Ubah Alamat"
   ) {
     return (
       <InputAddressPage
         addressData={selectedAddress}
         handleCloseAddressPageAction={handleCloseAddressPageAction}
-        action={showHandleAddressPage.action}
+        action={showHandlePageContext.action}
       />
     );
   }
 
-  if (showHandleAddressPage.action === "Hapus Alamat") {
+  if (showHandlePageContext.action === "Hapus Alamat") {
     return (
       <DeleteAddressPage
         selectedAddress={selectedAddress}
@@ -163,7 +163,7 @@ export default function Address({
     );
   }
 
-  if (showHandleAddressPage.action === "Ubah Alamat Utama") {
+  if (showHandlePageContext.action === "Ubah Alamat Utama") {
     return (
       <ChangePrimaryAddressPage
         selectedAddress={selectedAddress}
