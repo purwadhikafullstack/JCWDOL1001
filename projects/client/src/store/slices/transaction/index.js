@@ -5,8 +5,8 @@ import {
     createTransaction,
     getTransactionStatus,
     uploadPaymentProof,
-    resetSuccessTransaction,
-    getOngoingTransactions
+    getOngoingTransactions,
+    cancelTransaction
 } from "./slices";
 
 const INITIAL_STATE = {
@@ -19,7 +19,8 @@ const INITIAL_STATE = {
     isGetCheckoutLoading : false,
     isGetTransactionStatusLoading : false,
     isUpdateOngoingTransactionLoading : false,
-    success: false,
+    successUpdateOngoingTransaction: false,
+    successCancelTransaction: false,
 }
 
 const transactionsSlice = createSlice({
@@ -27,7 +28,8 @@ const transactionsSlice = createSlice({
     initialState : INITIAL_STATE,
     reducers : {
         resetSuccessTransaction: (state, action) => {
-            state.success = false;
+            state.successUpdateOngoingTransaction = false;
+            state.successCancelTransaction = false;
         },
     },
     extraReducers: {
@@ -76,9 +78,20 @@ const transactionsSlice = createSlice({
         },
         [uploadPaymentProof.fulfilled] : (state, action) => {
             state.isUpdateOngoingTransactionLoading = false
-            state.success = true
+            state.successUpdateOngoingTransaction = true
         },
         [uploadPaymentProof.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
+        [cancelTransaction.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [cancelTransaction.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successCancelTransaction = true
+        },
+        [cancelTransaction.rejected] : (state, action) => {
             state.isUpdateOngoingTransactionLoading = false
         },
 

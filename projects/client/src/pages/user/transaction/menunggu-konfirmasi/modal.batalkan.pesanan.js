@@ -12,12 +12,13 @@ export default function ModalBatalkanPesanan({
   isUpdateOngoingTransactionLoading,
 }) {
   const dispatch = useDispatch();
-  const { successCancelTransaction } = useSelector((state) => {
+  const {
+    successCancelTransaction
+  } = useSelector((state) => {
     return {
       successCancelTransaction: state.transaction?.successCancelTransaction,
     };
   });
-  
   const [chooseReasonRef, setChooseReasonRef] = useState(null);
   const [inputReasonRef, setInputReasonRef] = useState(null);
   const reasons = [

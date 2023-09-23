@@ -15,7 +15,8 @@ export default function Modal({
   children,
   disableOutside,
   fullWidth = false,
-  halfWidth = false
+  halfWidth = false,
+  showCloseButton = true,
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -86,20 +87,22 @@ export default function Modal({
             className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-50 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
-              <h3 className="title">
+              <h3 className="subtitle">
                 {titleModal ? titleModal : title}
               </h3>
-              <span
+              {showCloseButton &&
+                <span
                 className="cursor-pointer"
-                onClick={() => {
-                  closeModal();
-                  setTitle("");
-                  setLogin(false);
-                  setRegist(false);
-                }}
-              >
-                <HiXMark className="text-3xl" />
-              </span>
+                  onClick={() => {
+                    closeModal();
+                    setTitle("");
+                    setLogin(false);
+                    setRegist(false);
+                  }}
+                  >
+                  <HiXMark className="text-3xl" />
+                </span>
+              }
             </div>
 
             <div className="py-4">

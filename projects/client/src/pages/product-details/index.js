@@ -128,7 +128,7 @@ export default function ProductDetail({user}) {
                 <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
                   {product?.discountProducts[0].discount.isPercentage ? `${product?.discountProducts[0].discount.discountAmount}%` : 
                   // `${Math.round((product?.discountProducts[0].discount.discountAmount/product?.productPrice)*100)}%` 
-                  "Potongan Harga"
+                  `Potongan Harga ${formatNumber(product?.discountProducts[0]?.discount.discountAmount)}`
                   }
                 </span>
               
@@ -146,29 +146,23 @@ export default function ProductDetail({user}) {
                 Buy One Get One
               </span>
             </div>
-
           }
 
             <h3 className="text-xl lg:text-2xl font-bold text-primary">
               Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice)}
             </h3>
-
-
-
-
-
             <div className="mt-4">
-              <h3 className="title">Deskripsi</h3>
-              <p>{product?.productDescription}</p>
+              <h3 className="subtitle">Aturan Pakai</h3>
+              <p>{product?.productDosage}</p>
             </div>
             <div className="mt-4">
-              <h3 className="title">Aturan Pakai</h3>
-              <p>{product?.productDosage}</p>
+              <h3 className="subtitle">Deskripsi</h3>
+              <p>{product?.productDescription}</p>
             </div>
           </div>
 
           <div className="col-span-1 mt-4 flex h-fit w-full flex-col gap-4 rounded-lg border p-4 shadow-lg lg:mt-0">
-            <h3 className="title">Mau beli berapa?</h3>
+            <h3 className="subtitle">Mau beli berapa?</h3>
             <div className="flex justify-center gap-2">
               <Button
                 isSmall
@@ -216,7 +210,7 @@ export default function ProductDetail({user}) {
               isLink
               path="/products"
               title="Lihat Semua"
-              className="see-all"
+              className="text-primary font-semibold"
             />
           </div>
 

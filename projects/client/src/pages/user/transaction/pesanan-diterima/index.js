@@ -5,8 +5,9 @@ import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
+import EmptyTransaction from "../component.empty.transaction";
 
-export default function PesananDiterima({ statusId, statusDesc }) {
+export default function PesananDikirim({ statusId, statusDesc }) {
   const dispatch = useDispatch();
   const { transaction, isGetTransactionLoading } = useSelector((state) => {
     return {
@@ -39,7 +40,9 @@ export default function PesananDiterima({ statusId, statusDesc }) {
     console.log(selectedTransaction);
   }, [selectedTransaction]);
 
-  return (
+  return transaction.length === 0 ? (
+    <EmptyTransaction />
+  ) : (
     <>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
@@ -101,7 +104,11 @@ export default function PesananDiterima({ statusId, statusDesc }) {
                   <p className="font-bold">{formatNumber(item.total)}</p>
                 </div>
 
-                <p className="text-sm text-primary font-semibold">{statusDesc}</p>
+                <Button 
+                  isButton
+                  isPrimary
+                  title="Lihat Detail Transaksi"
+                />
               </div>
             </div>
           );
@@ -112,74 +119,75 @@ export default function PesananDiterima({ statusId, statusDesc }) {
         showModal={showModal}
         fullWidth={true}
         closeModal={()=>handleCloseModal()}
-        title={`Detail Transaksi - Pesanan Diterima ${selectedTransaction?.createdAt}`}
+        title={`Pesanan Diterima - ${selectedTransaction?.createdAt}`}
       >
         <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
-          <div
-            key={selectedTransaction?.transactionId}
-            className="border p-4 rounded-md h-fit shadow-md"
-          >
-            <div className="flex items-center justify-between">
-              <p className="mb-4 text-sm">
-                {formatDate(selectedTransaction?.createdAt)}
-              </p>
-              <p className="mb-4 text-sm font-semibold text-primary">
-                {selectedTransaction?.createdAt}
-              </p>
-            </div>
-            <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-              {selectedTransactionDetail?.map((product, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <img
-                    className="w-14 border"
-                    src={
-                      process.env.REACT_APP_CLOUDINARY_BASE_URL +
-                      product.listedTransaction.productPicture
-                    }
-                    alt={product.listedTransaction.productName}
-                  />
-                  <div className="">
-                    <p>{product.listedTransaction.productName}</p>
-                    <div className="flex gap-2">
-                      <p>{formatNumber(product.price)}</p>
-                      <span>x</span>
-                      <p>{product.quantity}</p>
+          <div>
+            <h3 className="subtitle">Transaksi</h3>
+            <div
+              key={selectedTransaction?.transactionId}
+              className="border p-4 rounded-md h-fit shadow-md"
+            >
+              <div className="flex items-center justify-between">
+                <p className="mb-4 text-sm">
+                  {formatDate(selectedTransaction?.createdAt)}
+                </p>
+                <p className="mb-4 text-sm font-semibold text-primary">
+                  {selectedTransaction?.createdAt}
+                </p>
+              </div>
+              <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
+                {selectedTransactionDetail?.map((product, index) => (
+                  <div key={index} className="flex items-center gap-2 text-sm">
+                    <img
+                      className="w-14 border"
+                      src={
+                        process.env.REACT_APP_CLOUDINARY_BASE_URL +
+                        product.listedTransaction.productPicture
+                      }
+                      alt={product.listedTransaction.productName}
+                    />
+                    <div className="">
+                      <p>{product.listedTransaction.productName}</p>
+                      <div className="flex gap-2">
+                        <p>{formatNumber(product.price)}</p>
+                        <span>x</span>
+                        <p>{product.quantity}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="flex items-center justify-between gap-2 border-t-2 pt-2">
-              <div className="">
-                <p className="text-sm">Total Belanja</p>
-                <p className="font-bold">
-                  {formatNumber(selectedTransaction?.total)}
-                </p>
+              <div className="flex items-center justify-between gap-2 border-t-2 pt-2">
+                <div className="">
+                  <p className="text-sm">Total Belanja</p>
+                  <p className="font-bold">
+                    {formatNumber(selectedTransaction?.total)}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
+
           <div className="w-full h-fit mt-8 md:mt-0">
-            <h3 className="title">Bukti Pembayaran</h3>
-            <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
+            <h3 className="subtitle">Bukti Pembayaran</h3>
+            <div className="">
+              {selectedTransaction?.paymentProof ? 
+                <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
+              :
+              <p>Belum ada bukti pembayaran</p>
+              }
+            </div>
           </div>
 
         </div>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 justify-center flex gap-2">
           <Button
             isButton
-            isPrimaryOutline
-            isBLock
+            isPrimary
             title={`Kembali`}
-            onClick={() => handleCloseModal()}
-          />
-
-          <Button
-            isButton
-            isDangerOutline
-            isBLock
-            title={`Batalkan Pesanan`}
             onClick={() => handleCloseModal()}
           />
         </div>

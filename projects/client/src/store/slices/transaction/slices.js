@@ -64,8 +64,21 @@ export const uploadPaymentProof = createAsyncThunk(
         try{
             const { transactionId, imageData } = payload
             await api.patch(`/transaction/upload-payment-proof/${transactionId}`, imageData);
-            toast.success("Bukti pembayaran berhasil diunggah!")
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
 
+export const cancelTransaction = createAsyncThunk(
+    "transactions/cancelTransaction",
+    async (payload, {rejectWithValue}) => {
+        try{
+            const transactionId= payload.transactionId
+            delete payload.transactionId;
+
+            await api.patch(`/transaction/cancel-transaction/${transactionId}`, payload);
         }catch(error){
             toast.error(error.response.data.message);
             return rejectWithValue(error.response.data.message);

@@ -23,22 +23,21 @@ export default function InputAddressPage({
 }) {
   const dispatch = useDispatch();
 
-  const { dataProvince, dataCity, isLoading, isSubmitAddressLoading } =
+  const { dataProvince, dataCity, isSubmitAddressLoading } =
     useSelector((state) => {
       return {
         dataProvince: state?.address?.province,
         dataCity: state?.address?.city,
-        isLoading: state?.address?.isLoading,
         isSubmitAddressLoading: state?.address?.isSubmitAddressLoading,
       };
     });
 
   const addressRef = useRef(null);
   const districtRef = useRef(null);
-  const postalCodeRef = useRef(null)
-  const contactPhoneRef = useRef(null)
-  const contactNameRef = useRef(null)
-  // const [postalCodeState, setPostalCode] = useState(80351);
+  const postalCodeRef = useRef(null);
+  const contactPhoneRef = useRef(null);
+  const contactNameRef = useRef(null);
+
   const [cityRef, setCityRef] = useState(null);
   const [provinceRef, setProvinceRef] = useState(null);
   const [isToastVisible, setIsToastVisible] = useState(false);
@@ -55,8 +54,7 @@ export default function InputAddressPage({
 
   const onCityChange = (cityParams) => {
     const result = cityParams.split(",");
-    // setPostalCode(result[1]);
-    setCityRef(result[0]);
+    setCityRef(result[1]);
   };
 
   useEffect(() => {
@@ -138,6 +136,8 @@ export default function InputAddressPage({
   useEffect(() => {
     dispatch(listProvince());
   }, []);
+
+
   
   return (
     <form className="px-1 pb-24 lg:pb-8" onSubmit={handleSubmit}>

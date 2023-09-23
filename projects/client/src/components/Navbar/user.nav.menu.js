@@ -101,7 +101,7 @@ export default function UserNavMenu({
 
               <AnimatePresence>
                 {
-                  isMenuVisible ?
+                  isMenuVisible &&
                     <motion.div
                       initial={{
                         opacity: 0,
@@ -148,7 +148,7 @@ export default function UserNavMenu({
                             className="hover:text-primary flex justify-between"
                           >
                             <span>Transaksi</span>
-                            {total > 0 &&
+                            {ongoingTransactions > 0 &&
                               <span className={`flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
                               {ongoingTransactions}
                               </span>
@@ -178,7 +178,6 @@ export default function UserNavMenu({
                         </div>
                       </div>
                     </motion.div>
-                  : ""
                 }
               </AnimatePresence>
             </div>

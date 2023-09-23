@@ -43,6 +43,7 @@ const getTransactions = async (req, res, next) => {
         }
       ],
       where: whereCondition,
+      order:[["updatedAt" , "DESC"]]
     });
 
     if (statusId !== 7) {

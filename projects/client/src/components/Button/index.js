@@ -15,7 +15,7 @@ export default function Button(props) {
   props.isPrimary &&
     props.isDisabled &&
     className.push(
-      "bg-primary/70 text-white hover:cursor-default dark:bg-primary/40"
+      "bg-primary/70 text-white dark:bg-primary/40"
     );
 
   props.isPrimaryOutline &&
@@ -32,6 +32,11 @@ export default function Button(props) {
     className.push(
       "bg-inherit text-danger border border-danger hover:bg-slate-100 duration-300"
     );
+    
+  props.isDangerOutline &&
+    className.push(
+      "bg-inherit text-danger border border-danger hover:bg-slate-100 duration-300"
+    );
 
   props.isDanger &&
     className.push("bg-danger hover:bg-red-600 text-white duration-300")
@@ -43,6 +48,9 @@ export default function Button(props) {
     className.push("bg-slate-400 hover:bg-slate-500 text-white duration-300")
 
   props.isBLock && className.push("w-full")
+
+  props.isDisabled &&
+    className.push("hover:cursor-default")
 
   const onClick = () => {
     props.onClick && !props.isDisabled && props.onClick()

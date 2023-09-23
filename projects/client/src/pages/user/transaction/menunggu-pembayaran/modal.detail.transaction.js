@@ -3,17 +3,17 @@ import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
 
-export default function PageDetailTransaction({
+export default function ModalDetailTransaction({
   selectedTransaction,
   handleShowModal,
+  handleCloseModal
 }) {
-  const transactionDetail = selectedTransaction.transactionDetail;
+  const transactionDetail = selectedTransaction?.transactionDetail;
   return (
     <>
-      <h3 className="title mt-4">Detail Transaksi - Menunggu Pembayaran {selectedTransaction.createdAt}</h3>
       <div
         key={selectedTransaction.transactionId}
-        className="mb-4 cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
+        className="mb-4 rounded-lg border p-4 shadow-md duration-300"
       >
         <div className="flex justify-between items-center">
           <p className="mb-4 text-sm">
@@ -24,7 +24,7 @@ export default function PageDetailTransaction({
           </p>
         </div>
         <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-          {transactionDetail.map((product, index) => (
+          {transactionDetail?.map((product, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <img
                 className="w-14 border"
@@ -55,8 +55,8 @@ export default function PageDetailTransaction({
           </div>
 
           <div className="flex gap-2 justify-end">
-            <Button isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan")}/>
-            <Button isButton isPrimary title={`Unggah Bukti Pembayaran`} onClick={() => handleShowModal("Unggah Bukti Pembayaran")}/>
+            <Button isButton isPrimary title={`Kembali`} onClick={handleCloseModal}/>
+            <Button isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
           </div>
         </div>
       </div>
