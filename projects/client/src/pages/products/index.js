@@ -15,10 +15,12 @@ import UploadRecipeButton from "../../components/UploadRecipeButton";
 import "./index.css";
 import FilterDropdownMenu from "./filter.dropdown.menu";
 import { totalProductCart } from "../../store/slices/cart/slices";
+import { useLocation } from "react-router-dom";
 
 export default function Products({ user }) {
   const dispatch = useDispatch();
-
+  const location = useLocation();
+  
   const {
     products,
     categories,
@@ -79,6 +81,16 @@ export default function Products({ user }) {
 
   useEffect(() => {
     dispatch(getCategory({ page: 1 }));
+    if(location.state?.categorySelected){
+      setSelectedCategory(location.state?.categorySelected)
+      dispatch(
+        getProducts({
+          page : 1,
+          category_id : location.state?.categorySelected.categoryId,
+          limit : 12
+        })
+      )
+    }
     dispatch(totalProductCart())
   }, []);
 
@@ -220,7 +232,7 @@ export default function Products({ user }) {
                     productId={product.productId}
                     productName={product.productName}
                     productPrice={product.productPrice}
-                    productDiscount={product.productDiscount}
+                    productDiscount={product.discountProducts}
                     productPicture={product.productPicture}
                     productStock={product.productStock}
                     onClick={() => handleCart(product.productId)}
