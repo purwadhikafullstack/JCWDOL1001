@@ -7,11 +7,10 @@ export default function PageDetailTransaction({
   selectedTransaction,
   handleShowModal,
 }) {
-  console.log(selectedTransaction);
   const transactionDetail = selectedTransaction.transactionDetail;
   return (
     <>
-      <h3 className="title mt-4">Detail Transaksi</h3>
+      <h3 className="title mt-4">Detail Transaksi - Menunggu Pembayaran {selectedTransaction.createdAt}</h3>
       <div
         key={selectedTransaction.transactionId}
         className="mb-4 cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
@@ -47,7 +46,7 @@ export default function PageDetailTransaction({
           ))}
         </div>
 
-        <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
+        <div className="mt-2 flex flex-col md:flex-row md:items-center justify-between gap-2 border-t-2 pt-2">
           <div className="">
             <p className="text-sm">Total Belanja</p>
             <p className="font-bold">
@@ -55,7 +54,10 @@ export default function PageDetailTransaction({
             </p>
           </div>
 
-          <Button isButton isPrimary title={`Unggah Bukti Pembayaran`} onClick={handleShowModal}/>
+          <div className="flex gap-2 justify-end">
+            <Button isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan")}/>
+            <Button isButton isPrimary title={`Unggah Bukti Pembayaran`} onClick={() => handleShowModal("Unggah Bukti Pembayaran")}/>
+          </div>
         </div>
       </div>
     </>

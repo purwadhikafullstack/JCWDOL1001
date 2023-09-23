@@ -9,6 +9,7 @@ const { Product_Detail, Product_List } = require("../../model/product");
 const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
 const { User_Address } = require("../../model/user");
+const { toCamelCase } = require("../../utils");
 
 const getTransactions = async (req, res, next) => {
   try {
@@ -18,7 +19,7 @@ const getTransactions = async (req, res, next) => {
     let whereCondition = {};
 
     if (userId === 1) {
-      whereCondition = { userId: { [Op.not]: 1 }, statusId };
+      whereCondition = { statusId };
     } else {
       whereCondition = { userId, statusId };
     }
@@ -44,6 +45,11 @@ const getTransactions = async (req, res, next) => {
       where: whereCondition,
     });
 
+    if (statusId !== 7) {
+      delete transaction?.dataValues?.canceledBy;
+      delete transaction?.dataValues?.message;
+    }
+
 
     res.status(200).json({
       type: "success",
@@ -55,6 +61,54 @@ const getTransactions = async (req, res, next) => {
     next(error);
   }
 };
+
+const getOngoingTransactions = async (req, res, next) =>{
+  try {
+    const { userId } = req.user;
+
+    let whereCondition = {};
+
+    if (userId === 1) {
+      whereCondition = { statusId : { [Op.not]: [6, 7] } };
+    } else {
+      whereCondition = { userId, statusId : { [Op.not]: [6, 7] } };
+    }
+
+    const transactions = await Transaction_List?.findAll({
+      where: whereCondition,
+    });
+
+    const statuses = await Transaction_Status?.findAll()
+
+    const data = {
+      totalTransactions: transactions.length,
+      transactions : []
+    }
+    
+    statuses.forEach(status => {
+      const statusId = status.statusId;
+      const statusDesc = status.statusDesc
+
+      if (statusId !== 7 && statusId !== 6) {
+        const total = transactions.filter(
+          (transaction) => transaction.statusId === statusId
+        ).length;
+        
+        data.transactions.push({statusId, statusDesc, total});
+      }
+    })
+    
+
+
+    res.status(200).json({
+      type: "success",
+      message: "Here are your ongoing transactions",
+      data
+    });
+  } catch (error) {
+    next(error)
+  }
+}
 
 const createTransactions = async (req, res, next) => {
   try {
@@ -158,6 +212,10 @@ const uploadPaymentProof = async (req, res, next) => {
     }
 
     await transaction.update({ paymentProof: req?.file?.filename, statusId : 2 });
+    await transaction.update({ statusId : 2 });
+
+    delete transaction?.dataValues?.canceledBy;
+    delete transaction?.dataValues?.message;
 
     res
       .status(200)
@@ -187,13 +245,144 @@ const confirmPayment = async (req, res, next) => {
 
     await transaction.update({ statusId : 3 })
 
+    delete transaction?.dataValues?.canceledBy;
+    delete transaction?.dataValues?.message;
+
     res
       .status(200)
       .json({
         type: "success",
-        message: "Transaction accepted!",
+        message: "Payment accepted!",
         data: transaction
       });
+  } catch (error) {
+
+    next(error);
+  }
+};
+
+const processOrder = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+
+    const transaction = await Transaction_List?.findOne({
+      where: { transactionId },
+    });
+
+    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+
+    await transaction.update({ statusId : 4 })
+
+    delete transaction?.dataValues?.canceledBy;
+    delete transaction?.dataValues?.message;
+
+    res
+      .status(200)
+      .json({
+        type: "success",
+        message: "Order processed!",
+        data: transaction
+      });
+  } catch (error) {
+
+    next(error);
+  }
+};
+
+const sendOrder = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+
+    const transaction = await Transaction_List?.findOne({
+      where: { transactionId },
+    });
+
+    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+
+    await transaction.update({ statusId : 5 })
+
+    delete transaction?.dataValues?.canceledBy;
+    delete transaction?.dataValues?.message;
+
+    res
+      .status(200)
+      .json({
+        type: "success",
+        message: "Order sent!",
+        data: transaction
+      });
+  } catch (error) {
+
+    next(error);
+  }
+};
+
+const receiveOrder = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+
+    const transaction = await Transaction_List?.findOne({
+      where: { transactionId },
+    });
+
+    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+
+    await transaction.update({ statusId : 6 })
+
+    delete transaction?.dataValues?.canceledBy;
+    delete transaction?.dataValues?.message;
+
+    res
+      .status(200)
+      .json({
+        type: "success",
+        message: "Order received!",
+        data: transaction
+      });
+  } catch (error) {
+
+    next(error);
+  }
+};
+
+const cancelTransaction = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+    const { roleId, userId } = req.user;
+    const { message } = req.body;
+
+    let whereCondition = {}
+
+    if (roleId === 1) {
+      whereCondition = { transactionId };
+    } else {
+      whereCondition = { userId, transactionId };
+    }
+
+    const transaction = await Transaction_List?.findOne({
+      where: whereCondition,
+    });
+
+    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+
+    if (transaction.dataValues.statusId === 1 ||
+        transaction.dataValues.statusId === 2 || 
+        transaction.dataValues.statusId === 3) {
+      await transaction.update({
+        statusId: 7,
+        message,
+        canceledBy: roleId === 1 ? "Admin" : "User",
+      });
+
+      res.status(200).json({
+        type: "success",
+        message: "Transaction canceled!",
+        data: transaction,
+      });
+    } else {
+      throw new Error("Transaction cannot be canceled.");
+    }
+
   } catch (error) {
 
     next(error);
@@ -215,9 +404,14 @@ const getTransactionStatus = async (req, res, next) => {
 
 module.exports = {
   getTransactions,
+  getOngoingTransactions,
   createTransactions,
   getCheckoutProducts,
   uploadPaymentProof,
   confirmPayment,
+  processOrder,
+  sendOrder,
+  receiveOrder,
+  cancelTransaction,
   getTransactionStatus,
 };

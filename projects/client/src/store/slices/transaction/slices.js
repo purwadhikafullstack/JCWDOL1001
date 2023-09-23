@@ -30,6 +30,20 @@ export const getTransactionList = createAsyncThunk(
     }
 )
 
+export const getOngoingTransactions = createAsyncThunk(
+    "transactions/getOngoingTransactions",
+    async (payload, {rejectWithValue}) => {
+        try{
+            const { data } = await api.get(`/transaction/ongoing`);
+
+            return data;
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
 export const createTransaction = createAsyncThunk(
     "transactions/createTransaction",
     async (payload, {rejectWithValue}) => {
@@ -44,15 +58,34 @@ export const createTransaction = createAsyncThunk(
     }
 )
 
-    export const getTransactionStatus = createAsyncThunk(
-        "transactions/getTransactionStatus",
-        async (payload, {rejectWithValue}) => {
-            try{
-                const { data } = await api.get(`/transaction/status`);
-                return data;
-            }catch(error){
-                toast.error(error.response.data.message);
-                return rejectWithValue(error.response.data.message);
-            }
+export const uploadPaymentProof = createAsyncThunk(
+    "transactions/uploadPaymentProof",
+    async (payload, {rejectWithValue}) => {
+        try{
+            const { transactionId, imageData } = payload
+            await api.patch(`/transaction/upload-payment-proof/${transactionId}`, imageData);
+            toast.success("Bukti pembayaran berhasil diunggah!")
+
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
         }
-    )
+    }
+)
+
+export const getTransactionStatus = createAsyncThunk(
+    "transactions/getTransactionStatus",
+    async (payload, {rejectWithValue}) => {
+        try{
+            const { data } = await api.get(`/transaction/status`);
+            return data;
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
+export const resetSuccessTransaction = () => ({
+    type: "transactions/resetSuccessTransaction",
+});

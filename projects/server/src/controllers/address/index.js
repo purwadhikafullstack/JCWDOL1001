@@ -203,20 +203,6 @@ const getListCity = async (req, res, next) => {
     }
 }
 
-const getListSubdistrict = async (req, res, next) => {
-    try {
-        const { city } = req.query
-        const subdistricts = await Rajaongkir_Subdistricts.findAll({where : { city_id : city }})
-
-        res.status(200).json({ 
-            message : "Data Subdistricts based on Province from RajaOngkir",
-            data: subdistricts
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
 const shippingCost = async (req, res, next) => {
     try {
 
@@ -248,6 +234,5 @@ module.exports = {
     deleteAddress,
     getListProvince,
     getListCity,
-    getListSubdistrict,
     shippingCost,
  }

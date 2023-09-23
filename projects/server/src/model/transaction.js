@@ -34,6 +34,10 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    canceledBy : {
+        type : db.Sequelize.STRING,
+        allowNull : true
+    },
     message : {
         type : db.Sequelize.STRING,
         allowNull : true

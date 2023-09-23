@@ -36,26 +36,7 @@ const Rajaongkir_Provinces = db.sequelize.define("rajaongkir_province", {
   timestamps: false
 });
 
-const Rajaongkir_Subdistricts = db.sequelize.define("rajaongkir_subdistrict", {
-    subdistrict_id : {
-        type: db.Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: false,
-    },
-    city_id : {
-        type: db.Sequelize.INTEGER,
-        allowNull: false,
-    },
-    subdistrict_name: {
-        type : db.Sequelize.STRING,
-        allowNull : false
-    },
-},{
-  timestamps: false
-});
-
 module.exports = { 
     Rajaongkir_Cities, 
     Rajaongkir_Provinces, 
-    Rajaongkir_Subdistricts, 
 }

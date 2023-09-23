@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList } from "../../../../store/slices/transaction/slices";
+import { getTransactionList, resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
-import InputImage from "../../../../components/InputImage";
 import PageDetailTransaction from "./page.detail.transaction";
 import { HiArrowLongLeft } from "react-icons/hi2";
+import ModalUnggahBuktiPembayaran from "./modal.unggah.bukti.pembayaran";
+import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
 
 export default function MenungguPembayaran({
   statusId,
@@ -15,18 +16,21 @@ export default function MenungguPembayaran({
   setShowStatusButton,
   showHandlePageContext,
   setShowHandlePageContext,
+  setActiveTab
 }) {
   const dispatch = useDispatch();
-  const { transaction, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, success, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
+      success: state.transaction?.success,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
+      isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
     };
   });
 
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [file, setFile] = useState(null)
+  const [showModal, setShowModal] = useState({show: false, context: null});
+
 
   const handleTransactionPageAction = (action, transactionId) => {
     setShowHandlePageContext({ show: true, action });
@@ -49,48 +53,54 @@ export default function MenungguPembayaran({
     setShowStatusButton(true);
   };
 
-  const handleShowModal = () =>{
-    window.scrollTo({top:0,
-    behavior:"smooth"})
-    setShowModal(true)
-  }
+  const handleShowModal = (context) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setShowModal({show: true, context});
+  };
 
-  const handleCloseModal = () =>{
-    setShowModal(false)
-  }
+  const handleCloseModal = () => {
+    setShowModal({show: false, context:null});
+  };
 
   useEffect(() => {
     dispatch(getTransactionList({ statusId }));
-  }, []);
+  }, [isUpdateOngoingTransactionLoading]);
 
+  useEffect(() => {
+    if (success) {
+      setShowStatusButton(true);
+      setShowHandlePageContext({ show: false, action: "" });
+      setActiveTab(2);
 
-    return (
-      <>
-        {!showHandlePageContext.show &&
-          <div className="flex flex-col gap-4 pt-3 pb-24 lg:pb-0">
-            {transaction.map((item) => {
-              const transactionDetail = item.transactionDetail;
-              const moreItems = transactionDetail.length - 1;
+      dispatch(resetSuccessTransaction())
+    }
+  }, [success]);
 
-              return (
+  return (
+    <>
+      {!showHandlePageContext.show && (
+        <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
+          {transaction.map((item) => {
+            const transactionDetail = item.transactionDetail;
+            const moreItems = transactionDetail.length - 1;
+
+            return (
+              <div
+                key={item.transactionId}
+                className="cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
+              >
                 <div
-                  key={item.transactionId}
-                  className="cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
-                >
-                  <div className=""
+                  className=""
                   onClick={() =>
                     handleTransactionPageAction(
                       "Detail Transaksi",
                       item.transactionId
                     )
                   }
-                  >
-                    
-                  <div className="flex justify-between items-center">
-                    <p className="mb-4 text-sm">
-                      {formatDate(item.createdAt)}
-                    </p>
-                    <p className="mb-4 text-sm text-primary font-semibold">
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="mb-4 text-sm">{formatDate(item.createdAt)}</p>
+                    <p className="mb-4 text-sm font-semibold text-primary">
                       {item.createdAt}
                     </p>
                   </div>
@@ -130,66 +140,66 @@ export default function MenungguPembayaran({
                       title={`+${moreItems} Barang Lagi`}
                     />
                   )}
+                </div>
+
+                <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
+                  <div className="">
+                    <p className="text-sm">Total Belanja</p>
+                    <p className="font-bold">{formatNumber(item.total)}</p>
                   </div>
 
-
-                  <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
-                    <div className="">
-                      <p className="text-sm">Total Belanja</p>
-                      <p className="font-bold">{formatNumber(item.total)}</p>
-                    </div>
-
-                    <p className="text-sm text-primary font-semibold">{statusDesc}</p>
-                  </div>
+                  <Button isButton isPrimaryOutline title="Lihat Detail" onClick={handleShowModal} />
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {showHandlePageContext.show && (
+        <>
+          <Button
+            isLink
+            className={`text-primary`}
+            title={
+              <div className="flex items-center gap-2">
+                <HiArrowLongLeft className="text-lg" />
+                <span className="underline">Kembali ke Daftar Transaksi</span>
+              </div>
+            }
+            onClick={handleCloseTransactionPageAction}
+          />
+          
+            <PageDetailTransaction
+              selectedTransaction={selectedTransaction}
+              handleShowModal={handleShowModal}
+            />
+
+        </>
+      )}
+
+      <Modal
+        fullWidth
+        showModal={showModal.show}
+        closeModal={handleCloseModal}
+        title={showModal.context}
+      >
+        {showModal.context === "Unggah Bukti Pembayaran" && 
+          <ModalUnggahBuktiPembayaran 
+            selectedTransaction={selectedTransaction} 
+            handleCloseModal={handleCloseModal} 
+            isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
+          />
         }
 
-        {showHandlePageContext.show &&
-          <>
-            <Button
-              isLink
-              className={`text-primary`}
-              title={
-                <div className="flex items-center gap-2">
-                  <HiArrowLongLeft className="text-lg" />
-                  <span className="underline">Kembali ke Daftar Transaksi</span>
-                </div>
-              }
-              onClick={handleCloseTransactionPageAction}
-            />
-            {showHandlePageContext.action === "Detail Transaksi" && (
-              <PageDetailTransaction selectedTransaction={selectedTransaction} handleShowModal={handleShowModal}/>
-            )}
-          </>
+        {showModal.context === "Batalkan Pesanan" && 
+          <ModalBatalkanPesanan 
+            selectedTransaction={selectedTransaction} 
+            handleCloseModal={handleCloseModal} 
+            isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
+          />
         }
-
-        <Modal fullWidth showModal={showModal} closeModal={() => {
-          handleCloseModal()
-          setFile(null)
-          }} title={`Unggah Bukti Pembayaran`}>
-          <InputImage file={file} setFile={setFile}/>
-          <div className="flex justify-center gap-2 mt-4">
-            <Button
-              isButton
-              isPrimaryOutline
-              title={`Kembali`}
-              onClick={() => {
-                handleCloseModal()
-              setFile(null)
-              }}
-            />
-
-            <Button
-              isButton
-              isPrimary
-              title={`Unggah Gambar`}
-            />
-          </div>
-        </Modal>
-      </>
-
-    );
-  }
+      </Modal>
+    </>
+  );
+}

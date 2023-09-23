@@ -3,24 +3,32 @@ import {
     getCheckoutProducts,
     getTransactionList,
     createTransaction,
-    getTransactionStatus
+    getTransactionStatus,
+    uploadPaymentProof,
+    resetSuccessTransaction,
+    getOngoingTransactions
 } from "./slices";
 
 const INITIAL_STATE = {
     transactions : [],
+    ongoingTransactions : null,
     cart : [],
     transactionStatus : [],
     isCreateTransactionLoading : false,
     isGetTransactionLoading : false,
     isGetCheckoutLoading : false,
     isGetTransactionStatusLoading : false,
+    isUpdateOngoingTransactionLoading : false,
+    success: false,
 }
 
 const transactionsSlice = createSlice({
     name : "transactions",
     initialState : INITIAL_STATE,
     reducers : {
-
+        resetSuccessTransaction: (state, action) => {
+            state.success = false;
+        },
     },
     extraReducers: {
         [getTransactionList.pending] : (state, action) => {
@@ -30,6 +38,16 @@ const transactionsSlice = createSlice({
             state = Object.assign(state, {transactions : action.payload?.data, isGetTransactionLoading : false})
         },
         [getTransactionList.rejected] : (state, action) => {
+            state = Object.assign(state, {isGetTransactionLoading : false})
+        },
+
+        [getOngoingTransactions.pending] : (state, action) => {
+            state.isGetTransactionLoading = true
+        },
+        [getOngoingTransactions.fulfilled] : (state, action) => {
+            state = Object.assign(state, {ongoingTransactions : action.payload.data, isGetTransactionLoading : false})
+        },
+        [getOngoingTransactions.rejected] : (state, action) => {
             state = Object.assign(state, {isGetTransactionLoading : false})
         },
 
@@ -46,11 +64,22 @@ const transactionsSlice = createSlice({
         [createTransaction.pending] : (state, action) => {
             state.isCreateTransactionLoading = true
         },
+        [createTransaction.fulfilled] : (state, action) => {
+            state.isCreateTransactionLoading = false
+        },
         [createTransaction.rejected] : (state, action) => {
             state.isCreateTransactionLoading = false
         },
-        [createTransaction.fulfilled] : (state, action) => {
-            state.isCreateTransactionLoading = false
+        
+        [uploadPaymentProof.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [uploadPaymentProof.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.success = true
+        },
+        [uploadPaymentProof.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
         },
 
         [getTransactionStatus.pending] : (state, action) => {

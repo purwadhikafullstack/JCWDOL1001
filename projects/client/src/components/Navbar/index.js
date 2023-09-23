@@ -5,7 +5,7 @@ import UserNavMenu from "./user.nav.menu"
 import AdminNavMenu from "./admin.nav.menu";
 import { useDispatch } from "react-redux";
 
-export default function Navbar ({ user, isLogin, setIsLogin }) {
+export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions }) {
     const dispatch = useDispatch()
     const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
@@ -56,6 +56,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 isSidebarActive={isSidebarActive}
                                 setIsSidebarActive={setIsSidebarActive}
                                 user={user}
+                                ongoingTransactions={ongoingTransactions}
                             />
                         }
 
@@ -65,6 +66,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 setIsLogin={setIsLogin}
                                 handleShowModal={handleShowModal}
                                 user={user}
+                                ongoingTransactions={ongoingTransactions}
                             />
                         )}
 

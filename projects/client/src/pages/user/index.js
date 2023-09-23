@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import Sidebar from "./component.sidebar";
+import UserSidebar from "./component.sidebar";
 import { useLocation, useParams } from "react-router-dom";
 import Profile from "./profile";
 import Address from "./address";
@@ -9,8 +9,9 @@ import Email from "./email";
 import { useEffect, useState } from "react";
 import Button from "../../components/Button";
 import { HiArrowLeft, HiXMark } from "react-icons/hi2";
+import Modal from "../../components/Modal";
 
-export default function UserPage({ user }) {
+export default function UserPage({ user, ongoingTransactions }) {
   const { context } = useParams();
 
   const profile = user.profile;
@@ -24,18 +25,23 @@ export default function UserPage({ user }) {
   const renderPageContext = (context) => {
     const pageContext = {
       profile: <Profile />,
+
       address: (
         <Address
           showHandlePageContext={showHandlePageContext}
           setShowHandlePageContext={setShowHandlePageContext}
         />
       ),
+
       email: <Email />,
+
       password: <Password />,
+      
       transaction: (
         <Transaction
           showHandlePageContext={showHandlePageContext}
           setShowHandlePageContext={setShowHandlePageContext}
+          ongoingTransactions={ongoingTransactions}
         />
       ),
     };
@@ -56,10 +62,11 @@ export default function UserPage({ user }) {
   return (
     <div className="container py-24">
       <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-4 lg:gap-4">
-        <Sidebar
+        <UserSidebar
           profile={profile}
           user={user}
           setMobileContextActive={setMobileContextActive}
+          ongoingTransactions={ongoingTransactions}
         />
 
         <div

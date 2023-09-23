@@ -99,7 +99,21 @@ const getProductById = async (req, res, next) => {
         {
           model : Product_Unit,
           as : "productUnits"
-        }
+        },
+        {
+          model : Product_Detail,
+          attributes : ["quantity"]
+        },
+        {
+          model : Discount_Product,
+          attributes : {exclude : ["discountProductId"]},
+          as: "discountProducts",
+          include : {
+            model : Discount,
+            where : { isDeleted : 0 },
+            required: false,
+          },
+        },
       ],
       where: {productId : id},
     });
