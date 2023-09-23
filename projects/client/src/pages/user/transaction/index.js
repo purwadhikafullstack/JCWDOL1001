@@ -52,6 +52,9 @@ export default function Transaction({
           <MenungguKonfirmasi
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       case 3:
@@ -59,6 +62,9 @@ export default function Transaction({
           <PembayaranDiterima
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       case 4:
@@ -66,6 +72,9 @@ export default function Transaction({
           <PesananDiproses
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       case 5:
@@ -73,6 +82,9 @@ export default function Transaction({
           <PesananDibatalkan
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       case 6:
@@ -80,6 +92,9 @@ export default function Transaction({
           <PesananDikirim
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       case 7:
@@ -87,6 +102,9 @@ export default function Transaction({
           <PesananDiterima
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
+            setShowStatusButton={setShowStatusButton}
+            showHandlePageContext={showHandlePageContext}
+            setShowHandlePageContext={setShowHandlePageContext}
           />
         );
       default:

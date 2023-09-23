@@ -18,6 +18,10 @@ export default function CheckoutPage(){
         dispatch(getCheckoutProducts())
     },[])
 
+    const PaymentMethod = () => {
+
+    }
+
     return(
         <>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
