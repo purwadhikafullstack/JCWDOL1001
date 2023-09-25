@@ -4,7 +4,7 @@ const fs = require("fs")
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 
 const { InputAddressValidationSchema } = require("./validation.js")
-const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities, Rajaongkir_Subdistricts } = require("../../model/relation.js");
+const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
