@@ -71,6 +71,62 @@ export const uploadPaymentProof = createAsyncThunk(
     }
 )
 
+export const confirmPayment = createAsyncThunk(
+    "transactions/confirmPayment",
+    async (payload, {rejectWithValue}) => {
+        try{
+
+            await api.patch(`/transaction/confirm-payment/${payload}`);
+
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
+export const processOrder = createAsyncThunk(
+    "transactions/processOrder",
+    async (payload, {rejectWithValue}) => {
+        try{
+
+            await api.patch(`/transaction/process-order/${payload}`);
+
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
+export const sendOrder = createAsyncThunk(
+    "transactions/sendOrder",
+    async (payload, {rejectWithValue}) => {
+        try{
+
+            await api.patch(`/transaction/send-order/${payload}`);
+
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
+export const receiveOrder = createAsyncThunk(
+    "transactions/receiveOrder",
+    async (payload, {rejectWithValue}) => {
+        try{
+
+            await api.patch(`/transaction/receive-order/${payload}`);
+
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
 export const cancelTransaction = createAsyncThunk(
     "transactions/cancelTransaction",
     async (payload, {rejectWithValue}) => {

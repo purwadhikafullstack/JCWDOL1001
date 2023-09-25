@@ -143,8 +143,9 @@ export default function Products({ user }) {
               >
                 Semua Produk
               </Button>
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <Button
+                  key={index}
                   isLink
                   className={`product-category ${
                     selectedCategory?.categoryDesc === category.categoryDesc &&
@@ -226,7 +227,7 @@ export default function Products({ user }) {
                   </p>
                 </div>
               ) : (
-                products.map((product) => (
+                products.map((product, index) => (
                   <Card
                     key={product.productId}
                     productId={product.productId}

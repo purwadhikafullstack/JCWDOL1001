@@ -16,10 +16,9 @@ export default function MenungguKonfirmasi({
   setActiveTab
 }) {
   const dispatch = useDispatch();
-  const { transaction, success, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
-      success: state.transaction?.success,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
       isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
     };
@@ -69,10 +68,13 @@ export default function MenungguKonfirmasi({
     ))
   }
 
-  return transaction.length === 0 ? (
-    <EmptyTransaction />
-  ) : (
+  return (
     <>
+    {transaction.length === 0 ?
+      <EmptyTransaction />  
+    :
+    <>
+      <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -144,13 +146,15 @@ export default function MenungguKonfirmasi({
           );
         })}
       </div>
+    </>
+    }
 
       <Modal
         showModal={showModal.show}
         fullWidth={true}
         closeModal={handleCloseModal}
-        showCloseButton={false}
         title={showModal.context}
+        closeButtonText={true}
       >
         {showModal.context === "Detail Transaksi" && 
 

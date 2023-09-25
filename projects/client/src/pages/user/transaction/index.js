@@ -16,10 +16,9 @@ export default function Transaction({
   ongoingTransactions
 }) {
   const dispatch = useDispatch();
-  const { transactionStatus, success } = useSelector((state) => {
+  const { transactionStatus } = useSelector((state) => {
     return {
       transactionStatus: state.transaction?.transactionStatus,
-      success: state.transaction?.success,
     };
   });
   
@@ -72,6 +71,7 @@ export default function Transaction({
           <PesananDikirim
           statusId={tabStatus.statusId}
           statusDesc={tabStatus.statusDesc}
+          setActiveTab={setActiveTab}
           />
       );
       case 6:

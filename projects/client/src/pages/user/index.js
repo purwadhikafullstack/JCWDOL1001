@@ -8,7 +8,7 @@ import Transaction from "./transaction";
 import Email from "./email";
 import { useEffect, useState } from "react";
 import Button from "../../components/Button";
-import { HiArrowLeft, HiXMark } from "react-icons/hi2";
+import { HiArrowLeft, HiArrowLongLeft, HiXMark } from "react-icons/hi2";
 import Modal from "../../components/Modal";
 
 export default function UserPage({ user, ongoingTransactions }) {
@@ -70,7 +70,7 @@ export default function UserPage({ user, ongoingTransactions }) {
         />
 
         <div
-          className={`absolute left-0 top-16 z-20 col-span-3 min-h-screen w-full border bg-slate-50 p-4 shadow-md duration-300 lg:static lg:z-0 lg:rounded-lg ${
+          className={`absolute left-0 top-16 z-20 col-span-3 min-h-[125vh] w-full border bg-slate-50 p-4 shadow-md duration-300 lg:static lg:z-0 lg:rounded-lg overflow-hidden ${
             mobileContextActive
               ? "translate-x-0"
               : "-translate-x-full lg:translate-x-0"
@@ -85,8 +85,8 @@ export default function UserPage({ user, ongoingTransactions }) {
                   setMobileContextActive(false);
                 }}
               >
-                <HiXMark className="text-2xl" />
-                <span className="font-semibold">Close</span>
+                <HiArrowLongLeft className="text-2xl" />
+                <span className="font-semibold">Kembali</span>
               </Button>
             </div>
           )}

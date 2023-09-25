@@ -3,8 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { uploadPaymentProof } from "../../../../store/slices/transaction/slices";
 import Button from "../../../../components/Button";
 import InputImage from "../../../../components/InputImage";
-import { HiOutlineInformationCircle } from "react-icons/hi2";
+import { HiOutlineDocumentDuplicate, HiOutlineInformationCircle } from "react-icons/hi2";
 import Message from "../../../../components/Message";
+import formatNumber from "../../../../utils/formatNumber";
+import LogoBca from "../../../../assets/logo-bca.png";
+import LogoMandiri from "../../../../assets/logo-mandiri.png";
+import { toast } from "react-toastify"
 
 export default function ModalCaraBayar({
   selectedTransaction,
@@ -32,6 +36,17 @@ export default function ModalCaraBayar({
     );
   };
 
+  const [isCopyTextSuccess, setIsCopyTextSuccess] = useState(false)
+  const copyText = (text) => {
+    setIsCopyTextSuccess(true)
+    navigator.clipboard.writeText(text)
+    toast.success("Berhasil menyalin!")
+
+    setTimeout(() => {
+      setIsCopyTextSuccess(false);
+    }, 2000);
+  }
+
   if (successUpdateOngoingTransaction) {
     return <Message
       type={`success`} 
@@ -41,8 +56,8 @@ export default function ModalCaraBayar({
   }
 
   return (
-    <div className="overflow-auto max-h-[75vh] pb-4">
-      <div className="">
+    <div className="overflow-auto max-h-screen pb-4 md:pr-1">
+      <div className="flex flex-col gap-4 mt-4">
         <div className="p-4 bg-green-100 border border-primary rounded-lg flex gap-2 items-center">
           <div className="">
             <HiOutlineInformationCircle className="text-primary text-3xl"/>
@@ -52,23 +67,53 @@ export default function ModalCaraBayar({
             <p>Kemudian unggah bukti pembayaran kamu</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="">
-            <p className="font-bold">0918023981</p>
-            <p>Apotech Sehat</p>
+
+        <h3 className="subtitle text-center">Total Pembayaran: <span className="text-primary">Rp. {formatNumber(selectedTransaction.total)}</span></h3>
+
+        <div className="w-fit mx-auto">
+          <div className="flex items-center gap-6 border border-primary rounded-md p-4">
+            <div className="w-20">
+              <img src={LogoBca} alt="" />
+            </div>
+            <div className="">
+              <Button
+                isBLock
+                className="flex justify-between items-center" 
+                isDisabled={isCopyTextSuccess}
+                onClick={() => copyText('0918023981')}
+              >
+                <p className="font-bold">0918023981</p>
+                <HiOutlineDocumentDuplicate
+                  className="text-primary text-lg"
+                />
+              </Button>
+              <p>Apotech Pasti Sukses</p>
+            </div>
           </div>
-          <p>BCA</p>
-        </div>
-        <div className="mt-2 flex items-center gap-2">
-          <div className="">
-            <p className="font-bold">0918023981</p>
-            <p>Apotech Sehat</p>
+
+          <div className="flex items-center gap-6 mt-4 border border-primary rounded-md p-4">
+            <div className="w-20">
+              <img src={LogoMandiri} alt="" />
+            </div>
+            <div className="">
+              <Button
+                isBLock
+                className="flex justify-between items-center"
+                isDisabled={isCopyTextSuccess}
+                onClick={() => copyText('1234567890')}
+              >
+                <p className="font-bold">1234567890</p>
+                <HiOutlineDocumentDuplicate
+                  className="text-primary text-lg"
+                />
+              </Button>
+              <p>Apotech Pasti Sukses</p>
+            </div>
           </div>
-          <p>Mandiri</p>
         </div>
 
+        <InputImage file={file} setFile={setFile} />
       </div>
-      <InputImage file={file} setFile={setFile} />
       <div className="mt-4 flex justify-center gap-2">
         <Button
           isButton

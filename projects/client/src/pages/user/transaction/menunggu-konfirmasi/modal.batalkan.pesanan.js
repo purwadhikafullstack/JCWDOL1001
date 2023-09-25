@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Input from "../../../../components/Input";
 import Button from "../../../../components/Button";
 import { useDispatch, useSelector } from "react-redux";
@@ -93,7 +93,7 @@ export default function ModalBatalkanPesanan({
           isPrimary
           onClick={() =>
             handleShowModal(
-              "Lihat Detail Transaksi",
+              "Detail Transaksi",
               selectedTransaction.transactionId
             )
           }

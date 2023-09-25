@@ -11,16 +11,37 @@ const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 const getAddress = async (req, res, next) =>{
     try {
         const userId = req.user.userId
+        const { page } = req.query;
+
+        const limit = 2;
         
-        const addresses = await User_Address.findAll({where: { userId, isDeleted : 0 }, order:[["isPrimary" , "DESC"]]})
+        const options = {
+            offset: page > 1 ? (page - 1) * limit : 0,
+            limit,
+        }
+        
+        const addresses = await User_Address.findAll({
+            where: { userId, isDeleted : 0 }, 
+            order:[["isPrimary" , "DESC"]],
+            ...options
+        })
 
         if (!addresses) {
             throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
         }
 
+        const totalAddress = await User_Address.count()
+        const totalPage = Math.ceil(totalAddress / limit)
+
         res.status(200).json({ 
             message : "Address fetched!",
-            data: addresses
+            data: {
+                totalPage,
+                currentPage: +page,
+                nextPage: +page === totalPage ? null : +page + 1,
+                totalAddress,
+                data: addresses
+            }
         })
     } catch (error) {
         next(error)

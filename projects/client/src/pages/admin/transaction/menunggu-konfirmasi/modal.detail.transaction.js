@@ -8,13 +8,22 @@ export default function ModalDetailTransaction({
   handleCloseModal
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
-  const shippingAddress = selectedTransaction?.user_address
+  const shippingAddress = selectedTransaction?.user_address;
+  const customerData = selectedTransaction?.user_account;
 
   return (
     <>
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
         <div className="left-container">
-          <div className="mb-4">
+          <div className="">
+            <h3 className="subtitle">Data Pemesan</h3>
+            <div className="">
+              <p>{customerData.email}</p>
+              <p>{customerData.userProfile?.name} ({customerData.userProfile?.phone})</p>
+            </div>
+          </div>
+
+          <div className="my-4">
             <h3 className="subtitle">Alamat Pengiriman</h3>
             <div className="">
               <p>{shippingAddress.address}</p>
@@ -81,25 +90,31 @@ export default function ModalDetailTransaction({
             }
           </div>
         </div>
+      </div>
 
-        </div>
-        <div className="mt-4 flex gap-2">
-          <Button
-            isButton
-            isPrimary
-            isBLock
-            title={`Kembali`}
-            onClick={handleCloseModal}
-          />
+      <div className="mt-4 justify-between flex gap-2">
+        <Button
+          isButton
+          isPrimaryOutline
+          title={`Kembali`}
+          onClick={handleCloseModal}
+        />
 
+        <div className="flex gap-2">
           <Button
             isButton
             isDangerOutline
-            isBLock
-            title={`Batalkan Pesanan`}
+            title={`Batalkan Transaksi`}
             onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
           />
+          <Button
+            isButton
+            isPrimary
+            title={`Terima Pembayaran`}
+            onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
+          />
         </div>
+      </div>
     </>
   );
 }

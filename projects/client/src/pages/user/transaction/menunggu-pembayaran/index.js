@@ -8,7 +8,6 @@ import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
-import { HiArrowLongLeft } from "react-icons/hi2";
 import ModalCaraBayar from "./modal.cara.bayar";
 import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
 import ModalDetailTransaction from "./modal.detail.transaction";
@@ -23,13 +22,11 @@ export default function MenungguPembayaran({
   const dispatch = useDispatch();
   const {
     transaction,
-    successUpdateOngoingTransaction,
     isUpdateOngoingTransactionLoading,
     isGetTransactionLoading,
   } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
-      successUpdateOngoingTransaction: state.transaction?.successUpdateOngoingTransaction,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
       isUpdateOngoingTransactionLoading:
         state.transaction?.isUpdateOngoingTransactionLoading,
@@ -76,10 +73,14 @@ export default function MenungguPembayaran({
     ))
   }
 
-  return transaction.length === 0 ? (
-    <EmptyTransaction />
-  ) : (
+  return (
     <>
+    {transaction.length === 0 ?
+      <EmptyTransaction />  
+    :
+    <>
+      <h3 className="subtitle mt-2">{statusDesc}</h3>
+
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -88,10 +89,10 @@ export default function MenungguPembayaran({
           return (
             <div
               key={item.transactionId}
-              className="cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
+              className="rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
             >
               <div
-                className=""
+                className="cursor-pointer"
                 onClick={() =>
                   handleShowModal("Detail Transaksi", item.transactionId)
                 }
@@ -173,13 +174,15 @@ export default function MenungguPembayaran({
           );
         })}
       </div>
+    </>
+    }
 
       <Modal
         fullWidth
         showModal={showModal.show}
         closeModal={handleCloseModal}
         title={showModal.context}
-        showCloseButton={false}
+        closeButtonText={true}
       >
         {showModal.context === "Pembayaran" && (
           <ModalCaraBayar

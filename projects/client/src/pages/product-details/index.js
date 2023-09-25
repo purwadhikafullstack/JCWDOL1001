@@ -11,16 +11,18 @@ import Card from "../../components/Card";
 import Modal from "../../components/Modal";
 import UploadRecipeButton from "../../components/UploadRecipeButton";
 import { getCart, totalProductCart, updateCart } from "../../store/slices/cart/slices";
+import LoadingProductDetail from "./loading.product.detail";
 
 export default function ProductDetail({user}) {
   const dispatch = useDispatch()
   const { id } = useParams()
 
-  const { product, products,cart } = useSelector((state)=>{
+  const { product, products, cart, isGetProductsLoading } = useSelector((state)=>{
     return {
       product: state?.products.productDetail,
       products: state?.products.data,
-      cart: state?.cart?.cart
+      cart: state?.cart?.cart,
+      isGetProductsLoading: state?.products.isGetProductsLoading,
     }
   })
   const [qty, setQty] = useState(1);
@@ -106,6 +108,9 @@ export default function ProductDetail({user}) {
 
   },[id])
 
+  if (isGetProductsLoading) {
+    return <LoadingProductDetail />
+  }
 
   return (
     <>
@@ -151,11 +156,11 @@ export default function ProductDetail({user}) {
             <h3 className="text-xl lg:text-2xl font-bold text-primary">
               Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice)}
             </h3>
-            <div className="mt-4">
+            <div className="mt-4 w-4/5">
               <h3 className="subtitle">Aturan Pakai</h3>
               <p>{product?.productDosage}</p>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 w-4/5">
               <h3 className="subtitle">Deskripsi</h3>
               <p>{product?.productDescription}</p>
             </div>

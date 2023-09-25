@@ -5,6 +5,7 @@ import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
+import SkeletonTransaction from "../component.skeleton";
 
 export default function PesananDibatalkan({ statusId, statusDesc }) {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const selectedTransactionDetail = selectedTransaction?.transactionDetail;
+  const shippingAddress = selectedTransaction?.user_address;
 
   const handleShowModal = (transactionId) => {
     window.scrollTo({
@@ -40,8 +42,13 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
 
   useEffect(() => {
     dispatch(getTransactionList({ statusId }));
-    console.log(selectedTransaction);
-  }, [selectedTransaction]);
+  }, []);
+
+  if (isGetTransactionLoading && !showModal.show) {
+    return Array.from({length: 3}, (_, index) => (
+      <SkeletonTransaction key={index}/>
+    ))
+  }
 
   return transaction.length === 0 ? (
     <div className="flex justify-center mt-12">
@@ -49,7 +56,7 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     </div>
   ) : (
     <>
-    <h3 className="subtitle mt-2">Pesanan Dibatalkan</h3>
+    <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -106,8 +113,8 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
 
               <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
                 <div className="">
-                  <p className="text-sm">Dibatalkan oleh {item.canceledBy}</p>
-                  <p className="text-sm">Alasan pembatalan: {item.message}</p>
+                  <p className="text-sm">Dibatalkan oleh <span className="font-semibold">{item.canceledBy}</span></p>
+                  <p className="text-sm">Alasan pembatalan: <span className="font-semibold">{item.message}</span></p>
                 </div>
 
                 <Button 
@@ -124,16 +131,27 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
       <Modal
         showModal={showModal}
         fullWidth={true}
+        closeButtonText={true}
         closeModal={()=>handleCloseModal()}
         title={`Pesanan dibatalkan oleh ${selectedTransaction?.canceledBy} : ${selectedTransaction?.message}`}
       >
         <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
-          <div className="">
-            <h3 className="subtitle">Transaksi</h3>
+          <div className="left-container">
+            <div className="mb-4">
+              <h3 className="subtitle">Alamat Pengiriman</h3>
+              <div className="">
+                <p>{shippingAddress?.address}</p>
+                <p>{shippingAddress?.district}, {shippingAddress?.city}, {shippingAddress?.province}, {shippingAddress?.postalCode}</p>
+                <p>{shippingAddress?.contactPhone} ({shippingAddress?.contactName})</p>
+              </div>
+            </div>
+
+            <h3 className="subtitle">Detail Pesanan</h3>
             <div
               key={selectedTransaction?.transactionId}
               className="border p-4 rounded-md h-fit shadow-md"
             >
+              
               <div className="flex items-center justify-between">
                 <p className="mb-4 text-sm">
                   {formatDate(selectedTransaction?.createdAt)}
@@ -188,11 +206,10 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
           </div>
 
         </div>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 justify-center flex gap-2">
           <Button
             isButton
-            isPrimaryOutline
-            isBLock
+            isPrimary
             title={`Kembali`}
             onClick={() => handleCloseModal()}
           />

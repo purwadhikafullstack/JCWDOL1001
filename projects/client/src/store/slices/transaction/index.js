@@ -6,7 +6,11 @@ import {
     getTransactionStatus,
     uploadPaymentProof,
     getOngoingTransactions,
-    cancelTransaction
+    cancelTransaction,
+    confirmPayment,
+    processOrder,
+    sendOrder,
+    receiveOrder
 } from "./slices";
 
 const INITIAL_STATE = {
@@ -84,6 +88,50 @@ const transactionsSlice = createSlice({
             state.isUpdateOngoingTransactionLoading = false
         },
 
+        [confirmPayment.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [confirmPayment.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successUpdateOngoingTransaction = true
+        },
+        [confirmPayment.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
+        [processOrder.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [processOrder.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successUpdateOngoingTransaction = true
+        },
+        [processOrder.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
+        [sendOrder.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [sendOrder.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successUpdateOngoingTransaction = true
+        },
+        [sendOrder.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
+        [receiveOrder.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [receiveOrder.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successUpdateOngoingTransaction = true
+        },
+        [receiveOrder.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
         [cancelTransaction.pending] : (state, action) => {
             state.isUpdateOngoingTransactionLoading = true
         },
@@ -99,7 +147,7 @@ const transactionsSlice = createSlice({
             state.isGetTransactionStatusLoading = true
         },
         [getTransactionStatus.fulfilled] : (state, action) => {
-            state = Object.assign(state, {transactionStatus : action.payload?.data, isGetTransactionStatusLoading : false})
+            state = Object.assign(state, {transactionStatus : action.payload?.data})
         },
         [getTransactionStatus.rejected] : (state, action) => {
             state = Object.assign(state, {isGetTransactionStatusLoading : false})

@@ -6,6 +6,7 @@ import { HiXMark } from "react-icons/hi2";
 import LoginContext from "./context/login.context";
 import RegisterContext from "./context/register.context";
 import ForgotContext from "./context/forgot.password.context";
+import Button from "../Button";
 
 export default function Modal({
   showModal,
@@ -17,6 +18,7 @@ export default function Modal({
   fullWidth = false,
   halfWidth = false,
   showCloseButton = true,
+  closeButtonText = false,
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -90,7 +92,7 @@ export default function Modal({
               <h3 className="subtitle">
                 {titleModal ? titleModal : title}
               </h3>
-              {showCloseButton &&
+              {showCloseButton && 
                 <span
                 className="cursor-pointer"
                   onClick={() => {
@@ -100,7 +102,11 @@ export default function Modal({
                     setRegist(false);
                   }}
                   >
-                  <HiXMark className="text-3xl" />
+                    {closeButtonText ? 
+                      <Button isButton isPrimaryOutline >Tutup</Button> 
+                    :
+                      <HiXMark className="text-3xl" />
+                    }
                 </span>
               }
             </div>

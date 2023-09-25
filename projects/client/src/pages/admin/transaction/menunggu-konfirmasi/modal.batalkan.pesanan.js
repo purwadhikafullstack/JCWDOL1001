@@ -12,17 +12,19 @@ export default function ModalBatalkanPesanan({
   isUpdateOngoingTransactionLoading,
 }) {
   const dispatch = useDispatch();
-  const { successCancelTransaction } = useSelector((state) => {
+  const {
+    successCancelTransaction
+  } = useSelector((state) => {
     return {
       successCancelTransaction: state.transaction?.successCancelTransaction,
     };
   });
-  
   const [chooseReasonRef, setChooseReasonRef] = useState(null);
   const [inputReasonRef, setInputReasonRef] = useState(null);
   const reasons = [
-    { title: "Saya ingin ganti alamat" },
-    { title: "Saya ingin mengubah pesanan" },
+    { title: "Produk tidak tersedia" },
+    { title: "Pembayaran tidak tesuai" },
+    { title: "Alamat tidak ditemukan" },
     { title: "Lainnya" },
   ];
 
@@ -46,17 +48,16 @@ export default function ModalBatalkanPesanan({
       })
     );
 
-  if (successCancelTransaction) {
-    return <Message
+  return (
+    successCancelTransaction ? 
+    <Message
       type={`success`} 
-      message={`Pesananmu berhasil dibatalkan!`} 
+      message={`Pesanan berhasil dibatalkan!`} 
       handleCloseModal={() => handleCloseModal(7)}
     />
-  }
-
-  return (
+    :
     <div>
-      <p className="font-semibold">Yah! Kenapa pesanannya dibatalin? :(</p>
+      <p className="font-semibold">Pilih alasan pembatalan:</p>
 
       <div className="mt-2 flex flex-col gap-2">
         {reasons.map((reason, index) => (
@@ -105,7 +106,7 @@ export default function ModalBatalkanPesanan({
           isDanger={chooseReasonRef}
           isSecondary={!chooseReasonRef}
           isDisabled={!chooseReasonRef}
-          title={`Batalkan Pesanan`}
+          title={`Batalkan Transaksi`}
           onClick={handleCancelOrder}
         />
       </div>

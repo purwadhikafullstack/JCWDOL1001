@@ -8,8 +8,7 @@ const { Op } = require("sequelize");
 const { Product_Detail, Product_List } = require("../../model/product");
 const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
-const { User_Address } = require("../../model/user");
-const { toCamelCase } = require("../../utils");
+const { User_Address, User_Account, User_Profile } = require("../../model/user");
 
 const getTransactions = async (req, res, next) => {
   try {
@@ -40,7 +39,15 @@ const getTransactions = async (req, res, next) => {
         },
         {
           model: User_Address,
-        }
+        },
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
       ],
       where: whereCondition,
       order:[["updatedAt" , "DESC"]]
@@ -367,8 +374,7 @@ const cancelTransaction = async (req, res, next) => {
     if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
 
     if (transaction.dataValues.statusId === 1 ||
-        transaction.dataValues.statusId === 2 || 
-        transaction.dataValues.statusId === 3) {
+        transaction.dataValues.statusId === 2 ) {
       await transaction.update({
         statusId: 7,
         message,

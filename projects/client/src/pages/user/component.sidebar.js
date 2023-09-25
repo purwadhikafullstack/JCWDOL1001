@@ -87,7 +87,8 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
           <h3 className="title lg:hidden mt-4">Pengaturan</h3>
           <div className="flex flex-col gap-6 lg:gap-4 mt-2 lg:mt-4 overflow-auto">
             {menu.map((menu, index) => (
-            <Button 
+            <Button
+              key={index}
               isLink
               path={menu.path}
               className={`flex relative items-center gap-3 ${menu.context === context ? "lg:text-primary lg:font-semibold" : ""}`}

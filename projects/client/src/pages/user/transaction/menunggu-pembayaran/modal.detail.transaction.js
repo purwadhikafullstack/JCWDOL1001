@@ -1,4 +1,3 @@
-import { HiArrowLongLeft } from "react-icons/hi2";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
@@ -9,6 +8,7 @@ export default function ModalDetailTransaction({
   handleCloseModal
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
+  const shippingAddress = selectedTransaction?.user_address;
   return (
     <>
       <div
@@ -23,7 +23,19 @@ export default function ModalDetailTransaction({
             {selectedTransaction.createdAt}
           </p>
         </div>
-        <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
+
+        <div className="">
+          <h3 className="subtitle">Alamat Pengiriman</h3>
+          <div className="">
+            <p>{shippingAddress.address}</p>
+            <p>{shippingAddress.district}, {shippingAddress.city}, {shippingAddress.province}, {shippingAddress.postalCode}</p>
+            <p>{shippingAddress.contactPhone} ({shippingAddress.contactName})</p>
+            <p></p>
+          </div>
+        </div>
+
+        <h3 className="subtitle mt-4">Detail Pesanan</h3>
+        <div className={`my-2 flex flex-col gap-1 overflow-auto max-h-[40vh]`}>
           {transactionDetail?.map((product, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <img

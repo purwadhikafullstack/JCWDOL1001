@@ -8,8 +8,7 @@ export default function ModalDetailTransaction({
   handleCloseModal
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
-  const shippingAddress = selectedTransaction?.user_address
-
+  const shippingAddress = selectedTransaction?.user_address;
   return (
     <>
       <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
@@ -17,9 +16,9 @@ export default function ModalDetailTransaction({
           <div className="mb-4">
             <h3 className="subtitle">Alamat Pengiriman</h3>
             <div className="">
-              <p>{shippingAddress.address}</p>
-              <p>{shippingAddress.district}, {shippingAddress.city}, {shippingAddress.province}, {shippingAddress.postalCode}</p>
-              <p>{shippingAddress.contactPhone} ({shippingAddress.contactName})</p>
+              <p>{shippingAddress?.address}</p>
+              <p>{shippingAddress?.district}, {shippingAddress?.city}, {shippingAddress?.province}, {shippingAddress?.postalCode}</p>
+              <p>{shippingAddress?.contactPhone} ({shippingAddress?.contactName})</p>
             </div>
           </div>
 
@@ -83,21 +82,19 @@ export default function ModalDetailTransaction({
         </div>
 
         </div>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex justify-end gap-2">
           <Button
             isButton
-            isPrimary
-            isBLock
+            isPrimaryOutline
             title={`Kembali`}
             onClick={handleCloseModal}
           />
 
           <Button
             isButton
-            isDangerOutline
-            isBLock
-            title={`Batalkan Pesanan`}
-            onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
+            isPrimary
+            title={`Pesanan Sudah Diterima`}
+            onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
           />
         </div>
     </>
