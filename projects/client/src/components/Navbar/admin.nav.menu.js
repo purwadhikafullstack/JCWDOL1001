@@ -8,8 +8,9 @@ import {
     HiMiniBars3,
     HiMiniChatBubbleOvalLeftEllipsis,
     HiSquares2X2,
-    HiXMark,
+    HiXMark
 } from "react-icons/hi2";
+import {GoChecklist} from "react-icons/go"
 import { BiSolidDiscount } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 
@@ -29,10 +30,14 @@ export default function AdminNavMenu({isSidebarActive, setIsSidebarActive}) {
             icon: <HiSquares2X2 className="h-7 w-7 " />
         },
         {
+            title : "Custom Order",
+            path : "/admin/custom",
+            icon : <GoChecklist className="h-7 w-7"/>
+        },
+        {
             title:"Categories",
             path:"/admin/categories",
             icon: <FaList className="h-7 w-7 " />
-
         },
         {
             title:"Transaction",

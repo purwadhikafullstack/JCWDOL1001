@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import CustomOrder from "./pages/admin/custom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
@@ -21,6 +21,7 @@ import UploadRecipePage from "./pages/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
 import UserPage from "./pages/user";
 import AdminTransaction from "./pages/admin/transaction";
+import ConfirmCustom from "./pages/user/confirmCustom";
 
 function App() {
   const { pathname } = useLocation();
@@ -87,6 +88,7 @@ function App() {
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
+              <Route path="/admin/custom" element={<CustomOrder />}/>
               <Route path="/admin/transaction" element={<AdminTransaction />}/>
             </>
           )}
@@ -99,6 +101,8 @@ function App() {
               <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
             </>
           )}
+
+          <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     
           <Route path="*" element={<NotFound />} />
         </Routes>

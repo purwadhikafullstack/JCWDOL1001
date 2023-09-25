@@ -9,7 +9,7 @@ const{helperToken,helperTransporter} = require("../../../helper/index.js")
 const {REDIRECT_BACKEND_URL,GMAIL, REDIRECT_URL} = require("../../../config/index.js")
 const {} = require("./validation.js")
 const {ValidationError} = require("yup");
-const { User_Account, User_Address } = require("../../../model/user.js");
+const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
 
 const getUser = async( req, res, next ) => {
@@ -17,7 +17,10 @@ const getUser = async( req, res, next ) => {
       const userlist = await User_Account.findAll({where :{
         role : 2,
         status : 1
-      }})
+      },include : [{
+        model : User_Profile,
+        as : "userProfile"
+    }]})
   
       res.status(200).json({ 
         type : "success",
@@ -126,7 +129,7 @@ const getUser = async( req, res, next ) => {
       else if(filteredResult.length === data.length){
         message += `And... good news! You can checkout any items included in the list. 
         Just click the button below to confirm that you would like to proceed your purchase.`
-        pathURL =  REDIRECT_BACKEND_URL + `/api/products/recipe/order/${accessToken}`
+        pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
       //kalau ready sebagian
       else{
@@ -150,7 +153,7 @@ const getUser = async( req, res, next ) => {
         Choice is yours. But if you make up your mind to proceed,
         Just click the button below to confirm that you would like to proceed your purchase`
         console.log(pathURL)
-        pathURL =  REDIRECT_BACKEND_URL + `/api/products/recipe/order/${accessToken}`
+        pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
 
       const template = fs.readFileSync(path.join(process.cwd(), "templates", "customProductConfirmation.html"), "utf8");
@@ -357,7 +360,8 @@ const getUser = async( req, res, next ) => {
         subtotal,
         transport : transportCost,
         total : subtotal + transportCost,
-        statusId : 1
+        statusId : 1,
+        addressId : address?.addressId
       }
       const listResult = await Transaction_List.create(translist)
 

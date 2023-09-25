@@ -14,6 +14,7 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
+import ModalInputCustomProduct from "../custom";
 
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
@@ -94,7 +95,6 @@ export default function AdminProducts({user}) {
       
       Object.assign(selectedUnit,unitData!==undefined ? unitData : {})
     }
-   
   };
 
   const handleCloseModal = () => {
@@ -327,6 +327,7 @@ export default function AdminProducts({user}) {
             handleCloseModal={handleCloseModal}
           />
         )}
+
       </Modal>
     </>
   );
