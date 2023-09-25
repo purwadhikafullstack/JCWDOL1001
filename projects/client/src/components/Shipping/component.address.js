@@ -1,7 +1,7 @@
 import { useState } from "react"
-import Button from "../../../components/Button"
-import Modal from "../../../components/Modal"
-import InputAddressPage from "../address/page.input.address"
+import Button from "../Button"
+import Modal from "../Modal"
+import InputAddressPage from "../../pages/user/address/page.input.address"
 import { useSelector } from "react-redux"
 
 export default function ShippingAddress({
@@ -34,7 +34,7 @@ export default function ShippingAddress({
             <Button
                 onClick={()=>{handleShowModal("Daftar Alamat")}}
             >
-                Dikirim ke : {selectedAddress.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
+                Dikirim ke : {selectedAddress?.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
             </Button>
 
             <Modal

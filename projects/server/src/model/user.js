@@ -40,6 +40,14 @@ const User_Account = db.sequelize.define("user_account", {
         type : db.Sequelize.STRING,
         allowNull : true
     },
+    addressIdRecipe : {
+        type : db.Sequelize.INTEGER,
+        allowNull : true
+    },
+    shippingRecipe : {
+        type : db.Sequelize.STRING,
+        allowNull : true
+    },
 },{
   timestamps: false
 });

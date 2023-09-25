@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import formatNumber from "../../../utils/formatNumber";
 import Button from "../../../components/Button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,11 +8,10 @@ import Input from "../../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
-import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { getAddress } from "../../../store/slices/address/slices";
-import ShippingAddress from "./component.address";
-import ShippingCost from "./component.shipping";
+import ShippingAddress from "../../../components/Shipping/component.address.js";
+import ShippingCost from "../../../components/Shipping/component.shipping.js";
 
 export default function Cart() {
   const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
@@ -25,6 +25,7 @@ export default function Cart() {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
   let status = []
   const selectedProduct = cart.map((item,index) => {
     status.push(false)
@@ -140,7 +141,7 @@ export default function Cart() {
 //     },[cart])
   
   const checkOut = () => {
-    navigate("/checkout")
+    navigate("/checkout",{ state: { addressSelected: selectedAddress }})
   }
   return (
     <div className="container relative py-24">
