@@ -30,9 +30,15 @@ const uploadRecipe = async (req, res, next) => {
         status: middlewareErrorHandling.BAD_REQUEST_STATUS,
         message: middlewareErrorHandling.IMAGE_NOT_FOUND,
     })
+    const address = JSON.parse(req.body.address)
+    const courier = JSON.parse(req.body.courier)
 
     await User_Account.update(
-        { imgRecipe : req?.file?.filename },
+        { 
+          imgRecipe : req?.file?.filename ,
+          addressIdRecipe : address.addressId,
+          shippingRecipe : courier.name + "," + courier.type + "," + courier.cost 
+        },
         { where : { UUID : req.user.UUID } }
     )
 
