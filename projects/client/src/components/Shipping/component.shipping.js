@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { getShippingCost } from "../../../store/slices/address/slices"
-import formatNumber from "../../../utils/formatNumber"
+import formatNumber from "../../utils/formatNumber"
+import { getShippingCost } from "../../store/slices/address/slices"
 
 export default function ShippingCost({
     selectedAddress,
+    setShipping
 }) {
     const {shippingCost, isGetCostLoading} = useSelector(state=>{
         return{
@@ -41,6 +42,12 @@ export default function ShippingCost({
 
     const handleChangeCourierService = (event) =>{
         setSelectedCourier({
+            name : selectedCourier.name,
+            type : event.target.selectedOptions[0].title,
+            etd : event.target.selectedOptions[0].id.replace(" HARI",""),
+            cost : event.target.selectedOptions[0].value
+        })
+        setShipping({
             name : selectedCourier.name,
             type : event.target.selectedOptions[0].title,
             etd : event.target.selectedOptions[0].id.replace(" HARI",""),
