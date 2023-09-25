@@ -23,7 +23,7 @@ export default function Item({productPrice, quantity, productPicture, productNam
             </div>
             <div className="">
                 <h1 className="font-bold mt-auto">
-                    {formatNumber(productPrice*quantity)}
+                    Rp.{" "}{formatNumber(productPrice*quantity)}
                 </h1>
             </div>
         </div>

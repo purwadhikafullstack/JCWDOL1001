@@ -59,7 +59,7 @@ const getTransactions = async (req, res, next) => {
 const createTransactions = async (req, res, next) => {
   try {
     const { userId } = req.user;
-    const { transport, totalPrice } = req.body;
+    const { transport, totalPrice, addressId } = req.body;
 
     const startTransaction = await Cart?.findAll({
       include: [
@@ -81,6 +81,7 @@ const createTransactions = async (req, res, next) => {
       transport: transport,
       subtotal: totalPrice,
       statusId: 1,
+      addressId : addressId
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -114,7 +115,7 @@ const createTransactions = async (req, res, next) => {
 
 const getCheckoutProducts = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.user;
     const startTransaction = await Cart?.findAll({
       include: [
         {

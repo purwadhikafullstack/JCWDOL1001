@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Card({ productId, productName, productPrice, productPicture, productStock, productDiscount, productCategories }) {
   const navigate = useNavigate();
-  console.log(productDiscount)
 
   return (
     <div

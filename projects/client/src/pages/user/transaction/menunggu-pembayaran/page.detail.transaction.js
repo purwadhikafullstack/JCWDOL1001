@@ -7,7 +7,6 @@ export default function PageDetailTransaction({
   selectedTransaction,
   handleShowModal,
 }) {
-  console.log(selectedTransaction);
   const transactionDetail = selectedTransaction.transactionDetail;
   return (
     <>
