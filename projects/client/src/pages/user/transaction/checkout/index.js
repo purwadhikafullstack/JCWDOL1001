@@ -4,7 +4,7 @@ import { createTransaction, getCheckoutProducts } from "../../../../store/slices
 import Item from "../../../../components/Item";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function CheckoutPage(){
 
@@ -13,16 +13,19 @@ export default function CheckoutPage(){
     let subTotal = 0;
     const [payment, setPayment] = useState(null);
     const [shipping, setShipping] = useState(null);
-
-    const {cart, address} = useSelector((state)=>{
+    const location = useLocation();
+    let address = location.state?.addressSelected;
+    const {cart} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
         }
     })
 
+    
     if(cart.length === 0){
         navigate("/")
     }
+    
 
     useEffect(()=>{
         dispatch(getCheckoutProducts())
@@ -59,7 +62,7 @@ export default function CheckoutPage(){
     }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : shipping, totalPrice : (subTotal+shipping), addressId : 2}));
+        dispatch(createTransaction({transport : shipping, totalPrice : (subTotal+shipping), addressId : address.addressId}));
         navigate("/user/transaction");
     }
 
@@ -95,9 +98,11 @@ export default function CheckoutPage(){
                             { shipping && 
                             <>
                                 <div className="flex-col">
-                                    <h4>Address : Jl. Sakura Miko no.35, Rt.003/Rw.005, Pondok Jagung, Serpong</h4>
-                                    <h4>City : Tangerang Selatan</h4>
-                                    <h4>Province : Banten</h4>
+                                    <h1>{address.contactName}</h1>
+                                    <h4>Address : {address.address},{address.district}</h4>
+                                    <h4>City : {address.city}</h4>
+                                    <h4>Province : {address.province}</h4>
+                                    <h4>Phone : {address.contactPhone}</h4>
                                     <h4 className="font-bold text-xl">Shipping cost : {formatNumber(shipping)}</h4>
                                 </div>
                             </>
@@ -109,9 +114,7 @@ export default function CheckoutPage(){
                     <div className="mb-5 pb-2">
                         <h3 className="text-2xl font-semibold w-full">Payment Method</h3>
                             <select value={payment} className="text-xl border-2 bg-green-200 rounded-lg md:rounded-md" onChange={(e)=>setPayment(e.target.value)}>
-                                <option disabled="true">DigitalPayment</option>
-                                <option value={"Gopay"}>Gopay</option>
-                                <option value={"Ovo"}>OVO</option>
+                                <option value={null}>Please choose your payment Method</option>
                                 <option disabled="true">BankTransfer</option>
                                 <option value={"BCA"}>BCA</option>
                                 <option value={"Mandiri"}>Mandiri</option>
