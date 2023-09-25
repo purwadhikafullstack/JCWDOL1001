@@ -83,21 +83,12 @@ export default function ModalDetailTransaction({
         </div>
 
         </div>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 justify-center flex gap-2">
           <Button
             isButton
             isPrimary
-            isBLock
             title={`Kembali`}
             onClick={handleCloseModal}
-          />
-
-          <Button
-            isButton
-            isDangerOutline
-            isBLock
-            title={`Batalkan Pesanan`}
-            onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
           />
         </div>
     </>

@@ -53,11 +53,15 @@ const getTransactions = async (req, res, next) => {
       order:[["updatedAt" , "DESC"]]
     });
 
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
+
     if (statusId !== 7) {
       delete transaction?.dataValues?.canceledBy;
       delete transaction?.dataValues?.message;
     }
-
 
     res.status(200).json({
       type: "success",
@@ -106,8 +110,6 @@ const getOngoingTransactions = async (req, res, next) =>{
       }
     })
     
-
-
     res.status(200).json({
       type: "success",
       message: "Here are your ongoing transactions",
@@ -209,7 +211,10 @@ const uploadPaymentProof = async (req, res, next) => {
       where: { [Op.and]: [{ userId }, { transactionId }] },
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
 
     if (!req.file) {
       return next({
@@ -249,7 +254,10 @@ const confirmPayment = async (req, res, next) => {
       where: { transactionId },
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
 
     await transaction.update({ statusId : 3 })
 
@@ -277,7 +285,10 @@ const processOrder = async (req, res, next) => {
       where: { transactionId },
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
 
     await transaction.update({ statusId : 4 })
 
@@ -305,7 +316,10 @@ const sendOrder = async (req, res, next) => {
       where: { transactionId },
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
 
     await transaction.update({ statusId : 5 })
 
@@ -333,7 +347,10 @@ const receiveOrder = async (req, res, next) => {
       where: { transactionId },
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
 
     await transaction.update({ statusId : 6 })
 
@@ -371,7 +388,17 @@ const cancelTransaction = async (req, res, next) => {
       where: whereCondition,
     });
 
-    if (!transaction) throw new Error(middlewareErrorHandling.TRANSACTION_NOT_FOUND);
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
+
+    if (roleId === 2 && transaction.dataValues.statusId !== 1) {
+      throw ({
+        status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+        message: "Transaction cannot be canceled."
+      })
+    }
 
     if (transaction.dataValues.statusId === 1 ||
         transaction.dataValues.statusId === 2 ) {

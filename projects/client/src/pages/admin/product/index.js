@@ -24,6 +24,7 @@ import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
 import ModalMakeConvertion from "./unit/modal.unit.make.convertion";
+import Pagination from "../../../components/PaginationV2";
 
 export default function AdminProducts({user}) {
 
@@ -70,11 +71,11 @@ export default function AdminProducts({user}) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchedProduct, setSearchedProduct] = useState(null);
-  const searchedProductRef = useRef();
   const [page, setPage] = useState(1);
   const [categoriesPage, setCategoriesPage] = useState(1);
   const [options, setOptions] = useState({sortName : "", sortPrice : "", categoryId : ""})
   const [selectedUnit, setSelectedUnit] = useState({});
+  const searchedProductRef = useRef();
 
 
   const handleShowModal = ({context, productId, stockId}) => {
@@ -94,7 +95,6 @@ export default function AdminProducts({user}) {
       
       Object.assign(selectedUnit,unitData!==undefined ? unitData : {})
     }
-   
   };
 
   const handleCloseModal = () => {
@@ -115,18 +115,6 @@ export default function AdminProducts({user}) {
     setOptions({
       ...options, [name] : value
     })
-  }
-
-  const handlePreviousPage = () => {
-    if(page > 1){
-      setPage(page-1);
-    }
-  }
-
-  const handleNextPage = () => {
-    if(page < total_page){
-      setPage(page+1);
-    }
   }
 
   useEffect(() => {
@@ -221,10 +209,8 @@ export default function AdminProducts({user}) {
             setSelectedProduct={setSelectedProduct}
           />
         </div>
-        <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-          {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
-          {total_page !== 1 && <h1>current page : {current_page}</h1>}
-          {page!==total_page && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===total_page}> Next </button>}
+        <div className="mt-4 flex items-center justify-center">
+          <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
         </div>
       </div>
 

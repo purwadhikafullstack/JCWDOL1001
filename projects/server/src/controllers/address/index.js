@@ -13,7 +13,7 @@ const getAddress = async (req, res, next) =>{
         const userId = req.user.userId
         const { page } = req.query;
 
-        const limit = 2;
+        const limit = 10;
         
         const options = {
             offset: page > 1 ? (page - 1) * limit : 0,

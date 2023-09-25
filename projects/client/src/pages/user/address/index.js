@@ -5,30 +5,29 @@ import { getAddress } from "../../../store/slices/address/slices";
 import Button from "../../../components/Button";
 import DeleteAddressPage from "./page.delete.address";
 import InputAddressPage from "./page.input.address";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChangePrimaryAddressPage from "./page.change.primary.address";
+import Pagination from "../../../components/PaginationV2";
 
 export default function Address({
-  user,
   showHandlePageContext,
   setShowHandlePageContext,
 }) {
   const dispatch = useDispatch();
 
-  const { address, isGetAddressLoading, isSubmitAddressLoading, totalPage, currentPage, nextPage } =
+  const { address, isGetAddressLoading, isSubmitAddressLoading, totalPage, currentPage } =
     useSelector((state) => {
       return {
         address: state.address.data,
         totalPage: state.address.totalPage,
         currentPage: state.address.currentPage,
-        nextPage: state.address.nextPage,
         isGetAddressLoading: state?.address?.isGetAddressLoading,
         isSubmitAddressLoading: state?.address?.isSubmitAddressLoading,
       };
     });
 
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   const handleShowAddressPageAction = (action, addressId) => {
     setShowHandlePageContext({ show: true, action });
@@ -113,6 +112,7 @@ useEffect(() => {
                     isButton
                     isWarningOutline
                     title="Jadikan Alamat Utama"
+                    isDisabled={isToastVisible}
                     onClick={() =>
                       handleShowAddressPageAction(
                         "Ubah Alamat Utama",
@@ -139,11 +139,7 @@ useEffect(() => {
           ))
         }
         <div className="flex justify-center mt-4">
-          <Button isButton
-            isPrimaryOutline 
-            title={`Muat Lebih Banyak`}
-            isLoading={isGetAddressLoading}
-          />    
+          <Pagination currentPage={currentPage} setPage={setPage} totalPage={totalPage}/>
         </div>
       </div>
     );
@@ -177,6 +173,7 @@ useEffect(() => {
         selectedAddress={selectedAddress}
         isSubmitAddressLoading={isSubmitAddressLoading}
         handleCloseAddressPageAction={handleCloseAddressPageAction}
+        setIsToastVisible={setIsToastVisible}
       />
     );
   }

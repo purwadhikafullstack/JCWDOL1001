@@ -3,7 +3,6 @@ import { getProducts } from "../../store/slices/product/slices";
 import { getCategory } from "../../store/slices/cat/slices";
 import { useEffect, useRef, useState } from "react";
 import { HiMagnifyingGlass, HiOutlineFunnel, HiXMark } from "react-icons/hi2";
-import { HiChevronRight, HiChevronLeft } from "react-icons/hi";
 
 import Button from "../../components/Button";
 import Card from "../../components/Card";
@@ -16,6 +15,7 @@ import "./index.css";
 import FilterDropdownMenu from "./filter.dropdown.menu";
 import { totalProductCart } from "../../store/slices/cart/slices";
 import { useLocation } from "react-router-dom";
+import Pagination from "../../components/PaginationV2";
 
 export default function Products({ user }) {
   const dispatch = useDispatch();
@@ -66,15 +66,6 @@ export default function Products({ user }) {
     setSelectedCategory(null)
   };
 
-  const handlePageClick = (type) => {
-    if (type === "prev") {
-      setPage(prevState => prevState - 1)
-    }
-    if (type === "next") {
-      setPage(prevState => prevState + 1)
-    }
-  };
-
   const handleSort = (sortBy, type) => {
     setSort({sortBy, type})
   };
@@ -113,16 +104,6 @@ export default function Products({ user }) {
     );
 
   }, [selectedCategory, search, sort, page ]);
-
-  // --------------------- PAGINATION SECTION -----------------------
-  const pagesToShow = 4;
-  const pagesBeforeAndAfter = Math.floor(pagesToShow / 2);
-
-  let startPage = current_page - pagesBeforeAndAfter;
-  let endPage = current_page + pagesBeforeAndAfter;
-
-  startPage = Math.max(1, startPage);
-  endPage = Math.min(total_page, endPage);
   
   return (
     <>
@@ -244,46 +225,7 @@ export default function Products({ user }) {
             </div>
 
             {total_page > 1 &&
-              <div className="col-span-full mt-10 flex select-none items-center justify-center gap-6 font-semibold">
-                <Button
-                  className={`flex items-center  ${
-                    +current_page === 1
-                      ? "cursor-auto text-slate-400"
-                      : "text-dark hover:text-primary"
-                  }`}
-                  onClick={() => handlePageClick("prev")}
-                  isDisabled={+current_page === 1}
-                >
-                  <HiChevronLeft className=" text-xl " /> Prev
-                </Button>
-
-                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                  <Button
-                    key={startPage + index}
-                    className={`flex items-center ${
-                      current_page === startPage + index
-                        ? "cursor-auto text-slate-400"
-                        : "text-dark hover:text-primary"
-                    }`}
-                    onClick={() => setPage(startPage + index)}
-                    isDisabled={current_page === startPage + index}
-                  >
-                    {startPage + index}
-                  </Button>
-                ))}
-
-                <Button
-                  className={`flex items-center  ${
-                    +current_page === total_page
-                      ? "cursor-auto text-slate-400"
-                      : "text-dark hover:text-primary"
-                  }`}
-                  onClick={() => handlePageClick("next")}
-                  isDisabled={+current_page === total_page}
-                >
-                  Next <HiChevronRight className="text-xl " />
-                </Button>
-              </div>
+              <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
             }
           </div>
         </div>

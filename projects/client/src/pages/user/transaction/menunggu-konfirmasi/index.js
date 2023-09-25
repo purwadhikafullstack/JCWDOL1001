@@ -5,7 +5,6 @@ import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
-import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
 import ModalDetailTransaction from "./modal.detail.transaction";
 import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
@@ -164,15 +163,6 @@ export default function MenungguKonfirmasi({
           handleShowModal={handleShowModal}
         />
       }
-
-      {showModal.context === "Batalkan Pesanan" && 
-          <ModalBatalkanPesanan 
-            selectedTransaction={selectedTransaction} 
-            isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
-            handleShowModal={handleShowModal}
-            handleCloseModal={handleCloseModal}
-          />
-        }
 
       </Modal>
     </>
