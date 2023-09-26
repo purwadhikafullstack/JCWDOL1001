@@ -4,6 +4,7 @@ const { Categories } = require("./category.js")
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./transaction.js")
 const { Discount, Discount_Product, Discount_Transaction } = require("./discount.js")
 const { Cart} = require("./cart.js")
+const { Forum } = require("./forum.js")
 
 // @define relation
 //acc-address, one to many
@@ -18,6 +19,8 @@ User_Profile.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId
 //status-account
 User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})
 User_Account.belongsTo(User_Status, {targetKey : "status", foreignKey : "status"})
+
+User_Address.belongsTo(User_Profile, {targetKey : "userId", foreignKey : "userId"})
 
 
 Product_List.belongsToMany(Categories, {
@@ -93,6 +96,9 @@ Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"
 User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
 Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
 
+Forum.belongsTo(User_Profile,{foreignKey:"userId",otherKey:"adminId"})
+User_Profile.hasMany(Forum,{foreignKey:"userId",otherKey:"adminId"})
+
 
 module.exports = { 
     User_Account, 
@@ -113,5 +119,6 @@ module.exports = {
     Discount_Product,
     Discount_Transaction,
     Transaction_Status,
-    Cart
+    Cart,
+    Forum
 }

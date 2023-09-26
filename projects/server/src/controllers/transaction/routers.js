@@ -13,6 +13,7 @@ router.get("/cart/:userId", verifyUser, transaction.getCheckoutProducts)
 router.get("/status", verifyUser, transaction.getTransactionStatus)
 router.post("/checkout", verifyUser, transaction.createTransactions)
 router.patch("/upload-payment-proof/:transactionId", verifyUser, uploader.single("file"), transaction.uploadPaymentProof)
+router.get("/report/:statusId", transaction.transactionReport)
 router.get("/:statusId", verifyUser,  transaction.getTransactions)
 
 module.exports = router

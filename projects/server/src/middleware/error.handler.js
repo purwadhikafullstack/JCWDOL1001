@@ -29,6 +29,9 @@ const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
 const TRANSACTION_NOT_FOUND = "Transaction not found"
+const DATA_NOT_FOUND = "Data not found"
+const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
+const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -94,5 +97,8 @@ module.exports = {
     VOUCHER_CODE_EMPTY,
     VOUCHER_NEED_PRODUCT,
     VOUCHER_NEED_AMOUNT,
-    TRANSACTION_NOT_FOUND
+    TRANSACTION_NOT_FOUND,
+    DATA_NOT_FOUND,
+    CANNOT_DELETE_QUESTION,
+    CANNOT_DELETE_ANSWERED_QUESTION,
 }

@@ -1,21 +1,26 @@
+const { Op, QueryTypes } = require("sequelize");
+const moment = require("moment")
+const cloudinary = require("cloudinary");
+const db = require("../../model/index")
+const { middlewareErrorHandling } = require("../../middleware");
 const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
 } = require("../../model/transaction");
 const { Cart } = require("../../model/cart.js");
-const { Op } = require("sequelize");
 const { Product_Detail, Product_List } = require("../../model/product");
-const { middlewareErrorHandling } = require("../../middleware");
-const cloudinary = require("cloudinary");
-const { User_Address } = require("../../model/user");
+const { User_Address, User_Profile } = require("../../model/user");
 
 const getTransactions = async (req, res, next) => {
   try {
     const { userId } = req.user;
     const { statusId } = req.params;
 
+    const {startFrom, endFrom, sortDate, sortTotal, } = req.query
+
     let whereCondition = {};
+    const sort = []
 
     if (userId === 1) {
       whereCondition = { userId: { [Op.not]: 1 }, statusId };
@@ -23,12 +28,22 @@ const getTransactions = async (req, res, next) => {
       whereCondition = { userId, statusId };
     }
 
+    if(req.query.startFrom) {
+      whereCondition.createdAt = {
+        [Op.gte]: moment(startFrom).format("YYYY-MM-DD HH:mm:ss"),
+        [Op.lte]: moment(endFrom).add(1,"days").format("YYYY-MM-DD HH:mm:ss"),
+      }
+    }
+
+    if(sortDate) sort.push(['updatedAt',sortDate])
+    if(sortTotal) sort.push(['total',sortTotal])
+
     const transaction = await Transaction_List?.findAll({
       include: [
-        {
-          model: Transaction_Status,
-          as: "transactionStatus",
-        },
+        // {
+        //   model: Transaction_Status,
+        //   as: "transactionStatus",
+        // },
         {
           model: Transaction_Detail,
           as: "transactionDetail",
@@ -37,11 +52,12 @@ const getTransactions = async (req, res, next) => {
             as: "listedTransaction",
           },
         },
-        {
-          model: User_Address,
-        }
+        // {
+        //   model: User_Address,
+        // }
       ],
       where: whereCondition,
+      order : sort
     });
 
 
@@ -55,6 +71,34 @@ const getTransactions = async (req, res, next) => {
     next(error);
   }
 };
+
+const transactionReport = async (req, res, next) => {
+    try {
+        const {startFrom, endFrom} = req.query
+        const {statusId} = req.params
+
+        const transaction =  await db.sequelize.query(
+            `SELECT 
+              SUM(total) as total, 
+              DATE_Format(createdAt,'%Y-%m-%d') as tanggal
+            FROM apotek.transaction_lists
+            ${statusId ? `WHERE statusId LIKE '${statusId}'` : ""}
+            GROUP BY tanggal
+            ${startFrom ? `HAVING tanggal BETWEEN '${startFrom}' AND '${endFrom}'` : ""}
+            ORDER BY tanggal ASC;`, 
+            { type: QueryTypes.SELECT }
+        )
+
+        res.status(200).json({
+            type: "success", 
+            message: "Data berhasil dimuat", 
+            report: transaction
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
 
 const createTransactions = async (req, res, next) => {
   try {
@@ -190,6 +234,7 @@ const getTransactionStatus = async (req, res, next) => {
 
 module.exports = {
   getTransactions,
+  transactionReport,
   createTransactions,
   getCheckoutProducts,
   uploadPaymentProof,
