@@ -14,6 +14,14 @@ const getTransactions = async (req, res, next) => {
   try {
     const { userId } = req.user;
     const { statusId } = req.params;
+    const { page } = req.query;
+
+    const limit = 10;
+        
+    const options = {
+      offset: page > 1 ? (page - 1) * limit : 0,
+      limit,
+    }
 
     let whereCondition = {};
 
@@ -50,7 +58,8 @@ const getTransactions = async (req, res, next) => {
         },
       ],
       where: whereCondition,
-      order:[["updatedAt" , "DESC"]]
+      order:[["updatedAt" , "DESC"]],
+      ...options
     });
 
     if (!transaction) throw ({
@@ -63,10 +72,16 @@ const getTransactions = async (req, res, next) => {
       delete transaction?.dataValues?.message;
     }
 
+    const totalTransactions = await User_Address.count()
+    const totalPage = Math.ceil(totalTransactions / limit)
+
     res.status(200).json({
       type: "success",
       message: "Here are your order lists",
-      userId,
+      totalPage,
+      currentPage: +page,
+      nextPage: +page === totalPage ? null : +page + 1,
+      // userId,
       data: transaction,
     });
   } catch (error) {
