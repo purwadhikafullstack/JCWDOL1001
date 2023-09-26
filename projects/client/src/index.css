@@ -17,6 +17,10 @@
     @apply text-lg font-bold text-dark md:text-xl;
   }
 
+  h3.subtitle {
+    @apply text-base font-bold text-dark md:text-lg;
+  }
+
 
   ::-webkit-scrollbar {
     @apply h-0 w-2;

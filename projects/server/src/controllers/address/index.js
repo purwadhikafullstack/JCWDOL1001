@@ -4,23 +4,44 @@ const fs = require("fs")
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 
 const { InputAddressValidationSchema } = require("./validation.js")
-const { User_Address } = require("../../model/relation.js");
+const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
 const getAddress = async (req, res, next) =>{
     try {
         const userId = req.user.userId
+        const { page } = req.query;
+
+        const limit = 10;
         
-        const addresses = await User_Address.findAll({where: { userId, isDeleted : 0 }, order:[["isPrimary" , "DESC"]]})
+        const options = {
+            offset: page > 1 ? (page - 1) * limit : 0,
+            limit,
+        }
+        
+        const addresses = await User_Address.findAll({
+            where: { userId, isDeleted : 0 }, 
+            order:[["isPrimary" , "DESC"]],
+            ...options
+        })
 
         if (!addresses) {
             throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
         }
 
+        const totalAddress = await User_Address.count()
+        const totalPage = Math.ceil(totalAddress / limit)
+
         res.status(200).json({ 
             message : "Address fetched!",
-            data: addresses
+            data: {
+                totalPage,
+                currentPage: +page,
+                nextPage: +page === totalPage ? null : +page + 1,
+                totalAddress,
+                data: addresses
+            }
         })
     } catch (error) {
         next(error)
@@ -178,44 +199,26 @@ const deleteAddress = async (req, res, next) =>{
 const getListProvince = async (req, res, next) => {
     try {
         
-        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + "province",
-        { 
-            headers : 
-            {
-                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-                "Content-Type": "application/x-www-form-urlencoded"
-        }
-        }
-        )
-        const {data} = response;
-        const {rajaongkir} = data
+        const provinces = await Rajaongkir_Provinces.findAll()
+
         res.status(200).json({ 
-            message : "Data Province from RajaOngkir",
-            data: rajaongkir.results
+            message : "Data Provinces from RajaOngkir",
+            data: provinces
         })
     } catch (error) {
         next(error)
     }
 }
+
 const getListCity = async (req, res, next) => {
     try {
-        const {province} = req.query
-        const response = await Axios.get(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL + 
-            `city?province=${province}`,
-        { 
-            headers : 
-            {
-                "key" : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-                "Content-Type": "application/x-www-form-urlencoded"
-        }
-    })
+        const { province } = req.query
+        const cities = await Rajaongkir_Cities.findAll({where : { province_id : province}})
 
-    const {data} = response;
-    const {rajaongkir} = data
-    res.status(200).json({ 
-        message : "Data City based on Province from RajaOngkir",
-        data: rajaongkir.results
-    })
+        res.status(200).json({ 
+            message : "Data Cities based on Province from RajaOngkir",
+            data: cities
+        })
     } catch (error) {
         next(error)
     }

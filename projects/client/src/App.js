@@ -21,6 +21,7 @@ import UploadRecipePage from "./pages/upload-recipe";
 import DiscountPage from "./pages/admin/discount";
 import UserPage from "./pages/user";
 import AdminTransaction from "./pages/admin/transaction";
+import { getOngoingTransactions } from "./store/slices/transaction/slices";
 import CheckoutPage from "./pages/user/transaction/checkout";
 
 function App() {
@@ -30,13 +31,15 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin } = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading } = useSelector(state => {
 		return {
 			user : state?.auth,
-      isLogin : state?.auth?.isLogin
+      isLogin : state?.auth?.isLogin,
+      ongoingTransactions : state?.transaction?.ongoingTransactions,
+      isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
 		}
 	})
-
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,10 +53,17 @@ function App() {
       );
       setMessage(data?.message || "");
     })();
+    
       dispatch(keepLogin()).finally(() => {
         setLoading(false);
       });
   }, [] )
+
+  useEffect(()=>{
+    if (isLogin) {
+      dispatch(getOngoingTransactions())
+    }
+  }, [isUpdateOngoingTransactionLoading, isLogin])
 
   if (loading) {
     return (
@@ -65,7 +75,7 @@ function App() {
 
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} />
+      <Navbar user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions?.totalTransactions}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
 
@@ -88,14 +98,14 @@ function App() {
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
-              <Route path="/admin/transaction" element={<AdminTransaction />}/>
+              <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
             </>
           )}
 
           {!user?.role || user?.role == 2 && (
             <>
               <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
-              <Route path="/user/:context" element={<UserPage user={user}/>} />
+              <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions}/>} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
               <Route path="/checkout" element={<CheckoutPage/>}/>

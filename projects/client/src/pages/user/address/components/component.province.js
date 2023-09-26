@@ -4,10 +4,10 @@ function ListOfProvince({ province = [], selected }) {
   return province.map((item) => {
     return (
       <option
-        value={[item.province_id, item.province]}
-        selected={item.province === selected ? "selected" : ""}
+        value={[item.province_id, item.province_name]}
+        selected={item.province_name === selected ? "selected" : ""}
       >
-        {item.province}
+        {item.province_name}
       </option>
     );
   });
@@ -17,6 +17,8 @@ export default function GetProvince({
   province = [],
   onProvinceChange = (provinceParams) => {},
   selected,
+  onChange,
+  errorInput
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const selectRef = useRef(null);
@@ -25,11 +27,11 @@ export default function GetProvince({
     <div className="flex w-full flex-col">
       <span>Provinsi</span>
       <select
-        className="w-full rounded-lg border border-slate-300 bg-inherit px-2 py-2 outline-none
-            focus:border-primary focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary
-            "
+        className={`w-full rounded-lg border bg-inherit px-2 py-2 outline-none
+            ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
         ref={selectRef}
         onChange={() => {
+          onChange()
           onProvinceChange(selectRef?.current?.value);
         }}
         onClick={() => setIsDropdownOpen(true)}

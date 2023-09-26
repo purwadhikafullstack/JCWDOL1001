@@ -13,6 +13,7 @@ export default function UserNavMenu({
   setIsLogin,
   user,
   handleShowModal,
+  ongoingTransactions
 }) {
   const {total}= useSelector(state=>{
     return {
@@ -41,8 +42,6 @@ export default function UserNavMenu({
     setIsMenuVisible(false)
   }
 
-  useEffect(()=>{},[user])
-
   return (
     <div className={`nav-menu-wrapper justify-end  ${isLogin ? "lg:w-1/3" :""}`} >
       <div className={`nav-menu mr-8 w-full ${ isLogin ? "border-primary/70 pr-8 lg:border-r-[1px]" :"" }`} >
@@ -65,7 +64,7 @@ export default function UserNavMenu({
               />
             </div>
           : 
-            <UserNavMenuItems user={user} isLogin={isLogin} />
+            <UserNavMenuItems user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions}/>
         }
       </div>
 
@@ -90,19 +89,19 @@ export default function UserNavMenu({
               className={`profile-img-wrapper relative row-start-2 flex w-full items-center gap-2 ${isAccountVerified ? "lg:border lg:border-danger lg:rounded-full lg:p-0.5" : null }`}
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
-              onClick={() => navigate("/user/profile")}
-            >
+              >
               <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
                 <img
                   src=""
                   alt=""
                   className="h-full w-full object-cover"
                 />
+                <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">{ongoingTransactions}</span>
               </div>
 
               <AnimatePresence>
                 {
-                  isMenuVisible ?
+                  isMenuVisible &&
                     <motion.div
                       initial={{
                         opacity: 0,
@@ -121,7 +120,7 @@ export default function UserNavMenu({
                       className="absolute right-0 top-full pt-2"
                     >
                       <div className="rounded-lg border bg-slate-100 px-6 py-4 shadow-lg">
-                        <div className="" onClick={() => navigate("/profile")}>
+                        <div className="" onClick={() => navigate("/user/profile")}>
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
                             <div className="h-12 w-12 overflow-hidden rounded-full">
                               <img
@@ -145,6 +144,19 @@ export default function UserNavMenu({
                         <div className="flex flex-col gap-2 pt-4">
                           <Button
                             isLink
+                            path="/user/transaction"
+                            className="hover:text-primary flex justify-between"
+                          >
+                            <span>Transaksi</span>
+                            {ongoingTransactions > 0 &&
+                              <span className={`flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
+                              {ongoingTransactions}
+                              </span>
+                            }
+                          </Button>
+                          <Button
+                            isLink
+                            path="/upload-recipe"
                             title="Unggah Resep"
                             className="hover:text-primary"
                           />
@@ -166,7 +178,6 @@ export default function UserNavMenu({
                         </div>
                       </div>
                     </motion.div>
-                  : ""
                 }
               </AnimatePresence>
             </div>

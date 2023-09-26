@@ -6,11 +6,16 @@ export default function ChangePrimaryAddressPage({
   selectedAddress,
   isSubmitAddressLoading,
   handleCloseAddressPageAction,
+  setIsToastVisible
 }) {
   const dispatch = useDispatch();
 
   const handleChangePrimaryAddress = (id) => {
     dispatch(updatePrimaryAddress(id));
+
+    setTimeout(()=>{
+      setIsToastVisible(false)
+    }, 2000)
   };
 
   return (
@@ -42,7 +47,10 @@ export default function ChangePrimaryAddressPage({
             isButton
             isWarning
             isLoading={isSubmitAddressLoading}
-            onClick={() => handleChangePrimaryAddress(selectedAddress.addressId)}
+            onClick={() => {
+              handleChangePrimaryAddress(selectedAddress.addressId)
+              setIsToastVisible(true)
+            }}
           />
         </div>
       </div>

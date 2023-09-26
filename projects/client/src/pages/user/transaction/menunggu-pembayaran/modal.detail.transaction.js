@@ -1,19 +1,19 @@
-import { HiArrowLongLeft } from "react-icons/hi2";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
 
-export default function PageDetailTransaction({
+export default function ModalDetailTransaction({
   selectedTransaction,
   handleShowModal,
+  handleCloseModal
 }) {
-  const transactionDetail = selectedTransaction.transactionDetail;
+  const transactionDetail = selectedTransaction?.transactionDetail;
+  const shippingAddress = selectedTransaction?.user_address;
   return (
     <>
-      <h3 className="title mt-4">Detail Transaksi</h3>
       <div
         key={selectedTransaction.transactionId}
-        className="mb-4 cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
+        className="mb-4 rounded-lg border p-4 shadow-md duration-300"
       >
         <div className="flex justify-between items-center">
           <p className="mb-4 text-sm">
@@ -23,8 +23,20 @@ export default function PageDetailTransaction({
             {selectedTransaction.createdAt}
           </p>
         </div>
-        <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-          {transactionDetail.map((product, index) => (
+
+        <div className="">
+          <h3 className="subtitle">Alamat Pengiriman</h3>
+          <div className="">
+            <p>{shippingAddress.address}</p>
+            <p>{shippingAddress.district}, {shippingAddress.city}, {shippingAddress.province}, {shippingAddress.postalCode}</p>
+            <p>{shippingAddress.contactPhone} ({shippingAddress.contactName})</p>
+            <p></p>
+          </div>
+        </div>
+
+        <h3 className="subtitle mt-4">Detail Pesanan</h3>
+        <div className={`my-2 flex flex-col gap-1 overflow-auto max-h-[40vh]`}>
+          {transactionDetail?.map((product, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <img
                 className="w-14 border"
@@ -46,7 +58,7 @@ export default function PageDetailTransaction({
           ))}
         </div>
 
-        <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
+        <div className="mt-2 flex flex-col md:flex-row md:items-center justify-between gap-2 border-t-2 pt-2">
           <div className="">
             <p className="text-sm">Total Belanja</p>
             <p className="font-bold">
@@ -54,7 +66,10 @@ export default function PageDetailTransaction({
             </p>
           </div>
 
-          <Button isButton isPrimary title={`Unggah Bukti Pembayaran`} onClick={handleShowModal}/>
+          <div className="flex gap-2 justify-end">
+            <Button isButton isPrimary title={`Kembali`} onClick={handleCloseModal}/>
+            <Button isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
+          </div>
         </div>
       </div>
     </>

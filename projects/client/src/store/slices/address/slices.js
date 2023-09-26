@@ -1,15 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
 import { toast } from "react-toastify"
-import Axios from "axios";
-
 
 export const getAddress = createAsyncThunk(
     "address/getAddress",
     async (payload, { rejectWithValue }) => {
         try {
+            const page = payload
 
-            const { data } = await api.get("/address/")
+            const { data } = await api.get(`/address/?page=${page}`)
 
             return data
         } catch (error) {
