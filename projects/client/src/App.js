@@ -22,6 +22,7 @@ import DiscountPage from "./pages/admin/discount";
 import UserPage from "./pages/user";
 import AdminTransaction from "./pages/admin/transaction";
 import { getOngoingTransactions } from "./store/slices/transaction/slices";
+import CheckoutPage from "./pages/user/transaction/checkout";
 
 function App() {
   const { pathname } = useLocation();
@@ -107,6 +108,7 @@ function App() {
               <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions}/>} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
+              <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
           )}
           <Route path="/verify/*" element={<Verification/>} />     

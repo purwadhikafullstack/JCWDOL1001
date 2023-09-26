@@ -49,7 +49,6 @@ export default function Transaction({
           <MenungguKonfirmasi
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
-            setActiveTab={setActiveTab}
           />
         );
       case 3:

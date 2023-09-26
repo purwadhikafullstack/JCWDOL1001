@@ -12,7 +12,6 @@ import SkeletonTransaction from "../component.skeleton";
 export default function MenungguKonfirmasi({
   statusId,
   statusDesc,
-  setActiveTab
 }) {
   const dispatch = useDispatch();
   const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
@@ -43,11 +42,8 @@ export default function MenungguKonfirmasi({
     }
   };
 
-  const handleCloseModal = (tab) => {
-    if (tab) {
-      setActiveTab(tab);
-    }
-    
+  const handleCloseModal = () => {
+
     setShowModal({show: false, context:null});
     
     dispatch(resetSuccessTransaction())
