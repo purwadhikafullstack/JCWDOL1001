@@ -6,6 +6,7 @@ import { HiXMark } from "react-icons/hi2";
 import LoginContext from "./context/login.context";
 import RegisterContext from "./context/register.context";
 import ForgotContext from "./context/forgot.password.context";
+import Button from "../Button";
 
 export default function Modal({
   showModal,
@@ -15,7 +16,9 @@ export default function Modal({
   children,
   disableOutside,
   fullWidth = false,
-  halfWidth = false
+  halfWidth = false,
+  showCloseButton = true,
+  closeButtonText = false,
 }) {
   const [login, setLogin] = useState(false);
   const [regist, setRegist] = useState(false);
@@ -83,23 +86,29 @@ export default function Modal({
             animate={{ translateY: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
             exit={{ translateY: -20, opacity: 0 }}
-            className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-100 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
+            className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-50 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
-              <h3 className="title">
+              <h3 className="subtitle">
                 {titleModal ? titleModal : title}
               </h3>
-              <span
+              {showCloseButton && 
+                <span
                 className="cursor-pointer"
-                onClick={() => {
-                  closeModal();
-                  setTitle("");
-                  setLogin(false);
-                  setRegist(false);
-                }}
-              >
-                <HiXMark className="text-3xl" />
-              </span>
+                  onClick={() => {
+                    closeModal();
+                    setTitle("");
+                    setLogin(false);
+                    setRegist(false);
+                  }}
+                  >
+                    {closeButtonText ? 
+                      <Button isButton isPrimaryOutline >Tutup</Button> 
+                    :
+                      <HiXMark className="text-3xl" />
+                    }
+                </span>
+              }
             </div>
 
             <div className="py-4">

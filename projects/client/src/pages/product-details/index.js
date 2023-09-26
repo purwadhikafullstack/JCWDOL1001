@@ -11,16 +11,18 @@ import Card from "../../components/Card";
 import Modal from "../../components/Modal";
 import UploadRecipeButton from "../../components/UploadRecipeButton";
 import { getCart, totalProductCart, updateCart } from "../../store/slices/cart/slices";
+import LoadingProductDetail from "./loading.product.detail";
 
 export default function ProductDetail({user}) {
   const dispatch = useDispatch()
   const { id } = useParams()
 
-  const { product, products,cart } = useSelector((state)=>{
+  const { product, products, cart, isGetProductsLoading } = useSelector((state)=>{
     return {
       product: state?.products.productDetail,
       products: state?.products.data,
-      cart: state?.cart?.cart
+      cart: state?.cart?.cart,
+      isGetProductsLoading: state?.products.isGetProductsLoading,
     }
   })
   const [qty, setQty] = useState(1);
@@ -92,6 +94,7 @@ export default function ProductDetail({user}) {
   
   useEffect(()=>{
     dispatch(getProductById(id))
+
     dispatch(
       getProducts({
         page: 1,
@@ -102,23 +105,16 @@ export default function ProductDetail({user}) {
       })
     );
     dispatch(getCart())
+
   },[id])
 
+  if (isGetProductsLoading) {
+    return <LoadingProductDetail />
+  }
 
   return (
     <>
       <div className="container py-24">
-        {/* <div className="flex gap-2 text-dark">
-          <Button
-            isLink
-            path="/products"
-            title="Produk"
-            className="font-semibold text-primary"
-          />
-          <span className="select-none">/</span>
-          <span className="select-none">{product?.productName}</span>
-        </div> */}
-
         <div className="grid grid-cols-1 lg:mt-8 lg:grid-cols-5 lg:gap-8">
           <div className="col-span-2 aspect-[5/4] w-full">
             <img
@@ -130,34 +126,48 @@ export default function ProductDetail({user}) {
 
           <div className="col-span-2 flex w-full flex-col gap-2">
             <h3 className="title">{product?.productName}</h3>
-            {product?.discount ? (
+              {product?.discountProducts && product?.discountProducts.length !== 0 && !product?.discountProducts[0]?.discount.oneGetOne
+          ? 
+            <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <span className="rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-                  {product?.discount}%
+                <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
+                  {product?.discountProducts[0].discount.isPercentage ? `${product?.discountProducts[0].discount.discountAmount}%` : 
+                  // `${Math.round((product?.discountProducts[0].discount.discountAmount/product?.productPrice)*100)}%` 
+                  `Potongan Harga ${formatNumber(product?.discountProducts[0]?.discount.discountAmount)}`
+                  }
                 </span>
+              
                 <h3 className="text-sm text-slate-400 line-through">
-                  Rp. {formatNumber(product?.productPrice)}
+                Rp.  {formatNumber(product?.productPrice)}
                 </h3>
               </div>
-            ) : 
-              null
-            }
-            <h3 className="text-xl lg:text-2xl font-bold text-primary">
-              Rp.{" "}
-              {product?.discount
-              //bisa letakin product.endingPrice disini
-                ? formatNumber(product?.discount * product?.productPrice)
-                : formatNumber(product?.productPrice)}
-            </h3>
+              
+            </div>
+            
+          : product?.discountProducts[0]?.discount.oneGetOne && 
 
-            <div className="mt-4">
-              <h3 className="title">Deskripsi</h3>
+            <div className="flex flex-col max-w-md">
+              <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
+                Buy One Get One
+              </span>
+            </div>
+          }
+
+            <h3 className="text-xl lg:text-2xl font-bold text-primary">
+              Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice)}
+            </h3>
+            <div className="mt-4 w-4/5">
+              <h3 className="subtitle">Aturan Pakai</h3>
+              <p>{product?.productDosage}</p>
+            </div>
+            <div className="mt-4 w-4/5">
+              <h3 className="subtitle">Deskripsi</h3>
               <p>{product?.productDescription}</p>
             </div>
           </div>
 
           <div className="col-span-1 mt-4 flex h-fit w-full flex-col gap-4 rounded-lg border p-4 shadow-lg lg:mt-0">
-            <h3 className="title">Mau beli berapa?</h3>
+            <h3 className="subtitle">Mau beli berapa?</h3>
             <div className="flex justify-center gap-2">
               <Button
                 isSmall
@@ -181,19 +191,16 @@ export default function ProductDetail({user}) {
             </div>
 
             <div className="flex items-center justify-between">
-              <h3 className="text-sm text-gray-600 ">Stock : {stock}</h3>
+              <h3 className="text-sm text-gray-600 ">
+                Stock: <span className="font-bold text-primary">{product?.productUnits[0]?.product_detail.quantity}</span>
+              </h3>
 
             </div>
             
-            <div className="flex items-center justify-between">
+            <div className="flex lg:flex-col justify-between">
               <h3 className="">Subtotal</h3>
               <h3 className="text-lg font-bold text-primary">
-                Rp.{" "}
-                {product?.discount
-                  ? formatNumber(
-                    //bisa letakin ending price disini
-                      product?.discount * product?.productPrice * qty)
-                  : formatNumber(product?.productPrice * qty)}
+                 Rp. {formatNumber((product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice) * qty )}
               </h3>
             </div>
 
@@ -208,7 +215,7 @@ export default function ProductDetail({user}) {
               isLink
               path="/products"
               title="Lihat Semua"
-              className="see-all"
+              className="text-primary font-semibold"
             />
           </div>
 
@@ -216,13 +223,14 @@ export default function ProductDetail({user}) {
             {products
               .map((product) => (
                 <Card
-                  key={product?.productId}
-                  productId={product?.productId}
-                  productName={product?.productName}
-                  productPrice={product?.productPrice}
-                  productDiscount={product?.discount}
-                  productPicture={product?.productPicture}
-                  productStock={product?.stock}
+                  key={product.productId}
+                  productId={product.productId}
+                  productName={product.productName}
+                  productPrice={product.productPrice}
+                  productDiscount={product.discountProducts}
+                  productPicture={product.productPicture}
+                  productStock={product.productStock}
+                  productCategories={product.productCategories}
                 />
               ))
               .slice(0, 6)}

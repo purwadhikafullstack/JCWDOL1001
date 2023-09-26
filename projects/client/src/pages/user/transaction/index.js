@@ -10,10 +10,10 @@ import PesananDiproses from "./pesanan-diproses";
 import PesananDikirim from "./pesanan-dikirim";
 import PesananDibatalkan from "./pesanan-dibatalkan";
 import PesananDiterima from "./pesanan-diterima";
+import transaction from "../../../store/slices/transaction";
 
 export default function Transaction({
-  showHandlePageContext,
-  setShowHandlePageContext,
+  ongoingTransactions
 }) {
   const dispatch = useDispatch();
   const { transactionStatus } = useSelector((state) => {
@@ -21,17 +21,16 @@ export default function Transaction({
       transactionStatus: state.transaction?.transactionStatus,
     };
   });
-
-  useEffect(() => {
-    dispatch(getTransactionStatus());
-  }, []);
-
+  
+    useEffect(() => {
+      dispatch(getTransactionStatus());
+    }, []);
+  
   const [activeTab, setActiveTab] = useState(1);
-  const [showStatusButton, setShowStatusButton] = useState(true);
-
+  
   function renderTabContent(tabId) {
     const tabStatus = transactionStatus.find((status) => status.statusId === tabId);
-
+    
     if (!tabStatus) {
       return <div>Something was wrong</div>;
     }
@@ -42,9 +41,7 @@ export default function Transaction({
           <MenungguPembayaran
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
-            setShowStatusButton={setShowStatusButton}
-            showHandlePageContext={showHandlePageContext}
-            setShowHandlePageContext={setShowHandlePageContext}
+            setActiveTab={setActiveTab}
           />
         );
       case 2:
@@ -70,21 +67,22 @@ export default function Transaction({
         );
       case 5:
         return (
-          <PesananDibatalkan
-            statusId={tabStatus.statusId}
-            statusDesc={tabStatus.statusDesc}
+          <PesananDikirim
+          statusId={tabStatus.statusId}
+          statusDesc={tabStatus.statusDesc}
+          setActiveTab={setActiveTab}
           />
-        );
+      );
       case 6:
         return (
-          <PesananDikirim
+          <PesananDiterima
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
           />
         );
       case 7:
         return (
-          <PesananDiterima
+          <PesananDibatalkan
             statusId={tabStatus.statusId}
             statusDesc={tabStatus.statusDesc}
           />
@@ -95,24 +93,31 @@ export default function Transaction({
   }
 
   return (
-    <div>
-      {showStatusButton && (
-        <>
-          <h3 className="title">Transaksi</h3>
-          <div className="mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
-            {transactionStatus.map((tab) => (
-              <Button
-                key={tab.statusId}
-                isButton
-                isPrimaryOutline={tab.statusId !== activeTab}
-                isPrimary={tab.statusId === activeTab}
-                title={tab.statusDesc}
-                onClick={() => setActiveTab(tab.statusId)}
-              />
-            ))}
-          </div>
-        </>
-      )}
+    <div className="">
+      <h3 className="title">Transaksi</h3>
+      <div className="mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
+        {transactionStatus.map((tab) => {
+          const ongoingStatus = ongoingTransactions?.transactions?.find(item => item.statusId === tab.statusId);
+          return(
+            <Button
+            key={tab.statusId}
+            isButton
+            isPrimaryOutline={tab.statusId !== activeTab}
+            isPrimary={tab.statusId === activeTab}
+            className={`relative`}
+            onClick={() => setActiveTab(tab.statusId)}
+            >
+            {tab.statusDesc}
+            
+            {ongoingStatus?.total > 0 &&
+              <span className="absolute text-white right-[2px] h-4 w-4 bg-danger top-[1px] flex rounded-full items-center justify-center text-xs">
+                {ongoingStatus?.total}
+              </span>
+            }
+          </Button>
+            )
+        })}
+      </div>
       <div className="">{renderTabContent(activeTab)}</div>
     </div>
   );

@@ -58,7 +58,7 @@ export default function Categories({ categories }) {
           {categories.map((category) => (
             <Button
               onClick={()=>{navigate("/products",{ state: { categorySelected: category }})}}
-              key={category.id}
+              key={category.categoryId}
               className="flex w-48 flex-shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6"
             >
               <div className="h-8 w-8 md:h-10 md:w-10">

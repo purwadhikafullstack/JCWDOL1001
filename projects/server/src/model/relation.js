@@ -5,6 +5,7 @@ const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./
 const { Discount, Discount_Product, Discount_Transaction } = require("./discount.js")
 const { Cart} = require("./cart.js")
 const { Forum } = require("./forum.js")
+const { Rajaongkir_Cities, Rajaongkir_Provinces} = require("./rajaongkir.js")
 
 // @define relation
 //acc-address, one to many
@@ -120,5 +121,7 @@ module.exports = {
     Discount_Transaction,
     Transaction_Status,
     Cart,
-    Forum
+    Forum,
+    Rajaongkir_Cities,
+    Rajaongkir_Provinces,
 }
