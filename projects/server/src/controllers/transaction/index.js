@@ -72,7 +72,7 @@ const getTransactions = async (req, res, next) => {
       delete transaction?.dataValues?.message;
     }
 
-    const totalTransactions = await User_Address.count()
+    const totalTransactions = await Transaction_List.count({where: whereCondition})
     const totalPage = Math.ceil(totalTransactions / limit)
 
     res.status(200).json({
@@ -81,7 +81,6 @@ const getTransactions = async (req, res, next) => {
       totalPage,
       currentPage: +page,
       nextPage: +page === totalPage ? null : +page + 1,
-      // userId,
       data: transaction,
     });
   } catch (error) {

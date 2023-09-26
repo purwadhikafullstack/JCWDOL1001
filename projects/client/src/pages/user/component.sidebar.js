@@ -97,7 +97,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
               {menu.icon}
               <span>{menu.title}</span>
 
-              {menu.notification &&
+              {menu.notification > 0 &&
                   <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-0 text-white group-hover:right-1 text-xs">{menu.notification}</span>
               }
             </Button>

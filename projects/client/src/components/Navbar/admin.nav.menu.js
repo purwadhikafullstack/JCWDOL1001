@@ -90,7 +90,7 @@ export default function AdminNavMenu({
                       {item.icon}
                       <span>{item.title}</span>
 
-                      {item.notification && (
+                      {item.notification > 0 && (
                         <span className="absolute right-1 lg:-right-2 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-xs text-white">
                           {Math.min(99, item.notification)}
                         </span>

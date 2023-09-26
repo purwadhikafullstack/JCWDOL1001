@@ -32,7 +32,7 @@ export default function Pagination({ currentPage, totalPage, setPage }) {
         onClick={() => handlePageClick("prev")}
         isDisabled={+currentPage === 1}
       >
-        <HiChevronLeft className=" text-xl " /> Prev
+        <HiChevronLeft className="" /> Prev
       </Button>
 
       {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
@@ -59,7 +59,7 @@ export default function Pagination({ currentPage, totalPage, setPage }) {
         onClick={() => handlePageClick("next")}
         isDisabled={+currentPage === totalPage}
       >
-        Next <HiChevronRight className="text-xl " />
+        Next <HiChevronRight />
       </Button>
     </div>
   )
