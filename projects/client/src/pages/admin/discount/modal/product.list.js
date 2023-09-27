@@ -56,7 +56,7 @@ export default function ProductList({
     
     return (
         <div className=" px-2 mt-5 rounded-md">
-            <h3 className="title mt-4 border-b-2 mb-3">Products List : </h3>
+            <h3 className="title mt-4 border-b-2 mb-3">Daftar Produk : </h3>
             <div
                 className="mb-2 flex flex-wrap gap-2"
             >
@@ -85,7 +85,7 @@ export default function ProductList({
                 isButton
                 isPrimary
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit mt-3" }`}
-                title = "Add Product"
+                title = "Tambah Produk"
                 onClick = {()=>setShowAllProduct(true)}
             />
             <AnimatePresence>
@@ -105,7 +105,7 @@ export default function ProductList({
                         className="h-fit w-full rounded-lg border bg-slate-100 p-4"
                     >
                         <div className="flex items-center justify-between">
-                            <h3 className="title">Choose Product</h3>
+                            <h3 className="title">Pilih Produk</h3>
                             <span
                                 className="cursor-pointer"
                                 onClick={() => setShowAllProduct(false)}
@@ -153,7 +153,7 @@ export default function ProductList({
                             isButton
                             isPrimary
                             isBLock
-                            title="Done"
+                            title="Selesai"
                             onClick={() => setShowAllProduct(false)}
                         />
                     </div>

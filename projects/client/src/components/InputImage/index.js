@@ -16,7 +16,7 @@ export default function InputImage({
   const onDrop = (acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > 1000000) {
-      toast.error("file too large. Max 1 MB", 
+      toast.error("Maksimal Gambar 1MB", 
           {
               position: "top-center",
               autoClose: 1000,
@@ -28,7 +28,6 @@ export default function InputImage({
               theme: "light",
           }
       )
-      // alert("file too large. Max 1 MB");
       return;
     }
     setFile(selectedFile);
@@ -60,7 +59,7 @@ export default function InputImage({
   return (
     <div className="flex h-fit w-full flex-col items-center justify-center px-4">
       <p className="text-dark mb-2 text-center text-lg font-semibold md:text-lg">
-        Upload Image
+        Unggah Gambar
       </p>
 
       <div
@@ -88,7 +87,7 @@ export default function InputImage({
 
             <Button
               onClick={removeImage}
-              title="Remove"
+              title="Hapus"
               isSmall
               isPrimaryOutline
               className="mt-2"
@@ -101,16 +100,16 @@ export default function InputImage({
 
                 <>
                   <span className="select-none">
-                    Drag & Drop your image here
+                    Tarik & Lepaskan Gambar Kamu Disini
                   </span>
                   <div className="flex items-center gap-2">
                     <hr className="h-[2px] w-full bg-slate-300" />
                     <p className="text-md mb-2 mt-2 text-center font-normal text-slate-400">
-                      Or
+                      Atau
                     </p>
                     <hr className="h-[2px] w-full bg-slate-300" />
                   </div>
-                  <Button onClick={open} title="Choose a file" isSmall isPrimary />
+                  <Button onClick={open} title="Pilih Gambar" isSmall isPrimary />
                 </>
                 )}
             </div>          

@@ -28,25 +28,25 @@ export default function AdminNavMenu({
 
   const menu = [
     {
-      title: "Products",
+      title: "Produk",
       path: "/admin/products",
       notification: null,
       icon: <HiSquares2X2 className="h-7 w-7 " />,
     },
     {
-      title: "Categories",
+      title: "Kategori",
       path: "/admin/categories",
       notification: null,
       icon: <FaList className="h-7 w-7 " />,
     },
     {
-      title: "Transaction",
+      title: "Transaksi",
       path: "/admin/transaction",
       notification: ongoingTransactions,
       icon: <HiBanknotes className="h-7 w-7 " />,
     },
     {
-      title: "Discount",
+      title: "Diskon",
       path: "/admin/discount",
       notification: null,
       icon: <BiSolidDiscount className="h-7 w-7 " />,
@@ -58,7 +58,7 @@ export default function AdminNavMenu({
       icon: <HiMiniChatBubbleOvalLeftEllipsis className="h-7 w-7 " />,
     },
     {
-      title: "Report",
+      title: "Laporan",
       path: "/admin/report",
       notification: null,
       icon: <HiClipboardDocumentList className="h-7 w-7 " />,
@@ -111,7 +111,7 @@ export default function AdminNavMenu({
                 >
                   <div className="flex w-max items-center gap-6 px-3 ">
                     <FaPowerOff className="h-7 w-7 " />
-                    <span>Log Out</span>
+                    <span>Keluar</span>
                   </div>
                 </Button>
               </li>

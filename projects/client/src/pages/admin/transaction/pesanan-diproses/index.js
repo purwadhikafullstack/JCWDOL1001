@@ -9,6 +9,7 @@ import ModalDetailTransaction from "./modal.detail.transaction";
 import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
 import ModalKonfirmasi from "./modal.konfirmasi";
+import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDiproses({
   statusId,
@@ -16,9 +17,11 @@ export default function PesananDiproses({
   setActiveTab
 }) {
   const dispatch = useDispatch();
-  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading, currentPage, totalPage } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
+      totalPage: state.transaction?.totalPage,
+      currentPage: state.transaction?.currentPage,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
       isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
     };
@@ -54,9 +57,10 @@ export default function PesananDiproses({
     dispatch(resetSuccessTransaction())
   };
 
+  const [page, setPage] = useState(1)
   useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, [isUpdateOngoingTransactionLoading]);
+    dispatch(getTransactionList({ statusId, page }));
+  }, [isUpdateOngoingTransactionLoading, page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -141,6 +145,9 @@ export default function PesananDiproses({
             </div>
           );
         })}
+        {totalPage > 1 &&
+          <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+        }
       </div>
     </>
     }

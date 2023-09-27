@@ -13,13 +13,13 @@ export default function TableDiscount({
         <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
             <tr>
                 <th className="p-3">No.</th>
-                <th className="p-3">Name</th>
-                <th className="p-3">Code</th>
-                <th className="p-3">Description</th>
-                <th className="p-3">Expired Date</th>
-                <th className="p-3">Amount</th>
-                <th className="p-3">Is One Get One</th>
-                <th className="p-3">Minimum Transaction</th>
+                <th className="p-3">Nama</th>
+                <th className="p-3">Kode</th>
+                <th className="p-3">Deskripsi</th>
+                <th className="p-3">Tanggal Berakhir</th>
+                <th className="p-3">Jumlah</th>
+                <th className="p-3">Beli Satu Gratis Satu</th>
+                <th className="p-3">Minimal Transaksi</th>
                 <th className="p-3">Actions</th>
             </tr>
         </thead>
@@ -45,7 +45,7 @@ export default function TableDiscount({
                     <td className="p-3">{list.discountDesc}</td>
                     <td className="p-3">{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
                     <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `IDR ${formatNumber(list.discountAmount)}` }</td>
-                    <td className="p-3">{list.oneGetOne ? "Yes" : "No" }</td>
+                    <td className="p-3">{list.oneGetOne ? "Ya" : "Tidak" }</td>
                     <td className="p-3">{list.minimalTransaction ? `IDR ${formatNumber(list.minimalTransaction)}` : "-"}</td>
                     <td className="p-3">
                         <div className="flex gap-3">
@@ -53,7 +53,7 @@ export default function TableDiscount({
                                 isSmall
                                 isPrimaryOutline
                                 onClick={() =>
-                                    handleShowModal({context:"Details Discount", id:list.discountId})
+                                    handleShowModal({context:"Detail Diskon", id:list.discountId})
                                 }
                                 title="Details"
                             />
@@ -63,7 +63,7 @@ export default function TableDiscount({
                                 isDanger
                                 onClick={() =>
                                     handleShowModal({
-                                        context: "Delete Discount", 
+                                        context: "Hapus Diskon", 
                                         id: list.discountId
                                     })
                                 }

@@ -95,7 +95,7 @@ export default function UploadRecipePage(){
                     isBLock
                     isPrimary={!isLoading}
                     isDisabled={isLoading}
-                    title="Upload"
+                    title="Unggah"
                     onClick={handleShowModal}
                 />
             </div>
@@ -106,19 +106,19 @@ export default function UploadRecipePage(){
                 title={showModal.context}
             >
                 <p className="modal-text">
-                    Are you sure you want to upload this image?
+                    Apa kamu yakin ingin mengunggah gambar ini?
                 </p>
 
                 <div className="mt-4 flex justify-end gap-2">
                     
                     <Button 
-                        title="No" 
+                        title="Tidak" 
                         isButton 
                         isSecondary 
                         onClick={handleCloseModal} 
                     />
                     <Button
-                        title="Yes"
+                        title="Ya"
                         isButton
                         isDanger
                         onClick={onClickYes}

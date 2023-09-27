@@ -1,3 +1,8 @@
+const cloudinary = require("cloudinary");
+const fs = require("fs");
+const handlebars = require("handlebars");
+const path = require("path");
+const {helperToken, helperEncryption, helperOTP, helperTransporter} = require("../../helper/index.js");
 const {
   Transaction_List,
   Transaction_Detail,
@@ -7,8 +12,8 @@ const { Cart } = require("../../model/cart.js");
 const { Op } = require("sequelize");
 const { Product_Detail, Product_List } = require("../../model/product");
 const { middlewareErrorHandling } = require("../../middleware");
-const cloudinary = require("cloudinary");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
+const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
 const getTransactions = async (req, res, next) => {
   try {
@@ -16,7 +21,7 @@ const getTransactions = async (req, res, next) => {
     const { statusId } = req.params;
     const { page } = req.query;
 
-    const limit = 10;
+    const limit = 2;
         
     const options = {
       offset: page > 1 ? (page - 1) * limit : 0,
@@ -223,6 +228,16 @@ const uploadPaymentProof = async (req, res, next) => {
     const { transactionId } = req.params;
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: { [Op.and]: [{ userId }, { transactionId }] },
     });
 
@@ -238,12 +253,31 @@ const uploadPaymentProof = async (req, res, next) => {
         message: middlewareErrorHandling.IMAGE_NOT_FOUND,
       });
     }
-
+    
     await transaction.update({ paymentProof: req?.file?.filename, statusId : 2 });
     await transaction.update({ statusId : 2 });
-
+    
     delete transaction?.dataValues?.canceledBy;
     delete transaction?.dataValues?.message;
+
+    const name = transaction.dataValues?.user_account.userProfile.name;
+    const email = transaction.dataValues?.user_account.email;
+
+    //@ send otp to email for verification
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "upload-payment-proof.html"), "utf8");
+    const html = handlebars.compile(template)({ name: (name), link :(REDIRECT_URL + `/products`) })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: email,
+        subject: `Menunggu Konfirmasi ${transaction.dataValues?.createdAt}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
     res
       .status(200)

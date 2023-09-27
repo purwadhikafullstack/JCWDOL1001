@@ -19,7 +19,7 @@ export default function ModalSelectCategory({ categories, handleSelectCategory, 
               className="h-fit w-full rounded-lg border bg-slate-100 p-4"
             >
               <div className="flex items-center justify-between">
-                <h3 className="title">Choose Category</h3>
+                <h3 className="title">Pilih Kategori</h3>
                 <span
                   className="cursor-pointer"
                   onClick={() => setShowCategoryModal(false)}
@@ -86,7 +86,7 @@ export default function ModalSelectCategory({ categories, handleSelectCategory, 
                   isButton
                   isPrimary
                   isBLock
-                  title="Done"
+                  title="Selesai"
                   onClick={() => setShowCategoryModal(false)}
                 />
               </div>
