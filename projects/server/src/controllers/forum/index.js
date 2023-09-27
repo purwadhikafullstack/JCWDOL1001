@@ -11,7 +11,7 @@ const {helperTransporter} = require("../../helper/index.js")
 
 const getQuestions = async (req, res, next) => {
     try {
-        const { page } = req.query;
+        const { page, sortDate, filterName } = req.query;
     
         const currentPage = page ? parseInt(page) : 1;
 
@@ -23,13 +23,15 @@ const getQuestions = async (req, res, next) => {
         const filter = {}
         const sort = [[`answer`,'ASC']]
 
-        if(req.user.roleId > 1) {
+        if(req.user.roleId !== 1) {
             filter.userId = {"userId" : req.user.userId}
-            sort.push([`updatedAt`, "DESC"])
+            sort.push([`updatedAt`, sortDate ? sortDate : "DESC"])
         }else {
-            sort.push([`createdAt`,"ASC"])
+            sort.push([`createdAt`,sortDate ? sortDate : "ASC"])
         }
 
+        if(filterName) filter.name = {"name" : {[Op.like]: `%${filterName}%`}}
+        
         const forums = await Forum.findAll({...options,
             where : {
                 [Op.and] :
@@ -39,7 +41,8 @@ const getQuestions = async (req, res, next) => {
                 ]
             },
             include : {
-                model :User_Profile
+                model :User_Profile,
+                where : filter.name
             },
             order : sort
         })

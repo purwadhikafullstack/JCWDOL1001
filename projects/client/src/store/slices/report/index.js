@@ -3,8 +3,6 @@ import { getReport } from "./slices"
 
 const INITIAL_STATE = {
     list : [],
-    totalPage: "",
-    currentPage: "",
     isGetReportListLoading : false
 }
 
@@ -21,8 +19,6 @@ const reportSlice = createSlice({
         [getReport.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 list : action.payload.report,
-                // totalPage : action.payload?.totalPage,
-                // currentPage : action.payload?.currentPage,
                 isGetReportListLoading : false
             })
         },

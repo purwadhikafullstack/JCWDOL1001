@@ -6,7 +6,7 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
-} = require("../../model/transaction");
+} = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List } = require("../../model/product");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
@@ -16,10 +16,11 @@ const getTransactions = async (req, res, next) => {
     const { userId } = req.user;
     const { statusId } = req.params;
 
-    const {startFrom, endFrom, sortDate, sortTotal, } = req.query
+    const {startFrom, endFrom, sortDate, sortTotal, filterName } = req.query
 
     let whereCondition = {};
     const sort = []
+    const filtering = {}
 
     if (userId === 1) {
       whereCondition = { statusId };
@@ -27,12 +28,14 @@ const getTransactions = async (req, res, next) => {
       whereCondition = { userId, statusId };
     }
 
-    if(req.query.startFrom) {
+    if(startFrom) {
       whereCondition.updatedAt = {
         [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
         [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
       }
     }
+
+    if(filterName) filtering.name = {"name" : {[Op.like]: `%${filterName}%`}}
     
     if(sortDate) sort.push(['updatedAt',sortDate])
     if(sortTotal) sort.push(['total',sortTotal])
@@ -56,11 +59,12 @@ const getTransactions = async (req, res, next) => {
         },
         {
           model: User_Account,
-          attributes : ["email"],
-          include: {
-            model: User_Profile,
-            as: "userProfile"
-          }
+          attributes : ["email"]
+        },
+        {
+          model: User_Profile,
+          as: "userProfile",
+          where:filtering.name,
         }
       ],
       where: whereCondition,

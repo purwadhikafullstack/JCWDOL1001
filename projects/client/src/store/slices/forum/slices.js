@@ -6,8 +6,17 @@ export const getForum = createAsyncThunk(
     "forum/getForum",
     async(payload, {rejectWithValue}) => {
         try{
+            const { page, sortDate,filterName } = payload
 
-            const { data } = await api.get("/forum")
+            let PARAMETER = "?"
+
+            if(page) PARAMETER += `page=${page ? page : 1 }&`
+            
+            if(sortDate) PARAMETER += `sortDate=${sortDate}&`
+
+            if(filterName) PARAMETER += `filterName=${filterName}&`
+
+            const { data } = await api.get("/forum"+ encodeURI(PARAMETER))
 
             return data
         }catch(error){

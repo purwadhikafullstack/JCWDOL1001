@@ -61,6 +61,7 @@ Transaction_Status.hasMany(Transaction_List,{foreignKey : "statusId", otherKey:"
 Transaction_List.belongsTo(Transaction_Status,{foreignKey:"statusId", as: "transactionStatus"})
 
 Transaction_List.belongsTo(User_Address,{foreignKey :"addressId", otherKey:"userId"})
+Transaction_List.belongsTo(User_Profile,{foreignKey :"userId", otherKey:"addressId",as: "userProfile"})
 
 Transaction_List.belongsToMany(Product_Detail, {through : Transaction_Detail, foreignKey : "transactionId", otherKey : "productId"})
 Transaction_List.hasMany(Transaction_Detail, {foreignKey : "transactionId",as : "transactionDetail"})
