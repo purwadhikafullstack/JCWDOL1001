@@ -21,7 +21,7 @@ const getQuestions = async (req, res, next) => {
         }
 
         const filter = {}
-        const sort = []
+        const sort = [[`answer`,'ASC']]
 
         if(req.user.roleId > 1) {
             filter.userId = {"userId" : req.user.userId}
@@ -171,12 +171,14 @@ const postAnswer = async (req, res, next) => {
 
 const deleteQuestion = async (req, res, next) => {
     try {
-        
+        const condition = {qnaId : req.params.qnaId}
+
+        if(req.user.roleId === 2){
+            condition.userId = req.user.userId
+        }
+
         const forumUser = await Forum.findOne({
-            where : {
-                qnaId  : req.params.qnaId,
-                userId : req.user.userId
-            }
+            where : condition
         })
 
         if(!forumUser) throw ({
@@ -188,15 +190,17 @@ const deleteQuestion = async (req, res, next) => {
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.CANNOT_DELETE_ANSWERED_QUESTION
         })
-        
-        const timeDeletion = moment(forumUser.createdAt).add(1,'h')
-        
-        const canDelete = moment().isSameOrBefore(timeDeletion)
 
-        if(!canDelete) throw ({
-            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-            message : middlewareErrorHandling.CANNOT_DELETE_QUESTION
-        })
+        if(req.user.roleId === 2){
+            const timeDeletion = moment(forumUser.createdAt).add(1,'h')
+            
+            const canDelete = moment().isSameOrBefore(timeDeletion)
+    
+            if(!canDelete) throw ({
+                status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+                message : middlewareErrorHandling.CANNOT_DELETE_QUESTION
+            })
+        }
 
         await Forum.update({isDeleted:1},{
             where : {

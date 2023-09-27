@@ -8,6 +8,8 @@ import uploadRecipeReducer from "./slices/upload-recipe"
 import discounteReducer from "./slices/discount"
 import cartReducer from "./slices/cart"
 import transactionReducer from "./slices/transaction"
+import reportReducer from "./slices/report"
+import forumReducer from "./slices/forum"
 
 const store = configureStore({
     reducer : {
@@ -19,7 +21,9 @@ const store = configureStore({
         uploadRecipe : uploadRecipeReducer,
         discount : discounteReducer,
         cart : cartReducer,
-        transaction: transactionReducer
+        transaction: transactionReducer,
+        report: reportReducer,
+        forum: forumReducer,
     },
 })
 

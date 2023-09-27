@@ -23,6 +23,8 @@ import UserPage from "./pages/user";
 import AdminTransaction from "./pages/admin/transaction";
 import { getOngoingTransactions } from "./store/slices/transaction/slices";
 import CheckoutPage from "./pages/user/transaction/checkout";
+import ReportPage from "./pages/admin/report";
+import ForumPage from "./pages/admin/forum";
 
 function App() {
   const { pathname } = useLocation();
@@ -99,6 +101,8 @@ function App() {
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
+              <Route path="/admin/report" element={<ReportPage />}/>
+              <Route path="/admin/qna" element={<ForumPage />}/>
             </>
           )}
 

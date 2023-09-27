@@ -19,7 +19,6 @@ router.patch("/send-order/:transactionId", verifyAdmin, transaction.sendOrder)
 router.patch("/receive-order/:transactionId", verifyUser, transaction.receiveOrder)
 router.patch("/cancel-transaction/:transactionId", verifyUser, transaction.cancelTransaction)
 router.get("/ongoing", verifyUser, transaction.getOngoingTransactions)
-router.get("/report/:statusId", transaction.transactionReport)
 router.get("/:statusId", verifyUser,  transaction.getTransactions)
 
 module.exports = router

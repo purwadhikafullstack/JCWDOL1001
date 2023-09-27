@@ -1,7 +1,6 @@
-const { Op, QueryTypes } = require("sequelize");
+const { Op } = require("sequelize");
 const moment = require("moment")
 const cloudinary = require("cloudinary");
-const db = require("../../model/index")
 const { middlewareErrorHandling } = require("../../middleware");
 const {
   Transaction_List,
@@ -10,8 +9,6 @@ const {
 } = require("../../model/transaction");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List } = require("../../model/product");
-const { middlewareErrorHandling } = require("../../middleware");
-const cloudinary = require("cloudinary");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
 
 const getTransactions = async (req, res, next) => {
@@ -31,12 +28,12 @@ const getTransactions = async (req, res, next) => {
     }
 
     if(req.query.startFrom) {
-      whereCondition.createdAt = {
-        [Op.gte]: moment(startFrom).format("YYYY-MM-DD HH:mm:ss"),
-        [Op.lte]: moment(endFrom).add(1,"days").format("YYYY-MM-DD HH:mm:ss"),
+      whereCondition.updatedAt = {
+        [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
+        [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
       }
     }
-
+    
     if(sortDate) sort.push(['updatedAt',sortDate])
     if(sortTotal) sort.push(['total',sortTotal])
 
@@ -90,34 +87,6 @@ const getTransactions = async (req, res, next) => {
     next(error);
   }
 };
-
-const transactionReport = async (req, res, next) => {
-  try {
-    const {startFrom, endFrom} = req.query
-    const {statusId} = req.params
-
-    const transaction =  await db.sequelize.query(
-        `SELECT 
-          SUM(total) as total, 
-          DATE_Format(createdAt,'%Y-%m-%d') as tanggal
-        FROM apotek.transaction_lists
-        ${statusId ? `WHERE statusId LIKE '${statusId}'` : ""}
-        GROUP BY tanggal
-        ${startFrom ? `HAVING tanggal BETWEEN '${startFrom}' AND '${endFrom}'` : ""}
-        ORDER BY tanggal ASC;`, 
-        { type: QueryTypes.SELECT }
-    )
-
-    res.status(200).json({
-        type: "success", 
-        message: "Data berhasil dimuat", 
-        report: transaction
-    })
-
-  } catch (error) {
-      next(error)
-  }
-}
 
 const getOngoingTransactions = async (req, res, next) =>{
   try {
@@ -484,7 +453,6 @@ const getTransactionStatus = async (req, res, next) => {
 
 module.exports = {
   getTransactions,
-  transactionReport,
   getOngoingTransactions,
   createTransactions,
   getCheckoutProducts,
