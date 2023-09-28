@@ -43,6 +43,7 @@ export default function Cart() {
   const [trigger, setTrigger] = useState(true);
 
   const [selectedAddress, setSelectedAddress] = useState([])
+  const [selectedShipping, setShipping] = useState([])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -141,13 +142,13 @@ export default function Cart() {
 //     },[cart])
   
   const checkOut = () => {
-    navigate("/checkout",{ state: { addressSelected: selectedAddress }})
+    navigate("/checkout",{ state: { addressSelected: selectedAddress, shippingSelected: selectedShipping }})
   }
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
       <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
-      <ShippingCost selectedAddress={selectedAddress} />
+      <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"
