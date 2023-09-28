@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         public: "Public Sans",
+        poppins: "Poppins",
       },
       colors: {
         primary: "#0d9488", //teal-600

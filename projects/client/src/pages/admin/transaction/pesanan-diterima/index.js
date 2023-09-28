@@ -8,6 +8,7 @@ import Modal from "../../../../components/Modal";
 import ModalDetailTransaction from "./modal.detail.transaction";
 import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
+import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDiterima({
   statusId,
@@ -15,9 +16,11 @@ export default function PesananDiterima({
   setActiveTab
 }) {
   const dispatch = useDispatch();
-  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading, currentPage, totalPage } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
+      totalPage: state.transaction?.totalPage,
+      currentPage: state.transaction?.currentPage,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
       isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
     };
@@ -47,9 +50,10 @@ export default function PesananDiterima({
     setShowModal({show: false, context:null});
   };
 
+  const [page, setPage] = useState(1)
   useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, [isUpdateOngoingTransactionLoading]);
+    dispatch(getTransactionList({ statusId, page }));
+  }, [isUpdateOngoingTransactionLoading, page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -134,6 +138,9 @@ export default function PesananDiterima({
             </div>
           );
         })}
+        {totalPage > 1 &&
+          <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+        }
       </div>
     </>
     }

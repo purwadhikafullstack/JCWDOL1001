@@ -19,9 +19,9 @@ export const getTransactionList = createAsyncThunk(
     "transactions/getTransactionList",
     async (payload, {rejectWithValue}) => {
         try{
-            const { statusId } = payload;
-            const {data} = await api.get(`/transaction/${statusId}`);
-            return data;
+            const { statusId, page } = payload;
+            const response = await api.get(`/transaction/${statusId}?page=${page}`);
+            return response.data;
         }catch(error){
             toast.error(error.response.data.message);
             return rejectWithValue(error.response.data.message);

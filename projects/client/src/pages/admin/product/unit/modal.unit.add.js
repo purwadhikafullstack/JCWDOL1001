@@ -25,7 +25,7 @@ export default function ModalAddProductUnit({
 
     const [isDefaultUnit, setIsDefaultUnit] = useState({
         id : 0,
-        name :"no"
+        name :"Tidak"
     })
 
     const [confirmation, setConfirmation] = useState(false);
@@ -50,7 +50,7 @@ export default function ModalAddProductUnit({
         return (
             <SuccessMessage
                 type="success"
-                message={`Add product unit ${unitSelected.unitName} into ${productData.productName} success`}
+                message={`Berhasil menambahkan satuan ${unitSelected.unitName} ke ${productData.productName}!`}
                 handleCloseModal={handleCloseModal}
             />
         );
@@ -91,11 +91,11 @@ export default function ModalAddProductUnit({
         
         try {
             if(output.data.isDefault == 1 && output.data.quantity === 0) {
-                return toast.error("Default Unit must have qty")
+                return toast.error("Harus ada jumlah pada Satuan Utama")
             }
     
             if(output.data.isDefault == 1 && output.data.convertion === 0) {
-                return toast.error("Default Unit must have qty per unit")
+                return toast.error("Satuan Utama harus memiliki jumlah per satuan")
             }
 
             dispatch(addUnit(output))
@@ -111,11 +111,11 @@ export default function ModalAddProductUnit({
        <form >
             <div className="mt-4 flex flex-col gap-y-4">
                 <div className="h-auto max-h-[75vh] overflow-auto px-1">
-                    <h3>Unit : </h3>
+                    <h3>Satuan : </h3>
                     {unitSelected.unitName === "other" ?
                         <Input
                             ref={unitRef}
-                            placeholder="Input Unit Name"
+                            placeholder="Masukkan Nama Satuan"
                         />
                         :
                         <select 
@@ -123,25 +123,25 @@ export default function ModalAddProductUnit({
                             onChange={handleChangeUnit}
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         >
-                            <option >Choose an unit </option>
+                            <option >Pilih Satuan</option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}
-                            <option value="other">Manual Input </option>
+                            <option value="other">Input Manual</option>
                         </select>
 
                     }
                     
                     <fieldset className={`${canAddDefaultUnit && canAddSecondaryUnit ? "mt-4" : "hidden"}`}>
-                        <legend>Is Default Unit?</legend>
+                        <legend>Apakah Sebagai Satuan Utama?</legend>
                         <div>
                             <input
                                 type="radio"
                                 id="1"
                                 name="isDefault"
-                                value="yes"
-                                checked = {isDefaultUnit.name === "yes" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:1,name:"yes"})}}
+                                value="Ya"
+                                checked = {isDefaultUnit.name === "Ya" ? true : false}
+                                onChange={()=>{handleChangeDefault({id:1,name:"Ya"})}}
                                 
                             />
                             <label for="1" className="mr-4">Yes</label>
@@ -150,17 +150,17 @@ export default function ModalAddProductUnit({
                                 type="radio" 
                                 id="0" 
                                 name="isDefault" 
-                                value="no" 
-                                checked = {isDefaultUnit.name === "no" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:0,name:"no"})}}
+                                value="Tidak" 
+                                checked = {isDefaultUnit.name === "Tidak" ? true : false}
+                                onChange={()=>{handleChangeDefault({id:0,name:"Tidak"})}}
                             />
                             <label for="0">No</label>
                         </div>
                     </fieldset>
 
-                    { (canAddDefaultUnit && canAddSecondaryUnit && isDefaultUnit.name === "yes") || (canAddDefaultUnit && !canAddSecondaryUnit) ?
+                    { (canAddDefaultUnit && canAddSecondaryUnit && isDefaultUnit.name === "Ya") || (canAddDefaultUnit && !canAddSecondaryUnit) ?
                         <div>
-                            <h3 className="pt-2">Qty Unit : </h3>
+                            <h3 className="pt-2">Jumlah Satuan : </h3>
                             <Input
                                 type="number"
                                 ref={qtyRef}
@@ -168,7 +168,7 @@ export default function ModalAddProductUnit({
                                 name="qtyUnit"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             />
-                            <h3 className="pt-2">Qty per Unit : </h3>
+                            <h3 className="pt-2">Jumlah per Satuan : </h3>
                             <Input
                                 type="number"
                                 ref={qtyPerUnitRef}
@@ -183,7 +183,7 @@ export default function ModalAddProductUnit({
             </div>
             <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
                 <Button 
-                    title="Back" 
+                    title="Kembali" 
                     isButton 
                     isSecondary 
                     onClick={() =>
@@ -197,7 +197,7 @@ export default function ModalAddProductUnit({
                 <Button
                     isButton
                     isPrimary
-                    title="Confirm"
+                    title="Konfirmasi"
                     onClick={()=>{setConfirmation(true)}}
                 />
             </div>
@@ -205,24 +205,22 @@ export default function ModalAddProductUnit({
             {confirmation && (
                 <div className="pt-10">
                     <p className="modal-text">
-                        Are you sure you want to save these changes?
+                        Apa kamu yakin untuk menyimpan perubahan ini?
                     </p>
                     <div className="flex gap-2">
                         <Button
-                            title="Cancel" 
+                            title="Tidak" 
                             isButton 
                             isSecondary 
                             onClick={() => setConfirmation(false)}
                         />
 
                         <Button
-                            title="Sure"
+                            title="Ya"
                             isButton
                             isPrimary
                             onClick={handleOnSure}
-                        >
-                            Sure
-                        </Button>
+                        />
                     </div>
                 </div>
             )}

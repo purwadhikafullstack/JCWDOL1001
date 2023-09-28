@@ -180,7 +180,7 @@ export default function Cart() {
 
               <div className="aspect-square h-20">
                 <img
-                  src={item?.productPicture}
+                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + item?.productPicture}
                   alt=""
                   className="h-full w-full object-cover"
                 />

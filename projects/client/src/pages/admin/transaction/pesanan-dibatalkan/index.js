@@ -6,12 +6,15 @@ import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
 import SkeletonTransaction from "../component.skeleton";
+import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDibatalkan({ statusId, statusDesc }) {
   const dispatch = useDispatch();
-  const { transaction, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
+      totalPage: state.transaction?.totalPage,
+      currentPage: state.transaction?.currentPage,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
     };
   });
@@ -41,9 +44,10 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     setShowModal(false);
   };
 
+  const [page, setPage] = useState(1)
   useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, []);
+    dispatch(getTransactionList({ statusId, page }));
+  }, [page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -127,6 +131,9 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
             </div>
           );
         })}
+        {totalPage > 1 &&
+          <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+        }
       </div>
 
       <Modal

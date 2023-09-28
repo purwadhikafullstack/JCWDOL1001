@@ -5,6 +5,7 @@ import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
+import Pagination from "../../../../components/PaginationV2";
 import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
 import ModalDetailTransaction from "./modal.detail.transaction";
 import EmptyTransaction from "../component.empty.transaction";
@@ -16,17 +17,19 @@ export default function MenungguPembayaran({
   setActiveTab
 }) {
   const dispatch = useDispatch();
-  const { transaction, success, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
-      success: state.transaction?.success,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
+      totalPage: state.transaction?.totalPage,
+      currentPage: state.transaction?.currentPage,
       isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
     };
   });
 
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [page, setPage] = useState(1)
 
   const handleShowModal = (context, transactionId) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -56,8 +59,8 @@ export default function MenungguPembayaran({
   };
 
   useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, [isUpdateOngoingTransactionLoading]);
+    dispatch(getTransactionList({ statusId, page }));
+  }, [isUpdateOngoingTransactionLoading, page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -142,6 +145,9 @@ export default function MenungguPembayaran({
             </div>
           );
         })}
+        {totalPage > 1 &&
+          <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+        }
       </div>
     </>
     }

@@ -80,14 +80,14 @@ export default function DiscountPage(){
                             isButton
                             isPrimary
                             className="lg:justify-self-start"
-                            title="Add New"
+                            title="Tambah Baru"
                             onClick={() =>
-                                handleShowModal({context:"Add New", isNew :true})
+                                handleShowModal({context:"Tambah Baru", isNew :true})
                             }
                         />
                         <Input 
                             type="text" 
-                            placeholder="Search" 
+                            placeholder="Cari" 
                             className=""
                             ref={discountRef}
                         />
@@ -114,7 +114,7 @@ export default function DiscountPage(){
                     title={showModal.context}
                     disableOutside
                 >
-                    {showModal.context === "Delete Discount" && (
+                    {showModal.context === "Hapus Diskon" && (
                         <ModalDeleteDiscount
                             selectedDiscount={selectedId}
                             success={success}
@@ -123,8 +123,8 @@ export default function DiscountPage(){
                         />
                     )}
 
-                    {(showModal.context === "Details Discount" || 
-                        showModal.context === "Add New") && (
+                    {(showModal.context === "Detail Diskon" || 
+                        showModal.context === "Tambah Baru") && (
                         <ModalDetailsDiscount
                             selectedId={selectedId}
                             handleCloseModal={handleCloseModal}
