@@ -129,55 +129,6 @@ const postQuestion = async (req, res, next) => {
     }
 }
 
-const postAnswer = async (req, res, next) => {
-    try {
-        req.body.adminId = req.user.userId
-        
-        await Forum.update(req.body,{
-            where : {
-                qnaId : req.params.qnaId
-            }
-        })
-
-        const forum = await Forum.findOne({
-            where : {
-                qnaId : req.params.qnaId
-            },
-            include : {
-                model: User_Profile,
-                include : {
-                    model : User_Account,
-                    attributes : ['email']
-                }
-            }
-        })
-
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnAnswer.html"), "utf8");
-        const html = handlebars.compile(template)({ name : forum.user_profile.name, question : forum.question, answer : forum.answer})
-
-        const mailOptions = {
-            from: `Apotech Team Support <${GMAIL}>`,
-            to: forum.user_profile.user_account.email,
-            subject: "Your question has been answered",
-            html: html
-        }
-
-        helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
-            if (error) throw error;
-            console.log("Email sent: " + info.response);
-        })
-
-
-        res.status(200).json({
-			type : "success",
-			message : "Pertanyaan berhasil dijawab",
-            data : forum
-		});
-    }catch (error) {
-        next(error)
-    }
-}
-
 const deleteQuestion = async (req, res, next) => {
     try {
         const condition = {qnaId : req.params.qnaId}
@@ -226,11 +177,9 @@ const deleteQuestion = async (req, res, next) => {
     }
 }
 
-
 module.exports={
     getQuestions,
     getQuestionsForPublic,
     postQuestion,
-    postAnswer,
     deleteQuestion,
 }

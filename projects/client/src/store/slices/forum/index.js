@@ -3,7 +3,6 @@ import {
     getForum,
     getPublicForum,
     deleteQuestion,
-    AnswerQuestion,
     PostQuestion
 } from "./slices"
 
@@ -61,18 +60,6 @@ const reportSlice = createSlice({
             })
         },
         [deleteQuestion.rejected] : (state, action) => {
-            state.isLoading = false
-        },
-        [AnswerQuestion.pending] : (state, action) => {
-            state.isLoading = true
-        },
-        [AnswerQuestion.fulfilled] : (state, action) => {
-            state = Object.assign(state, {
-                isLoading :false,
-                success : true
-            })
-        },
-        [AnswerQuestion.rejected] : (state, action) => {
             state.isLoading = false
         },
         [PostQuestion.pending] : (state, action) => {

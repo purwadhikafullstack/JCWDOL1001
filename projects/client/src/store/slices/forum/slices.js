@@ -63,21 +63,6 @@ export const deleteQuestion = createAsyncThunk(
     }
 )
 
-export const AnswerQuestion = createAsyncThunk(
-    "forum/answer",
-    async(payload, {rejectWithValue}) => {
-        try{
-
-            const { data } = await api.post("/forum/"+payload.qnaId, payload.answer)
-
-            return data
-        }catch(error){
-            toast.error(error.response.data.message)
-            return rejectWithValue(error.response.data)
-        }
-    }
-)
-
 export const PostQuestion = createAsyncThunk(
     "forum/post",
     async(payload, {rejectWithValue}) => {

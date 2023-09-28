@@ -7,7 +7,6 @@ const router = express.Router()
 router.get("/", verifyUser, forum.getQuestions)
 router.get("/public", forum.getQuestionsForPublic)
 router.post("/", verifyUser, forum.postQuestion)
-router.post("/:qnaId", verifyAdmin, forum.postAnswer)
 router.patch("/:qnaId", verifyUser, forum.deleteQuestion)
 
 module.exports = router
