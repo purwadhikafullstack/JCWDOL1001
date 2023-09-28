@@ -6,7 +6,7 @@ export const getForum = createAsyncThunk(
     "forum/getForum",
     async(payload, {rejectWithValue}) => {
         try{
-            const { page, sortDate,filterName } = payload
+            const { page, sortDate,filterQuestion } = payload
 
             let PARAMETER = "?"
 
@@ -14,9 +14,9 @@ export const getForum = createAsyncThunk(
             
             if(sortDate) PARAMETER += `sortDate=${sortDate}&`
 
-            if(filterName) PARAMETER += `filterName=${filterName}&`
+            if(filterQuestion) PARAMETER += `filterQuestion=${filterQuestion}&`
 
-            const { data } = await api.get("/forum"+ encodeURI(PARAMETER))
+            const { data } = await api.get("/forum" + encodeURI(PARAMETER))
 
             return data
         }catch(error){
@@ -30,8 +30,15 @@ export const getPublicForum = createAsyncThunk(
     "forum/forPublic",
     async(payload, {rejectWithValue}) => {
         try{
+            const { page, filterQuestion } = payload
 
-            const { data } = await api.get("/forum/public")
+            let PARAMETER = "?"
+
+            if(page) PARAMETER += `page=${page ? page : 1 }&`
+
+            if(filterQuestion) PARAMETER += `filterQuestion=${filterQuestion}&`
+
+            const { data } = await api.get("/forum/public" + encodeURI(PARAMETER))
 
             return data
         }catch(error){

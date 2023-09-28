@@ -79,7 +79,10 @@ const reportSlice = createSlice({
             state.isLoading = true
         },
         [PostQuestion.fulfilled] : (state, action) => {
-            state.isLoading = false
+            state = Object.assign(state, {
+                isLoading :false,
+                success : true
+            })
         },
         [PostQuestion.rejected] : (state, action) => {
             state.isLoading = false

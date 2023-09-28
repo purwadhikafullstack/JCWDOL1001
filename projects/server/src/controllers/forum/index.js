@@ -11,7 +11,7 @@ const {helperTransporter} = require("../../helper/index.js")
 
 const getQuestions = async (req, res, next) => {
     try {
-        const { page, sortDate, filterName } = req.query;
+        const { page, sortDate, filterQuestion } = req.query;
     
         const currentPage = page ? parseInt(page) : 1;
 
@@ -30,19 +30,19 @@ const getQuestions = async (req, res, next) => {
             sort.push([`createdAt`,sortDate ? sortDate : "ASC"])
         }
 
-        if(filterName) filter.name = {"name" : {[Op.like]: `%${filterName}%`}}
+        if(filterQuestion) filter.question = {"question" : {[Op.like]: `%${filterQuestion}%`}}
         
         const forums = await Forum.findAll({...options,
             where : {
                 [Op.and] :
                 [
                     filter.userId,
-                    {"isDeleted" : 0}
+                    {"isDeleted" : 0},
+                    filter.question
                 ]
             },
             include : {
                 model :User_Profile,
-                where : filter.name
             },
             order : sort
         })
@@ -67,7 +67,9 @@ const getQuestions = async (req, res, next) => {
 
 const getQuestionsForPublic = async (req, res, next) => {
     try {
-        const { page } = req.query;
+        const { page, filterQuestion } = req.query;
+
+        const filter = {}
     
         const currentPage = page ? parseInt(page) : 1;
 
@@ -76,12 +78,16 @@ const getQuestionsForPublic = async (req, res, next) => {
             limit : 10,
         }
 
+        if(filterQuestion) filter.question = {"question" : {[Op.like]: `%${filterQuestion}%`}}
+
         const forums = await Forum.findAll({...options,
             where : {
-                answer:{
-                    [Op.not] : null
-                },
-                isDeleted : 0
+                [Op.and] :
+                [
+                    {answer:{ [Op.not] : null }},
+                    {"isDeleted" : 0},
+                    filter.question
+                ]
             },
             include : {
                 model :User_Profile

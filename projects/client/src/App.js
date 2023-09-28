@@ -24,7 +24,7 @@ import AdminTransaction from "./pages/admin/transaction";
 import { getOngoingTransactions } from "./store/slices/transaction/slices";
 import CheckoutPage from "./pages/user/transaction/checkout";
 import ReportPage from "./pages/admin/report";
-import ForumPage from "./pages/admin/forum";
+import QnAPage from "./pages/qna";
 
 function App() {
   const { pathname } = useLocation();
@@ -80,6 +80,7 @@ function App() {
       <Navbar user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions?.totalTransactions}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/qna" element={<QnAPage />} />
 
           <Route path="/products" element={
             user?.role===1 ?
@@ -94,7 +95,6 @@ function App() {
               <ProductDetail user={user}/>}
             />
 
-
           {user?.role == 1 && (
             <>
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
@@ -102,7 +102,6 @@ function App() {
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
               <Route path="/admin/report" element={<ReportPage />}/>
-              <Route path="/admin/qna" element={<ForumPage />}/>
             </>
           )}
 

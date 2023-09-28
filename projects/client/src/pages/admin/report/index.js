@@ -123,16 +123,16 @@ function ReportPage () {
         setFilter(true)
     }
 
-    const onButtonGraph = () => {
-        setGraph(true)
-        dispatch(
-            getTransactionList({
-                statusId : 7,
-                startFrom : startDateRef.current.value,
-                endFrom : endDateRef.current.value
-            })
-        )
-    }
+    // const onButtonGraph = () => {
+    //     setGraph(true)
+    //     dispatch(
+    //         getTransactionList({
+    //             statusId : 7,
+    //             startFrom : startDateRef.current.value,
+    //             endFrom : endDateRef.current.value
+    //         })
+    //     )
+    // }
 
     const onButtonSortDate = (type="")=>{
         setSortingPrice("")
@@ -284,7 +284,7 @@ function ReportPage () {
                 </div>
                 <Button isButton isPrimary
                     className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center`}
-                    onClick={onButtonGraph}
+                    onClick={()=>{setGraph(true)}}
 
                 >
                     Show Graph
