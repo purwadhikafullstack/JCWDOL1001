@@ -2,38 +2,37 @@ import * as Yup from "yup";
 
 export const inputProductValidationSchema = Yup.object({
   productName: Yup.string()
-    .required("Product name is required"),
+    .required("Nama produk harus diisi"),
   productPrice: Yup.string()
-    .min(1, "Price must be greater than 0")
-    .required("Price is required"),
+    .required("Harga produk harus diisi")
+    .matches(/^[0-9]+$/, "Harga hanya boleh diisi dengan angka"),
   productDosage: Yup.string()
-    .required("Dosage is required"),
+    .required("Dosis harus diisi"),
   productDescription: Yup.string()
-    .required("Description is required")
-    .matches(/[a-zA-Z]/, "Description must contain at least one letter")
-    .min(20, "Description must be at least 20 letters long"),
+    .required("Deskripsi harus diisi")
+    .matches(/[a-zA-Z]/, "Deskripsi harus mengandung setidaknya satu huruf")
+    .min(20, "Deskripsi minimal 20 karakter"),
   categoryId: Yup.array()
-    .min(1, "At least one category must be selected")
-    .required("Category is required"),
-  productPicture: Yup.mixed()
-    .required("Image is required")
+    .min(1, "Pilih setidaknya satu kategori")
+    .required("Kategori harus diisi"),
+  productPicture: Yup.mixed().required('Pilih gambar'),
 });
 
 export const updateProductValidationSchema = Yup.object({
   productName: Yup.string()
-    .required("Product name is required"),
+    .required("Nama produk harus diisi"),
   productPrice: Yup.string()
-    .min(1, "Price must be greater than 0")
-    .required("Price is required"),
+    .required("Harga produk harus diisi")
+    .matches(/^[0-9]+$/, "Harga hanya boleh diisi dengan angka"),
   productDosage: Yup.string()
-    .required("Dosage is required"),
+    .required("Dosis harus diisi"),
   productDescription: Yup.string()
-    .required("Description is required")
-    .matches(/[a-zA-Z]/, "Description must contain at least one letter")
-    .min(20, "Description must be at least 20 letters long"),
+    .required("Deskripsi harus diisi")
+    .matches(/[a-zA-Z]/, "Deskripsi harus mengandung setidaknya satu huruf")
+    .min(20, "Deskripsi minimal 20 karakter"),
   categoryId: Yup.array()
-    .min(1, "At least one category must be selected")
-    .required("Category is required"),
+    .min(1, "Pilih setidaknya satu kategori")
+    .required("Kategori harus diisi"),
   productPicture: Yup.mixed()
     .nullable()
 });

@@ -18,16 +18,17 @@ import ModalSelectCategory from "./modal.select.category";
 export default function ModalInputProduct({
   success,
   categories,
-  categoriesPage,
+  categoriesTotalPage,
   setCategoriesPage,
-  totalCategoriesPage,
   productData,
-  selectedCategories,
-  setSelectedCategories,
+  // selectedCategories,
+  // setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
+  categoriesCurrentPage
 }) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -138,7 +139,7 @@ export default function ModalInputProduct({
       });
       setError(errors);
 
-      toast.error("Check your input field!");
+      toast.error("Periksa kembali kolom pengisian!");
 
       setIsToastVisible(true);
 
@@ -157,7 +158,10 @@ export default function ModalInputProduct({
             ? "Produk Berhasil Diubah!"
             : "Produk Berhasil Ditambahkan!"
         }
-        handleCloseModal={handleCloseModal}
+        handleCloseModal={()=>{
+          handleCloseModal()
+          setSelectedCategories([]);
+        }}
       />
     );
   }
@@ -177,17 +181,14 @@ export default function ModalInputProduct({
                   className="mb-2 flex flex-wrap gap-2"
                   onChange={() => setError({ ...error, categoryId: false })}
                 >
-                  {selectedCategories.map((item) => {
-                    const selectedCategory = categories.find(
-                      (category) => category.categoryId === item.categoryId
-                    );
+                  {selectedCategories?.map((item) => {
                     return (
                       <Button
                         isPrimaryOutline
-                        key={selectedCategory?.categoryId}
+                        key={item?.categoryId}
                         className="flex items-center rounded-md px-2 py-1 text-sm"
                       >
-                        {selectedCategory?.categoryDesc}
+                        {item?.categoryDesc}
                         <span
                           className="ml-2 cursor-pointer"
                           onClick={() => handleRemoveCategory(item.categoryId)}
@@ -298,7 +299,10 @@ export default function ModalInputProduct({
               isBLock
               isSecondary
               title="Kembali"
-              onClick={handleCloseModal}
+              handleCloseModal={()=>{
+                handleCloseModal();
+                setSelectedCategories([]);
+              }}
             />
             <Button
               isButton
@@ -357,6 +361,9 @@ export default function ModalInputProduct({
             selectedCategories={selectedCategories} 
             handleSelectCategory={handleSelectCategory}
             setShowCategoryModal={setShowCategoryModal}
+            categoriesTotalPage={categoriesTotalPage}
+            categoriesCurrentPage={categoriesCurrentPage}
+            setCategoriesPage={setCategoriesPage}
           />
         )}
       </AnimatePresence>

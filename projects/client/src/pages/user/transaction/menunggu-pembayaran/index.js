@@ -41,6 +41,7 @@ export default function MenungguPembayaran({
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showModal, setShowModal] = useState({ show: false, context: null });
   const [page, setPage] = useState(1)
+  const [sortDate, setSortDate] = useState("DESC")
 
   const handleShowModal = (context, transactionId) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -70,8 +71,8 @@ export default function MenungguPembayaran({
   };
 
   useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [page]);
+    dispatch(getTransactionList({ statusId, page, sortDate }));
+  }, [page, sortDate]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -104,7 +105,10 @@ export default function MenungguPembayaran({
                 }
               >
                 <div className="flex items-center justify-between">
-                  <p className="mb-4 text-sm">{formatDate(item.createdAt)}</p>
+                  <div className="mb-4">
+                  <p className="text-sm font-semibold">{formatDate(item.createdAt)}</p>
+                  <p className="text-sm">Diperbarui Pada {formatDate(item.createdAt)}</p>
+                  </div>
                   <p className="mb-4 text-sm font-semibold text-primary">
                     {item.createdAt}
                   </p>

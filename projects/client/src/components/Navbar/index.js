@@ -45,7 +45,10 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
                                 href="/" 
                                 className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-dark"
                             >
-                                APOTECH
+                            <span className="absolute block h-2 w-6 rounded-full bg-dark"></span>
+                            <span className="absolute rotate-90 block h-2 w-6 rounded-full bg-primary"></span>
+                            <span className="absolute block h-2 w-6 rounded-full bg-dark opacity-40"></span>
+                            <span className="ml-8 font-poppins">Apotech</span>
                             </a>
                         </div>
 

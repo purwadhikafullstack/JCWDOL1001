@@ -2,7 +2,7 @@ const cloudinary = require("cloudinary");
 const fs = require("fs");
 const handlebars = require("handlebars");
 const path = require("path");
-const {helperToken, helperEncryption, helperOTP, helperTransporter} = require("../../helper/index.js");
+const { helperTransporter } = require("../../helper/index.js");
 const {
   Transaction_List,
   Transaction_Detail,
@@ -19,9 +19,9 @@ const getTransactions = async (req, res, next) => {
   try {
     const { userId } = req.user;
     const { statusId } = req.params;
-    const { page } = req.query;
+    const { page, sortDate, startFrom, endFrom } = req.query;
 
-    const limit = 2;
+    const limit = 10;
         
     const options = {
       offset: page > 1 ? (page - 1) * limit : 0,
@@ -63,7 +63,7 @@ const getTransactions = async (req, res, next) => {
         },
       ],
       where: whereCondition,
-      order:[["updatedAt" , "DESC"]],
+      order:[[ "updatedAt" , sortDate ? sortDate : "DESC" ]],
       ...options
     });
 
@@ -222,6 +222,7 @@ const getCheckoutProducts = async (req, res, next) => {
   }
 };
 
+// update ongoing status 1 to 2
 const uploadPaymentProof = async (req, res, next) => {
   try {
     const { userId } = req.user;
@@ -263,9 +264,11 @@ const uploadPaymentProof = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    //@ send otp to email for verification
     const template = fs.readFileSync(path.join(process.cwd(), "templates", "upload-payment-proof.html"), "utf8");
-    const html = handlebars.compile(template)({ name: (name), link :(REDIRECT_URL + `/products`) })
+    const html = handlebars.compile(template)({ 
+      name: (name), 
+      link :(REDIRECT_URL + `/products`) 
+    })
 
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
@@ -295,11 +298,22 @@ const uploadPaymentProof = async (req, res, next) => {
   }
 };
 
+// update ongoing status 2 to 3
 const confirmPayment = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: { transactionId },
     });
 
@@ -312,6 +326,28 @@ const confirmPayment = async (req, res, next) => {
 
     delete transaction?.dataValues?.canceledBy;
     delete transaction?.dataValues?.message;
+
+    const name = transaction.dataValues?.user_account.userProfile.name;
+    const email = transaction.dataValues?.user_account.email;
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const html = handlebars.compile(template)({
+      name: (name), 
+      title: ("Pembayaran Diterima"),
+      ongoingStatus:("pembayaran kamu sudah diterima dan akan segera diproses"), 
+      link :(REDIRECT_URL + `/products`) })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: email,
+        subject: `Pembayaran Diterima ${transaction.dataValues?.createdAt}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
     res
       .status(200)
@@ -326,11 +362,22 @@ const confirmPayment = async (req, res, next) => {
   }
 };
 
+// update ongoing status 3 to 4
 const processOrder = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: { transactionId },
     });
 
@@ -343,6 +390,28 @@ const processOrder = async (req, res, next) => {
 
     delete transaction?.dataValues?.canceledBy;
     delete transaction?.dataValues?.message;
+
+    const name = transaction.dataValues?.user_account.userProfile.name;
+    const email = transaction.dataValues?.user_account.email;
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const html = handlebars.compile(template)({
+      name: (name), 
+      title: ("Pesanan Diproses"),
+      ongoingStatus:("pesanan kamu sedang diproses dan akan segera dikirimkan"), 
+      link :(REDIRECT_URL + `/products`) })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: email,
+        subject: `Pesanan Diproses ${transaction.dataValues?.createdAt}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
     res
       .status(200)
@@ -357,11 +426,22 @@ const processOrder = async (req, res, next) => {
   }
 };
 
+// update ongoing status 4 to 5
 const sendOrder = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: { transactionId },
     });
 
@@ -374,6 +454,28 @@ const sendOrder = async (req, res, next) => {
 
     delete transaction?.dataValues?.canceledBy;
     delete transaction?.dataValues?.message;
+
+    const name = transaction.dataValues?.user_account.userProfile.name;
+    const email = transaction.dataValues?.user_account.email;
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const html = handlebars.compile(template)({
+      name: (name), 
+      title: ("Pesanan Dikirim"),
+      ongoingStatus:("pesanan kamu sedang dikirim"), 
+      link :(REDIRECT_URL + `/products`) })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: email,
+        subject: `Pesanan Dikirim ${transaction.dataValues?.createdAt}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
     res
       .status(200)
@@ -388,11 +490,22 @@ const sendOrder = async (req, res, next) => {
   }
 };
 
+// update ongoing status 5 to 6
 const receiveOrder = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: { transactionId },
     });
 
@@ -405,6 +518,27 @@ const receiveOrder = async (req, res, next) => {
 
     delete transaction?.dataValues?.canceledBy;
     delete transaction?.dataValues?.message;
+
+    const name = transaction.dataValues?.user_account.userProfile.name;
+    const email = transaction.dataValues?.user_account.email;
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "receive-order.html"), "utf8");
+    const html = handlebars.compile(template)({ 
+      name : (name), 
+      link : (REDIRECT_URL + `/products`) 
+    })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: email,
+        subject: `Pesanan Diterima ${transaction.dataValues?.createdAt}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
     res
       .status(200)
@@ -419,6 +553,7 @@ const receiveOrder = async (req, res, next) => {
   }
 };
 
+// update ongoing status to 7
 const cancelTransaction = async (req, res, next) => {
   try {
     const { transactionId } = req.params;
@@ -434,6 +569,16 @@ const cancelTransaction = async (req, res, next) => {
     }
 
     const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
       where: whereCondition,
     });
 
@@ -456,6 +601,40 @@ const cancelTransaction = async (req, res, next) => {
         message,
         canceledBy: roleId === 1 ? "Admin" : "User",
       });
+
+      let reason = "";
+      let information = "";
+      // email jika dibatalkan oleh user
+      if (roleId === 2) {
+        information = "Pesananmu berhasil dibatalkan!"
+      }
+      // email jika dibatalkan oleh admin
+      if (roleId === 1) {
+        reason = transaction.dataValues?.message;
+        information = `Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena ${reason}`;
+      }
+
+      const name = transaction.dataValues?.user_account.userProfile.name;
+      const email = transaction.dataValues?.user_account.email;
+
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const html = handlebars.compile(template)({ 
+        name : (name),
+        information : (information),
+        link : (REDIRECT_URL + `/products`) 
+      })
+
+      const mailOptions = {
+          from: `Apotech Team Support <${GMAIL}>`,
+          to: email,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
+          html: html
+        }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
 
       res.status(200).json({
         type: "success",

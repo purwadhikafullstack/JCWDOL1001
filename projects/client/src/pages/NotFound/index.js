@@ -10,7 +10,7 @@ export default function NotFound() {
         isButton
         isPrimary
         isLink
-        title="Back"
+        title="Kembali"
         path="/"
       />
     </div>

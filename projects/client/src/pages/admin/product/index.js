@@ -51,24 +51,26 @@ export default function AdminProducts({user}) {
     return {
       success: state.products.success,
       products: state.products.data,
+      current_page : state.products.current_page,
+      total_page : state.products.total_page,
+
       categories: state?.cat?.category,
+      categoriesCurrentPage : state?.cat?.currentPage,
+      categoriesTotalPage : state?.cat?.totalPage,
+
       isGetProductsLoading: state.products.isGetProductsLoading,
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
       isSubmitStockLoading : state.products.isSubmitStockLoading,
       errorMessage: state.products.errorMessage,
-      current_page : state.products.current_page,
-      total_page : state.products.total_page,
+
       units : state?.units?.data,
       unitsSuccess : state?.units?.success,
       isLoading : state.units.isLoading, //penyebab produk ngedispatch setiap close modal
-      categoriesCurrentPage : state?.cat?.currentPage,
-      categoriesTotalPage : state?.cat?.totalPage
     };
   });
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchedProduct, setSearchedProduct] = useState(null);
   const [page, setPage] = useState(1);
@@ -99,7 +101,6 @@ export default function AdminProducts({user}) {
 
   const handleCloseModal = () => {
     setShowModal({ show: false, context: "" });
-    setSelectedCategories([]);
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
     dispatch(resetUnit())
@@ -108,7 +109,7 @@ export default function AdminProducts({user}) {
 
   useEffect(() => {
     dispatch(getProducts());
-  }, [isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
+  }, [isDeleteProductLoading, isSubmitProductLoading, isSubmitStockLoading, isLoading]);
   
   const handleOptionChange = (e) => {
     const {name , value} = e.target
@@ -225,15 +226,12 @@ export default function AdminProducts({user}) {
           <ModalInputProduct
             success={success}
             categories={categories}
-            categoriesPage={categoriesPage}
-            setCategoriesPage={setCategoriesPage}
+            categoriesCurrentPage={categoriesCurrentPage}
             categoriesTotalPage={categoriesTotalPage}
+            setCategoriesPage={setCategoriesPage}
             productData={selectedProduct}
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
-            errorMessage={errorMessage}
           />
         )}
 

@@ -23,6 +23,7 @@ export default function ModalBatalkanPesanan({
   const reasons = [
     { title: "Saya ingin ganti alamat" },
     { title: "Saya ingin mengubah pesanan" },
+    { title: "Saya ingin mengubah kode voucher" },
     { title: "Lainnya" },
   ];
 
@@ -85,29 +86,36 @@ export default function ModalBatalkanPesanan({
         </div>
       )}
 
-      <div className="mt-2 flex justify-end gap-2">
-        <Button
-          isButton
-          isDisabled={isUpdateOngoingTransactionLoading}
-          isPrimary
-          onClick={() =>
-            handleShowModal(
-              "Detail Transaksi",
-              selectedTransaction.transactionId
-            )
-          }
-          title={`Kembali`}
-        />
+      <div className="mt-2 flex flex-col items-center justify-center gap-2">
+        {chooseReasonRef &&
+        <div className="text-center font-semibold">
+          <p>Apa kamu yakin ingin membatalkan pesanan?</p>
+        </div>
+        }
+        <div className="flex gap-2">
+          <Button
+            isButton
+            isDisabled={isUpdateOngoingTransactionLoading}
+            isPrimary
+            onClick={() =>
+              handleShowModal(
+                "Detail Transaksi",
+                selectedTransaction.transactionId
+              )
+            }
+            title={`Tidak`}
+          />
 
-        <Button
-          isButton
-          isLoading={isUpdateOngoingTransactionLoading}
-          isDanger={chooseReasonRef}
-          isSecondary={!chooseReasonRef}
-          isDisabled={!chooseReasonRef}
-          title={`Batalkan Pesanan`}
-          onClick={handleCancelOrder}
-        />
+          <Button
+            isButton
+            isLoading={isUpdateOngoingTransactionLoading}
+            isDanger={chooseReasonRef}
+            isSecondary={!chooseReasonRef}
+            isDisabled={!chooseReasonRef}
+            title={`Ya, Batalkan Pesanan`}
+            onClick={handleCancelOrder}
+          />
+        </div>
       </div>
     </div>
   );
