@@ -26,10 +26,6 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
   const customerData = selectedTransaction?.user_account
 
   const handleShowModal = (transactionId) => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
     setShowModal(true);
 
     if (transactionId) {

@@ -13,7 +13,6 @@ import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDikirim({
   statusId,
-  statusDesc,
   setActiveTab
 }) {
   const dispatch = useDispatch();
@@ -81,7 +80,6 @@ export default function PesananDikirim({
     <EmptyTransaction />  
     :
     <>
-      <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;

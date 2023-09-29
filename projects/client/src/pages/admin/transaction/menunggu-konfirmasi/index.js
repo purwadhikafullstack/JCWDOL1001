@@ -37,10 +37,6 @@ export default function MenungguKonfirmasi({
     setShowModal({show: true, context});
     setSelectedTransaction(transactionId)
 
-    window.scrollTo({
-      top: 0,
-    });
-
     if (transactionId) {
       const transactionData = transaction.find(
         (item) => item.transactionId === transactionId

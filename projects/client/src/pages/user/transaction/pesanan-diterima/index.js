@@ -12,7 +12,6 @@ import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDiterima({
   statusId,
-  statusDesc,
 }) {
   const dispatch = useDispatch();
   const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
@@ -65,7 +64,6 @@ export default function PesananDiterima({
       <EmptyTransaction />  
     :
     <>
-      <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
