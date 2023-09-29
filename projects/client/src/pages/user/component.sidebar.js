@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser } from 'react-icons/hi2';
+import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser, HiMiniChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -46,6 +46,13 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
       notification: null,
       icon : <HiOutlineLockClosed className="block text-xl"/>
     },
+    {
+      title : "QnA",
+      context : "qna",
+      path : "/user/qna",
+      notification: null,
+      icon : <HiMiniChatBubbleOvalLeftEllipsis className="block text-xl"/>
+    },
   ]
 
   useEffect(() => {
@@ -71,6 +78,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
                 isButton
                 isPrimary
                 isBLock
+              onClick={() => navigate("/verify")}
                 title="Verify Account"
                 className="lg:hidden"
               />
@@ -80,6 +88,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
               isButton
               isBLock
               isPrimaryOutline
+              onClick={() => navigate("/upload-recipe")}
               title="Unggah Resep"
               />
           </div>
@@ -97,7 +106,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
               {menu.icon}
               <span>{menu.title}</span>
 
-              {menu.notification &&
+              {menu.notification > 0 &&
                   <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-0 text-white group-hover:right-1 text-xs">{menu.notification}</span>
               }
             </Button>

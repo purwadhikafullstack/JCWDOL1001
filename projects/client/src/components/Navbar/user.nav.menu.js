@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import UserNavMenuItems from "./user.nav.menu.items"
 import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout, resendOtp } from "../../store/slices/auth/slices"
+import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
+
 
 export default function UserNavMenu({
   isLogin,
@@ -22,6 +24,8 @@ export default function UserNavMenu({
   })
 
   const navigate = useNavigate()
+
+  const { pathname } = useLocation()
 
   const dispatch = useDispatch()
 
@@ -49,6 +53,14 @@ export default function UserNavMenu({
           !isLogin ? 
             <div className="flex w-full gap-4 lg:w-fit">
               <Button
+                isLink
+                path="/qna"
+                className={`flex flex-col items-center pr-5 gap-1 text-xs ${ pathname === "/qna" ? "text-primary" : "text-slate-500" } `}
+              >
+                <HiMiniChatBubbleOvalLeftEllipsis className="text-2xl"/>
+                QnA
+              </Button>
+              <Button
                 isButton
                 isPrimaryOutline
                 title="Masuk"
@@ -62,7 +74,9 @@ export default function UserNavMenu({
                 className="w-full"
                 onClick={() => handleShowModal("register")}
               />
+              
             </div>
+            
           : 
             <UserNavMenuItems user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions}/>
         }
@@ -96,7 +110,11 @@ export default function UserNavMenu({
                   alt=""
                   className="h-full w-full object-cover"
                 />
-                <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">{ongoingTransactions}</span>
+                {ongoingTransactions > 0 &&
+                  <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">
+                    {ongoingTransactions}
+                  </span>
+                }
               </div>
 
               <AnimatePresence>

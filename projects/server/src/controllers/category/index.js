@@ -18,7 +18,7 @@ const getCategory = async (req, res, next) => {
 		res.status(200).json({
 			type : "success",
 			message : "categoryGet",
-            currentPage : page ? page : 1,
+            currentPage : +page ? +page : 1,
             totalPage : pages,
             totalCategory : total,
 			data : {category}

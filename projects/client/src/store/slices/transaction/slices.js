@@ -19,8 +19,22 @@ export const getTransactionList = createAsyncThunk(
     "transactions/getTransactionList",
     async (payload, {rejectWithValue}) => {
         try{
-            const { statusId } = payload;
-            const {data} = await api.get(`/transaction/${statusId}`);
+            const { statusId, page, startFrom, endFrom, sortDate, sortTotal, filterName} = payload;
+
+            let PARAMETER = ""
+
+            if(page) PARAMETER +=`page=${page}&`
+
+            if(startFrom) PARAMETER +=`startFrom=${startFrom}&endFrom=${endFrom}&`
+
+            if(sortDate) PARAMETER +=`sortDate=${sortDate}&`
+            
+            if(sortTotal) PARAMETER +=`sortTotal=${sortTotal}&`
+
+            if(filterName) PARAMETER +=`filterName=${filterName}&`
+            
+            const {data} = await api.get(`/transaction/${statusId}?`+ encodeURI(PARAMETER));
+            
             return data;
         }catch(error){
             toast.error(error.response.data.message);

@@ -3,7 +3,8 @@ const { Product_List, Product_Category, Product_Unit, Product_Detail,Product_His
 const { Categories } = require("./category.js")
 const { Transaction_List, Transaction_Detail, Transaction_Status } = require("./transaction.js")
 const { Discount, Discount_Product, Discount_Transaction } = require("./discount.js")
-const { Cart } = require("./cart.js")
+const { Cart} = require("./cart.js")
+const { Forum } = require("./forum.js")
 const { Rajaongkir_Cities, Rajaongkir_Provinces} = require("./rajaongkir.js")
 
 // @define relation
@@ -19,6 +20,8 @@ User_Profile.belongsTo(User_Account, {targetKey : "userId", foreignKey : "userId
 //status-account
 User_Status.hasMany(User_Account,{sourceKey : "status", foreignKey : "status"})
 User_Account.belongsTo(User_Status, {targetKey : "status", foreignKey : "status"})
+
+User_Address.belongsTo(User_Profile, {targetKey : "userId", foreignKey : "userId"})
 
 
 Product_List.belongsToMany(Categories, {
@@ -58,6 +61,7 @@ Transaction_Status.hasMany(Transaction_List,{foreignKey : "statusId", otherKey:"
 Transaction_List.belongsTo(Transaction_Status,{foreignKey:"statusId", as: "transactionStatus"})
 
 Transaction_List.belongsTo(User_Address,{foreignKey :"addressId", otherKey:"userId"})
+Transaction_List.belongsTo(User_Profile,{foreignKey :"userId", otherKey:"addressId",as: "userProfile"})
 
 Transaction_List.belongsToMany(Product_Detail, {through : Transaction_Detail, foreignKey : "transactionId", otherKey : "productId"})
 Transaction_List.hasMany(Transaction_Detail, {foreignKey : "transactionId",as : "transactionDetail"})
@@ -94,6 +98,9 @@ Cart.belongsTo(Product_Detail,{sourceKey : "productId", foreignKey : "productId"
 User_Account.hasMany(Cart,{sourceKey : "userId", foreignKey : "userId"})
 Cart.belongsTo(User_Account,{sourceKey : "userId", foreignKey : "userId"})
 
+Forum.belongsTo(User_Profile,{foreignKey:"userId",otherKey:"adminId"})
+User_Profile.hasMany(Forum,{foreignKey:"userId",otherKey:"adminId"})
+
 
 module.exports = { 
     User_Account, 
@@ -115,6 +122,7 @@ module.exports = {
     Discount_Transaction,
     Transaction_Status,
     Cart,
+    Forum,
     Rajaongkir_Cities,
     Rajaongkir_Provinces,
 }

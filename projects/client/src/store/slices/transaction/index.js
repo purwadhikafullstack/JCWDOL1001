@@ -14,6 +14,9 @@ import {
 } from "./slices";
 
 const INITIAL_STATE = {
+    totalPage : null,
+    currentPage : null,
+    nextPage : null,
     transactions : [],
     ongoingTransactions : null,
     cart : [],
@@ -41,7 +44,13 @@ const transactionsSlice = createSlice({
             state.isGetTransactionLoading = true
         },
         [getTransactionList.fulfilled] : (state, action) => {
-            state = Object.assign(state, {transactions : action.payload?.data, isGetTransactionLoading : false})
+            state = Object.assign(state, {
+                transactions : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
+                nextPage : action.payload?.nextPage,
+                isGetTransactionLoading : false
+            })
         },
         [getTransactionList.rejected] : (state, action) => {
             state = Object.assign(state, {isGetTransactionLoading : false})

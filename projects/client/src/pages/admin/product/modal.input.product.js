@@ -18,16 +18,17 @@ import ModalSelectCategory from "./modal.select.category";
 export default function ModalInputProduct({
   success,
   categories,
-  categoriesPage,
+  categoriesTotalPage,
   setCategoriesPage,
-  totalCategoriesPage,
   productData,
-  selectedCategories,
-  setSelectedCategories,
+  // selectedCategories,
+  // setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
+  categoriesCurrentPage
 }) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -138,7 +139,7 @@ export default function ModalInputProduct({
       });
       setError(errors);
 
-      toast.error("Check your input field!");
+      toast.error("Periksa kembali kolom pengisian!");
 
       setIsToastVisible(true);
 
@@ -154,10 +155,13 @@ export default function ModalInputProduct({
         type="success"
         message={
           productData
-            ? "Product Updated Successfully"
-            : "Product Added Successfully!"
+            ? "Produk Berhasil Diubah!"
+            : "Produk Berhasil Ditambahkan!"
         }
-        handleCloseModal={handleCloseModal}
+        handleCloseModal={()=>{
+          handleCloseModal()
+          setSelectedCategories([]);
+        }}
       />
     );
   }
@@ -168,26 +172,23 @@ export default function ModalInputProduct({
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="">
             {selectedCategories.length === 0 ? (
-              <h3>Select Category ...</h3>
+              <h3>Pilih Kategori ...</h3>
             ) : (
               <>
-                <h3>Categories</h3>
+                <h3>Kategori</h3>
 
                 <div
                   className="mb-2 flex flex-wrap gap-2"
                   onChange={() => setError({ ...error, categoryId: false })}
                 >
-                  {selectedCategories.map((item) => {
-                    const selectedCategory = categories.find(
-                      (category) => category.categoryId === item.categoryId
-                    );
+                  {selectedCategories?.map((item) => {
                     return (
                       <Button
                         isPrimaryOutline
-                        key={selectedCategory?.categoryId}
+                        key={item?.categoryId}
                         className="flex items-center rounded-md px-2 py-1 text-sm"
                       >
-                        {selectedCategory?.categoryDesc}
+                        {item?.categoryDesc}
                         <span
                           className="ml-2 cursor-pointer"
                           onClick={() => handleRemoveCategory(item.categoryId)}
@@ -204,7 +205,7 @@ export default function ModalInputProduct({
             <Button
               isButton
               isPrimary
-              title="Choose Category"
+              title="Pilih Kategori"
               onClick={() => setShowCategoryModal(true)}
             />
 
@@ -220,8 +221,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productNameRef}
                 type="text"
-                label="Product Name"
-                placeholder="e.g. Paracetamol 500 mg"
+                label="Nama Produk"
+                placeholder="Contoh: Paracetamol 500 mg"
                 errorInput={error.productName}
                 onChange={() => setError({ ...error, productName: false })}
               />
@@ -236,8 +237,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productPriceRef}
                 type="number"
-                label="Product Price"
-                placeholder="e.g. 35000"
+                label="Harga Produk"
+                placeholder="Contoh: 35000"
                 errorInput={error.productPrice}
                 onChange={() => setError({ ...error, productPrice: false })}
               />
@@ -252,8 +253,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productDosageRef}
                 type="text"
-                label="Product Dosage"
-                placeholder="e.g. 3 x 1 hari"
+                label="Dosis"
+                placeholder="Contoh: 3 x 1 hari"
                 errorInput={error.productDosage}
                 onChange={() => setError({ ...error, productDosage: false })}
               />
@@ -268,8 +269,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productDescriptionRef}
                 type="textarea"
-                label="Product Description"
-                placeholder="Write Description Here"
+                label="Deskripsi Produk"
+                placeholder="Tulis Deskripsi Disini"
                 errorInput={error.productDescription}
                 onChange={() =>
                   setError({ ...error, productDescription: false })
@@ -297,15 +298,18 @@ export default function ModalInputProduct({
               isButton
               isBLock
               isSecondary
-              title="Cancel"
-              onClick={handleCloseModal}
+              title="Kembali"
+              handleCloseModal={()=>{
+                handleCloseModal();
+                setSelectedCategories([]);
+              }}
             />
             <Button
               isButton
               isPrimary
               isBLock
               isDisabled={isToastVisible}
-              title={productData ? "Update" : "Add Product"}
+              title={productData ? "Ubah" : "Tambah Produk"}
               type={isToastVisible ? "button" : "submit"}
             />
           </div>
@@ -314,15 +318,15 @@ export default function ModalInputProduct({
         <div className={`${!confirmAdd ? "hidden" : null}`}>
           {productData ? (
             <p className="modal-text">
-              Are you sure you want to update this product?
+              Apa kamu yakin ingin mengubah produk ini?
             </p>
           ) : (
             <p className="modal-text">
-              Are you sure you want to add{" "}
+              Apa kamu yakin ingin menambahkan produk{" "}
               <span className="font-bold">
                 {capitalizeEachWords(productNameRef.current?.value)}
               </span>{" "}
-              to the product list?
+              ke daftar produk?
             </p>
           )}
 
@@ -331,7 +335,7 @@ export default function ModalInputProduct({
               <Button
                 isButton
                 isPrimaryOutline
-                title="Back"
+                title="Tidak"
                 className="mt-4"
                 type="button"
                 onClick={() => setConfirmAdd(false)}
@@ -341,7 +345,7 @@ export default function ModalInputProduct({
             <Button
               isButton
               isPrimary
-              title={"Sure"}
+              title={"Ya"}
               className="mt-4"
               type="submit"
               isLoading={isSubmitProductLoading}
@@ -357,6 +361,9 @@ export default function ModalInputProduct({
             selectedCategories={selectedCategories} 
             handleSelectCategory={handleSelectCategory}
             setShowCategoryModal={setShowCategoryModal}
+            categoriesTotalPage={categoriesTotalPage}
+            categoriesCurrentPage={categoriesCurrentPage}
+            setCategoriesPage={setCategoriesPage}
           />
         )}
       </AnimatePresence>

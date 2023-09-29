@@ -120,7 +120,6 @@ export const getShippingCost= createAsyncThunk(
     "address/cost",
     async (payload, { rejectWithValue }) => {
         try {
-            console.log(payload)
             const {data} = await api.post("/address/shipping-cost", payload)
             
             return data

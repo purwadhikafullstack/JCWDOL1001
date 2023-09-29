@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList, resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
+import { getTransactionList } from "../../../../store/slices/transaction/slices";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
@@ -8,22 +8,25 @@ import Modal from "../../../../components/Modal";
 import ModalDetailTransaction from "./modal.detail.transaction";
 import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
+import Pagination from "../../../../components/PaginationV2";
 
 export default function MenungguKonfirmasi({
   statusId,
   statusDesc,
 }) {
   const dispatch = useDispatch();
-  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading } = useSelector((state) => {
+  const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
     return {
       transaction: state.transaction?.transactions,
       isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
+      totalPage: state.transaction?.totalPage,
+      currentPage: state.transaction?.currentPage,
     };
   });
 
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [page, setPage] = useState(1)
 
   const handleShowModal = (context, transactionId) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -43,19 +46,12 @@ export default function MenungguKonfirmasi({
   };
 
   const handleCloseModal = () => {
-
     setShowModal({show: false, context:null});
-    
-    dispatch(resetSuccessTransaction())
   };
 
   useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, [selectedTransaction]);
-
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId }));
-  }, [isUpdateOngoingTransactionLoading]);
+    dispatch(getTransactionList({ statusId, page }));
+  }, [page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -79,7 +75,7 @@ export default function MenungguKonfirmasi({
             <div
               key={item.transactionId}
               className="cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
-              onClick={() => handleShowModal("Detail Transaksi", item.transactionId)}
+              onClick={() => handleShowModal("Detail Transaksi - Menunggu Konfirmasi", item.transactionId)}
             >
               <div className="flex items-center justify-between">
                 <p className="mb-4 text-sm">{formatDate(item.createdAt)}</p>
@@ -134,13 +130,16 @@ export default function MenungguKonfirmasi({
                   isButton
                   isPrimary
                   title="Lihat Detail Transaksi"
-                  onClick={() => handleShowModal("Lihat Detail Transaksi", item.transactionId)}
                 />
               </div>
             </div>
           );
         })}
       </div>
+
+      {totalPage > 1 &&
+        <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+      }
     </>
     }
 
@@ -151,15 +150,13 @@ export default function MenungguKonfirmasi({
         title={showModal.context}
         closeButtonText={true}
       >
-        {showModal.context === "Detail Transaksi" && 
-
-        <ModalDetailTransaction
-          selectedTransaction={selectedTransaction}
-          handleCloseModal={handleCloseModal}
-          handleShowModal={handleShowModal}
-        />
-      }
-
+        {showModal.show &&
+          <ModalDetailTransaction
+            selectedTransaction={selectedTransaction}
+            handleCloseModal={handleCloseModal}
+            handleShowModal={handleShowModal}
+          />
+        }
       </Modal>
     </>
   );

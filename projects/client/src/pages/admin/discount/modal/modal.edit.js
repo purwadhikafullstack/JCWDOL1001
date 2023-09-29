@@ -8,6 +8,7 @@ import { createDiscount, updateDiscount } from "../../../../store/slices/discoun
 import SuccessMessage from "../../../../components/Message"
 import {formatDate, formatDateValue} from "../../../../utils/formatDate"
 import { toast } from "react-toastify"
+import { DiscountInfoValidationSchema } from "../../../../store/slices/discount/validation"
 
 export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,products,isNew,success}) {
     const dispatch = useDispatch()
@@ -22,63 +23,75 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     
     const [isPercentage, setIsPercentage] = useState({
         id : `${selectedId?.isPercentage ?  1: 0 }`,
-        name : `${selectedId?.isPercentage ? "yes": "no" }`
+        name : `${selectedId?.isPercentage ? "Ya": "Tidak" }`
     })
 
     const [isOneGetOne, setIsOneGetOne] = useState({
         id : `${selectedId?.oneGetOne ?  1: 0 }`,
-        name : `${selectedId?.oneGetOne ? "yes": "no" }`
+        name : `${selectedId?.oneGetOne ? "Ya": "Tidak" }`
     })
 
     const onButtonCancel = () => {
-        if(!selectedId){ handleCloseModal()}
-        handleShowModal({context:"Details Discount", id:selectedId.discountId})
-        setEdit(false)
+        
+        if(selectedId.length === 0){ 
+            handleCloseModal()
+        }else{
+            handleShowModal({context:"Detail Diskon", id:selectedId.discountId})
+            setEdit(false)
+        }
     }
 
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [error, setError] = useState("")
+    const [isToastVisible, setIsToastVisible] = useState(false)
     const output = {}
 
     const onButtonSave = async () => {
         try {
-            // minimum transaksi atau produk buy one get one harus ada kode voucher
-            if(
-                (
-                    ( (amountRef?.current?.value === "" || amountRef?.current?.value == "0" ) && (minimumRef?.current?.value !== "" || minimumRef?.current?.value != "0" ) )
-                    || (isOneGetOne.id === 1)
-                )
-                && codeRef?.current?.value === ""
-            ){
-                return toast.error("Voucher code can't be empty")
-            }
-            
-            // minimum transaction harus ada amount utk dipotong
-            if((minimumRef?.current?.value !== "" || minimumRef?.current?.value != "0" ) && (amountRef?.current?.value === "" || amountRef?.current?.value == "0" )){
-                return toast.error("Minimum transaction voucher must have a reduced amount")
-            }
 
             // buy one get one harus ada produk
             if(isOneGetOne.id === 1 && selectedProducts.length === 0 ){
-                return toast.error("Buy One Get One must have product")
+                throw({message:"Buy One Get One must have product"}) 
             }
             
             output.data = {
                 "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-                "isPercentage" : isPercentage.id ,
+                "isPercentage" : +isPercentage.id ,
                 "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-                "oneGetOne" : isOneGetOne.id,
+                "oneGetOne" : +isOneGetOne.id,
                 "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : selectedId?.minimalTransaction,
                 "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
-                "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode
+                "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
             }
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
+            
+            await DiscountInfoValidationSchema.validate(output.data,{
+                abortEarly:false
+            })
+            
             if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
                 dispatch(updateDiscount({discountId : selectedId?.discountId,output}))
             }
-        }catch(error){}
+        }catch(error){
+            const errors = {}
+            
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+            
+            setError(errors)
+            
+            toast.error("Check your input field!")
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
+        }
     }
     useEffect(() => {
         setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
@@ -87,7 +100,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
         return ( 
             <SuccessMessage 
                 type="success" 
-                message={`${selectedId ? "Update discount success" : "Add new discount success"}`} 
+                message={`${selectedId ? "Berhasil mengubah diskon" : "Berhasil menambahkan diskon baru!"}`} 
                 handleCloseModal={handleCloseModal} 
             /> 
         ) 
@@ -98,7 +111,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             isButton
             isPrimary
             className = {`${onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-            title = "Edit"
+            title = "Ubah"
             onClick = {()=> setEdit(true)}
         />
         <div className=" flex gap-3">
@@ -106,92 +119,117 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 isButton
                 isDanger
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-                title = "Cancel"
+                title = "Kembali"
                 onClick = {onButtonCancel}
             />
             <Button
                 isButton
                 isPrimary
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-                title = "Save"
+                title = "Simpan"
+                isDisabled={isToastVisible}
                 onClick = {onButtonSave}
             />
         </div>
-        <div className="flex items-center justify-between max-w-[80%] gap-8">
+        <div className="flex items-center justify-between max-w-[85%] gap-8">
             <div className="">
-                <h3 className={`${onEdit ? "title mt-2" : "title mt-4" }`}>Name : </h3>
+                <h4 className={`title font-bold ${onEdit ? "mt-2" : "mt-4" }`}>Nama : </h4>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "text" }`}
                     ref = {nameRef}
                     placeholder = {selectedId?.discountName}
+                    errorInput={error.discountName }
+                    onChange={() => setError({ ...error, discountName: false })}
                 />
+                {error.discountName && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                        {error.discountName}
+                    </div>
+                )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountName}</h1>
-                <h3 className="title mt-4">Description : </h3>
+                <h4 className="title font-bold mt-4">Deskripsi : </h4>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "textarea" }`}
                     ref = {descRef}
                     placeholder = {selectedId?.discountDesc}
+                    errorInput={error.discountDesc }
+                    onChange={() => setError({ ...error, discountDesc: false })}
                 />
+                {error.discountDesc && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                        {error.discountDesc}
+                    </div>
+                )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountDesc}</h1>
-                <h3 className={`${onEdit ? "title mt-5" : "title mt-4" }`}>Is Percentage : </h3>
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? "Yes" : "No" }</h1>
-                <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="percentage">
+                <h4 className={`title font-bold ${onEdit ? "mt-5" : "mt-4" }`}>Persentase : </h4>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? "Ya" : "Tidak" }</h1>
+                <fieldset className={`${onEdit ? "pt-3 pb-1" : "hidden"}`} id="percentage">
                     <div>
                         <input
                             type="radio"
                             id="1"
                             name="isPercentage"
-                            value="yes"
-                            checked = {isPercentage?.name === "yes" ? true : false}
-                            onChange={()=>{setIsPercentage({id:"1",name:"yes"})}}
+                            value="Ya"
+                            checked = {isPercentage?.name === "Ya" ? true : false}
+                            onChange={()=>{setIsPercentage({id:"1",name:"Ya"})}}
                         />
-                        <label for="1" className="mr-4">Yes</label>
+                        <label for="1" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
                             id="0" 
                             name="isPercentage" 
-                            value="no" 
-                            checked = {isPercentage?.name === "no" ? true : false}
-                            onChange={()=>{setIsPercentage({id:"0",name:"no"})}}
+                            value="Tidak" 
+                            checked = {isPercentage?.name === "Tidak" ? true : false}
+                            onChange={()=>{setIsPercentage({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">No</label>
+                        <label for="0">Tidak</label>
                     </div>
                 </fieldset>
-                <h3 className="title mt-4">Is One Get One : </h3>
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Yes" : "No" }</h1>
-                <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="oneGetOne">
+                <h4 className="title font-bold mt-4">Beli Satu Gratis Satu : </h4>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Ya" : "Tidak" }</h1>
+                <fieldset className={`${onEdit ? "pt-3 z-50" : "hidden"}`} id="oneGetOne">
                     <div>
                         <input
                             type="radio"
                             id="1"
                             name="isOneGetOne"
-                            value="yes"
-                            checked = {isOneGetOne?.name === "yes" ? true : false}
-                            onChange={()=>{setIsOneGetOne({id:"1",name:"yes"})}}
+                            value="Ya"
+                            checked = {isOneGetOne?.name === "Ya" ? true : false}
+                            onChange={() => {
+                                amountRef.current.value =""
+                                setIsOneGetOne({id:"1",name:"Ya"})
+                            }}
                             
                         />
-                        <label for="1" className="mr-4">Yes</label>
+                        <label for="1" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
                             id="0" 
                             name="isOneGetOne" 
-                            value="no" 
-                            checked = {isOneGetOne?.name === "no" ? true : false}
-                            onChange={()=>{setIsOneGetOne({id:"0",name:"no"})}}
+                            value="Tidak" 
+                            checked = {isOneGetOne?.name === "Tidak" ? true : false}
+                            onChange={()=>{setIsOneGetOne({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">No</label>
+                        <label for="0">Tidak</label>
                     </div>
                 </fieldset>
             </div>
             <div className="">
-                <h3 className="title mt-4">Code : </h3>
+                <h4 className="title font-bold mt-4">Kode : </h4>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "text" }`}
                     ref = {codeRef}
                     placeholder = {selectedId?.discountCode ? selectedId?.discountCode : "-"}
+                    errorInput={error.discountCode }
+                    onChange={() => setError({ ...error, discountCode: false })}
                 />
+                {error.discountCode && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                        {error.discountCode}
+                    </div>
+                )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountCode ? selectedId?.discountCode : "-"}</h1>
-                <h3 className="title mt-4">Expired Date : </h3>
+                <h4 className="title font-bold mt-4">Tanggal Berakhir : </h4>
                 <input 
                     type = {`${!onEdit ? "hidden" : "date" }`}
                     ref = {expiredRef}
@@ -199,19 +237,33 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     className="w-full rounded-lg border bg-inherit px-2 py-2  focus:ring-2"
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? formatDate(selectedId?.discountExpired) : "-"}</h1>
-                <h3 className="title mt-4">Amount : </h3>
+                <h4 className="title font-bold mt-4">Jumlah : </h4>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {amountRef}
                     placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `IDR ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
+                    errorInput={error.discountAmount }
+                    onChange={() => setError({ ...error, discountAmount: false })}
                 />
+                {error.discountAmount && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                        {error.discountAmount}
+                    </div>
+                )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? `${selectedId?.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
-                <h3 className="title mt-4">Minimum Transaction : </h3>
+                <h4 className="title font-bold mt-4">Minimal Transaksi : </h4>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {minimumRef}
                     placeholder = {!selectedId?.minimalTransaction ? "-" : `IDR ${formatNumber(selectedId?.discountAmount)}` }
+                    errorInput={error.minimalTransaction }
+                    onChange={() => setError({ ...error, minimalTransaction: false })}
                 />
+                {error.minimalTransaction && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                        {error.minimalTransaction}
+                    </div>
+                )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
             </div>
         </div>

@@ -9,6 +9,8 @@ import discounteReducer from "./slices/discount"
 import cartReducer from "./slices/cart"
 import transactionReducer from "./slices/transaction"
 import stockReducer from "./slices/product/history"
+import reportReducer from "./slices/report"
+import forumReducer from "./slices/forum"
 
 const store = configureStore({
     reducer : {
@@ -21,7 +23,9 @@ const store = configureStore({
         discount : discounteReducer,
         cart : cartReducer,
         transaction: transactionReducer,
-        stock : stockReducer
+        stock : stockReducer,
+        report: reportReducer,
+        forum: forumReducer,
     },
 })
 

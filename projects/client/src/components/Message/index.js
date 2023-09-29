@@ -17,7 +17,7 @@ export default function Message(props) {
         <HiXCircle className=" rounded-full bg-slate-100 text-6xl text-danger" />
         }
         <p className="modal-text my-2">{props.message}</p>
-        <Button isButton isPrimary onClick={props.handleCloseModal} title="Close"/>
+        <Button isButton isPrimary onClick={props.handleCloseModal} title="Tutup"/>
       </div>
     );
 }
