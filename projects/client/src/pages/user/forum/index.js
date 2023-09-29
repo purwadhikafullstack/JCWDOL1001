@@ -9,6 +9,8 @@ import Pagination from "../../../components/Pagination"
 import Modal from "../../../components/Modal"
 import Message from "../../../components/Message"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
+import { PostQuestionValidationSchema } from "../../../store/slices/forum/validation.js"
+import { toast } from "react-toastify"
 
 function ForumPage () {
     const dispatch = useDispatch()
@@ -54,11 +56,6 @@ function ForumPage () {
         document.body.style.overflow = "auto"
     }
 
-    const handleOnSure = () => {
-        dispatch(PostQuestion({question : inputQuestionRef.current.value}))
-        setConfirmation(false)
-    }
-
     const onChangePagination = (type) => {
         dispatch(
             getForum({ 
@@ -77,6 +74,40 @@ function ForumPage () {
         dispatch(getForum({sortDate :""}))
         questionRef.current.value = ""
         setFilter(false)
+    }
+
+    const [error, setError] = useState("")
+    const [isToastVisible, setIsToastVisible] = useState(false)
+    const output = {}
+
+    const handleOnSure = async () => {
+        try {
+            Object.assign(output,{question : inputQuestionRef.current.value})
+            
+            await PostQuestionValidationSchema.validate(output,{
+                abortEarly:false
+            })
+
+            dispatch(PostQuestion(output))
+            setConfirmation(false)
+
+        }catch(error) {
+            const errors = {}
+            
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+            
+            setError(errors)
+            
+            toast.error("Check your input field!")
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
+        }
     }
 
     useEffect(() => {
@@ -181,10 +212,21 @@ function ForumPage () {
                         <p className="mt-2">Nama Pengguna : </p>
                         <p className="mt-2">{profile.name} </p>
                         <p className="mt-2">Masukan Pertanyaan Anda : </p>
-                        <textarea ref={inputQuestionRef} type="text-area" className="border-2 p-3 rounded-md" rows="5" cols="33" />
+                        <Input ref={inputQuestionRef} type="textarea" 
+                            errorInput={error.question }
+                            onChange={() => setError({ ...error, question: false })}
+                        />
+                        {error.question && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                                {error.question}
+                            </div>
+                        )}
                         <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
                             <Button title="Back" isButton isSecondary 
-                                onClick={() =>handleCloseModal()}
+                                onClick={() =>{
+                                    handleCloseModal()
+                                    setError({ ...error, question: false })
+                                }}
                             />
                             <Button isButton isPrimary title="Confirm"
                                 onClick={()=>{setConfirmation(true)}}
@@ -201,7 +243,7 @@ function ForumPage () {
                             {!isLoading && (
                                 <Button title="No" isButton isSecondary onClick={handleCloseModal} />
                             )}
-                            <Button title="Yes" isButton isDanger
+                            <Button title="Yes" isButton isDanger 
                                 isLoading={isLoading}
                                 onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
@@ -217,7 +259,7 @@ function ForumPage () {
                             <Button title="Cancel"  isButton  isSecondary 
                                 onClick={() => setConfirmation(false)}
                             />
-                            <Button title="Sure" isButton isPrimary
+                            <Button title="Sure" isButton isPrimary isDisabled={isToastVisible}
                                 onClick={handleOnSure}
                             >
                                 Sure

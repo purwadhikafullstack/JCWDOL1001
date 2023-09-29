@@ -79,7 +79,8 @@ const getTransactions = async (req, res, next) => {
         }
       ],
       where: whereCondition,
-      order : sort
+      order : sort,
+      ...options
     });
 
     if (!transaction) throw ({

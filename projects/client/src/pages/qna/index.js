@@ -7,6 +7,8 @@ import Modal from "../../components/Modal"
 import Message from "../../components/Message"
 import Pagination from "../../components/Pagination"
 import Input from "../../components/Input"
+import { PostQuestionValidationSchema } from "../../store/slices/forum/validation"
+import { toast } from "react-toastify"
 
 export default function QnAPage() {
   const { questionList, success, profile, currentPage, totalPage  } = useSelector(state => {
@@ -43,11 +45,6 @@ export default function QnAPage() {
     document.body.style.overflow = "auto"
   }
 
-  const handleOnSure = () => {
-    dispatch(PostQuestion({question : inputQuestionRef.current.value}))
-    setConfirmation(false)
-  }
-
   const onChangePagination = (type) => {
     dispatch(getPublicForum({ 
       page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
@@ -63,6 +60,41 @@ export default function QnAPage() {
     dispatch(getPublicForum({page:"",filterQuestion:""}))
     questionRef.current.value = ""
     setFilter(false)
+  }
+
+  const [error, setError] = useState("")
+  const [isToastVisible, setIsToastVisible] = useState(false)
+  const output = {}
+
+  const handleOnSure = async () => {
+    try {
+      
+      Object.assign(output,{question : inputQuestionRef.current.value})
+            
+      await PostQuestionValidationSchema.validate(output,{
+          abortEarly:false
+      })
+
+      dispatch(PostQuestion(output))
+      setConfirmation(false)
+
+    } catch(error){
+      const errors = {}
+            
+      error.inner.forEach((innerError) => {
+          errors[innerError.path] = innerError.message;
+      })
+      
+      setError(errors)
+      
+      toast.error("Check your input field!")
+
+      setIsToastVisible(true)
+
+      setTimeout(() => {
+          setIsToastVisible(false)
+      }, 2000)
+    }
   }
 
   useEffect(() => {
@@ -181,13 +213,24 @@ export default function QnAPage() {
             <p className="mt-2">Nama Pengguna : </p>
             <p className="mt-2">{profile.name} </p>
             <p className="mt-2">Masukan Pertanyaan Anda : </p>
-            <textarea ref={inputQuestionRef} type="text-area" className="border-2 p-3 rounded-md" rows="5" cols="33" />
+            <Input ref={inputQuestionRef} type="textarea" 
+              errorInput={error.question }
+              onChange={() => setError({ ...error, question: false })}
+            />
+            {error.question && (
+              <div className="text-sm text-red-500 dark:text-red-400">
+                {error.question}
+              </div>
+            )}
             <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
                 <Button title="Back" isButton isSecondary 
-                    onClick={() =>handleCloseModal()}
+                  onClick={() =>{
+                    handleCloseModal() 
+                    setError({ ...error, question: false })
+                  }}
                 />
                 <Button isButton isPrimary title="Confirm"
-                    onClick={()=>{setConfirmation(true)}}
+                  onClick={()=>{setConfirmation(true)}}
                 />
             </div>
           </div>
@@ -201,7 +244,7 @@ export default function QnAPage() {
                 <Button title="Cancel" isButton isSecondary 
                   onClick={() => setConfirmation(false)}
                 />
-                <Button onClick={handleOnSure} title="Sure" isButton isPrimary >
+                <Button onClick={handleOnSure} title="Sure" isDisabled={isToastVisible} isButton isPrimary >
                   Sure
                 </Button>
             </div>

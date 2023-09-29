@@ -1,6 +1,7 @@
 import {createAsyncThunk} from "@reduxjs/toolkit"
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify'
+import { PostQuestionValidationSchema } from "./validation"
 
 export const getForum = createAsyncThunk(
     "forum/getForum",
