@@ -23,7 +23,7 @@ export const getTransactionList = createAsyncThunk(
 
             let PARAMETER = ""
 
-            if(page) PARAMETER +=`sortDate=${page}&`
+            if(page) PARAMETER +=`page=${page}&`
 
             if(startFrom) PARAMETER +=`startFrom=${startFrom}&endFrom=${endFrom}&`
 
