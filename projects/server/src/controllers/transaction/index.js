@@ -12,10 +12,7 @@ const {
   Transaction_Status,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
-const { Op } = require("sequelize");
 const { Product_Detail, Product_List, Product_Unit, Product_History } = require("../../model/product");
-const { middlewareErrorHandling } = require("../../middleware");
-const cloudinary = require("cloudinary");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
 const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
@@ -180,7 +177,7 @@ const createTransactions = async (req, res, next) => {
 
     const newTransactionList = {
       userId: userId,
-      total: totalPrice + transport,
+      total: +totalPrice + +transport,
       transport: transport,
       subtotal: totalPrice,
       statusId: 1,

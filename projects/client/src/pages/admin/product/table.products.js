@@ -15,7 +15,8 @@ export default function TableProducts({
   handleShowModal,
   products,
   isGetProductsLoading,
-  isSubmitProductLoading
+  isSubmitProductLoading,
+  current_page
 }) {
   return (
     <table className="text-gray-500 w-full text-left text-sm">
@@ -59,7 +60,7 @@ export default function TableProducts({
                 className="text-gray-900 whitespace-nowrap p-3 font-medium"
               >
                 {/* {index + 1 + (current_page - 1) * 10} */}
-                {index + 1}
+                {index + 1 +(current_page - 1) * 10}
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>

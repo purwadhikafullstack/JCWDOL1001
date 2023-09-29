@@ -5,6 +5,8 @@ import Item from "../../../../components/Item";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { useLocation, useNavigate } from "react-router-dom";
+import LogoBca from "../../../../assets/logo-bca.png";
+import LogoMandiri from "../../../../assets/logo-mandiri.png";
 
 export default function CheckoutPage(){
 
@@ -15,54 +17,46 @@ export default function CheckoutPage(){
     const [shipping, setShipping] = useState(null);
     const location = useLocation();
     let address = location.state?.addressSelected;
+    let shippings = location.state?.shippingSelected;
     const {cart} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
         }
     })
-
     
-    if(cart.length === 0){
-        navigate("/")
-    }
-    
-
     useEffect(()=>{
         dispatch(getCheckoutProducts())
     },[])
 
     const ShippingCost = () => {
-        setShipping(9000)
+        setShipping(shippings.cost)
     }
 
     const PaymentMethod = () => {
-        switch(payment){
-            case `BCA` :
                 return(
-                    <div class="my-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
+                    <div className="flex flex-row">
+                    <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
+                            <img src={LogoBca} className=" w-48 h-24 mx-12 items-center justify-center"></img>
                             <h3>Please transfer to BCA Bank Account</h3>
-                            <h1 className="text-4xl font-bold">9354 220 114</h1>
+                            <h1 className="text-4xl font-bold">091 802 3981</h1>
                             <h2 className="text-2xl font-semibold">APOTEK PRIMA JASA</h2>
                         </div>
                     </div>
-                )
-            case `Mandiri` :
-                return(
-                    <div class="my-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
+                    <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
+                            <img src={LogoMandiri} className="w-48 h-24 mx-12 items-center justify-center"></img>
                             <h3>Please transfer to Mandiri Bank Account</h3>
-                            <h1 className="text-4xl font-bold">9112 230 114</h1>
+                            <h1 className="text-4xl font-bold">1234 567 890</h1>
                             <h2 className="text-2xl font-semibold">APOTEK PRIMA MANDIRI</h2>
                         </div>
                     </div>
+                    </div>
                 )
-            default : return null;
         }
-    }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : shipping, totalPrice : (subTotal+shipping), addressId : address.addressId}));
+        dispatch(createTransaction({transport : shipping, totalPrice : (+subTotal*1 + +shipping*1), addressId : address.addressId}));
         navigate("/user/transaction");
     }
 
@@ -98,7 +92,7 @@ export default function CheckoutPage(){
                             { shipping && 
                             <>
                                 <div className="flex-col">
-                                    <h1>{address.contactName}</h1>
+                                    <h1 className=" text-3xl font-bold border-b-2 border-black">Contact Name : {address.contactName}</h1>
                                     <h4>Address : {address.address},{address.district}</h4>
                                     <h4>City : {address.city}</h4>
                                     <h4>Province : {address.province}</h4>
@@ -113,21 +107,22 @@ export default function CheckoutPage(){
                     </div>
                     <div className="mb-5 pb-2">
                         <h3 className="text-2xl font-semibold w-full">Payment Method</h3>
-                            <select value={payment} className="text-xl border-2 bg-green-200 rounded-lg md:rounded-md" onChange={(e)=>setPayment(e.target.value)}>
+                            {/*<select value={payment} className="text-xl border-2 bg-green-200 rounded-lg md:rounded-md" onChange={(e)=>setPayment(e.target.value)}>
                                 <option value={null}>Please choose your payment Method</option>
                                 <option disabled="true">BankTransfer</option>
                                 <option value={"BCA"}>BCA</option>
                                 <option value={"Mandiri"}>Mandiri</option>
-                            </select>
+                        </select>*/}
                             {
-                                payment && PaymentMethod() 
+                                //payment && 
+                                PaymentMethod()
                             }
                     </div>
                     <div className="text-2xl font-semibold w-auto border mb-5 pb-2">
                         <h1>Sub Total : Rp. {formatNumber(subTotal)}</h1>
                         {
                             shipping && <><h1>Shipping cost : Rp. {formatNumber(shipping)}</h1>
-                            <h1>Grand total : Rp. {formatNumber(subTotal + shipping)}</h1></>
+                            <h1>Grand total : Rp. {formatNumber(subTotal*1 + shipping*1)}</h1></>
                         }
                         <Button className="" isPrimary isButton title={`Check Out!`} onClick={checkOut}/>
                     </div>

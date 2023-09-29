@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../../utils/api.instance.js"
 import { toast } from "react-toastify"
 
-export const ProductStockHistory = createAsyncThunk(
+export const productStockHistory = createAsyncThunk(
     "products/stockHistory",
     async(payload, {rejectWithValue}) => {
         try{
