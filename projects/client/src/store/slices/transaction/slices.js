@@ -19,9 +19,11 @@ export const getTransactionList = createAsyncThunk(
     "transactions/getTransactionList",
     async (payload, {rejectWithValue}) => {
         try{
-            const { statusId,startFrom, endFrom, sortDate, sortTotal, filterName} = payload;
+            const { statusId, page, startFrom, endFrom, sortDate, sortTotal, filterName} = payload;
 
             let PARAMETER = ""
+
+            if(page) PARAMETER +=`sortDate=${page}&`
 
             if(startFrom) PARAMETER +=`startFrom=${startFrom}&endFrom=${endFrom}&`
 

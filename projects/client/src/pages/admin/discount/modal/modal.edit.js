@@ -22,17 +22,17 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     
     const [isPercentage, setIsPercentage] = useState({
         id : `${selectedId?.isPercentage ?  1: 0 }`,
-        name : `${selectedId?.isPercentage ? "yes": "no" }`
+        name : `${selectedId?.isPercentage ? "Ya": "Tidak" }`
     })
 
     const [isOneGetOne, setIsOneGetOne] = useState({
         id : `${selectedId?.oneGetOne ?  1: 0 }`,
-        name : `${selectedId?.oneGetOne ? "yes": "no" }`
+        name : `${selectedId?.oneGetOne ? "Ya": "Tidak" }`
     })
 
     const onButtonCancel = () => {
         if(!selectedId){ handleCloseModal()}
-        handleShowModal({context:"Details Discount", id:selectedId.discountId})
+        handleShowModal({context:"Detail Diskon", id:selectedId.discountId})
         setEdit(false)
     }
 
@@ -87,7 +87,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
         return ( 
             <SuccessMessage 
                 type="success" 
-                message={`${selectedId ? "Update discount success" : "Add new discount success"}`} 
+                message={`${selectedId ? "Berhasil mengubah diskon" : "Berhasil menambahkan diskon baru!"}`} 
                 handleCloseModal={handleCloseModal} 
             /> 
         ) 
@@ -98,7 +98,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             isButton
             isPrimary
             className = {`${onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-            title = "Edit"
+            title = "Ubah"
             onClick = {()=> setEdit(true)}
         />
         <div className=" flex gap-3">
@@ -106,92 +106,92 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 isButton
                 isDanger
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-                title = "Cancel"
+                title = "Kembali"
                 onClick = {onButtonCancel}
             />
             <Button
                 isButton
                 isPrimary
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit" }`}
-                title = "Save"
+                title = "Simpan"
                 onClick = {onButtonSave}
             />
         </div>
         <div className="flex items-center justify-between max-w-[80%] gap-8">
             <div className="">
-                <h3 className={`${onEdit ? "title mt-2" : "title mt-4" }`}>Name : </h3>
+                <h3 className={`${onEdit ? "title mt-2" : "title mt-4" }`}>Nama : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "text" }`}
                     ref = {nameRef}
                     placeholder = {selectedId?.discountName}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountName}</h1>
-                <h3 className="title mt-4">Description : </h3>
+                <h3 className="title mt-4">Deskripsi : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "textarea" }`}
                     ref = {descRef}
                     placeholder = {selectedId?.discountDesc}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountDesc}</h1>
-                <h3 className={`${onEdit ? "title mt-5" : "title mt-4" }`}>Is Percentage : </h3>
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? "Yes" : "No" }</h1>
+                <h3 className={`${onEdit ? "title mt-5" : "title mt-4" }`}>Persentase : </h3>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? "Ya" : "Tidak" }</h1>
                 <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="percentage">
                     <div>
                         <input
                             type="radio"
                             id="1"
                             name="isPercentage"
-                            value="yes"
-                            checked = {isPercentage?.name === "yes" ? true : false}
-                            onChange={()=>{setIsPercentage({id:"1",name:"yes"})}}
+                            value="Ya"
+                            checked = {isPercentage?.name === "Ya" ? true : false}
+                            onChange={()=>{setIsPercentage({id:"1",name:"Ya"})}}
                         />
-                        <label for="1" className="mr-4">Yes</label>
+                        <label for="1" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
                             id="0" 
                             name="isPercentage" 
-                            value="no" 
-                            checked = {isPercentage?.name === "no" ? true : false}
-                            onChange={()=>{setIsPercentage({id:"0",name:"no"})}}
+                            value="Tidak" 
+                            checked = {isPercentage?.name === "Tidak" ? true : false}
+                            onChange={()=>{setIsPercentage({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">No</label>
+                        <label for="0">Tidak</label>
                     </div>
                 </fieldset>
-                <h3 className="title mt-4">Is One Get One : </h3>
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Yes" : "No" }</h1>
+                <h3 className="title mt-4">Beli Satu Gratis Satu : </h3>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Ya" : "Tidak" }</h1>
                 <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="oneGetOne">
                     <div>
                         <input
                             type="radio"
                             id="1"
                             name="isOneGetOne"
-                            value="yes"
-                            checked = {isOneGetOne?.name === "yes" ? true : false}
-                            onChange={()=>{setIsOneGetOne({id:"1",name:"yes"})}}
+                            value="Ya"
+                            checked = {isOneGetOne?.name === "Ya" ? true : false}
+                            onChange={()=>{setIsOneGetOne({id:"1",name:"Ya"})}}
                             
                         />
-                        <label for="1" className="mr-4">Yes</label>
+                        <label for="1" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
                             id="0" 
                             name="isOneGetOne" 
-                            value="no" 
-                            checked = {isOneGetOne?.name === "no" ? true : false}
-                            onChange={()=>{setIsOneGetOne({id:"0",name:"no"})}}
+                            value="Tidak" 
+                            checked = {isOneGetOne?.name === "Tidak" ? true : false}
+                            onChange={()=>{setIsOneGetOne({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">No</label>
+                        <label for="0">Tidak</label>
                     </div>
                 </fieldset>
             </div>
             <div className="">
-                <h3 className="title mt-4">Code : </h3>
+                <h3 className="title mt-4">Kode : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "text" }`}
                     ref = {codeRef}
                     placeholder = {selectedId?.discountCode ? selectedId?.discountCode : "-"}
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountCode ? selectedId?.discountCode : "-"}</h1>
-                <h3 className="title mt-4">Expired Date : </h3>
+                <h3 className="title mt-4">Tanggal Berakhir : </h3>
                 <input 
                     type = {`${!onEdit ? "hidden" : "date" }`}
                     ref = {expiredRef}
@@ -199,14 +199,14 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     className="w-full rounded-lg border bg-inherit px-2 py-2  focus:ring-2"
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? formatDate(selectedId?.discountExpired) : "-"}</h1>
-                <h3 className="title mt-4">Amount : </h3>
+                <h3 className="title mt-4">Jumlah : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {amountRef}
                     placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `IDR ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
                 />
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? `${selectedId?.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
-                <h3 className="title mt-4">Minimum Transaction : </h3>
+                <h3 className="title mt-4">Minimal Transaksi : </h3>
                 <Input 
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {minimumRef}

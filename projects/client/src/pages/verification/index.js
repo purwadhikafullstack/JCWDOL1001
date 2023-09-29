@@ -107,17 +107,17 @@ export default function Verification() {
         user?.status === 1 ? 
         <div className="container pt-24 w-2/3 h-full flex flex-col">
             <h3 className="text-2xl font-bold">
-                    You have been verified.
+                Kamu telah terverifikasi
             </h3>
             
             <span className="text-gray-500 font-semibold">
-                    No need to verify more than once ;D
+                Tidak perlu melakukan verifikasi lagi ;D
             </span>
             <span className="text-gray-500 text-sm font-semibold mt-5">
-                    You will redirected to homepage in {refresh} s.
+                Kamu akan diarahkan ke beranda dalam {refresh} detik.
             </span>
             <span className="text-gray-500 text-sm font-semibold">
-                    or click <a href="/" className="font-bold text-primary">here</a>.
+                Jika kamu tidak diarahkan secara otomatis silakan klik <a href="/" className="font-bold text-primary">disini</a>.
             </span>
 
         </div>
@@ -126,18 +126,18 @@ export default function Verification() {
 
         <div className="container pt-24 w-2/3 h-full">
         <h3 className="text-2xl font-bold">
-                Verification
+                Verifikasi
             </h3>
         
         <span className="text-gray-500 font-semibold">
-                Fill the form, and you ready to go!
+                Isi datamu dan kamu akan segera menjadi bagian dari Apotech!
             </span>
         <div>
 
     
         <div className="mt-4 py-10 ">  
             <div className="font-semibold text-lg mb-2 text-teal-600">
-               OTP Code :
+               Kode OTP :
             </div>
             <div className="mb-5 w-2/5">
                 <Input
@@ -145,33 +145,33 @@ export default function Verification() {
                 required
                 type="text"
                 label="OTP : "
-                placeholder="6 Characters"
+                placeholder="6 Karakter"
                 />
             </div>
             <div className="font-semibold text-lg mb-2 text-teal-600">
-                Profile Information : 
+                Informasi Profil : 
             </div>
             <div className="flex flex-row gap-6 mb-5">
                 <div>
-                Gender :
+                Jenis Kelamin :
                 <select className="w-full rounded-lg border h-max bg-inherit px-2 py-2 outline-none focus:ring-2
             focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary" 
                 ref={genderRef}>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
                 </select>
                 </div>
                 <Input
                 ref={dateRef}
                 required
                 type="date"
-                label="Birthdate : "
+                label="Tanggal Lahir : "
                 placeholder="10-10-2000"
                 />
              </div>
 
              <div className="font-semibold text-lg mb-2 text-teal-600">
-                Address Information :
+                Informasi Alamat :
              </div>
              <div className="flex flex-col gap-3 mb-5">
                 <GetProvince

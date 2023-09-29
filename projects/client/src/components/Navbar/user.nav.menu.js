@@ -110,7 +110,11 @@ export default function UserNavMenu({
                   alt=""
                   className="h-full w-full object-cover"
                 />
-                <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">{ongoingTransactions}</span>
+                {ongoingTransactions > 0 &&
+                  <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">
+                    {ongoingTransactions}
+                  </span>
+                }
               </div>
 
               <AnimatePresence>

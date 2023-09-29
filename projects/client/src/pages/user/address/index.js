@@ -138,9 +138,11 @@ useEffect(() => {
           </div>
           ))
         }
-        <div className="flex justify-center mt-4">
-          <Pagination currentPage={currentPage} setPage={setPage} totalPage={totalPage}/>
-        </div>
+        {totalPage > 1 &&
+          <div className="flex justify-center mt-4">
+            <Pagination currentPage={currentPage} setPage={setPage} totalPage={totalPage}/>
+          </div>
+        }
       </div>
     );
   }

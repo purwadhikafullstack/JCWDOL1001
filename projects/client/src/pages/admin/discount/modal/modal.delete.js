@@ -17,7 +17,7 @@ export default function ModalDeleteDiscount({
     return (
       <SuccessMessage
         type="success"
-        message={`${selectedDiscount.discountName} discount has been delete`}
+        message={`Diskon produk ${selectedDiscount.discountName} telah dihapus`}
         handleCloseModal={handleCloseModal}
       />
     )
@@ -26,18 +26,18 @@ export default function ModalDeleteDiscount({
   return (
     <>  
         <p className="modal-text">
-            Are you sure to delete discount name : 
+            Apa kamu yakin ingin menghapus diskon : 
             <span className="font-bold"> {selectedDiscount.discountName}</span>?
             <p className="modal-text">
-            You won't be able to undo the changes after deleting.
+            Kamu tidak akan bisa melakukan perubahan apapun setelah menghapus
             </p>
         </p>
 
         <div className="mt-4 flex justify-end gap-2">
             
-            <Button title="No" isButton isSecondary onClick={handleCloseModal} />
+            <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
             <Button
-                title="Yes"
+                title="Ya, Hapus"
                 isButton
                 isDanger
                 isLoading={isDeleteLoading}

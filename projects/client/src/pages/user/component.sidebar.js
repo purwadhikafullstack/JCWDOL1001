@@ -78,6 +78,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
                 isButton
                 isPrimary
                 isBLock
+              onClick={() => navigate("/verify")}
                 title="Verify Account"
                 className="lg:hidden"
               />
@@ -87,6 +88,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
               isButton
               isBLock
               isPrimaryOutline
+              onClick={() => navigate("/upload-recipe")}
               title="Unggah Resep"
               />
           </div>
@@ -104,7 +106,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
               {menu.icon}
               <span>{menu.title}</span>
 
-              {menu.notification &&
+              {menu.notification > 0 &&
                   <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-0 text-white group-hover:right-1 text-xs">{menu.notification}</span>
               }
             </Button>
