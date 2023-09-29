@@ -50,22 +50,6 @@ const unitsSlice = createSlice({
           isLoading : false,
         })
       },
-      [resetUnit.pending] : (state, action) => {
-        state = Object.assign(state, {
-          isLoading : true,
-        })
-      },
-      [resetUnit.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-        state = Object.assign(state, {
-          success : false,
-          isLoading : false,
-        })
-      },
-      [resetUnit.rejected] : (state, action) => {
-        state = Object.assign(state, {
-          isLoading : false,
-        })
-      },
       [updateUnit.pending] : (state, action) => {
         state = Object.assign(state, {
           isLoading : true,

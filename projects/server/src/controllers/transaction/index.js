@@ -1,3 +1,6 @@
+const { Op } = require("sequelize");
+const moment = require("moment")
+const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const handlebars = require("handlebars");
@@ -7,11 +10,9 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
-} = require("../../model/transaction");
+} = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
-const { Op } = require("sequelize");
 const { Product_Detail, Product_List } = require("../../model/product");
-const { middlewareErrorHandling } = require("../../middleware");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
 const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
@@ -19,7 +20,7 @@ const getTransactions = async (req, res, next) => {
   try {
     const { userId } = req.user;
     const { statusId } = req.params;
-    const { page, sortDate, startFrom, endFrom } = req.query;
+    const { page, sortDate, startFrom, endFrom, sortTotal, filterName } = req.query;
 
     const limit = 10;
         
@@ -29,12 +30,26 @@ const getTransactions = async (req, res, next) => {
     }
 
     let whereCondition = {};
+    const sort = []
+    const filtering = {}
 
     if (userId === 1) {
       whereCondition = { statusId };
     } else {
       whereCondition = { userId, statusId };
     }
+
+    if(startFrom) {
+      whereCondition.updatedAt = {
+        [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
+        [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+      }
+    }
+
+    if(filterName) filtering.name = {"name" : {[Op.like]: `%${filterName}%`}}
+    
+    if(sortDate) sort.push(['updatedAt',sortDate ? sortDate : "DESC"])
+    if(sortTotal) sort.push(['total',sortTotal])
 
     const transaction = await Transaction_List?.findAll({
       include: [
@@ -55,15 +70,16 @@ const getTransactions = async (req, res, next) => {
         },
         {
           model: User_Account,
-          attributes : ["email"],
-          include: {
-            model: User_Profile,
-            as: "userProfile"
-          }
+          attributes : ["email"]
         },
+        {
+          model: User_Profile,
+          as: "userProfile",
+          where:filtering.name,
+        }
       ],
       where: whereCondition,
-      order:[[ "updatedAt" , sortDate ? sortDate : "DESC" ]],
+      order : sort,
       ...options
     });
 
@@ -676,4 +692,4 @@ module.exports = {
   receiveOrder,
   cancelTransaction,
   getTransactionStatus,
-};
+}

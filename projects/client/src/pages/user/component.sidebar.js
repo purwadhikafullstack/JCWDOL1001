@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser } from 'react-icons/hi2';
+import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser, HiMiniChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -45,6 +45,13 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
       path : "/user/password",
       notification: null,
       icon : <HiOutlineLockClosed className="block text-xl"/>
+    },
+    {
+      title : "QnA",
+      context : "qna",
+      path : "/user/qna",
+      notification: null,
+      icon : <HiMiniChatBubbleOvalLeftEllipsis className="block text-xl"/>
     },
   ]
 

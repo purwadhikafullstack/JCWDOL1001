@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Button from "../../components/Button";
 import { HiArrowLeft, HiArrowLongLeft, HiXMark } from "react-icons/hi2";
 import Modal from "../../components/Modal";
+import ForumPage from "./forum";
 
 export default function UserPage({ user, ongoingTransactions }) {
   const { context } = useParams();
@@ -44,6 +45,8 @@ export default function UserPage({ user, ongoingTransactions }) {
           ongoingTransactions={ongoingTransactions}
         />
       ),
+
+      qna:(<ForumPage/>)
     };
 
     if (context in pageContext) {

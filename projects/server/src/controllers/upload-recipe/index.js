@@ -6,6 +6,7 @@ const {GMAIL} = require("../../config/index.js")
 const {helperTransporter} = require("../../helper/index.js")
 const { User_Account, User_Profile } = require("../../model/relation.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
+const uploadRecipeValidationSchema = require("./validation.js")
 
 
 const uploadRecipe = async (req, res, next) => {
@@ -30,6 +31,9 @@ const uploadRecipe = async (req, res, next) => {
         status: middlewareErrorHandling.BAD_REQUEST_STATUS,
         message: middlewareErrorHandling.IMAGE_NOT_FOUND,
     })
+
+    await uploadRecipeValidationSchema.validate(req.body);
+
     const address = JSON.parse(req.body.address)
     const courier = JSON.parse(req.body.courier)
 

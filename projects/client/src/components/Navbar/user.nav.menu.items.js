@@ -37,8 +37,8 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
 
       <Button
         isLink
-        path="/"
-        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/" ? "text-primary" : "text-slate-500" } `}
+        path="/qna"
+        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/qna" ? "text-primary" : "text-slate-500" } `}
       >
         <HiMiniChatBubbleOvalLeftEllipsis className="text-2xl"/>
         QnA

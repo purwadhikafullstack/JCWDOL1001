@@ -19,16 +19,20 @@ export default function LoginContext ({
 			isLogin : state?.auth?.isLogin
 		}
 	})
-
+    
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
+    const [isToastVisible, setIsToastVisible] = useState(false)
     const [error, setError] = useState("")
 
     const handleLogin = async (e) => {
+        e.preventDefault()
+        const output = {email :emailRef.current?.value ,password:passwordRef.current?.value}
         try{
-            e.preventDefault()
-            const output = {email :emailRef.current?.value ,password:passwordRef.current?.value}
-            await LoginValidationSchema.validate(output)
+            await LoginValidationSchema.validate(output, {
+                abortEarly: false,
+            })
+            setError("")
             dispatch(login(output))
 
         }catch(error) {
@@ -39,6 +43,14 @@ export default function LoginContext ({
             })
 
             setError(errors)
+
+            toast.error("Check your input field!")
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
         }
     }
 
@@ -64,14 +76,14 @@ export default function LoginContext ({
                         type="text"
                         label="Email"
                         placeholder="example@email.com"
-                        // errorInput={emailRef.current?.value === "" }
-                        // onChange={()=>setError("")}
+                        errorInput={error.email }
+                        onChange={() => setError({ ...error, email: false })}
                     />
-                    {/* {emailRef.current?.value === "" && (
+                    {error.email && (
                         <div className="text-sm text-red-500 dark:text-red-400">
-                            Email is required
+                            {error.email}
                         </div>
-                    )} */}
+                    )}
                 </div>
                 <div>
                     <Input
@@ -80,10 +92,14 @@ export default function LoginContext ({
                         type="password"
                         label="Password"
                         placeholder="··············"
-                        errorInput={error}
-                        onChange={()=>setError("")}
+                        errorInput={error.password}
+                        onChange={() => setError({ ...error, password: false })}
                     />
-
+                    {error.password && (
+                        <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.password}
+                        </div>
+                    )}
                     <Button
                         isLink
                         title="Lupa password?"
@@ -99,7 +115,8 @@ export default function LoginContext ({
                 <Button
                     isButton
                     isPrimary
-                    type="submit"
+                    isDisabled={isToastVisible}
+                    type={isToastVisible ? "button" : "submit"}
                     title="Masuk"
                     className="mt-4 py-3"
                 />
