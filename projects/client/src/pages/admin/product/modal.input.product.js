@@ -7,29 +7,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HiChevronLeft, HiChevronRight, HiXMark } from "react-icons/hi2";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
 import { toast } from "react-toastify";
-import {
-  createProduct,
-  updateProduct,
-} from "../../../store/slices/product/slices";
+import { createProduct, updateProduct } from "../../../store/slices/product/slices";
 import {
   inputProductValidationSchema,
   updateProductValidationSchema,
 } from "../../../store/slices/product/validation";
 import Message from "../../../components/Message";
+import ModalSelectCategory from "./modal.select.category";
 
 export default function ModalInputProduct({
   success,
   categories,
-  categoriesPage,
+  categoriesTotalPage,
   setCategoriesPage,
-  totalCategoriesPage,
   productData,
-  selectedCategories,
-  setSelectedCategories,
+  // selectedCategories,
+  // setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
+  categoriesCurrentPage
 }) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -74,14 +73,6 @@ export default function ModalInputProduct({
     );
   };
 
-    const handlePreviousPage = () => {
-      setCategoriesPage(categoriesPage - 1);
-  }
-
-  const handleNextPage = () => {
-      setCategoriesPage(categoriesPage + 1);
-  }
-
   useEffect(() => {
     if (productData) {
       productNameRef.current.value = productData.productName || "";
@@ -101,7 +92,6 @@ export default function ModalInputProduct({
       (category) => category.categoryId
     );
 
-    // Data product (JSON)
     const inputProductData = {
       productName: capitalizeEachWords(productNameRef.current?.value),
       productPrice: productPriceRef.current?.value,
@@ -149,7 +139,7 @@ export default function ModalInputProduct({
       });
       setError(errors);
 
-      toast.error("Check your input field!");
+      toast.error("Periksa kembali kolom pengisian!");
 
       setIsToastVisible(true);
 
@@ -165,10 +155,13 @@ export default function ModalInputProduct({
         type="success"
         message={
           productData
-            ? "Product Updated Successfully"
-            : "Product Added Successfully!"
+            ? "Produk Berhasil Diubah!"
+            : "Produk Berhasil Ditambahkan!"
         }
-        handleCloseModal={handleCloseModal}
+        handleCloseModal={()=>{
+          handleCloseModal()
+          setSelectedCategories([]);
+        }}
       />
     );
   }
@@ -179,26 +172,23 @@ export default function ModalInputProduct({
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="">
             {selectedCategories.length === 0 ? (
-              <h3>Select Category ...</h3>
+              <h3>Pilih Kategori ...</h3>
             ) : (
               <>
-                <h3>Categories</h3>
+                <h3>Kategori</h3>
 
                 <div
                   className="mb-2 flex flex-wrap gap-2"
                   onChange={() => setError({ ...error, categoryId: false })}
                 >
-                  {selectedCategories.map((item) => {
-                    const selectedCategory = categories.find(
-                      (category) => category.categoryId === item.categoryId
-                    );
+                  {selectedCategories?.map((item) => {
                     return (
                       <Button
                         isPrimaryOutline
-                        key={selectedCategory?.categoryId}
+                        key={item?.categoryId}
                         className="flex items-center rounded-md px-2 py-1 text-sm"
                       >
-                        {selectedCategory?.categoryDesc}
+                        {item?.categoryDesc}
                         <span
                           className="ml-2 cursor-pointer"
                           onClick={() => handleRemoveCategory(item.categoryId)}
@@ -215,7 +205,7 @@ export default function ModalInputProduct({
             <Button
               isButton
               isPrimary
-              title="Choose Category"
+              title="Pilih Kategori"
               onClick={() => setShowCategoryModal(true)}
             />
 
@@ -231,8 +221,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productNameRef}
                 type="text"
-                label="Product Name"
-                placeholder="e.g. Paracetamol 500 mg"
+                label="Nama Produk"
+                placeholder="Contoh: Paracetamol 500 mg"
                 errorInput={error.productName}
                 onChange={() => setError({ ...error, productName: false })}
               />
@@ -247,8 +237,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productPriceRef}
                 type="number"
-                label="Product Price"
-                placeholder="e.g. 35000"
+                label="Harga Produk"
+                placeholder="Contoh: 35000"
                 errorInput={error.productPrice}
                 onChange={() => setError({ ...error, productPrice: false })}
               />
@@ -263,8 +253,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productDosageRef}
                 type="text"
-                label="Product Dosage"
-                placeholder="e.g. 3 x 1 hari"
+                label="Dosis"
+                placeholder="Contoh: 3 x 1 hari"
                 errorInput={error.productDosage}
                 onChange={() => setError({ ...error, productDosage: false })}
               />
@@ -279,8 +269,8 @@ export default function ModalInputProduct({
               <Input
                 ref={productDescriptionRef}
                 type="textarea"
-                label="Product Description"
-                placeholder="Write Description Here"
+                label="Deskripsi Produk"
+                placeholder="Tulis Deskripsi Disini"
                 errorInput={error.productDescription}
                 onChange={() =>
                   setError({ ...error, productDescription: false })
@@ -308,15 +298,18 @@ export default function ModalInputProduct({
               isButton
               isBLock
               isSecondary
-              title="Cancel"
-              onClick={handleCloseModal}
+              title="Kembali"
+              handleCloseModal={()=>{
+                handleCloseModal();
+                setSelectedCategories([]);
+              }}
             />
             <Button
               isButton
               isPrimary
               isBLock
               isDisabled={isToastVisible}
-              title={productData ? "Update" : "Add Product"}
+              title={productData ? "Ubah" : "Tambah Produk"}
               type={isToastVisible ? "button" : "submit"}
             />
           </div>
@@ -325,15 +318,15 @@ export default function ModalInputProduct({
         <div className={`${!confirmAdd ? "hidden" : null}`}>
           {productData ? (
             <p className="modal-text">
-              Are you sure you want to update this product?
+              Apa kamu yakin ingin mengubah produk ini?
             </p>
           ) : (
             <p className="modal-text">
-              Are you sure you want to add{" "}
+              Apa kamu yakin ingin menambahkan produk{" "}
               <span className="font-bold">
                 {capitalizeEachWords(productNameRef.current?.value)}
               </span>{" "}
-              to the product list?
+              ke daftar produk?
             </p>
           )}
 
@@ -342,7 +335,7 @@ export default function ModalInputProduct({
               <Button
                 isButton
                 isPrimaryOutline
-                title="Back"
+                title="Tidak"
                 className="mt-4"
                 type="button"
                 onClick={() => setConfirmAdd(false)}
@@ -352,7 +345,7 @@ export default function ModalInputProduct({
             <Button
               isButton
               isPrimary
-              title={"Sure"}
+              title={"Ya"}
               className="mt-4"
               type="submit"
               isLoading={isSubmitProductLoading}
@@ -363,94 +356,15 @@ export default function ModalInputProduct({
 
       <AnimatePresence>
         {showCategoryModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/70"
-          >
-            <motion.div
-              initial={{ translateY: -20, opacity: 0 }}
-              animate={{ translateY: 0, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              exit={{ translateY: -20, opacity: 0 }}
-              className="h-fit w-full rounded-lg border bg-slate-100 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="title">Choose Category</h3>
-                <span
-                  className="cursor-pointer"
-                  onClick={() => setShowCategoryModal(false)}
-                >
-                  <HiXMark className="text-3xl" />
-                </span>
-              </div>
-
-              <div className="my-4 max-h-[55vh] divide-y-2 overflow-auto">
-                {categories.map((category) => (
-                  <div
-                    key={category.categoryId}
-                    className="group mr-2 flex justify-between"
-                  >
-                    <label
-                      htmlFor={category.categoryId}
-                      className="w-full cursor-pointer py-2 duration-300 group-hover:ml-3"
-                    >
-                      {category.categoryDesc}
-                    </label>
-                    <input
-                      type="checkbox"
-                      id={category.categoryId}
-                      name={category.categoryDesc}
-                      value={category.categoryId}
-                      onChange={handleSelectCategory}
-                      checked={selectedCategories.some(
-                        (item) => item.categoryId === category.categoryId
-                      )}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* <div className="flex gap-2">
-                <Button
-                  className={`flex items-center  ${
-                    +categoriesPage === 1
-                      ? "cursor-auto text-slate-400"
-                      : "text-dark hover:text-primary"
-                  }`}
-                  onClick={() => handlePreviousPage()}
-                  isDisabled={+categoriesPage === 1}
-                >
-                  <HiChevronLeft className=" text-xl " /> Prev
-                </Button>
-
-                <Button
-                  className={`flex items-center  ${
-                    +categoriesPage === totalCategoriesPage
-                      ? "cursor-auto text-slate-400"
-                      : "text-dark hover:text-primary"
-                  }`}
-                  onClick={() => handleNextPage()}
-                  isDisabled={+categoriesPage === totalCategoriesPage}
-                >
-                  Next <HiChevronRight className="text-xl " />
-                </Button>
-              </div> */}
-
-              <div className="flex gap-2">
-                <Button
-                  isButton
-                  isPrimary
-                  isBLock
-                  title="Done"
-                  onClick={() => setShowCategoryModal(false)}
-                />
-              </div>
-            </motion.div>
-          </motion.div>
+          <ModalSelectCategory
+            categories={categories} 
+            selectedCategories={selectedCategories} 
+            handleSelectCategory={handleSelectCategory}
+            setShowCategoryModal={setShowCategoryModal}
+            categoriesTotalPage={categoriesTotalPage}
+            categoriesCurrentPage={categoriesCurrentPage}
+            setCategoriesPage={setCategoriesPage}
+          />
         )}
       </AnimatePresence>
     </div>

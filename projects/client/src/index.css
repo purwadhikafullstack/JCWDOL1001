@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;200;300;400;500;600;700&family=Poppins:wght@600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,6 +15,10 @@
 
   h3.title {
     @apply text-lg font-bold text-dark md:text-xl;
+  }
+
+  h3.subtitle {
+    @apply text-base font-bold text-dark md:text-lg;
   }
 
 

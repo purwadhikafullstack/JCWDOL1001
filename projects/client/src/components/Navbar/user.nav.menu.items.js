@@ -3,7 +3,7 @@ import Button from "../Button"
 import { HiDocumentText, HiMiniChatBubbleOvalLeftEllipsis, HiMiniSquares2X2 } from "react-icons/hi2"
 import { BiSolidDiscount } from "react-icons/bi"
 
-export default function UserNavMenuItems({ user }) {
+export default function UserNavMenuItems({ user, ongoingTransactions }) {
   const { pathname } = useLocation()
 
   return (
@@ -37,8 +37,8 @@ export default function UserNavMenuItems({ user }) {
 
       <Button
         isLink
-        path="/"
-        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/" ? "text-primary" : "text-slate-500" } `}
+        path="/qna"
+        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/qna" ? "text-primary" : "text-slate-500" } `}
       >
         <HiMiniChatBubbleOvalLeftEllipsis className="text-2xl"/>
         QnA
@@ -46,7 +46,7 @@ export default function UserNavMenuItems({ user }) {
 
       <Button
         isLink
-        path="/user/profile"
+        path={pathname.includes("user")  ? null : "/user/profile"}
         className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/profile" ? "text-primary" : "text-slate-500"}`}
       >
         <div className={`profile-img-wrapper`}>
@@ -58,6 +58,11 @@ export default function UserNavMenuItems({ user }) {
               alt=""
               className="h-full w-full object-cover"
             />
+            {ongoingTransactions > 0 &&
+              <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-6 bottom-6 text-white group-hover:right-1 text-[12px]">
+                {ongoingTransactions}
+              </span>
+            }
           </div>
         </div>
         <span className={user.status === 0 && "text-danger"}>Saya</span>

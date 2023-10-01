@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import formatNumber from "../../../utils/formatNumber";
 import Button from "../../../components/Button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,11 +8,12 @@ import Input from "../../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
-import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { getAddress } from "../../../store/slices/address/slices";
-import ShippingAddress from "./component.address";
-import ShippingCost from "./component.shipping";
+import ShippingAddress from "../../../components/Shipping/component.address.js";
+import ShippingCost from "../../../components/Shipping/component.shipping.js";
+import { toast } from "react-toastify";
+import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/validation";
 
 export default function Cart() {
   const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
@@ -25,6 +27,7 @@ export default function Cart() {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
   let status = []
   const selectedProduct = cart.map((item,index) => {
     status.push(false)
@@ -42,6 +45,7 @@ export default function Cart() {
   const [trigger, setTrigger] = useState(true);
 
   const [selectedAddress, setSelectedAddress] = useState([])
+  const [selectedShipping, setShipping] = useState([])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -134,19 +138,54 @@ export default function Cart() {
   dispatch(getAddress())
 },[])
 
-// useEffect(() => {
-//     dispatch(getCart())
-//     dispatch(totalProductCart())
-//     },[cart])
+  // useEffect(() => {
+  //     dispatch(getCart())
+  //     dispatch(totalProductCart())
+  //     },[cart])
+  const [error, setError] = useState("")
+  const [isToastVisible, setIsToastVisible] = useState(false)
   
-  const checkOut = () => {
-    navigate("/checkout")
+  const checkOut = async () => {
+    try{
+      await AddressAndShippingValidationSchema.validate({
+        "addressId" : selectedAddress.length ===0 ? "" : selectedAddress?.addressId,
+        "courierName" : selectedShipping.name
+      },{abortEarly:false})
+      navigate("/checkout",{ state: { addressSelected: selectedAddress, shippingSelected: selectedShipping }})
+
+    }catch(error){
+      const errors = {}
+        
+      error.inner.forEach((innerError) => {
+        errors[innerError.path] = innerError.message;
+      })
+      
+      setError(errors)
+      
+      toast.error("Check your input field!")
+
+      setIsToastVisible(true)
+
+      setTimeout(() => {
+        setIsToastVisible(false)
+      }, 2000)
+    }
   }
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
       <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
-      <ShippingCost selectedAddress={selectedAddress} />
+      {(error.addressId && selectedAddress.length ===0) && (
+        <div className="text-sm text-red-500 dark:text-red-400">
+          {error.addressId}
+        </div>
+      )}
+      <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
+      {(error.courierName && selectedShipping.length ===0) && (
+        <div className="text-sm text-red-500 dark:text-red-400">
+          {error.courierName}
+        </div>
+      )}
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"
@@ -179,7 +218,7 @@ export default function Cart() {
 
               <div className="aspect-square h-20">
                 <img
-                  src={item?.productPicture}
+                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + item?.productPicture}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -352,7 +391,7 @@ export default function Cart() {
               isButton
               isPrimary
               title="Check Out"
-              isDisabled={selectedItems?.length === 0}
+              isDisabled={selectedItems?.length === 0 || isToastVisible }
               onClick={checkOut}
             />
           </div>

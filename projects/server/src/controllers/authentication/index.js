@@ -56,7 +56,7 @@ const login = async (req, res, next) => {
             .status(200)
             .json({ 
                 type : "success",
-                message : `Welcom ${userExists.dataValues.email}`,
+                message : `Welcome ${userExists.dataValues.email}`,
                 user : userExists 
             })
 

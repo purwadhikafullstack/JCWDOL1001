@@ -22,11 +22,11 @@ export default function TableProducts({
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
         <tr>
           <th className="p-3">#</th>
-          <th className="p-3">Product Name</th>
-          <th className="p-3">Price</th>
-          <th className="p-3">Quantity</th>
+          <th className="p-3">Nama Produk</th>
+          <th className="p-3">Harga</th>
+          <th className="p-3">Stok</th>
           <th className="p-3">Unit</th>
-          <th className="p-3">Image</th>
+          <th className="p-3">Gambar</th>
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -40,7 +40,7 @@ export default function TableProducts({
         ) : products.length === 0 ? (
           <tr className="text-center">
             <td colSpan={7} className="p-3">
-              No data to display
+              Tidak ada data Produk
             </td>
           </tr>
         ) : (
@@ -84,17 +84,17 @@ export default function TableProducts({
                     isSmall
                     isPrimaryOutline
                     onClick={() =>
-                      handleShowModal({context:"Details Product", productId:product?.productId})
+                      handleShowModal({context:"Detail Produk", productId:product?.productId})
                     }
 
-                    title="Details"
+                    title="Detail"
                   />
 
                   <Button
                   isSmall
                   isDanger
                     onClick={() =>
-                      handleShowModal({context:"Delete Product", productId:product.productId})
+                      handleShowModal({context:"Hapus Produk", productId:product.productId})
                     }
 
                   >
@@ -108,17 +108,17 @@ export default function TableProducts({
                       }
                     />
 
-                    <div className="absolute right-full top-0 z-10 hidden h-fit w-40 rounded-lg bg-slate-50 p-2 shadow-md group-hover:block lg:left-full">
+                    <div className="absolute right-full -top-1 z-10 hidden h-fit w-40 rounded-lg bg-slate-50 p-2 shadow-md group-hover:block">
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal({context:"Edit Details", productId:product.productId})
+                          handleShowModal({context:"Ubah Detail", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlinePencilSquare className="text-lg text-blue-500" />
-                          Edit Details
+                          Ubah Detail
                         </span>
                       </Button>
 
@@ -126,12 +126,12 @@ export default function TableProducts({
                         isBLock
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
-                          handleShowModal({context:"Edit Stock", productId:product.productId})
+                          handleShowModal({context:"Ubah Stok", productId:product.productId})
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineSquare3Stack3D className="text-lg text-primary" />
-                          Edit Stock
+                          Ubah Stok
                         </span>
                       </Button>
 
@@ -140,14 +140,14 @@ export default function TableProducts({
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
                           handleShowModal({
-                            context : "Edit Unit", 
+                            context : "Ubah Unit", 
                             productId : product.productId
                           })
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineCircleStack className="text-lg text-purple-500 " />
-                          Edit Unit
+                          Ubah Unit
                         </span>
                       </Button>
                       

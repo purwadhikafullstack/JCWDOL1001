@@ -1,41 +1,57 @@
 import React, { useEffect } from 'react'
-import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser } from 'react-icons/hi2';
+import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser, HiMiniChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/slices/auth/slices';
 
-export default function ProfileCard({ profile, user, setMobileContextActive }) {
+export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions }) {
   const { context } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
   const menu = [
     {
       title : "Profil",
       context : "profile",
       path : "/user/profile",
+      notification: null,
       icon : <HiOutlineUser className="block text-xl"/>
     },
     {
       title : "Alamat",
       context : "address",
       path : "/user/address",
+      notification: null,
       icon : <HiOutlineMapPin className="block text-xl"/>
     },
     {
       title : "Transaksi",
       context : "transaction",
       path : "/user/transaction",
+      notification: ongoingTransactions?.totalTransactions,
       icon : <HiOutlineClipboardDocumentList className="block text-xl"/>
     },
     {
       title : "Email",
       context : "email",
       path : "/user/email",
+      notification: null,
       icon : <HiOutlineEnvelope className="block text-xl"/>
     },
     {
       title : "Password",
       context : "password",
       path : "/user/password",
+      notification: null,
       icon : <HiOutlineLockClosed className="block text-xl"/>
+    },
+    {
+      title : "QnA",
+      context : "qna",
+      path : "/user/qna",
+      notification: null,
+      icon : <HiMiniChatBubbleOvalLeftEllipsis className="block text-xl"/>
     },
   ]
 
@@ -62,6 +78,7 @@ export default function ProfileCard({ profile, user, setMobileContextActive }) {
                 isButton
                 isPrimary
                 isBLock
+              onClick={() => navigate("/verify")}
                 title="Verify Account"
                 className="lg:hidden"
               />
@@ -71,6 +88,7 @@ export default function ProfileCard({ profile, user, setMobileContextActive }) {
               isButton
               isBLock
               isPrimaryOutline
+              onClick={() => navigate("/upload-recipe")}
               title="Unggah Resep"
               />
           </div>
@@ -78,20 +96,26 @@ export default function ProfileCard({ profile, user, setMobileContextActive }) {
           <h3 className="title lg:hidden mt-4">Pengaturan</h3>
           <div className="flex flex-col gap-6 lg:gap-4 mt-2 lg:mt-4 overflow-auto">
             {menu.map((menu, index) => (
-            <Button 
+            <Button
+              key={index}
               isLink
               path={menu.path}
-              className={`flex items-center gap-3 ${menu.context === context ? "lg:text-primary lg:font-semibold" : ""}`}
+              className={`flex relative items-center gap-3 ${menu.context === context ? "lg:text-primary lg:font-semibold" : ""}`}
               onClick={() => setMobileContextActive(true)}
               >
               {menu.icon}
               <span>{menu.title}</span>
+
+              {menu.notification > 0 &&
+                  <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-0 text-white group-hover:right-1 text-xs">{menu.notification}</span>
+              }
             </Button>
             ))}
 
             <Button 
               isLink
               className={`items-center gap-3 flex`}
+              onClick={() => dispatch(logout())}
             >
               <HiOutlinePower className="text-xl"/>
               <span>Keluar</span>

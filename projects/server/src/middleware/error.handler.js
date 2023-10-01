@@ -34,6 +34,9 @@ const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
 
 const TRANSACTION_NOT_FOUND = "Transaction not found"
 const ONLY_ONCE = "This link only valid for 1 submission."
+const DATA_NOT_FOUND = "Data not found"
+const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
+const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -101,6 +104,9 @@ module.exports = {
     VOUCHER_NEED_AMOUNT,
     NO_STOCK,
     PRODUCT_ALREADY_CHECKEDOUT,
-    TRANSACTION_NOT_FOUND,
     ONLY_ONCE,
+    TRANSACTION_NOT_FOUND,
+    DATA_NOT_FOUND,
+    CANNOT_DELETE_QUESTION,
+    CANNOT_DELETE_ANSWERED_QUESTION,
 }

@@ -8,15 +8,8 @@ export default function Button(props) {
 
   props.isSmall && className.push("px-2 py-1 rounded-md select-none text-sm")
 
-  props.isPrimary &&
-    !props.isDisabled &&
-    className.push("bg-primary hover:bg-teal-700 text-white duration-300")
-
-  props.isPrimary &&
-    props.isDisabled &&
-    className.push(
-      "bg-primary/70 text-white hover:cursor-default dark:bg-primary/40"
-    );
+  props.isPrimary && 
+    className.push(`text-white ${!props.isDisabled ? "bg-primary hover:bg-teal-700 duration-300" : "bg-primary/70"}`)
 
   props.isPrimaryOutline &&
     className.push(
@@ -32,6 +25,11 @@ export default function Button(props) {
     className.push(
       "bg-inherit text-danger border border-danger hover:bg-slate-100 duration-300"
     );
+    
+  props.isDangerOutline &&
+    className.push(
+      "bg-inherit text-danger border border-danger hover:bg-slate-100 duration-300"
+    );
 
   props.isDanger &&
     className.push("bg-danger hover:bg-red-600 text-white duration-300")
@@ -40,9 +38,12 @@ export default function Button(props) {
     className.push("bg-warning hover:bg-[#e8960c] text-white duration-300")
 
   props.isSecondary &&
-    className.push("bg-slate-400 hover:bg-slate-500 text-white duration-300")
+    className.push(`bg-slate-400 text-white duration-300 ${props.isDisabled ? null : "hover:bg-slate-500"}`)
 
   props.isBLock && className.push("w-full")
+
+  props.isDisabled &&
+    className.push("hover:cursor-default")
 
   const onClick = () => {
     props.onClick && !props.isDisabled && props.onClick()

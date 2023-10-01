@@ -25,6 +25,7 @@ import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
 import ModalMakeConvertion from "./unit/modal.unit.make.convertion";
+import Pagination from "../../../components/PaginationV2";
 
 export default function AdminProducts({user}) {
 
@@ -51,31 +52,33 @@ export default function AdminProducts({user}) {
     return {
       success: state.products.success,
       products: state.products.data,
+      current_page : state.products.current_page,
+      total_page : state.products.total_page,
+
       categories: state?.cat?.category,
+      categoriesCurrentPage : state?.cat?.currentPage,
+      categoriesTotalPage : state?.cat?.totalPage,
+
       isGetProductsLoading: state.products.isGetProductsLoading,
       isDeleteProductLoading: state.products.isDeleteProductLoading,
       isSubmitProductLoading: state.products.isSubmitProductLoading,
       isSubmitStockLoading : state.products.isSubmitStockLoading,
       errorMessage: state.products.errorMessage,
-      current_page : state.products.current_page,
-      total_page : state.products.total_page,
+
       units : state?.units?.data,
       unitsSuccess : state?.units?.success,
-      isLoading : state.units.isLoading,
-      categoriesCurrentPage : state?.cat?.currentPage,
-      categoriesTotalPage : state?.cat?.totalPage
+      isLoading : state.units.isLoading, //penyebab produk ngedispatch setiap close modal
     };
   });
 
   const [showModal, setShowModal] = useState({ show: false, context: "" });
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchedProduct, setSearchedProduct] = useState(null);
-  const searchedProductRef = useRef();
   const [page, setPage] = useState(1);
   const [categoriesPage, setCategoriesPage] = useState(1);
   const [options, setOptions] = useState({sortName : "", sortPrice : "", categoryId : ""})
   const [selectedUnit, setSelectedUnit] = useState({});
+  const searchedProductRef = useRef();
 
 
   const handleShowModal = ({context, productId, stockId}) => {
@@ -99,7 +102,6 @@ export default function AdminProducts({user}) {
 
   const handleCloseModal = () => {
     setShowModal({ show: false, context: "" });
-    setSelectedCategories([]);
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
     dispatch(resetUnit())
@@ -108,25 +110,13 @@ export default function AdminProducts({user}) {
 
   useEffect(() => {
     dispatch(getProducts());
-  }, [isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
+  }, [isDeleteProductLoading, isSubmitProductLoading, isSubmitStockLoading, isLoading]);
   
   const handleOptionChange = (e) => {
     const {name , value} = e.target
     setOptions({
       ...options, [name] : value
     })
-  }
-
-  const handlePreviousPage = () => {
-    if(page > 1){
-      setPage(page-1);
-    }
-  }
-
-  const handleNextPage = () => {
-    if(page < total_page){
-      setPage(page+1);
-    }
   }
 
   useEffect(() => {
@@ -159,7 +149,7 @@ export default function AdminProducts({user}) {
           <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
 
           <form className="relative w-1/3">
-            <Input type="text" placeholder="Search" ref={searchedProductRef}/>
+            <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
             <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}>
               <HiMagnifyingGlass className="text-2xl text-primary" />
             </button>
@@ -171,13 +161,13 @@ export default function AdminProducts({user}) {
             isButton
             isPrimary
             className="lg:justify-self-start"
-            title="Add Product"
-            onClick={() => handleShowModal({context:"Add Product"})}
+            title="Tambah Produk"
+            onClick={() => handleShowModal({context:"Tambah Produk"})}
           />
           <div className="flex flex-1"></div>
 
           <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="searchcat" className="pr-2">Search Category</label>
+            <label htmlFor="searchcat" className="pr-2">Pilih Kategori</label>
             <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="border-2 border-double">
               <option value=""></option>
               {
@@ -192,20 +182,20 @@ export default function AdminProducts({user}) {
           </div>
 
           <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortname" className="pr-2">Sort Name</label>
+            <label htmlFor="sortname" className="pr-2">Urutkan Nama</label>
             <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="border-2 border-double">
               <option value=""></option>
-              <option value="ASC">A to Z</option>
-              <option value="DESC">Z to A</option>
+              <option value="ASC">A - Z</option>
+              <option value="DESC">Z - A</option>
             </select>
           </div>
 
           <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortprice" className="pr-2">Sort Price</label>
+            <label htmlFor="sortprice" className="pr-2">Urutkan Harga</label>
             <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="border-2 border-double">
               <option value=""></option>
-              <option value="ASC">Lowest to highest</option>
-              <option value="DESC">Highest to Lowest</option>
+              <option value="ASC">Terendah - Tertinggi</option>
+              <option value="DESC">Tertinggi - Terendah</option>
 
             </select>
           </div>
@@ -221,10 +211,8 @@ export default function AdminProducts({user}) {
             setSelectedProduct={setSelectedProduct}
           />
         </div>
-        <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-          {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
-          {total_page !== 1 && <h1>current page : {current_page}</h1>}
-          {page!==total_page && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===total_page}> Next </button>}
+        <div className="mt-4 flex items-center justify-center">
+          <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
         </div>
       </div>
 
@@ -234,31 +222,28 @@ export default function AdminProducts({user}) {
         title={showModal.context}
         disableOutside
       >
-        {(showModal.context === "Add Product" ||
-          showModal.context === "Edit Details") && (
+        {(showModal.context === "Tambah Produk" ||
+          showModal.context === "Ubah Detail") && (
           <ModalInputProduct
             success={success}
             categories={categories}
-            categoriesPage={categoriesPage}
-            setCategoriesPage={setCategoriesPage}
+            categoriesCurrentPage={categoriesCurrentPage}
             categoriesTotalPage={categoriesTotalPage}
+            setCategoriesPage={setCategoriesPage}
             productData={selectedProduct}
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
             handleCloseModal={handleCloseModal}
             isSubmitProductLoading={isSubmitProductLoading}
-            errorMessage={errorMessage}
           />
         )}
 
-        {showModal.context === "Details Product" && (
+        {showModal.context === "Detail Produk" && (
           <ModalDetailsProduct
             selectedProduct={selectedProduct}
             categories={categories}
           />
         )}
 
-        {showModal.context === "Delete Product" && (
+        {showModal.context === "Hapus Produk" && (
           <ModalDeleteProduct
             selectedProduct={selectedProduct}
             success={success}
@@ -267,7 +252,7 @@ export default function AdminProducts({user}) {
           />
         )}
 
-        {showModal.context === "Edit Stock" && (
+        {showModal.context === "Ubah Stok" && (
           <ModalEditStock
           success={success}
           productData={selectedProduct}
@@ -277,7 +262,7 @@ export default function AdminProducts({user}) {
         />
         )}
 
-        {showModal.context === "Edit Unit" && (
+        {showModal.context === "Ubah Unit" && (
           <>
             <h3 className="text-xl font-bold">| {selectedProduct.productName}</h3>
             <ModalUnitsProduct

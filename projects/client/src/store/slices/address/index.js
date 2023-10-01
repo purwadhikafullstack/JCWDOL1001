@@ -13,6 +13,10 @@ import {
 } from "./slices"
 
 const INITIAL_STATE = {
+    totalPage : null,
+    currentPage : null,
+    nextPage : null,
+    totalAddress : null,
     data : [],
     province : [],
     city : [],
@@ -69,7 +73,11 @@ const addressSlice = createSlice({
         },
         [getAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
-                data : action.payload?.data,
+                totalPage : action.payload?.data.totalPage,
+                currentPage : action.payload?.data.currentPage,
+                nextPage : action.payload?.data.nextPage,
+                totalAddress : action.payload?.data.totalAddress,
+                data : action.payload?.data.data,
                 isGetAddressLoading : false,
             })
         },
@@ -84,7 +92,6 @@ const addressSlice = createSlice({
         },
         [addAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
-                data : action.payload?.data,
                 isSubmitAddressLoading : false,
             })
         },

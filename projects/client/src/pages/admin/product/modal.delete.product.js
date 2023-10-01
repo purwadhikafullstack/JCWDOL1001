@@ -27,19 +27,19 @@ export default function ModalDeleteProduct({
   return (
     <>
       <p className="modal-text">
-        Are you sure to delete{" "}
+        Apa kamu yakin ingin menghapus produk{" "}
         <span className="font-bold">{selectedProduct?.productName}</span>?{" "}
-        <p className="modal-text">
-          You won't be able to undo the changes after deleting.
+        <p className="modal-text text-danger">
+          Kamu tidak akan bisa melakukan perubahan apapun setelah menghapus produk ini
         </p>
       </p>
 
       <div className="mt-4 flex justify-end gap-2">
         {!isDeleteProductLoading && (
-          <Button title="No" isButton isSecondary onClick={handleCloseModal} />
+          <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
         )}
         <Button
-          title="Yes"
+          title="Ya, Hapus"
           isButton
           isDanger
           isLoading={isDeleteProductLoading}

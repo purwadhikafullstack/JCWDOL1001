@@ -3,5 +3,5 @@ const { trimString } = require("./trimString.js")
 
 module.exports = {
   capitalizeEachWords,
-  trimString
+  trimString,
 }

@@ -27,12 +27,12 @@ export default function ModalDetailsProduct({selectedProduct, categories}) {
         <p className="mt-4">{selectedProduct.productDescription}</p>
 
         <div className="pt-4">
-          <h3 className="text-2xl font-bold">Product Units</h3>
+          <h3 className="text-2xl font-bold">Produk Unit</h3>
           <table className="text-gray-500 w-full text-left text-sm">
             <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
               <tr>
-                <th className="p-3">Unit Name</th>
-                <th className="p-3">Qty</th>
+                <th className="p-3">Nama Unit</th>
+                <th className="p-3">Kuantitas</th>
               </tr>
             </thead>
             {selectedProduct.productUnits.map((unit) => (

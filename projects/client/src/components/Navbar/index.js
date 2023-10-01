@@ -5,7 +5,7 @@ import UserNavMenu from "./user.nav.menu"
 import AdminNavMenu from "./admin.nav.menu";
 import { useDispatch } from "react-redux";
 
-export default function Navbar ({ user, isLogin, setIsLogin }) {
+export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions }) {
     const dispatch = useDispatch()
     const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
@@ -45,7 +45,10 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 href="/" 
                                 className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-dark"
                             >
-                                APOTECH
+                            <span className="absolute block h-2 w-6 rounded-full bg-dark"></span>
+                            <span className="absolute rotate-90 block h-2 w-6 rounded-full bg-primary"></span>
+                            <span className="absolute block h-2 w-6 rounded-full bg-dark opacity-40"></span>
+                            <span className="ml-8 font-poppins">Apotech</span>
                             </a>
                         </div>
 
@@ -56,6 +59,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 isSidebarActive={isSidebarActive}
                                 setIsSidebarActive={setIsSidebarActive}
                                 user={user}
+                                ongoingTransactions={ongoingTransactions}
                             />
                         }
 
@@ -65,6 +69,7 @@ export default function Navbar ({ user, isLogin, setIsLogin }) {
                                 setIsLogin={setIsLogin}
                                 handleShowModal={handleShowModal}
                                 user={user}
+                                ongoingTransactions={ongoingTransactions}
                             />
                         )}
 

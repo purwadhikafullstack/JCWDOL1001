@@ -5,12 +5,18 @@ import Button from "../../components/Button/index.js"
 import InputImage from "../../components/InputImage/index.js"
 import Modal from "../../components/Modal/index.js";
 import { uploadRecipe } from "../../store/slices/upload-recipe/slices.js"
+import ShippingAddress from "../../components/Shipping/component.address.js"
+import { getAddress } from "../../store/slices/address/slices.js"
+import ShippingCost from "../../components/Shipping/component.shipping.js"
+import { UploadRecipeValidationSchema } from "../../store/slices/upload-recipe/validation.js"
+import { toast } from "react-toastify"
 
 export default function UploadRecipePage(){
 
-    const {isLoading} = useSelector(state => {
+    const {isLoading,address} = useSelector(state => {
 		return {
-			isLoading : state?.uploadRecipe?.isLoading
+			isLoading : state?.uploadRecipe?.isLoading,
+            address : state?.address?.data,
 		}
 	})
 
@@ -23,6 +29,15 @@ export default function UploadRecipePage(){
     const [file, setFile] = useState(null)
 
     const [dataImage, setDataImage] = useState(null)
+
+    const [selectedAddress, setSelectedAddress] = useState([])
+
+    const [selectedCourier, setSelectedCourier] = useState({
+        name : "", 
+        type :"",
+        etd :"",
+        cost :""
+    })
 
     const [showModal, setShowModal] = useState({ show: false, context: "" })
     
@@ -38,24 +53,74 @@ export default function UploadRecipePage(){
         document.body.style.overflow = "auto"
     }
 
-    const onClickYes = () => {
-        formData.append("file",file)
-        dispatch(uploadRecipe(formData))
-        handleCloseModal()
+    const [isToastVisible, setIsToastVisible] = useState(false)
+
+    const onClickYes = async () => {
+        try{
+            await UploadRecipeValidationSchema.validate(
+                {
+                    "file":file,
+                    "addressId" : selectedAddress.length ===0 ? "" : selectedAddress?.addressId,
+                    "courierName" : selectedCourier.name
+                }
+            ,{
+                abortEarly:false
+            })
+
+            formData.append("file",file)
+            formData.append("address",JSON.stringify(selectedAddress))
+            formData.append("courier",JSON.stringify(selectedCourier))
+            dispatch(uploadRecipe(formData))
+            handleCloseModal()
+
+        }catch(error){
+            const errors = {}
+                        
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+            
+            setError(errors)
+            
+            toast.error("Check your input field!")
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
+        }
     }
 
-    useEffect(() => {},[isLoading])
+    useEffect(() => {
+        dispatch(getAddress())
+    },[])
 
     return(
         <div className="container max-w-3xl pt-24">
             <div className="flex flex-col gap-5">
+                <h3 className="title">Jasa Pengiriman</h3>
+                <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
+                {(error.addressId && selectedAddress.length ===0) && (
+                    <div className="text-sm text-red-500 dark:text-red-400 -mt-5">
+                        {error.addressId}
+                    </div>
+                )}
+                <ShippingCost selectedAddress={selectedAddress} setShipping={setSelectedCourier} />
+                {(error.courierName && selectedCourier.name ==="") && (
+                <div className="text-sm text-red-500 dark:text-red-400 -mt-5">
+                    {error.courierName}
+                </div>
+                )}
+            </div>
+            <div className="flex flex-col gap-5 mt-5">
                 <h3 className="title">Upload Resep</h3>
                 <span className="title text-md text-slate-500">Foto tidak boleh lebih dari 1Mb.</span>
             </div>
             <InputImage
               file={file}
               setFile={setFile}
-              error={error}
+              error={error.file}
               setError={setError}
               dataImage={dataImage}
               setDataImage={setDataImage}
@@ -73,7 +138,7 @@ export default function UploadRecipePage(){
                     isBLock
                     isPrimary={!isLoading}
                     isDisabled={isLoading}
-                    title="Upload"
+                    title="Unggah"
                     onClick={handleShowModal}
                 />
             </div>
@@ -84,21 +149,22 @@ export default function UploadRecipePage(){
                 title={showModal.context}
             >
                 <p className="modal-text">
-                    Are you sure you want to upload this image?
+                    Apa kamu yakin ingin mengunggah gambar ini?
                 </p>
 
                 <div className="mt-4 flex justify-end gap-2">
                     
                     <Button 
-                        title="No" 
+                        title="Tidak" 
                         isButton 
                         isSecondary 
                         onClick={handleCloseModal} 
                     />
                     <Button
-                        title="Yes"
+                        title="Ya"
                         isButton
                         isDanger
+                        isDisabled={isToastVisible}
                         onClick={onClickYes}
                     />
                 </div>

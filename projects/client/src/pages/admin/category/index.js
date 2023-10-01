@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import Button from "../../../components/Button/index.js";
+import Pagination from "../../../components/PaginationV2";
 import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../../store/slices/cat/slices.js";
 
 export default function CategoryList(){
@@ -54,46 +55,34 @@ export default function CategoryList(){
         }
     }
 
-    const handlePreviousPage = () => {
-        if(page > 1){
-          setPage(page-1);
-        }
-      }
-    
-      const handleNextPage = () => {
-        if(page < totalPage){
-          setPage(page+1);
-        }
-      }
-
     const optionPage = () => {
         switch(newPage){
             case 'add' : 
                 return(<div class="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
                     <div class="m-4">
-                    <h2 class="font-semibold text-green-900 text-2xl">Add Category</h2>
+                    <h2 class="font-semibold text-green-900 text-2xl">Tambah Kategori</h2>
                     <form class="space-y-4 md:space-y-6 font-medium text-xl">
                         <div>
-                            <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Name</label>
+                            <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Nama Kategori</label>
                             <input type="text" class="sm:rounded-lg rounded-xl border" ref={categoryNameRef}/>
                         </div>
                         <div>
-                            <label for="categoryImage" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Image</label>
+                            <label for="categoryImage" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Gambar Kategori</label>
                             <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
                         </div>
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Add!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
+                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Tambah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
                     </form>
                     </div>
                 </div>)
             case 'delete' : return(
                 <div class="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
                     <div class="m-4">
-                    <h2 class="font-semibold text-green-900 text-2xl">Delete Category</h2>
-                    <h2 class="my-4">Are you sure you want to Delete category no. {categoryIndex} ?</h2>
+                    <h2 class="font-semibold text-green-900 text-2xl">Hapus Kategori</h2>
+                    <h2 class="my-4">Apa kamu yakin ingin menghapus kategori nomor {categoryIndex} ?</h2>
                     <form class="space-y-4 md:space-y-6 font-medium text-xl">
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Delete!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
+                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Hapus!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
                     </form></div>
                 </div>
             )
@@ -101,15 +90,15 @@ export default function CategoryList(){
                 return(
                 <div class="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
                     <div class="m-4">
-                    <h2 class="font-semibold text-green-900 text-2xl"> Update Category Description</h2>
-                    <h2 class="my-4">Update category no. {categoryIndex}</h2>
+                    <h2 class="font-semibold text-green-900 text-2xl">Ubah Nama Kategori</h2>
+                    <h2 class="my-4">Ubah kategori nomor {categoryIndex}</h2>
                     <form class="space-y-4 md:space-y-6 font-medium text-xl">
                         <div>
-                            <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Category Name</label>
+                            <label for="categoryName" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Nama Kategori</label>
                             <input type="text" class="sm:rounded-lg rounded-xl border" onChange={(e)=>setCategoryDesc(e.target.value)}/> 
                         </div>
-                        <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Update!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
+                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
+                        <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
                     </form>
                     </div>                    
                 </div>
@@ -118,13 +107,13 @@ export default function CategoryList(){
                 return(
                     <div class="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
                         <div class="m-4">
-                        <h2 class="font-semibold text-green-900 text-2xl"> Update Category Picture </h2>
-                        <h2 class="my-4">Update picture for item no. {categoryIndex} </h2>
+                        <h2 class="font-semibold text-green-900 text-2xl">Ubah Gambar Kategori</h2>
+                        <h2 class="my-4">Ubah gambar kategori nomor {categoryIndex} </h2>
                         <form class="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
                                 <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
-                                <Button isButton isDanger type="submit" title="Cancel!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                                <Button isButton isPrimary type="submit" title="Change!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
+                                <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
+                                <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
                             </div>
                         </form>
                         </div>
@@ -148,8 +137,8 @@ export default function CategoryList(){
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg py-8">
                 <div class="flex flex-row border-b-4 border-double border-black">
-                    <h1 class="font-serif text-4xl  flex-1"> Categories </h1>
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4" onClick={()=>setNewPage('add')}>Add Category</button>
+                    <h1 class="font-serif text-4xl  flex-1"> Kategori </h1>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4" onClick={()=>setNewPage('add')}>Tambah Kategori</button>
                 </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -160,10 +149,10 @@ export default function CategoryList(){
                                 No.
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Category desc
+                                Nama Kategori
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Category image
+                                Gambar Kategori
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Action
@@ -186,13 +175,13 @@ export default function CategoryList(){
                                 <td class="px-6 py-4">
                                 <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4
                                  focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700
-                                 dark:focus:ring-red-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")}>Delete</button>
+                                 dark:focus:ring-red-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")}>Hapus</button>
                                 <button type="button" class="focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4
                                 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2
-                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "update")}>Update Description</button>
+                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "update")}>Ubah Nama Kategori</button>
                                 <button type="button" class="focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4
                                 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2
-                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")}>Update Category Picture</button>
+                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")}>Ubah Gambar Kategori</button>
                                 </td>
                             </tr>))
                             :
@@ -202,9 +191,7 @@ export default function CategoryList(){
                     </tbody>
                 </table>
                 <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-                    {page!==1 && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handlePreviousPage} disabled={page===1}> Prev </button>}
-                    {totalPage !== 1 && <h1>current page : {currentPage}</h1>}
-                    {page!==totalPage && <button className="px-4 mx-4 bg-gray-200 hover:bg-slate-400 rounded-xl" onClick={handleNextPage} disabled={page===totalPage}> Next </button>}
+                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
             </div>
             
