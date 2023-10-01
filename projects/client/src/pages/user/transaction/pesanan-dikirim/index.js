@@ -12,30 +12,18 @@ import ModalKonfirmasi from "./modal.konfirmasi";
 import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDikirim({
-  statusId,
-  setActiveTab
+  transaction,
+  totalPage,
+  currentPage,
+  setPage,
+  setActiveTab,
+  isGetTransactionLoading,
+  isUpdateOngoingTransactionLoading 
 }) {
   const dispatch = useDispatch();
-  const {
-    transaction,
-    totalPage,
-    currentPage,
-    isUpdateOngoingTransactionLoading,
-    isGetTransactionLoading,
-  } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      isUpdateOngoingTransactionLoading:
-        state.transaction?.isUpdateOngoingTransactionLoading,
-    };
-  });
 
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [page, setPage] = useState(1);
 
   const handleShowModal = (context, transactionId) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -63,10 +51,6 @@ export default function PesananDikirim({
     
     dispatch(resetSuccessTransaction())
   };
-
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList, resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
@@ -11,29 +11,23 @@ import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
 import ModalKonfirmasi from "./modal.konfirmasi";
 import Pagination from "../../../../components/PaginationV2";
+import ModalTolakPembayaran from "./modal.tolak.pembayaran";
 
 export default function MenungguKonfirmasi({
-  statusId,
-  statusDesc,
-  setActiveTab
+  transaction,
+  currentPage,
+  totalPage,
+  setPage,
+  setActiveTab,
+  isGetTransactionLoading,
+  isUpdateOngoingTransactionLoading,
 }) {
   const dispatch = useDispatch();
-  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
-    };
-  });
 
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [page, setPage] = useState(1)
 
   const handleShowModal = (context, transactionId) => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     setShowModal({show: true, context});
     setSelectedTransaction(transactionId)
 
@@ -55,10 +49,6 @@ export default function MenungguKonfirmasi({
     dispatch(resetSuccessTransaction())
   };
 
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [isUpdateOngoingTransactionLoading, page]);
-
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
       <SkeletonTransaction key={index}/>
@@ -71,7 +61,6 @@ export default function MenungguKonfirmasi({
     <EmptyTransaction />  
     :
     <>
-      <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -152,13 +141,22 @@ export default function MenungguKonfirmasi({
         showModal={showModal.show}
         halfWidth={showModal?.context === "Detail Transaksi"}
         closeModal={handleCloseModal}
-        title={showModal.context}
+        title={showModal.context === "Detail Transaksi" ? "Menunggu Konfirmasi" : showModal.context}
       >
         {showModal.context === "Detail Transaksi" && 
           <ModalDetailTransaction
             selectedTransaction={selectedTransaction}
             handleCloseModal={handleCloseModal}
             handleShowModal={handleShowModal}
+          />
+        }
+
+        {showModal.context === "Tolak Pembayaran" && 
+          <ModalTolakPembayaran 
+            selectedTransaction={selectedTransaction} 
+            isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
+            handleShowModal={handleShowModal}
+            handleCloseModal={handleCloseModal}
           />
         }
 

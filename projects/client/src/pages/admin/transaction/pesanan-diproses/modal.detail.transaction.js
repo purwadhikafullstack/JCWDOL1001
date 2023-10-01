@@ -9,17 +9,16 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  const customerData = selectedTransaction?.user_account
 
   return (
     <>
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[65vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
         <div className="left-container">
           <div className="">
             <h3 className="subtitle">Data Pemesan</h3>
             <div className="">
-              <p>{customerData.email}</p>
-              <p>{customerData.userProfile?.name} ({customerData.userProfile?.phone})</p>
+              <p>{selectedTransaction?.user_account?.email}</p>
+              <p>{selectedTransaction?.userProfile?.name} ({selectedTransaction?.userProfile?.phone})</p>
             </div>
           </div>
 
@@ -92,17 +91,11 @@ export default function ModalDetailTransaction({
         </div>
 
         </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button
-            isButton
-            isPrimaryOutline
-            title={`Kembali`}
-            onClick={handleCloseModal}
-          />
-
+        <div className="mt-4">
           <Button
             isButton
             isPrimary
+            isBLock
             title={`Kirim Pesanan`}
             onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
           />

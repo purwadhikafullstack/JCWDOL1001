@@ -20,7 +20,7 @@ import Pagination from "../../components/PaginationV2";
 export default function Products({ user }) {
   const dispatch = useDispatch();
   const location = useLocation();
-  
+
   const {
     products,
     categories,
@@ -44,6 +44,7 @@ export default function Products({ user }) {
   const [sort, setSort] = useState({ sortBy: "", type: "" });
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(null)
+  const [promo, setPromo] = useState(false)
   const [filterType, setFilterType] = useState(null)
 
   const handleCart = (productId) => {
@@ -64,6 +65,7 @@ export default function Products({ user }) {
     event.preventDefault();
     setSearch(searchRef.current?.value)
     setSelectedCategory(null)
+    setPromo(false)
   };
 
   const handleSort = (sortBy, type) => {
@@ -71,17 +73,18 @@ export default function Products({ user }) {
   };
 
   useEffect(() => {
-    dispatch(getCategory({ page: 1 }));
-    if(location.state?.categorySelected){
-      setSelectedCategory(location.state?.categorySelected)
-      dispatch(
-        getProducts({
-          page : 1,
-          category_id : location.state?.categorySelected.categoryId,
-          limit : 12
-        })
-      )
-    }
+    dispatch(getCategory({ page : 1 }));
+
+    // if(location.state?.categorySelected){
+    //   setSelectedCategory(location.state?.categorySelected)
+    //   dispatch(
+    //     getProducts({
+    //       page : 1,
+    //       category_id : location.state?.categorySelected.categoryId,
+    //       limit : 12
+    //     })
+    //   )
+    // }
     dispatch(totalProductCart())
   }, []);
 
@@ -100,10 +103,11 @@ export default function Products({ user }) {
         sort_price: sort.sortBy === "price" ? sort.type : "",
         sort_name: sort.sortBy === "name" ? sort.type : "",
         limit: 12,
+        promo,
       })
     );
 
-  }, [selectedCategory, search, sort, page ]);
+  }, [selectedCategory, search, sort, page, promo ]);
   
   return (
     <>
@@ -114,16 +118,32 @@ export default function Products({ user }) {
             <div className="categories-wrapper mt-4 flex flex-nowrap gap-8 overflow-auto lg:flex-col lg:items-start lg:justify-start lg:gap-4">
               <Button
                 isLink
-                className={`product-category ${!selectedCategory && "active"}`}
+                className={`product-category ${promo && "active"}`}
                 onClick={() => {
                   setSelectedCategory(null);
                   setSearch(null)
                   setPage(1)
+                  setPromo(true)
+                  searchRef.current.value = ""
+                }}
+              >
+                Promo
+              </Button>
+
+              <Button
+                isLink
+                className={`product-category ${!selectedCategory && !promo && "active"}`}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setSearch(null)
+                  setPage(1)
+                  setPromo(false)
                   searchRef.current.value = ""
                 }}
               >
                 Semua Produk
               </Button>
+
               {categories.map((category, index) => (
                 <Button
                   key={index}
@@ -136,6 +156,7 @@ export default function Products({ user }) {
                     setSelectedCategory(category);
                     setSearch(null)
                     setPage(1)
+                    setPromo(false)
                     searchRef.current.value = ""
                   }}
                 >
@@ -166,7 +187,7 @@ export default function Products({ user }) {
             </form>
 
             <div className="flex items-center justify-between mt-4">
-              <h3 className="title mt-4">
+              <h3 className="title">
                 {searchRef.current?.value
                   ? `Hasil Pencarian: ${searchRef.current?.value}`
                   : selectedCategory

@@ -66,7 +66,7 @@ export default function ModalDetailTransaction({
             </p>
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="grid grid-cols-2 gap-2">
             <Button isButton isPrimary title={`Kembali`} onClick={handleCloseModal}/>
             <Button isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
           </div>

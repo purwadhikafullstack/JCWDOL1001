@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList, resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
@@ -12,27 +12,19 @@ import EmptyTransaction from "../component.empty.transaction";
 import SkeletonTransaction from "../component.skeleton";
 
 export default function MenungguPembayaran({
-  statusId,
-  statusDesc,
-  setActiveTab
+  transaction,
+  currentPage,
+  totalPage,
+  setPage,
+  setActiveTab,
+  isGetTransactionLoading,
+  isUpdateOngoingTransactionLoading,
 }) {
-  const dispatch = useDispatch();
-  const { transaction, isUpdateOngoingTransactionLoading, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-      isUpdateOngoingTransactionLoading: state.transaction?.isUpdateOngoingTransactionLoading,
-    };
-  });
-
+  const dispatch = useDispatch()
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [page, setPage] = useState(1)
 
   const handleShowModal = (context, transactionId) => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     setShowModal({show: true, context});
     setSelectedTransaction(transactionId)
 
@@ -54,10 +46,6 @@ export default function MenungguPembayaran({
     dispatch(resetSuccessTransaction())
   };
 
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [isUpdateOngoingTransactionLoading, page]);
-
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
       <SkeletonTransaction key={index}/>
@@ -70,7 +58,6 @@ export default function MenungguPembayaran({
     <EmptyTransaction />  
     :
     <>
-      <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -151,7 +138,7 @@ export default function MenungguPembayaran({
       <Modal
         showModal={showModal.show}
         closeModal={handleCloseModal}
-        title={showModal.context}
+        title={showModal.context === "Detail Transaksi" ? "Menunggu Pembayaran" : "Konfirmasi"}
         halfWidth={showModal?.context === "Detail Transaksi"}
       >
         {showModal.context === "Detail Transaksi" && 

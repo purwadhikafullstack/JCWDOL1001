@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList } from "../../../../store/slices/transaction/slices";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
@@ -8,22 +7,19 @@ import Modal from "../../../../components/Modal";
 import SkeletonTransaction from "../component.skeleton";
 import Pagination from "../../../../components/PaginationV2";
 
-export default function PesananDibatalkan({ statusId, statusDesc }) {
+export default function PesananDibatalkan({ 
+  transaction,
+  currentPage,
+  totalPage,
+  setPage,
+  isGetTransactionLoading,
+  }) {
   const dispatch = useDispatch();
-  const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-    };
-  });
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const selectedTransactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  const customerData = selectedTransaction?.user_account
 
   const handleShowModal = (transactionId) => {
     setShowModal(true);
@@ -40,11 +36,6 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     setShowModal(false);
   };
 
-  const [page, setPage] = useState(1)
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [page]);
-
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
       <SkeletonTransaction key={index}/>
@@ -57,7 +48,6 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     </div>
   ) : (
     <>
-    <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
@@ -138,13 +128,13 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
         closeModal={()=>handleCloseModal()}
         title={`Pesanan dibatalkan oleh ${selectedTransaction?.canceledBy} : ${selectedTransaction?.message}`}
       >
-        <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+        <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[65vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
           <div className="left-container">
           <div className="">
             <h3 className="subtitle">Data Pemesan</h3>
             <div className="">
-              <p>{customerData?.email}</p>
-              <p>{customerData?.userProfile?.name} ({customerData?.userProfile?.phone})</p>
+              <p>{selectedTransaction?.user_account?.email}</p>
+              <p>{selectedTransaction?.userProfile?.name} ({selectedTransaction?.userProfile?.phone})</p>
             </div>
           </div>
 

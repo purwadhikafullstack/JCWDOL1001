@@ -9,17 +9,16 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  const customerData = selectedTransaction?.user_account;
 
   return (
     <>
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
         <div className="left-container">
           <div className="">
             <h3 className="subtitle">Data Pemesan</h3>
             <div className="">
-              <p>{customerData.email}</p>
-              <p>{customerData.userProfile?.name} ({customerData.userProfile?.phone})</p>
+              <p>{selectedTransaction?.user_account?.email}</p>
+              <p>{selectedTransaction?.userProfile?.name} ({selectedTransaction?.userProfile?.phone})</p>
             </div>
           </div>
 
@@ -92,28 +91,28 @@ export default function ModalDetailTransaction({
         </div>
       </div>
 
-      <div className="mt-4 justify-between flex gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 mt-4">
         <Button
           isButton
-          isPrimaryOutline
-          title={`Kembali`}
-          onClick={handleCloseModal}
+          isDangerOutline
+          title={`Batalkan Transaksi`}
+          className={`lg:col-start-3 md:row-start-1`}
+          onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
         />
-
-        <div className="flex gap-2">
-          <Button
-            isButton
-            isDangerOutline
-            title={`Batalkan Transaksi`}
-            onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
-          />
-          <Button
-            isButton
-            isPrimary
-            title={`Terima Pembayaran`}
-            onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
-          />
-        </div>
+        <Button
+          isButton
+          isWarningOutline
+          title={`Tolak Pembayaran`}
+          className={`lg:col-start-4`}
+          onClick={() => handleShowModal("Tolak Pembayaran", selectedTransaction.transactionId)}
+        />
+        <Button
+          isButton
+          isPrimary
+          title={`Terima Pembayaran`}
+          className={`md:col-start-3 lg:col-start-5 row-start-1 col-span-full md:col-span-1`}
+          onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
+        />
       </div>
     </>
   );

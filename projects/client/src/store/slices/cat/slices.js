@@ -7,10 +7,13 @@ export const getCategory = createAsyncThunk(
     "category/allcat",
     async(payload, {rejectWithValue}) => {
         try{
-            const {page} = payload
+            const {page, limit} = payload
             let query = "";
             if(page){
                 query += `?page=${page}`;
+            }
+            if(limit){
+                query += `${query ? '&' : '?'}limit=${limit}`;
             }
             const response = await api.get(`/category${query}`);
             return response.data;

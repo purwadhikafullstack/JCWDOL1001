@@ -1,5 +1,7 @@
 const { Op } = require("sequelize");
 const moment = require("moment")
+const momentTimezone = require("moment-timezone")
+const cron = require("node-cron");
 const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
@@ -16,13 +18,77 @@ const { Product_Detail, Product_List } = require("../../model/product");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
 const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
+async function cancelExpiredTransactions() {
+  try {
+    const twentyFourHoursAgo = moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm:ss");
+    const transactionsToCancel = await Transaction_List.findAll({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
+      where: {
+        statusId: 1,
+        createdAt: {
+          [Op.lte]: twentyFourHoursAgo,
+        },
+      },
+    });
+
+    for (const transaction of transactionsToCancel) {
+      await transaction.update({ 
+        statusId: 7,
+        canceledBy : "Sistem",
+        message : "Melewati batas waktu pembayaran"
+      })
+
+      const name = transaction.dataValues?.user_account.userProfile.name;
+      const email = transaction.dataValues?.user_account.email;
+
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const html = handlebars.compile(template)({ 
+        name : (name),
+        information : "Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena telah melewati batas waktu pembayaran",
+        link : (REDIRECT_URL + `/products`) 
+      })
+
+      const mailOptions = {
+          from: `Apotech Team Support <${GMAIL}>`,
+          to: email,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
+          html: html
+        }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
+    }
+    
+  } catch (error) {
+    console.error("Error while canceling expired transactions:", error);
+  }
+}
+
 const getTransactions = async (req, res, next) => {
+  cron.schedule("* * * * *", () =>{
+    cancelExpiredTransactions()
+    console.log("Success Cancel Transaction");
+  })
+
+  await cancelExpiredTransactions();
+
   try {
     const { userId } = req.user;
     const { statusId } = req.params;
     const { page, sortDate, startFrom, endFrom, sortTotal, filterName } = req.query;
 
-    const limit = 10;
+    const limit = 2;
         
     const options = {
       offset: page > 1 ? (page - 1) * limit : 0,
@@ -107,6 +173,7 @@ const getTransactions = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+
 };
 
 const getOngoingTransactions = async (req, res, next) =>{
@@ -255,7 +322,7 @@ const uploadPaymentProof = async (req, res, next) => {
           }
         },
       ],
-      where: { [Op.and]: [{ userId }, { transactionId }] },
+      where: { [Op.and]: [{ userId }, { statusId : 1 }, { transactionId }] },
     });
 
     if (!transaction) throw ({
@@ -330,7 +397,7 @@ const confirmPayment = async (req, res, next) => {
           }
         },
       ],
-      where: { transactionId },
+      where: { [Op.and]: [ { statusId : 2 }, { transactionId }] },
     });
 
     if (!transaction) throw ({
@@ -394,7 +461,7 @@ const processOrder = async (req, res, next) => {
           }
         },
       ],
-      where: { transactionId },
+      where: { [Op.and]: [{ statusId : 3 }, { transactionId }] },
     });
 
     if (!transaction) throw ({
@@ -458,7 +525,7 @@ const sendOrder = async (req, res, next) => {
           }
         },
       ],
-      where: { transactionId },
+      where: { [Op.and]: [{ statusId : 4 }, { transactionId }] },
     });
 
     if (!transaction) throw ({
@@ -522,7 +589,7 @@ const receiveOrder = async (req, res, next) => {
           }
         },
       ],
-      where: { transactionId },
+      where: { [Op.and]: [{ statusId : 5 }, { transactionId }] },
     });
 
     if (!transaction) throw ({
@@ -667,6 +734,76 @@ const cancelTransaction = async (req, res, next) => {
   }
 };
 
+// update ongoing status 2 to 1
+const rejectPayment = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+    const { message } = req.body;
+
+    const transaction = await Transaction_List?.findOne({
+      include:[
+        {
+          model: User_Account,
+          attributes : ["email"],
+          include: {
+            model: User_Profile,
+            as: "userProfile"
+          }
+        },
+      ],
+      where: { [Op.and]: [{ statusId : 2 }, { transactionId }] },
+    });
+
+    if (!transaction) throw ({
+      status: middlewareErrorHandling.NOT_FOUND_STATUS,
+      message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
+    });
+
+      await transaction.update({
+        statusId: 1,
+        message,
+        canceledBy: "Admin"
+      });
+
+      const reason = transaction.dataValues?.message;
+      const information = `Mohon maaf, pembayaran kamu ditolak oleh Team Apotech karena ${reason}`;
+
+      const name = transaction.dataValues?.user_account.userProfile.name;
+      const email = transaction.dataValues?.user_account.email;
+
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "reject-payment.html"), "utf8");
+      const html = handlebars.compile(template)({ 
+        name : (name),
+        // bankName : (bankName),
+        // bankAccount : (bankAccount),
+        // accountHolder : (accountHolder),
+        information : (information),
+        link : (REDIRECT_URL + `/user/transaction`) 
+      })
+
+      const mailOptions = {
+          from: `Apotech Team Support <${GMAIL}>`,
+          to: email,
+          subject: `Pembayaran Ditolak ${transaction.dataValues?.createdAt}`,
+          html: html
+        }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
+
+      res.status(200).json({
+        type: "success",
+        message: "Payment rejected!",
+        data: transaction,
+      });
+  } catch (error) {
+
+    next(error);
+  }
+};
+
 const getTransactionStatus = async (req, res, next) => {
   try {
     const status = await Transaction_Status.findAll();
@@ -691,5 +828,6 @@ module.exports = {
   sendOrder,
   receiveOrder,
   cancelTransaction,
+  rejectPayment,
   getTransactionStatus,
 }

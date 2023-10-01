@@ -11,21 +11,14 @@ import SkeletonTransaction from "../component.skeleton";
 import Pagination from "../../../../components/PaginationV2";
 
 export default function PesananDiproses({
-  statusId,
+  transaction,
+  isGetTransactionLoading, 
+  totalPage,
+  currentPage,
+  setPage
 }) {
-  const dispatch = useDispatch();
-  const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-    };
-  });
-
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [page, setPage] = useState(1)
 
   const handleShowModal = (context, transactionId) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -47,10 +40,6 @@ export default function PesananDiproses({
   const handleCloseModal = () => {
     setShowModal({show: false, context:null});
   };
-
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [page]);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
