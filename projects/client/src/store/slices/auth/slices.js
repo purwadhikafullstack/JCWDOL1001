@@ -211,3 +211,41 @@ export const changeProfileData = createAsyncThunk (
         }
     }
 )
+
+export const forgotPass = createAsyncThunk(
+    "auth/user/forgotPassword",
+     
+    async (payload, { rejectWithValue }) => {
+        try {
+            const response = await api.post("auth/forgot", payload)
+
+            const {data} = response
+
+            toast.success(response?.data?.message)
+            
+        } catch (error) {
+            toast.error(error.response?.data?.message)
+
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const resetPass= createAsyncThunk(
+    "auth/user/resetPassword",
+     
+    async (payload, { rejectWithValue }) => {
+        try {
+            const response = await api.post("auth/reset", payload)
+
+            const {data} = response
+
+            alert(response?.data?.message)
+            
+        } catch (error) {
+            alert(error.response?.data?.message)
+
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)

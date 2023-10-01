@@ -10,6 +10,7 @@ const INITIAL_STATE = {
     dataUser: [],
     status : false,
     isLoading : false,
+    message : ""
 }
 
 const customSlice = createSlice({
@@ -24,7 +25,8 @@ const customSlice = createSlice({
         },
         [checkIngredient.fulfilled] : (state, action) => {
             state = Object.assign(state, {
-                isLoading : false
+                isLoading : false,
+                message : action.yaload?.message
             })
         },
         [checkIngredient.rejected] : (state,action) => {

@@ -11,20 +11,23 @@ import Input from "../../../components/Input";
 import { getProducts } from "../../../store/slices/product/slices";
 import { checkIngredient, getUser } from "../../../store/slices/custom/slices";
 import UserList from "./components/component.user";
+import NormalProductList from "./components/component.normalProduct";
 
 export default function CustomOrder({ statusId, statusDesc }) {
   const dispatch = useDispatch();
-  const { dataProduct,dataUser} = useSelector((state) => {
+  const { dataProduct,dataUser,message} = useSelector((state) => {
     return {
       dataProduct: state?.products?.data,
-      dataUser : state?.custom?.dataUser
+      dataUser : state?.custom?.dataUser,
       //butuh data product
+      message : state?.custom?.message
     };
   });
 
   //berarti butuh useState buat simpan:
   // useState dalam pengerjaan list Mapping, bukan handle modal
-  const [listAllProduct, setListAllProduct] = useState([])
+  const [option, setOption] = useState(2)
+  const optionRef = useRef(null)
   const [listAllCustomProduct, setListAllCustomProduct] = useState([])
   // const [listAllNormalProduct, setListAllNormalProduct] = useState([])
 
@@ -37,10 +40,12 @@ export default function CustomOrder({ statusId, statusDesc }) {
   const [ListInputProduct, setListInputProduct] = useState([])
   
   //useRef
-  const productNameRef = useRef(null)
-  const productPriceRef = useRef(null)
-  const productQuantityRef = useRef(null)
-  const productDosageRef = useRef(null)
+  const [productIdState, setProductIdState] = useState("")
+  //useref exclusive for custom product
+  const [productNameState, setProductNameState] = useState("")
+  const [productPriceState, setProductPriceState] = useState("")
+  const [productQuantityState, setProductQuantityState] = useState("")
+  const [productDosageState, setProductDosageState] = useState("")
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -49,11 +54,20 @@ export default function CustomOrder({ statusId, statusDesc }) {
   const handleShowAllModal = () =>{
     setShowModal(true)
     setListAllIngredient([])
-    productNameRef.current.value = ""
-    productPriceRef.current.value = ""
-    productDosageRef.current.value = ""
-    productQuantityRef.current.value = ""
+    setProductIdState("")
+    setProductDosageState("")
+    setProductNameState("")
+    setProductPriceState("")
+    setProductQuantityState("")
+    setOption(2)
   }
+
+  const onChangeValue = (event, state) =>{
+    const newValue = event.target.value
+    if(newValue){
+      state(newValue)
+    }
+  } 
 
   const handleShowModal = (productName) => {
     // munculin modal
@@ -64,27 +78,57 @@ export default function CustomOrder({ statusId, statusDesc }) {
       const selectedProduct = listAllCustomProduct.find(
         (item) => item.productName === productName
       );
+
+      if(selectedProduct.type === 1) {
       // setSelectedTransaction(transactionData);
       setListAllIngredient(selectedProduct?.ingredients)
-      productNameRef.current.value = selectedProduct?.productName
-      productPriceRef.current.value = selectedProduct?.productPrice
-      productDosageRef.current.value = selectedProduct?.productDosage
-      productQuantityRef.current.value = selectedProduct?.quantity
-      }
+      setProductNameState(selectedProduct?.productName)
+      setProductPriceState(selectedProduct?.productPrice)
+      setProductDosageState(selectedProduct?.productDosage)
+      setProductQuantityState(selectedProduct?.quantity)
+      setOption(1)
+    }
+    if(selectedProduct.type === 0){
+      setOption(0)
+      setProductIdState(selectedProduct?.productId)
+      setProductQuantityState(selectedProduct?.quantity)
+    }
+    }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
   const handleAddModal = () => {
     const items = listAllCustomProduct;
-    items.push({
-      productName : productNameRef.current.value,
-      productPrice : productPriceRef.current.value,
-      productDosage: productDosageRef.current.value,
-      quantity : productQuantityRef.current.value,
-      ingredients : listAllIngredient
-    })
+    if(option === 1){
+      items.push({
+        // productName : productNameRef.current.value,
+        productName : productNameState,
+        productPrice : productPriceState,
+        productDosage: productDosageState,
+        quantity : productQuantityState,
+        type : 1,
+        ingredients : listAllIngredient
+      })
+    }
+    if(option === 0){
+      items.push({
+        // productName : productNameRef.current.value,
+        productId : productIdState,
+        productName : productNameState,
+        productPrice : productPriceState,
+        quantity : productQuantityState,
+        type : 0,
+      })
+    }
+    setProductNameState("")
+    setProductIdState("")
+    setProductPriceState("")
+    setProductDosageState("")
+    setProductQuantityState("")
+    setOption(2)
     console.log(items)
     setListAllCustomProduct(items)
 
@@ -106,13 +150,18 @@ export default function CustomOrder({ statusId, statusDesc }) {
     // productName
     setIngredientName(result[1]);
 }
+  const onNormalProductChange = (params) =>{
+    const result = params.split(",")
+    // product ID
+    setProductIdState(result[0])
+    setProductNameState(result[1])
+    setProductPriceState(result[2])
+
+}
 
 const onUserChange = (params) =>{
   const result = params.split(",")
-  // email
   setEmail(result[0])
-  // productName
-  // setIngredientName(result[1]);
 }
 
 const submitIngredient = () =>{
@@ -127,11 +176,12 @@ const submitIngredient = () =>{
 }
 
 const handleSubmitOrder = () =>{
-
+  setListAllCustomProduct([])
   dispatch(checkIngredient({
     email : email,
     data : listAllCustomProduct
   }))
+  
   //hapus semua data
 }
   useEffect(() => {
@@ -146,6 +196,12 @@ const handleSubmitOrder = () =>{
     dispatch(getUser())
   }, []);
 
+  useEffect(()=>{
+//handleGetUser yang uda disorting boleh juga
+//setiap getuser ada update, di state
+  dispatch(getUser())
+  },[message])
+
   return (
     <>
       <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
@@ -156,7 +212,7 @@ const handleSubmitOrder = () =>{
         <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {listAllCustomProduct.map((item) => {
           // const moreItems = transactionDetail.length - 1;
-
+          if(item.type === 1){
           return (
             <div
               // key={item}
@@ -215,6 +271,29 @@ const handleSubmitOrder = () =>{
 
             </div>
           );
+          }
+          if(item.type === 0) {
+            return(
+              <div
+              // key={item}
+              className="cursor-pointer rounded-lg border p-4 shadow-md duration-300 hover:border-primary"
+              onClick={() => handleShowModal(item.productName)}
+            >
+              <div className="flex flex-col items-start">
+                <p className="mb-4 text-sm font-semibold text-primary">
+                  {item.productName}
+                </p>
+                <p className="mb-2 text-sm font-semibold text-gray-700">
+                  Price : {item.productPrice}
+                </p>
+                <p className="mb-2 text-sm font-semibold text-gray-700">
+                  Quantity : {item.quantity}
+                </p>
+              </div>
+            </div>
+            )
+          }
+
         })}
         </div>
         <Button
@@ -240,6 +319,20 @@ const handleSubmitOrder = () =>{
         closeModal={()=>handleCloseModal()}
         title={`Add Product Section`}
       >
+        {/* masukin option 2 pilihan, option dan setoptionm, tiga kondisi */}
+        <span className="">
+          Jenis produk apa yang ingin Anda tambahkan?
+        </span>
+        <select className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2 mb-4
+            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
+            "
+            ref={optionRef} onChange={()=>{setOption(+optionRef?.current?.value)}}
+            >
+          <option value="0" >Produk Satuan</option>
+          <option value="1" >Obat Racik</option>
+        </select>
+
+        { option === 1 &&
         <div className="grid gap-2 md:grid-cols-2 max-h-[50vh] lg:max-h-screen overflow-y-auto">
           {/* kiri */}
           <div className="">
@@ -247,7 +340,7 @@ const handleSubmitOrder = () =>{
               className="border p-4 shadow-md"
             >
               <div className="flex items-center justify-between">
-                <span>
+                <span className="title">
                   Add Ingredient
                 </span>
               </div>
@@ -294,7 +387,7 @@ const handleSubmitOrder = () =>{
           </div>
 
           {/* kanan */}
-          <div className="w-full h-fit mt-8 md:mt-0">
+          <div className="w-full h-fit mt-8 md:mt-0 border p-2">
             <h3 className="title">Summary</h3>
               <div>
                 Ingredients
@@ -328,7 +421,9 @@ const handleSubmitOrder = () =>{
           <div className="mt-4 flex flex-col gap-y-4">
             <div className="">
               <Input
-                ref={productNameRef}
+                // ref={productNameRef}
+                value={productNameState}
+                onChange={(event)=>onChangeValue(event,setProductNameState)}
                 type="text"
                 label="Product Name"
                 placeholder="e.g. Paracetamol 500 mg"
@@ -344,10 +439,11 @@ const handleSubmitOrder = () =>{
 
             <div className="">
               <Input
-                ref={productPriceRef}
+                value={productPriceState}
                 type="number"
                 label="Product Price"
                 placeholder="e.g. 35000"
+                onChange={event=>onChangeValue(event,setProductPriceState)}
                 // errorInput={error.productPrice}
                 // onChange={() => setError({ ...error, productPrice: false })}
               />
@@ -360,10 +456,11 @@ const handleSubmitOrder = () =>{
 
             <div className="">
               <Input
-                ref={productDosageRef}
+                value={productDosageState}
                 type="text"
                 label="Product Dosage"
                 placeholder="e.g. 3 x 1 hari"
+                onChange={event=>{onChangeValue(event,setProductDosageState)}}
                 // errorInput={error.productDosage}
                 // onChange={() => setError({ ...error, productDosage: false })}
               />
@@ -376,10 +473,11 @@ const handleSubmitOrder = () =>{
 
             <div className="">
               <Input
-                ref={productQuantityRef}
+                value={productQuantityState}
                 type="number"
                 label="Product Quantity"
                 placeholder="e.g. 3"
+                onChange={event=>{onChangeValue(event,setProductQuantityState)}}
                 // errorInput={error.productPrice}
                 // onChange={() => setError({ ...error, productPrice: false })}
               />
@@ -389,11 +487,40 @@ const handleSubmitOrder = () =>{
                 </div>
               )} */}
             </div>
-
+        
 
             </div>
           </div>
         </div>
+}
+{
+  option === 0 && 
+  <div className="grid gap-2 max-h-[50vh] lg:max-h-screen overflow-y-auto">
+    <div className="border p-4 shadow-md">
+      <NormalProductList
+        product={dataProduct}
+        onNormalProductChange={onNormalProductChange}
+        productId={productIdState}
+      />
+      <div className="">
+              <Input
+                value={productQuantityState}
+                type="number"
+                label="Product Quantity"
+                placeholder="e.g. 3"
+                onChange={event=>{onChangeValue(event,setProductQuantityState)}}
+                // errorInput={error.productPrice}
+                // onChange={() => setError({ ...error, productPrice: false })}
+              />
+              {/* {error.productPrice && (
+                <div className="text-sm text-red-500 dark:text-red-400">
+                  {error.productPrice}
+                </div>
+              )} */}
+      </div>
+    </div>
+  </div>
+}
         <div className="mt-4 flex justify-between gap-2">
           <Button
             isButton

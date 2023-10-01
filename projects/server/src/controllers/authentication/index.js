@@ -2,7 +2,8 @@ const { ValidationError } = require("yup")
 const { User_Account,User_Address, User_Profile } = require("../../model/relation.js")
 const validation = require("./validation.js")
 const {REDIRECT_URL,GMAIL} = require("../../config/index.js")
-const {RegisterValidationSchema, VerifyValidationSchema, UpdatePasswordValidationSchema  } = require("./validation.js")
+const {RegisterValidationSchema, VerifyValidationSchema, UpdatePasswordValidationSchema ,
+    PasswordValidationSchema, ForgotPassValidationSchema } = require("./validation.js")
 const db = require("../../model/index.js")
 const {helperToken, helperEncryption, helperOTP, helperTransporter} = require("../../helper/index.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
@@ -456,6 +457,82 @@ const changeProfileData = async (req, res, next) => {
     }
 }
 
+//forgotpassword (get email, send verif to reset password)
+const forgotPass = async ( req,res,next) => {
+    try{
+        const transaction = await db.sequelize.transaction(async()=>{     
+        // @ email validation
+        const  {email}  = req.body;
+
+        //@input validation
+        await ForgotPassValidationSchema.validate(email); 
+
+        //@ get id from email
+        // @first, find the user's data
+        const userResult = await User_Account?.findOne( { where : {email: email } });
+        
+         // @generate access token
+         const accessToken = createToken({ 
+            UUID: userResult.UUID,
+            role : userResult.role,
+        }); 
+
+         
+         let receiver = userResult?.dataValues?.username
+        //@send verification email
+        const template = fs.readFileSync(path.join(process.cwd(), "templates", "forgotPass.html"), "utf8");
+        const html = handlebars.compile(template)({link :(REDIRECT_URL + `/reset-password/${accessToken}`) })
+        
+        const mailOptions = {
+            from: `Apotech Team Support <${GMAIL}>`,
+            to: email,
+            subject: "Forgot Password",
+            html: html}
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) throw error;
+                console.log("Email sent: " + info.response);
+            })
+            // @return response
+           res
+               .status(200)
+               .json({
+               message: "We have sent verification email for reset password",
+           });
+        });
+
+    } catch (error){
+        next(error)
+    }
+}
+
+//reset password
+const reset = async(req,res,next) =>{
+    try{
+        //@grab password from res; validate and encrypt it into hashedpassword
+        const {password} = req.body;
+
+        //@password template validation
+        await PasswordValidationSchema.validate(password);
+        const hashedPassword = helperEncryption.hashPassword(password);
+
+        //@update user data
+        await User_Account?.update({ password: hashedPassword}, {
+            where: {
+                UUID : req?.user?.UUID
+            }
+          });
+         
+        // @ send rexponse message only, cause they need to relogin
+        res
+        .status(200)
+        .json({
+        message: "Success! Your new password is ready to use. Go back to login page",
+    });
+    } catch(error){
+        next(error)
+    }
+}
+
 module.exports = {
    login,
    keepLogin,
@@ -467,4 +544,6 @@ module.exports = {
    changeProfileData,
    changeProfilePicture,
    changeEmailOtp,
+   forgotPass,
+   reset
 }

@@ -27,7 +27,7 @@ router.patch("/:id", verifyAdmin, uploader.single("file"), product.updateProduct
 router.get("/recipe/user", verifyAdmin, recipe.getUser)
 router.post("/recipe/check", verifyAdmin, recipe.checkIngredientStock)
 router.post("/recipe/reverse", verifyAdmin, recipe.reverseStock)
-router.post("/recipe/order/:token", recipe.createCustomProductOrder)
+router.post("/recipe/order/:token",verifyUser, recipe.createCustomProductOrder)
 
 module.exports = router
 

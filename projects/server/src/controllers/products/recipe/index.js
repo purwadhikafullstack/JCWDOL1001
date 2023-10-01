@@ -39,14 +39,16 @@ const getUser = async( req, res, next ) => {
         const {data,email} = req.body
         //validate email address
           //todo : validate
-        //ingrdient isinya productId dan quantity
+
         const result = await Promise.all(
         data.map(async (item) =>{ 
+        const {type} = item
+        
+        if(type){
         const {ingredients, productName,
         productPrice, productDosage, quantity} = item
-        //validation for data
+                    //validation for data
           // TODO: validate
-        // -gua perlu create product list, as productList misal 
         const product = await Product_List.create({
           productName,
           isDeleted : 1,
@@ -102,8 +104,28 @@ const getUser = async( req, res, next ) => {
           }
         }
         if(availability){
-          return {name : productName, productId : product?.productId}
+          return {name : productName, productId : product?.productId, quantity : quantity, type : 1}
         }
+      }
+      //buat product biasa
+      if(type === 0){
+        const {productId, quantity} = item
+        let availability = false
+        const result = await Product_List.findOne({where:{
+          productId : productId
+        },include: {
+            model : Product_Detail,
+            attributes : ["quantity"]
+        }})
+        console.log(result)
+        if(quantity <= result?.product_details[0]?.quantity){
+          availability = true
+        }
+        if(availability){
+          console.log("here")
+          return {name : result.productName, productId : productId, quantity : quantity, type : 0}
+        }
+      }
       }))
 
       // -kirim email untuk respond user
@@ -195,9 +217,7 @@ const getUser = async( req, res, next ) => {
 
      const address = await User_Address?.findOne({
       where : {
-        isPrimary : 1,
-        isDeleted : 0,
-        userId : user?.userId
+        addressId : user?.addressIdRecipe
       }
      })
      let subtotal = 0;
@@ -205,7 +225,9 @@ const getUser = async( req, res, next ) => {
      //looping data per product
      let productResult = await Promise.all(
       data.map(async (item) =>{ 
-        const {productId, name} = item
+        const {productId, name,type} = item
+
+      if(type === 1){
         const product = await Product_List.findOne({
           where :{
             productId : productId,
@@ -216,6 +238,7 @@ const getUser = async( req, res, next ) => {
           message : middlewareErrorHandling.PRODUCT_ALREADY_CHECKEDOUT});
 
         subtotal += (product.productPrice * +product.productDescription)
+        console.log("subtotal dari custom " ,subtotal)
         await Product_List.update({ productPicture : "done"},{
           where : {
             productId : productId,
@@ -341,19 +364,64 @@ const getUser = async( req, res, next ) => {
         productId : productId, 
         quantity : +product?.productDescription,
         price : product?.productPrice  }
+    }
+    
+    if(type === 0){
+      const {quantity} = item
+      //grab data produk
+      const product = await Product_List?.findOne({where : {
+        productId : productId
+      },
+        include : 
+        [
+          {
+            model : Product_Unit,
+            as : "productUnits"
+          },
+          {
+            model : Product_Detail,
+            attributes : ["quantity"]
+          },
+        ]})
+      //kurang quantity
+      await Product_History.create({
+        productId : productId,
+        unit : product.productUnits[0]?.name,
+        initialStock : product?.product_details[0].quantity,
+        status : "Penjualan",
+        type : "Pengurangan",
+        quantity : quantity,
+        results : product?.product_details[0].quantity - quantity
+      })
+
+      await Product_Detail.update({quantity : product?.product_details[0].quantity - quantity},{
+        where : {
+          productId : productId
+        }
+      })
+      subtotal += (product.productPrice * quantity)
+      console.log("subtotal dari normal " ,subtotal)
+      return{
+        name : name,
+        productId : productId,
+        quantity : quantity,
+        price : product?.productPrice
+      }
+    }
     }))
    
     //bagian ongkir-----------------------------------------------------------
-    const {data:{rajaongkir:{results}}} = await Axios.post(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL_COST,
-      { 
-          key : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-          origin: 151, 
-          destination: address?.postalCode, 
-          weight: 1000, 
-          courier: "pos"
-      }
-  )
-  const transportCost = results[0]?.costs[0]?.cost[0]?.value 
+  //   const {data:{rajaongkir:{results}}} = await Axios.post(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL_COST,
+  //     { 
+  //         key : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
+  //         origin: 151, 
+  //         destination: address?.postalCode, 
+  //         weight: 1000, 
+  //         courier: "pos"
+  //     }
+  // )
+  const transportCost = +user?.shippingRecipe?.split(",")[2]
+  console.log(transportCost, " ", subtotal)
       //buat transaction list
       const translist = {
         userId : user?.userId,
