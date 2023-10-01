@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
 
-import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
+import { ForgotPassValidationSchema, LoginValidationSchema, PasswordValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
 
 export const login = createAsyncThunk(
@@ -217,6 +217,7 @@ export const forgotPass = createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
+            await ForgotPassValidationSchema.validate(payload)
             const response = await api.post("auth/forgot", payload)
 
             const {data} = response
@@ -236,14 +237,17 @@ export const resetPass= createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await api.post("auth/reset", payload)
+            const {token} = payload
+            delete payload.token
+            await PasswordValidationSchema.validate(payload)
+            const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})
 
             const {data} = response
 
-            alert(response?.data?.message)
+            toast.success(response?.data?.message)
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }

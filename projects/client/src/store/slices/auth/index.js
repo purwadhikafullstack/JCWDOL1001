@@ -34,6 +34,7 @@ const INITIAL_STATE = {
     isChangeProfileLoading : false,
     isForgotPasswordLoading : false,
     isResetPasswordLoading : false,
+    resetStatus : false,
 }
 
 const authSlice = createSlice({
@@ -166,6 +167,7 @@ const authSlice = createSlice({
         },
         [resetPass.rejected] : (state, action) => {
             state.isResetPasswordLoading = false
+            state.resetStatus = true
         },
         [resetPass.fulfilled] : (state, action) => {
             state.isResetPasswordLoading= false

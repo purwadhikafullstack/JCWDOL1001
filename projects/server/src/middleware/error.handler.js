@@ -33,7 +33,7 @@ const NO_STOCK = "Insufficient stocks for desired product"
 const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
 
 const TRANSACTION_NOT_FOUND = "Transaction not found"
-
+const ONLY_ONCE = "This link only valid for 1 submission."
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -101,5 +101,6 @@ module.exports = {
     VOUCHER_NEED_AMOUNT,
     NO_STOCK,
     PRODUCT_ALREADY_CHECKEDOUT,
-    TRANSACTION_NOT_FOUND
+    TRANSACTION_NOT_FOUND,
+    ONLY_ONCE,
 }

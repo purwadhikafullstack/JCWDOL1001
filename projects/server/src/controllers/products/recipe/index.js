@@ -231,7 +231,7 @@ const getUser = async( req, res, next ) => {
         const product = await Product_List.findOne({
           where :{
             productId : productId,
-            // productPicture : "review"
+            productPicture : "review"
           }
         })
         if(!product) throw ({ status : 404, 

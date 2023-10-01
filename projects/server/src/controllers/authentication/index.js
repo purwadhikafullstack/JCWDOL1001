@@ -467,21 +467,25 @@ const forgotPass = async ( req,res,next) => {
         //@input validation
         await ForgotPassValidationSchema.validate(email); 
 
+        
         //@ get id from email
         // @first, find the user's data
         const userResult = await User_Account?.findOne( { where : {email: email } });
-        
+        // const profileResult = await User_Profile?.findOne( { where : {userId : userResult?.userId}})
+        await User_Account?.update({
+            otp : "RESET"
+        },{where : {
+            email : email
+        }})
          // @generate access token
          const accessToken = createToken({ 
             UUID: userResult.UUID,
             role : userResult.role,
         }); 
 
-         
-         let receiver = userResult?.dataValues?.username
         //@send verification email
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "forgotPass.html"), "utf8");
-        const html = handlebars.compile(template)({link :(REDIRECT_URL + `/reset-password/${accessToken}`) })
+        const html = handlebars.compile(template)({link :(REDIRECT_URL + `/reset-password/reset-${accessToken}`) })
         
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
@@ -514,9 +518,15 @@ const reset = async(req,res,next) =>{
         //@password template validation
         await PasswordValidationSchema.validate(password);
         const hashedPassword = helperEncryption.hashPassword(password);
-
+        const result = await User_Account.findOne({where : {
+            UUID : req?.user?.UUID,
+            otp : "RESET"
+        }})
+        if(!result){
+            throw ({status : 410, message : middlewareErrorHandling.ONLY_ONCE});
+        }
         //@update user data
-        await User_Account?.update({ password: hashedPassword}, {
+        await User_Account?.update({ password: hashedPassword, otp : null}, {
             where: {
                 UUID : req?.user?.UUID
             }
