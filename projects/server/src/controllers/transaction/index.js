@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, Transaction, EagerLoadingError } = require("sequelize");
 const moment = require("moment")
 const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
@@ -12,9 +12,10 @@ const {
   Transaction_Status,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
-const { Product_Detail, Product_List } = require("../../model/product");
+const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
-const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
+const { REDIRECT_URL, GMAIL } = require("../../config/index.js");
+const { addAbortListener } = require("events");
 
 const getTransactions = async (req, res, next) => {
   try {
@@ -617,6 +618,8 @@ const cancelTransaction = async (req, res, next) => {
         message,
         canceledBy: roleId === 1 ? "Admin" : "User",
       });
+    
+
 
       let reason = "";
       let information = "";
@@ -629,6 +632,206 @@ const cancelTransaction = async (req, res, next) => {
         reason = transaction.dataValues?.message;
         information = `Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena ${reason}`;
       }
+
+      //TODO : use these logic to proceed reverse stock
+      //get transaction list
+      const reverseList = await Transaction_Detail.findAll({where : {
+        transactionId : transactionId,
+      }})
+      // //product check
+      const result = await Promise.all(
+        reverseList.map(async (item) =>{ 
+          const {productId, quantity} = item
+          //seandainya di product resep, ada barangnya
+          const listRecipe = await Product_Recipe.findAll({where : 
+          {
+            productId : productId
+          }})
+
+          //produk satuan
+          if(!listRecipe){
+          const defaultUnit = await Product_Detail.findOne({
+            where : {
+              productId : productId,
+              isDefault : true
+            },
+            include :[ 
+              {
+                model : Product_Unit,
+              }
+            ]
+          })
+
+          await Product_History.create({
+            productId : productId,
+            unit : defaultUnit.product_unit.name,
+            initialStock : defaultUnit.quantity,
+            status : "Pembatalan Transaksi",
+            type : "Penambahan",
+            quantity : quantity,
+            results : +defaultUnit.quantity + quantity
+          })
+          //update qtynya
+          await Product_Detail.update({
+            quantity : +defaultUnit?.quantity + quantity
+          },{
+            where : {
+              productId : productId,
+              isDefault : true
+            }
+          })
+        }
+        //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
+          if(listRecipe){
+            await Promise.all(
+              listRecipe.map(async (itemRecipe) =>{
+                const mainUnit = await Product_Detail.findOne({
+                  where : {
+                    productId : itemRecipe?.ingredientProductId,
+                    isDefault : true
+                  },
+                  include :[ 
+                    {
+                      model : Product_Unit,
+                    }
+                  ]
+                })
+                const secUnit = await Product_Detail.findOne({
+                  where : {
+                    productId : itemRecipe?.ingredientProductId,
+                    isDefault : false
+                  },
+                  include :[
+                  {
+                    model : Product_Unit,
+                  }]
+                })
+                //seandainya awalnya stock ada 12 sec, kepake cmn 4
+                //quantity di transaksi x quantity di resep produknya =  total ingredients yang kepakai
+                //cth : kejual 3 biji, 1 biji perlu 3 butir panadol
+                //brrti kepake 9 butir
+                //cth cmn perlu 8, brrti kepake 3 main, sisa 1
+                const totalIngredientQuantity = quantity * itemRecipe?.quantity
+
+                //seandainya totalIngredientQuantity < main unit convertion?
+                if(totalIngredientQuantity < mainUnit?.convertion){
+                //cek dlu apakah totalIngredientQuantity + secUnit.quantity >= convertion
+                //kalau iya brrti terjadi konversi; cth : total 7, sec unit 1 conv 8, brrti awalnya ada 6
+                if(totalIngredientQuantity + secUnit.quantity >= mainUnit?.convertion){
+                //update both unit
+                const currentSecUnitQuantity = totalIngredientQuantity + secUnit.quantity - mainUnit?.convertion
+                await Product_History.create({
+                  productId : itemRecipe?.ingredientProductId,
+                  unit : mainUnit.product_unit.name,
+                  initialStock : mainUnit.quantity,
+                  status : "Pembatalan Transaksi",
+                  type : "Penambahan",
+                  quantity : 1,
+                  results : +mainUnit.quantity + 1
+                })
+                await Product_History.create({
+                  productId : itemRecipe?.ingredientProductId,
+                  unit : secUnit.product_unit.name,
+                  initialStock : secUnit.quantity,
+                  status : "Pembatalan Transaksi",
+                  type : "Pengurangan",
+                  quantity : Math.abs(totalIngredientQuantity - mainUnit?.convertion),
+                  results : +currentSecUnitQuantity
+                })
+                //update qtynya
+                await Product_Detail.update({
+                  quantity : +mainUnit.quantity + 1
+                },{
+                  where : {
+                    productId : itemRecipe?.ingredientProductId,
+                    isDefault : true
+                  }
+                })
+                await Product_Detail.update({
+                  quantity : +currentSecUnitQuantity
+                },{
+                  where : {
+                    productId : itemRecipe?.ingredientProductId,
+                    isDefault : false
+                  }
+                })
+
+                }
+                //kalau kurang brrti gaterjadi konversi
+                else{
+                //update only sec unit
+                await Product_History.create({
+                  productId : itemRecipe?.ingredientProductId,
+                  unit : secUnit.product_unit.name,
+                  initialStock : secUnit.quantity,
+                  status : "Pembatalan Transaksi",
+                  type : "Pengurangan",
+                  quantity : +totalIngredientQuantity,
+                  results :  +totalIngredientQuantity + secUnit?.quantity
+                })
+
+                await Product_Detail.update({
+                  quantity :  +totalIngredientQuantity + +secUnit?.quantity
+                },{
+                  where : {
+                    productId : itemRecipe?.ingredientProductId,
+                    isDefault : false
+                  }
+                })
+
+                }
+                }
+                //kalau totalIngredientQuantity >= main unit convertion
+                //pasti terjadi konversi
+                if(totalIngredientQuantity >= mainUnit?.convertion){
+                  // sisa skrg 4, konversi 8, perlu 20, dulu sisa brp ? 0
+                  // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
+                  const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.quantity) / mainUnit?.convertion)
+                  const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.quantity) % mainUnit?.convertion
+
+                  await Product_History.create({
+                    productId : itemRecipe?.ingredientProductId,
+                    unit : mainUnit.product_unit.name,
+                    initialStock : mainUnit.quantity,
+                    status : "Pembatalan Transaksi",
+                    type : "Penambahan",
+                    quantity : currentMainUnitQuantity,
+                    results : +mainUnit.quantity + currentMainUnitQuantity
+                  })
+                  await Product_History.create({
+                    productId : itemRecipe?.ingredientProductId,
+                    unit : secUnit.product_unit.name,
+                    initialStock : secUnit.quantity,
+                    status : "Pembatalan Transaksi",
+                    type : currentSecUnitQuantity > secUnit?.quantity ? "Penambahan" : "Pengurangan",
+                    quantity : Math.abs(currentSecUnitQuantity - secUnit?.quantity),
+                    results : currentSecUnitQuantity
+                  })
+                  //update qtynya
+                  await Product_Detail.update({
+                    quantity : +mainUnit.quantity + currentMainUnitQuantity
+                  },{
+                    where : {
+                      productId : itemRecipe?.ingredientProductId,
+                      isDefault : true
+                    }
+                  })
+                  await Product_Detail.update({
+                    quantity : +currentSecUnitQuantity
+                  },{
+                    where : {
+                      productId : itemRecipe?.ingredientProductId,
+                      isDefault : false
+                    }
+                  })
+                } 
+                
+
+              })
+            )
+          }
+      
+      }))
 
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
