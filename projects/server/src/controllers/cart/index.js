@@ -8,7 +8,8 @@ async function dataCart (userId){
     return await Cart?.findAll(
         {
             where : {
-            userId : userId
+            userId : userId,
+            inCheckOut : 0
         },
         include : 
         [
@@ -162,7 +163,7 @@ const totalProductCart = async (req, res, next) => {
                 //grab user from UUid
                 const user = await User_Account.findOne({where : {UUID : req?.user?.UUID}})
                 //find all product in cart from userId 
-                const total = await Cart.sum('quantity', { where: { userId : user?.userId } }); 
+                const total = await Cart.sum('quantity', { where: { userId : user?.userId , inCheckOut : 0} }); 
             res.status(200).json({ 
                 message : "Current Total Products in cart",
                 total: total
@@ -172,41 +173,33 @@ const totalProductCart = async (req, res, next) => {
         }
 }
 
-// const updateStockCart = async (req, res, next) => {
-//     try {
-//             //updateStockCart => update stock based on payload stock
-//                 // update stock (payload sama dgn add tocart),
-//                 // tinggal cari yg sesuai payload 
+const checkOutCart = async (req,res,next) => {
+    try {
+        const {data} = req.body;
+        // //do validation 
 
-//                 //grab data from req.body
-//                 const {productId, quantity} = req.body;
-//                 //do validation
-//                     //--TODO: validate--
-//                 //grab product details
-//                  //--TODO: --
-//                 //error handling kalau quantity > productStock.quantity, throw error
-//                  //--TODO: e--
-//                 //grab user from UUid
-//                 const user = await User_Account.findOne({where : {UUID : req?.user?.UUID}})
-//                 //find all product in cart from userId 
-//                 await Cart.update({quantity : quantity},{where:{
-//                     userId : user?.userId,
-//                     productId : productId
-//                 }})
-                
-//                 const updateCart = await Cart.findOne({where:{
-//                     userId : user?.userId,
-//                     productId : productId
-//                 }})
-//             res.status(200).json({ 
-//                 message : "Product stock has been updated in cart",
-//                 data: updateCart
-//             })
-//         } catch (error) {
-//             next(error)
-//         }
-// }
+        //grab user from UUid
+        await Promise.all(
+        data.map(async (item) => {
+            await Cart.update({
+                inCheckOut : 1
+            },{
+                where: {
+                  productId: item.productId,
+                  userId : req.user?.userId
+                }
+              });  
 
+        })
+        )
+
+    res.status(200).json({ 
+        message : "Products has been moved to checkout list",
+    })
+} catch (error) {
+    next(error)
+}
+}
 const deleteProductCart = async (req, res, next) => {
     try {
                 //deleteProductCart => drop table pake destroy where userId dan productId
@@ -235,7 +228,7 @@ const deleteProductCart = async (req, res, next) => {
 
 module.exports = {
     getCart,
-    // addToCart,
+    checkOutCart,
     totalProductCart,
     updateCart,
     deleteProductCart

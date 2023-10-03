@@ -34,7 +34,7 @@ export default function Modal({
       }
     };
 
-    context === "login" ? setLogin(true) : setRegist(true);
+    context === "login" ? setLogin(true) :  setRegist(true); 
 
     document.addEventListener("keydown", handleEscapeKey);
 
@@ -75,6 +75,7 @@ export default function Modal({
                   setTitle("");
                   setLogin(false);
                   setRegist(false);
+                  setForgot(false)
                 }
               }}
               className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
@@ -99,6 +100,7 @@ export default function Modal({
                     closeModal();
                     setTitle("");
                     setLogin(false);
+                    setForgot(false)
                     setRegist(false);
                   }}
                   >
@@ -113,6 +115,10 @@ export default function Modal({
 
             <div className="py-4">
               {context ? (
+                forgot ?
+                <ForgotContext
+                />  
+                : 
                 login ? (
                   <LoginContext
                     onLogin={() => {
@@ -133,10 +139,8 @@ export default function Modal({
                   <RegisterContext
                   onDoneRegist={()=>{
                   setTitle("Next Step")}} 
-                />
-                :
-              <ForgotContext/>
-                
+                /> : 
+                ""
               ) : (
                 children
               )}

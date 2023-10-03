@@ -22,9 +22,9 @@ export default function CheckoutPage(){
     })
 
     
-    if(cart.length === 0){
-        navigate("/")
-    }
+    // if(cart.length === 0){
+    //     navigate("/")
+    // }
     
 
     useEffect(()=>{

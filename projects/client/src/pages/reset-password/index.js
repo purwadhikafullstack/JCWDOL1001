@@ -1,40 +1,72 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import Button from "../../components/Button/index.js"
-import { resetPass } from "../../store/slices/auth/slices.js"
+import { forgotPass, resetPass } from "../../store/slices/auth/slices.js"
+import { PasswordValidationSchema } from "../../store/slices/auth/validation.js"
+import { toast } from "react-toastify"
+import Input from "../../components/Input/index.js"
 
 export default function ResetPassword({
 }){
+    const location = useLocation()
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
     const dispatch = useDispatch()
-    const {resetStatus} = useSelector(state=>{
-        return {
-            resetStatus : state?.auth?.resetStatus
+    const navigate = useNavigate()
+    
+    const [submit,setSubmit] = useState(false)
+    const [isToastVisible, setIsToastVisible] = useState(false)
+    const [error, setError] = useState("")
+    const handleReset = async (e) =>{
+        e.preventDefault()
+        try{
+            const resultPass = passwordRef.current.value
+            const resultConfirmPass = confirmPasswordRef.current.value
+            const token = location.pathname.split('-password/reset-')[1]
+            await PasswordValidationSchema.validate({password : passwordRef.current?.value,
+                confirmPassword : confirmPasswordRef.current?.value}, {
+                abortEarly: false,
+            })
+            if(resultPass === resultConfirmPass){
+                dispatch(resetPass({password : passwordRef.current?.value, token : token}))
+                setError("")
+                setSubmit(true)
+                navigate("/")
+            }
+
+        }catch(error) {
+            const errors = {}
+
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+
+            setError(errors)
+            console.log(errors)
+            toast.error("Check your input field!")
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
         }
-    })
-    const handleReset = () =>{
-        const resultPass = passwordRef.current.value
-        const resultConfirmPass = confirmPasswordRef.current.value
-        const token = location.pathname.split('reset-')[1]
-        if(resultPass === resultConfirmPass){
-            dispatch(resetPass({password : passwordRef.current?.value, token : token}))
-        }
-        // minus throw Error
     }
 
-    useEffect(()=>{
-
-    })
 return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
-        <span className="title self-start">
+        <span className="text-primary font-semibold text-xl">
             Reset Password
         </span>
-        {resetStatus ?
-        
-        <form className="mt-8 flex flex-col gap-4" onSubmit={handleReset}>
+        {submit ?         
+        <span className="mt-6 text-center">
+            Password kamu sudah diubah. 
+            <br/>
+            Silahkan login menggunakan password yang baru.
+        </span>
+        :
+        <form className="mt-8 flex flex-col gap-4" onSubmit={(event)=>{handleReset(event)}}>
                 <div>
                     <Input
                         ref={passwordRef}
@@ -42,9 +74,14 @@ return (
                         type="password"
                         label="Password"
                         placeholder="..............."
-                        errorInput={error}
-                        onChange={()=>setError("")}
-                    />
+                        errorInput={error.password}
+                        onChange={() => setError({ ...error, password: false })}
+                        />
+                        {error.password && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                                {error.password}
+                            </div>
+                        )}
 
                 </div>
                 <div>
@@ -54,23 +91,26 @@ return (
                         type="password"
                         label="Confirm Password"
                         placeholder="··············"
-                        errorInput={error}
-                        onChange={()=>setError("")}
-                    />
+                        errorInput={error.confirmPassword}
+                        onChange={() => setError({ ...error, confirmPassword: false })}
+                        />
+                        {error.confirmPassword && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                                {error.confirmPassword}
+                            </div>
+                        )}
                 </div>
 
                 <Button
                     isButton
                     isPrimary
-                    type="submit"
+                    isDisabled={isToastVisible}
+                    type={isToastVisible ? "button" : "submit"}
                     title="Ubah Password"
                     className="mt-4 py-3"
                 />
         </form>
-        :
-        <div>
-            Your password has been reset. You can login using the newly updated password
-        </div>
+
 }
     </div>
 )

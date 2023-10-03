@@ -79,7 +79,7 @@ export default function AdminNavMenu({
       icon: <HiSquares2X2 className="h-7 w-7 " />,
     },
     {
-      title : "Pesanan Resep Dokter",
+      title : "Pesanan Resep",
       path : "/admin/custom",
       icon : <GoChecklist className="h-7 w-7"/>
   },

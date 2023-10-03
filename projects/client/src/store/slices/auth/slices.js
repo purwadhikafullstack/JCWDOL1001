@@ -2,7 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
 
-import { ForgotPassValidationSchema, LoginValidationSchema, PasswordValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
+import { ForgotPassValidationSchema, LoginValidationSchema, PasswordValidationSchema, 
+    RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
 
 export const login = createAsyncThunk(
@@ -71,7 +72,7 @@ export const register = createAsyncThunk(
 
             const {data} = response
 
-            alert(response?.data?.message)
+            toast.success("register Success")
 
             return data
 
@@ -103,7 +104,7 @@ export const verify = createAsyncThunk(
 
             const {data} = response
             
-            alert(response?.data?.message)
+            toast.success("verify Succeed")
             return data
             
         } catch (error) {
@@ -123,7 +124,7 @@ export const resendOtp= createAsyncThunk(
 
             const {data} = response
 
-            alert(response?.data?.message)
+            toast.success(data?.message)
             
         } catch (error) {
             alert(error.response?.data?.message)
@@ -238,6 +239,7 @@ export const resetPass= createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
             const {token} = payload
+            console.log(token)
             delete payload.token
             await PasswordValidationSchema.validate(payload)
             const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})

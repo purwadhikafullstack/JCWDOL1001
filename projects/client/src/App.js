@@ -26,6 +26,7 @@ import { getOngoingTransactions } from "./store/slices/transaction/slices";
 import CheckoutPage from "./pages/user/transaction/checkout";
 import ReportPage from "./pages/admin/report";
 import QnAPage from "./pages/qna";
+import ResetPassword from "./pages/reset-password";
 
 function App() {
   const { pathname } = useLocation();
@@ -116,7 +117,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
           )}
-
+          <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     
           <Route path="*" element={<NotFound />} />

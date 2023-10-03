@@ -9,7 +9,7 @@ export const getUser = createAsyncThunk(
         try{
             //validation payload
             const { data } = await api.get("products/recipe/user")
-            toast.success(data?.message)
+            // toast.success(data?.message)
             return data
         }catch(error){
             toast.error(error.response.data.message)

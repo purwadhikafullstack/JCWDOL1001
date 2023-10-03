@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { BsCart2, BsDashLg, BsPlusLg,BsTrashFill } from "react-icons/bs";
 import Input from "../../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
-import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
+import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { getAddress } from "../../../store/slices/address/slices";
@@ -151,7 +151,11 @@ export default function Cart() {
         "addressId" : selectedAddress.length ===0 ? "" : selectedAddress?.addressId,
         "courierName" : selectedShipping.name
       },{abortEarly:false})
-      navigate("/checkout",{ state: { addressSelected: selectedAddress, shippingSelected: selectedShipping }})
+      dispatch(inCheckOut({data : selectedItems}))
+      navigate("/checkout",{ 
+        state: { addressSelected: selectedAddress, 
+          shippingSelected: selectedShipping 
+        }})
 
     }catch(error){
       const errors = {}

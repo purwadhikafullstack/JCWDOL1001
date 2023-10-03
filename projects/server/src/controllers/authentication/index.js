@@ -478,7 +478,7 @@ const forgotPass = async ( req,res,next) => {
             email : email
         }})
          // @generate access token
-         const accessToken = createToken({ 
+         const accessToken = helperToken.createToken({ 
             UUID: userResult.UUID,
             role : userResult.role,
         }); 
@@ -492,7 +492,7 @@ const forgotPass = async ( req,res,next) => {
             to: email,
             subject: "Forgot Password",
             html: html}
-            transporter.sendMail(mailOptions, (error, info) => {
+            helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;
                 console.log("Email sent: " + info.response);
             })

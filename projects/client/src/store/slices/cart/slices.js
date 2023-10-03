@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance";
+import { toast } from 'react-toastify';
 import Axios from "axios";
 
 
@@ -50,6 +51,20 @@ export const updateCart = createAsyncThunk(
     }
 )
 
+export const inCheckOut = createAsyncThunk(
+    "cart/inCheckOut",
+    async (payload , {rejectWithValue}) => {
+        try {
+            await api.post("/cart/checkOut", payload)
+            toast.success("Check Out Succeed")
+        }
+        catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
 export const deleteCart = createAsyncThunk(
     "cart/deleteCart",
 
@@ -63,7 +78,7 @@ export const deleteCart = createAsyncThunk(
             return {data : data, total : total}
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }

@@ -13,7 +13,7 @@ import {
     forgotPass,
     resetPass
 } from "./slices"
-import { reset } from "../../../../../server/src/controllers/authentication";
+// import { reset } from "../../../../../server/src/controllers/authentication";
 
 const INITIAL_STATE = {
     uuid : "",
@@ -35,6 +35,7 @@ const INITIAL_STATE = {
     isForgotPasswordLoading : false,
     isResetPasswordLoading : false,
     resetStatus : false,
+    isForgot : false
 }
 
 const authSlice = createSlice({
@@ -155,9 +156,11 @@ const authSlice = createSlice({
         },
         [forgotPass.pending] : (state, action) => {
             state.isForgotPasswordLoading = true
+            state.isForgot = false
         },
         [forgotPass.rejected] : (state, action) => {
             state.isForgotPasswordLoading = false
+            state.isForgot = true
         },
         [forgotPass.fulfilled] : (state, action) => {
             state.isForgotPasswordLoading= false
