@@ -70,7 +70,7 @@ export default function MenungguPembayaran({
               onClick={() => handleShowModal("Detail Transaksi", item.transactionId)}
             >
               <div className="flex items-center justify-between">
-                <p className="mb-4 text-sm">{formatDate(item.createdAt)}</p>
+                <p className="mb-4 text-sm">{formatDate(item.updatedAt)}</p>
                 <p className="mb-4 text-sm font-semibold text-primary">
                   {item.invoice}
                 </p>

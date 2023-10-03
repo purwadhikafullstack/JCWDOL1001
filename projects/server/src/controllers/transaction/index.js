@@ -1,7 +1,5 @@
 const { Op } = require("sequelize");
 const moment = require("moment")
-const momentTimezone = require("moment-timezone")
-const cron = require("node-cron");
 const { middlewareErrorHandling } = require("../../middleware");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
@@ -20,7 +18,6 @@ const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
 async function cancelExpiredTransactions() {
   try {
-    // const twentyFourHoursAgo = moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm:ss");
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
     console.log("current time", currentTime);
 

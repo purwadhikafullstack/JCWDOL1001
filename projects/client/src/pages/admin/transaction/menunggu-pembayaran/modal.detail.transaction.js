@@ -13,7 +13,7 @@ export default function ModalDetailTransaction({
 
   return (
     <>
-    <div className="max-h-[65vh] overflow-auto pb-4 grid lg:grid-cols-2">
+    <div className="max-h-[65vh] overflow-auto pb-4 px-1 grid lg:grid-cols-2">
       <div className="left-container">
         <div className="p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
           <Countdown expired={selectedTransaction.expired}/>
@@ -44,13 +44,19 @@ export default function ModalDetailTransaction({
           className="border p-4 rounded-md h-fit shadow-md"
         >
           
-          <div className="flex items-center justify-between">
-            <p className="mb-4 text-sm">
-              {formatDate(selectedTransaction?.createdAt)}
-            </p>
-            <p className="mb-4 text-sm font-semibold text-primary">
-              {selectedTransaction?.invoice}
-            </p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-sm">
+              <p>Tanggal Pembelian</p>
+              <p className="">
+                {formatDate(selectedTransaction?.createdAt)}
+              </p>
+            </div>
+            <div className="text-sm text-right">
+              <p>Invoice</p>
+              <p className="font-semibold text-primary">
+                {selectedTransaction?.invoice}
+              </p>
+            </div>
           </div>
           <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
             {transactionDetail?.map((product, index) => (

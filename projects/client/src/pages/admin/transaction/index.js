@@ -41,11 +41,10 @@ export default function Transaction({
   const [isEndDateChanged, setIsEndDateChanged] = useState(false)
   const [showClearButton, setShowClearButton] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
-  const [filterType, setFilterType] = useState(null)
 
-  const handleSort = async () => {
+  const handleSetDate = async () => {
     try {
-      // if (!showClearButton) {
+      if (!showClearButton) {
         await setDateValidationSchema.validate({
           startDate: startDateRef.current?.value, 
           endDate: endDateRef.current?.value, 
@@ -61,23 +60,23 @@ export default function Transaction({
             sortDate : sortDate ? "ASC" : "DESC"
           })
         )
-      // }
+      }
 
-      // if (showClearButton) {
-      //   startDateRef.current.value = "";
-      //   endDateRef.current.value = "";
+      if (showClearButton) {
+        startDateRef.current.value = "";
+        endDateRef.current.value = "";
 
-      //   setSortDate(false)
-      //   setShowClearButton(false)
-      //   setPage(1)
+        setSortDate(false)
+        setShowClearButton(false)
+        setPage(1)
 
-      //   dispatch(getTransactionList({
-      //       statusId : activeTab,
-      //       startFrom : startDateRef.current.value,
-      //       endFrom : endDateRef.current.value,
-      //       sortDate : sortDate ? "ASC" : "DESC"
-      //   }))
-      // }
+        dispatch(getTransactionList({
+            statusId : activeTab,
+            startFrom : startDateRef.current.value,
+            endFrom : endDateRef.current.value,
+            sortDate : sortDate ? "ASC" : "DESC"
+        }))
+      }
     } catch (error) {
       toast.error("Tanggal akhir tidak boleh kurang dari tanggal awal")
       setIsToastVisible(true);
@@ -89,6 +88,11 @@ export default function Transaction({
   }
 
   useEffect(() => {
+    startDateRef.current.value = "";
+    endDateRef.current.value = "";
+
+    setShowClearButton(false)
+
     dispatch(getTransactionList({ 
       statusId : activeTab,
       startFrom : startDateRef.current?.value,
@@ -102,6 +106,15 @@ export default function Transaction({
     dispatch(getTransactionStatus());
   }, []);
   
+  useEffect(()=>{
+    setPage(1)
+    dispatch(getOngoingTransactions())
+  }, [activeTab, sortDate])
+
+  useEffect(()=>{
+    setSortDate(false)
+  }, [activeTab])
+
   const tabContent = [
     { tabId: 1, component: MenungguPembayaran },
     { tabId: 2, component: MenungguKonfirmasi },
@@ -115,10 +128,6 @@ export default function Transaction({
   const RenderTabContent = tabContent.find(content => content.tabId === activeTab)?.component
   const statusDesc = transactionStatus?.find(status => status.statusId === activeTab)?.statusDesc
 
-  useEffect(()=>{
-    setPage(1)
-    dispatch(getOngoingTransactions())
-  }, [activeTab])
 
   return (
     <>
@@ -155,7 +164,7 @@ export default function Transaction({
             <div className="flex flex-col md:flex-row md:justify-between gap-2">
               <div className="flex gap-2 items-center">
                 <input
-                  // disabled={showClearButton}
+                  disabled={showClearButton}
                   name="start" 
                   type="date" 
                   ref={startDateRef}
@@ -166,7 +175,7 @@ export default function Transaction({
               <HiMinus/>
 
                 <input
-                  // disabled={showClearButton}
+                  disabled={showClearButton}
                   name="end"
                   type="date" 
                   ref={endDateRef}
@@ -177,76 +186,12 @@ export default function Transaction({
                 <div className="group relative">
                   <Button
                     isButton
-                    isPrimary
-                    // isDangerOutline={showClearButton}
-                    // onClick={handleSetDate}
-                    title={filterType ? filterType : "Atur Tanggal"}
+                    isPrimary={!showClearButton}
+                    isDangerOutline={showClearButton}
+                    onClick={handleSetDate}
+                    title={showClearButton ? "Hapus" : "Atur Tanggal"}
                     isDisabled={!isStartDateChanged || !isEndDateChanged || isToastVisible}
                   />
-
-                  <div className="absolute z-50 w-full invisible group-hover:visible">
-                    <div className="mt-1 h-fit rounded-lg border border-primary bg-slate-100 p-2 shadow-md">
-                      <div
-                        className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"
-                        onClick={() => {
-                          handleSort("ASC");
-                          // setActiveFilter("price-asc")
-                          setFilterType("Terbaru")
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          id="price-asc"
-                          name="sort"
-                          className="cursor-pointer"
-                          value="price-asc"
-                          // checked={activeFilter === "price-asc"}
-                        />
-                        <label
-                          className="w-full cursor-pointer"
-                          htmlFor="price-asc"
-                        >
-                          Terbaru
-                        </label>
-                      </div>
-
-                      <div
-                        className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"
-                        onClick={() => {
-                          handleSort("DESC");
-                          // setActiveFilter("price-desc")
-                          setFilterType("Terlama")
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          id="price-desc"
-                          name="sort"
-                          className="cursor-pointer"
-                          value="price-desc"
-                          // checked={activeFilter === "price-desc"}
-                        />
-                        <label
-                          className="w-full cursor-pointer"
-                          htmlFor="price-desc"
-                        >
-                          Terlama
-                        </label>
-                      </div>
-
-                      <div
-                        className="cursor-pointer flex gap-2 items-center px-0.5 py-1 hover:border hover:border-primary rounded-md"
-                        onClick={() => {
-                          // handleSort("", "");
-                          // setActiveFilter("")
-                          // setFilterType(null)
-                        }}
-                      >
-                        <HiOutlineTrash className="text-danger"/>
-                        Hapus Sortir
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -255,7 +200,7 @@ export default function Transaction({
                   <span className="text-sm font-semibold">Urutkan Tanggal</span>
                   <Button 
                     isButton
-                    isPrimaryOutline
+                    isPrimary
                     className={`relative`}
                     title={sortDate ? "Terlama" : "Terbaru"}
                     onClick={() => setSortDate(prevState => !prevState)}
