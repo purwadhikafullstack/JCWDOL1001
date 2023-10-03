@@ -12,7 +12,7 @@ export const DiscountInfoValidationSchema = Yup.object({
             return schema
         }),
     discountAmount : Yup.number("Amount must be a number")
-        .when(["discountName","minimalTransaction","oneGetOne"], ([discountName,minimalTransaction,oneGetOne,discountAmount], schema) => {
+        .when(["discountName","minimalTransaction",], ([discountName,discountAmount], schema) => {
             if(!discountName || !discountAmount) return schema.required("Discount Amount is requiredd")
             return schema
         }),

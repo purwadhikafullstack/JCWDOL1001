@@ -5,7 +5,7 @@ import { HiMagnifyingGlass} from "react-icons/hi2"
 import Button from "../../../components/Button/index.js"
 import { getDiscount } from "../../../store/slices/discount/slices.js"
 import Input from "../../../components/Input/index.js"
-import Pagination from "../../../components/Pagination/index.js"
+import Pagination from "../../../components/PaginationV2/index.js"
 import Modal from "../../../components/Modal/index.js"
 import TableDiscount from "./table.discount.js"
 import ModalDeleteDiscount from "./modal/modal.delete.js"
@@ -52,21 +52,18 @@ export default function DiscountPage(){
         document.body.style.overflow = "auto"
     };
 
-    const onChangePagination = (type) => {
-        dispatch(
-            getDiscount({ 
-                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-                discountName : discountRef?.current.value
-            })
-        )
-    }
+    const [page, setPage] = useState(1);
 
     useEffect(()=>{
         dispatch(
             getDiscount({page : currentPage,discountName : discountRef?.current.value})
         )
-        dispatch(getProducts({page:0}))
+        dispatch(getProducts({page:page}))
     },[])
+
+    useEffect(() => {
+        dispatch( getProducts({ page : page }) )
+    }, [page])
 
     return(
         <>
@@ -101,12 +98,7 @@ export default function DiscountPage(){
                 </div>
                 <TableDiscount discountList={discountList} handleShowModal={handleShowModal}/>
                 <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-                    <Pagination 
-                        onChangePagination={onChangePagination}
-                        disabledPrev={Number(currentPage) === 1}
-                        disabledNext={currentPage >= totalPage}
-                        currentPage={currentPage}
-                    />
+                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
                 <Modal
                     showModal={showModal.show}

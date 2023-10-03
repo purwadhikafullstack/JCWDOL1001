@@ -361,6 +361,13 @@ export default function Cart() {
           </div>
 
           <div className="mt-4 flex items-center justify-between font-bold">
+            <p className="text-lg">Biaya Ongkir</p>
+            <p>
+              {selectedShipping.length === 0 ? "Belum Memilih Jasa Pengiriman" : `Rp.${formatNumber(selectedShipping.cost)}` }
+            </p>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between font-bold">
             <p className="text-lg">Total</p>
             <p>
               Rp.{" "}
@@ -378,7 +385,7 @@ export default function Cart() {
                     return cartItem?.quantity * discountPrice;
                   })
                   .reduce((total, price) => total + price, 0)
-              )}
+              + (selectedShipping.length === 0 ? 0 : +selectedShipping.cost) )}
             </p>
           </div>
 

@@ -52,11 +52,10 @@ const getProducts = async (req, res, next) => {
         },
         {
           model: Product_Unit,
-          as: "productUnits",
+          as: "productUnits"
         },
         {
           model: Product_Detail,
-          attributes: ["quantity"],
         },
         {
           model: Discount_Product,

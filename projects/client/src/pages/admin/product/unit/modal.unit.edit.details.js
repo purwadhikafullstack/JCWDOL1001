@@ -4,6 +4,8 @@ import Input from "../../../../components/Input";
 import { useDispatch } from "react-redux";
 import { getUnits, updateUnit } from "../../../../store/slices/product/unit/slices";
 import SuccessMessage from "../../../../components/Message";
+import { toast } from "react-toastify";
+import { ProductUnitValidationSchema } from "../../../../store/slices/product/unit/validation";
 
 
 export default function ModalEditProductUnit({
@@ -31,18 +33,9 @@ export default function ModalEditProductUnit({
         name : `${selectedUnit?.product_detail?.isDefault === true ? "yes": "no" }`
     })
 
-    const [confirmation, setConfirmation] = useState(false);
-    if (success) {
-        return (
-            <SuccessMessage
-                type="success"
-                message={`Change product unit from ${unitBefore} into ${ unitSelected.unitName } success`}
-                handleCloseModal={handleCloseModal}
-            />
-        );
-    }
+    const [confirmation, setConfirmation] = useState(false)
 
-    const dataUnits = units.filter((unit) => unit.isSecondary.toString() === unitSelected.isSecondary.toString())
+    const dataUnits = units.filter((unit) => unit.isSecondary?.toString() === unitSelected.isSecondary?.toString())
 
     const handleChangeUnit = (event) => {
         setSelectedUnit({
@@ -50,46 +43,106 @@ export default function ModalEditProductUnit({
             unitName :event.target.selectedOptions[0].value,
             isSecondary : event.target.selectedOptions[0].id
         })
+        setError({ ...error, unit: false })
     }
 
-    const handleOnSure = ()=>{
-        dispatch(
-            updateUnit({
-                data :{
-                    unitId : unitSelected?.unitId ? unitSelected?.unitId : units.length + 1,
-                    quantity : selectedUnit?.product_detail?.quantity,
-                    convertion : qtyPerUnitRef?.current?.value ? qtyPerUnitRef?.current?.value : 0,
-                    isDefault : isDefaultUnit.id,
-                    stockId : selectedUnit?.product_detail?.stockId,
-                    isSecondary : unitSelected?.isSecondary ? unitSelected?.isSecondary : selectedUnit.isSecondary,
-                    unitName : unitRef?.current?.value ? unitRef?.current?.value : ""
-                },
-                productId : productData.productId
+    const [error, setError] = useState("")
+    const [isToastVisible, setIsToastVisible] = useState(false)
+    const output = {}
+    const handleOnSure = async ()=>{
+        try{
+            output.data ={
+                unitId : unitSelected?.unitId ? unitSelected?.unitId : units.length + 1,
+                quantity : selectedUnit?.product_detail?.quantity,
+                convertion : qtyPerUnitRef?.current?.value ? +qtyPerUnitRef?.current?.value : selectedUnit.product_detail.convertion,
+                isDefault : +isDefaultUnit.id,
+                stockId : selectedUnit?.product_detail?.stockId,
+                isSecondary : unitSelected?.isSecondary ? unitSelected?.isSecondary : selectedUnit.isSecondary,
+                unitName : unitRef?.current?.value ? unitRef?.current?.value : ""
+            }
+            
+            if(output.data.isSecondary === 0 && output.data.convertion === 0 && output.data.isDefault ===1 ){
+                throw({inner: [{
+                    path : "convertion",
+                    message:"Satuan utama harus memiliki kuantitas per satuan"
+                }]})
+            }
+
+            if(output.data.isSecondary !== 0  && unitBefore === unitSelected.unitName ){
+                throw({inner: [{
+                    path : "unit",
+                    message:"Satuan tidak mengalami perubahan"
+                }]})
+            }
+            await ProductUnitValidationSchema.validate(output.data,{
+                abortEarly:false
             })
-        )
-        dispatch(getUnits())
-        setConfirmation(false)
+
+            dispatch(
+                updateUnit({
+                    data :output.data,
+                    productId : productData.productId
+                })
+            )
+            dispatch(getUnits())
+            setConfirmation(false)
+        } catch(error){
+            const errors = {}
+            
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+            
+            setError(errors)
+            
+            toast.error("Check your input field!")
+
+            setConfirmation(false)
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
+        }
     }
 
-  return (
+    if (success) {
+        return (
+            <SuccessMessage
+                type="success"
+                message={`${selectedUnit?.product_detail?.isDefault ? `Perubahan satuan  ${unitBefore} berhasil` : `Perubahan satuan dari satuan ${unitBefore} menjadi satuan ${ unitSelected.unitName } berhasil`}`}
+                handleCloseModal={handleCloseModal}
+            />
+        );
+    }
+
+    return (
     <div className="max-h-[75vh] overflow-auto px-1">
        | {productData.productName}
        <form >
             <div className="mt-4 flex flex-col gap-y-4 ">
                 <div className="h-auto max-h-[75vh] overflow-auto px-1">
-                    <h3>Unit ({selectedUnit.name}): </h3>
+                    <h3>Satuan ({selectedUnit.name}): </h3>
+                    <Button onClick={()=>{
+                        setSelectedUnit({
+                            unitId : selectedUnit?.unitId,
+                            unitName : selectedUnit?.name,
+                            isSecondary : selectedUnit?.isSecondary
+                        })
+                    }} className={`${unitSelected.unitName === "other" ? "text-red-600" : "hidden"}`}>Reset Satuan</Button>
                     {unitSelected.unitName === "other" ?
                         <Input
                             ref={unitRef}
-                            placeholder="Input Unit Name"
+                            placeholder="Masukkan nama satuan"
                         />
                         :
                         <select 
                             value={unitSelected?.unitName} 
                             onChange={handleChangeUnit}
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            className={`bg-gray-50 border  text-gray-900 text-sm rounded-lg block w-full p-2.5 ${error.unit ? `border-red-600` : `border-gray-300`}`}
                         >
-                            <option >Choose an unit </option>
+                            <option value="default" >Pilih satuan </option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name} id={unit.isSecondary.toString()}>{unit.name}</option>
                             ))}
@@ -97,18 +150,30 @@ export default function ModalEditProductUnit({
                         </select>
 
                     }
+                    {error.unit && (
+                        <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.unit}
+                        </div>
+                    )}
 
                     { isDefaultUnit.name === "yes" ?
                         <div>
-                            <h3 className="pt-2">Qty per Unit : </h3>
+                            <h3 className="pt-2">Kuantitas per Satuan : </h3>
                             <Input
                                 type="number"
                                 ref={qtyPerUnitRef}
                                 id="qtyUnit"
                                 name="qtyPerUnit"
-                                defaultValue={selectedUnit?.product_detail?.convertion}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                errorInput={error.convertion}
+                                defaultValue={selectedUnit.product_detail.convertion}
+                                placeholder={selectedUnit.product_detail.convertion}
+                                onChange={() => setError({ ...error, convertion: false })}
                             />
+                            {error.convertion && (
+                                <div className="text-sm text-red-500 dark:text-red-400">
+                                    {error.convertion}
+                                </div>
+                            )}
                         </div>
                         :""
                     }
@@ -116,12 +181,12 @@ export default function ModalEditProductUnit({
             </div>
             <div className={`mt-4 flex gap-2 ${confirmation ? "hidden":""}`}>
                 <Button 
-                    title="Back" 
+                    title="Kembali" 
                     isButton 
                     isSecondary 
                     onClick={() =>
                         handleShowModal({
-                            context : "Edit Unit",
+                            context : "Ubah Satuan",
                             productId : productData.productId,
                             unitId : ""
                         })
@@ -130,7 +195,7 @@ export default function ModalEditProductUnit({
                 <Button
                     isButton
                     isPrimary
-                    title="Confirm"
+                    title="Konfirmasi"
                     onClick={()=>{setConfirmation(true)}}
                 />
             </div>
@@ -138,24 +203,22 @@ export default function ModalEditProductUnit({
             {confirmation && (
                 <div className="pt-10">
                     <p className="modal-text">
-                        Are you sure you want to save these changes?
+                        Apakah kamu yakin ingin menyimpan perubahan ini?
                     </p>
                     <div className="flex gap-2">
                         <Button
-                            title="Cancel" 
+                            title="Tidak" 
                             isButton 
                             isSecondary 
                             onClick={() => setConfirmation(false)}
                         />
 
                         <Button
-                            title="Sure"
+                            title="Yakin"
                             isButton
                             isPrimary
                             onClick={handleOnSure}
-                        >
-                            Sure
-                        </Button>
+                        />
                     </div>
                 </div>
             )}

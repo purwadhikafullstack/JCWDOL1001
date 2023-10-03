@@ -1,10 +1,12 @@
-import { HiXMark } from "react-icons/hi2"
-import { useEffect, useState } from "react"
+import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2"
+import { useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Button from "../../../../components/Button"
-import Pagination from "../../../../components/Pagination/index.js"
+import Pagination from "../../../../components/PaginationV2/index.js"
 import { getProducts } from "../../../../store/slices/product/slices"
 import { useDispatch, useSelector } from "react-redux"
+import Input from "../../../../components/Input"
+
 
 export default function ProductList({
     dataDiscount,
@@ -42,21 +44,25 @@ export default function ProductList({
         setSelectedProducts(selectedProducts.filter((item) => item?.productId !== productId));
     }
 
-    const onChangePagination = (type) => {
-        dispatch(
-            getProducts({ 
-                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1
-            })
-        )
-    }
+    const [page, setPage] = useState(1);
+    const searchNameRef = useRef();
+    
+    useEffect(() => {
+        dispatch( getProducts({ page : page }) )
+    }, [page])
 
     useEffect(() => {
         setSelectedProducts(dataDiscount?.productDiscount);
     }, [dataDiscount])
+
+    const onButtonSearch = () =>{
+        dispatch( getProducts({ page : page,product_name:searchNameRef.current.value }) )
+    }
     
     return (
         <div className=" px-2 mt-5 rounded-md">
             <h3 className="title mt-4 border-b-2 mb-3">Daftar Produk : </h3>
+            
             <div
                 className="mb-2 flex flex-wrap gap-2"
             >
@@ -104,8 +110,19 @@ export default function ProductList({
                         exit={{ translateY: -20, opacity: 0 }}
                         className="h-fit w-full rounded-lg border bg-slate-100 p-4"
                     >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center relative justify-between">
                             <h3 className="title">Pilih Produk</h3>
+                            <Input 
+                                type="text" 
+                                placeholder="Cari"
+                                ref={searchNameRef}
+                            />
+                            <Button 
+                                className="absolute top-1/2 left-[68%] -translate-y-1/2 p-2" 
+                                onClick={onButtonSearch}
+                            >
+                            <HiMagnifyingGlass className="text-2xl text-primary" />
+                            </Button>
                             <span
                                 className="cursor-pointer"
                                 onClick={() => setShowAllProduct(false)}
@@ -138,13 +155,7 @@ export default function ProductList({
                         </div>
                         ))}
                         <div className="flex justify-center pt-4">
-                            <Pagination 
-                                onChangePagination={onChangePagination}
-                                disabledPrev={Number(currentPage) === 1}
-                                disabledNext={currentPage >= totalPage}
-                                currentPage={currentPage}
-                                className = "text-center"
-                            />
+                            <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                         </div>
                     </div>
 
