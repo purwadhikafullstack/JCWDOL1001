@@ -30,6 +30,7 @@ export default function Profile() {
   const submitImage = () => {
     formData.append('file',file);
     dispatch(changeProfilePicture({userId : profile.userId,formData : formData}));
+    setFile(null);
   }
 
   useEffect(()=>{

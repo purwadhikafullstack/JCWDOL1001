@@ -25,6 +25,7 @@ import { getOngoingTransactions } from "./store/slices/transaction/slices";
 import CheckoutPage from "./pages/user/transaction/checkout";
 import ReportPage from "./pages/admin/report";
 import QnAPage from "./pages/qna";
+import StockHistory from "./pages/admin/product/history";
 
 function App() {
   const { pathname } = useLocation();
@@ -98,6 +99,7 @@ function App() {
           {user?.role == 1 && (
             <>
               <Route path="/admin/products" element={<AdminProducts user={user}/>} />
+              <Route path="/admin/products/history/:product" element={<StockHistory/>}/>
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
