@@ -42,7 +42,7 @@ export default function ModalDetailTransaction({
                 {formatDate(selectedTransaction?.createdAt)}
               </p>
               <p className="mb-4 text-sm font-semibold text-primary">
-                {selectedTransaction?.createdAt}
+                {selectedTransaction?.invoice}
               </p>
             </div>
             <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>

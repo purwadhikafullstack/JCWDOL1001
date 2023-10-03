@@ -75,7 +75,7 @@ export default function ModalCaraBayar({
 
         <div className="flex flex-col items-center">
           <div className="p-2 border border-warning rounded-lg font-semibold text-xl">
-            <Countdown createdAt={selectedTransaction.createdAt}/>
+            <Countdown expired={selectedTransaction.expired}/>
           </div>
         </div>
         

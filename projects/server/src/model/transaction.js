@@ -42,6 +42,14 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.STRING,
         allowNull : true
     },
+    invoice : {
+        type : db.Sequelize.STRING,
+        allowNull : false
+    },
+    expired : {
+        type : db.Sequelize.DATE,
+        allowNull : false
+    },
 },{
     timestamps:true
 })

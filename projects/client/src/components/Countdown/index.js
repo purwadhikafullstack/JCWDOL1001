@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Countdown({ createdAt }) {
+export default function Countdown({ expired }) {
   const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 
   useEffect(() => {
@@ -19,9 +19,9 @@ export default function Countdown({ createdAt }) {
   }, []);
 
   function calculateRemainingTime() {
-    const createdAtTime = new Date(createdAt).getTime();
+    const expiredTime = new Date(expired).getTime();
     const currentTime = new Date().getTime();
-    const differenceInSeconds = Math.floor(((createdAtTime + 86400000) - currentTime) / 1000);
+    const differenceInSeconds = Math.floor((expiredTime - currentTime) / 1000);
     return Math.max(0, differenceInSeconds);
   }
 
@@ -30,7 +30,7 @@ export default function Countdown({ createdAt }) {
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
     
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+    return `${String(hours).padStart(2, "0")} : ${String(minutes).padStart(2, "0")} : ${String(remainingSeconds).padStart(2, "0")}`;
   };
 
   return (

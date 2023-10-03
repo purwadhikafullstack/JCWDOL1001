@@ -20,7 +20,10 @@ const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
 async function cancelExpiredTransactions() {
   try {
-    const twentyFourHoursAgo = moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm:ss");
+    // const twentyFourHoursAgo = moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm:ss");
+    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
+    console.log("current time", currentTime);
+
     const transactionsToCancel = await Transaction_List.findAll({
       include:[
         {
@@ -34,8 +37,8 @@ async function cancelExpiredTransactions() {
       ],
       where: {
         statusId: 1,
-        createdAt: {
-          [Op.lte]: twentyFourHoursAgo,
+        expired: {
+          [Op.gte]: currentTime,
         },
       },
     });
@@ -76,12 +79,6 @@ async function cancelExpiredTransactions() {
 }
 
 const getTransactions = async (req, res, next) => {
-  cron.schedule("* * * * *", () =>{
-    cancelExpiredTransactions()
-    console.log("Success Cancel Transaction");
-  })
-
-  await cancelExpiredTransactions();
 
   try {
     const { userId } = req.user;
@@ -661,6 +658,14 @@ const cancelTransaction = async (req, res, next) => {
             as: "userProfile"
           }
         },
+        {
+          model: Transaction_Detail,
+          as: "transactionDetail",
+          // include: {
+          //   model: Product_List,
+          //   as: "listedTransaction",
+          // },
+        },
       ],
       where: whereCondition,
     });
@@ -829,5 +834,6 @@ module.exports = {
   receiveOrder,
   cancelTransaction,
   rejectPayment,
+  cancelExpiredTransactions,
   getTransactionStatus,
 }

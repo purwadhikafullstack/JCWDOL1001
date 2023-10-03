@@ -62,11 +62,30 @@ export default function Products({ user }) {
   };
 
   const handleSearch = (event) => {
+    setPage(1)
     event.preventDefault();
     setSearch(searchRef.current?.value)
     setSelectedCategory(null)
     setPromo(false)
   };
+
+  const clearSearch = () => {
+    setSearch(null)
+    setPage(1)
+
+    searchRef.current.value = "";
+    dispatch(
+      getProducts({
+        page: page,
+        category_id: selectedCategory ? selectedCategory?.categoryId : "",
+        product_name: search,
+        sort_price: sort.sortBy === "price" ? sort.type : "",
+        sort_name: sort.sortBy === "name" ? sort.type : "",
+        limit: 12,
+        promo,
+      })
+    );
+}
 
   const handleSort = (sortBy, type) => {
     setSort({sortBy, type})
@@ -75,16 +94,16 @@ export default function Products({ user }) {
   useEffect(() => {
     dispatch(getCategory({ page : 1 }));
 
-    // if(location.state?.categorySelected){
-    //   setSelectedCategory(location.state?.categorySelected)
-    //   dispatch(
-    //     getProducts({
-    //       page : 1,
-    //       category_id : location.state?.categorySelected.categoryId,
-    //       limit : 12
-    //     })
-    //   )
-    // }
+    if(location.state?.categorySelected){
+      setSelectedCategory(location.state?.categorySelected)
+      dispatch(
+        getProducts({
+          page : 1,
+          category_id : location.state?.categorySelected.categoryId,
+          limit : 12
+        })
+      )
+    }
     dispatch(totalProductCart())
   }, []);
 
@@ -167,24 +186,30 @@ export default function Products({ user }) {
           </div>
 
           <div className="col-span-1 lg:col-span-4">
-            <form
-              className="relative lg:w-1/3"
-              onSubmit={(e) => {
-                handleSearch(e);
-              }}
-            >
-              <Input
-                ref={searchRef}
-                type="text"
-                placeholder="Cari kebutuhanmu disini"
-              />
-              <button
-                className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
-                type="submit"
+            <div className="flex justify-center items-center lg:justify-start gap-2">
+              <form
+                className="relative w-5/6 lg:w-1/3"
+                onSubmit={(e) => {
+                  handleSearch(e);
+                }}
               >
-                <HiMagnifyingGlass className="text-2xl text-primary" />
-              </button>
-            </form>
+                <Input
+                  ref={searchRef}
+                  type="text"
+                  placeholder="Cari kebutuhanmu disini"
+                />
+                <button
+                  className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
+                  type="submit"
+                >
+                  <HiMagnifyingGlass className="text-2xl text-primary" />
+                </button>
+              </form>
+              {search && 
+                <Button isButton isPrimary title={`Hapus`} onClick={clearSearch}/>
+              }
+            </div>
+
 
             <div className="flex items-center justify-between mt-4">
               <h3 className="title">
@@ -205,7 +230,7 @@ export default function Products({ user }) {
                   {filterType ?
                     <span className="capitalize">{filterType}</span>
                     :
-                    <span>Filter</span>
+                    <span>Sortir</span>
                   }
                   <HiOutlineFunnel className="text-lg" />
                 </Button>

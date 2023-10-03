@@ -15,8 +15,8 @@ export default function ModalDetailTransaction({
     <>
     <div className="max-h-[65vh] overflow-auto pb-4 grid lg:grid-cols-2">
       <div className="left-container">
-        <div className="">
-          <h3 className="subtitle"><Countdown createdAt={selectedTransaction?.createdAt} /></h3>
+        <div className="p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
+          <Countdown expired={selectedTransaction.expired}/>
         </div>
 
         <div className="my-4">
@@ -49,7 +49,7 @@ export default function ModalDetailTransaction({
               {formatDate(selectedTransaction?.createdAt)}
             </p>
             <p className="mb-4 text-sm font-semibold text-primary">
-              {selectedTransaction?.createdAt}
+              {selectedTransaction?.invoice}
             </p>
           </div>
           <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>

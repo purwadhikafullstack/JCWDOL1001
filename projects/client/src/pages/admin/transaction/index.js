@@ -12,7 +12,7 @@ import PesananDikirim from "./pesanan-dikirim";
 import PesananDibatalkan from "./pesanan-dibatalkan";
 import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
-import { HiMinus, HiXMark } from "react-icons/hi2";
+import { HiMinus, HiOutlineTrash, HiXMark } from "react-icons/hi2";
 
 export default function Transaction({
   ongoingTransactions
@@ -41,10 +41,11 @@ export default function Transaction({
   const [isEndDateChanged, setIsEndDateChanged] = useState(false)
   const [showClearButton, setShowClearButton] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
+  const [filterType, setFilterType] = useState(null)
 
-  const handleSetDate = async () => {
+  const handleSort = async () => {
     try {
-      if (!showClearButton) {
+      // if (!showClearButton) {
         await setDateValidationSchema.validate({
           startDate: startDateRef.current?.value, 
           endDate: endDateRef.current?.value, 
@@ -60,23 +61,23 @@ export default function Transaction({
             sortDate : sortDate ? "ASC" : "DESC"
           })
         )
-      }
+      // }
 
-      if (showClearButton) {
-        startDateRef.current.value = "";
-        endDateRef.current.value = "";
+      // if (showClearButton) {
+      //   startDateRef.current.value = "";
+      //   endDateRef.current.value = "";
 
-        setSortDate(false)
-        setShowClearButton(false)
-        setPage(1)
+      //   setSortDate(false)
+      //   setShowClearButton(false)
+      //   setPage(1)
 
-        dispatch(getTransactionList({
-            statusId : activeTab,
-            startFrom : startDateRef.current.value,
-            endFrom : endDateRef.current.value,
-            sortDate : sortDate ? "ASC" : "DESC"
-        }))
-      }
+      //   dispatch(getTransactionList({
+      //       statusId : activeTab,
+      //       startFrom : startDateRef.current.value,
+      //       endFrom : endDateRef.current.value,
+      //       sortDate : sortDate ? "ASC" : "DESC"
+      //   }))
+      // }
     } catch (error) {
       toast.error("Tanggal akhir tidak boleh kurang dari tanggal awal")
       setIsToastVisible(true);
@@ -154,6 +155,7 @@ export default function Transaction({
             <div className="flex flex-col md:flex-row md:justify-between gap-2">
               <div className="flex gap-2 items-center">
                 <input
+                  // disabled={showClearButton}
                   name="start" 
                   type="date" 
                   ref={startDateRef}
@@ -164,6 +166,7 @@ export default function Transaction({
               <HiMinus/>
 
                 <input
+                  // disabled={showClearButton}
                   name="end"
                   type="date" 
                   ref={endDateRef}
@@ -171,14 +174,80 @@ export default function Transaction({
                   className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
                 />
 
-                <Button
-                  isButton
-                  isPrimary={!showClearButton}
-                  isDangerOutline={showClearButton}
-                  onClick={handleSetDate}
-                  title={showClearButton ? "Hapus Tanggal" : "Atur Tanggal"}
-                  isDisabled={!isStartDateChanged || !isEndDateChanged || isToastVisible}
+                <div className="group relative">
+                  <Button
+                    isButton
+                    isPrimary
+                    // isDangerOutline={showClearButton}
+                    // onClick={handleSetDate}
+                    title={filterType ? filterType : "Atur Tanggal"}
+                    isDisabled={!isStartDateChanged || !isEndDateChanged || isToastVisible}
                   />
+
+                  <div className="absolute z-50 w-full invisible group-hover:visible">
+                    <div className="mt-1 h-fit rounded-lg border border-primary bg-slate-100 p-2 shadow-md">
+                      <div
+                        className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"
+                        onClick={() => {
+                          handleSort("ASC");
+                          // setActiveFilter("price-asc")
+                          setFilterType("Terbaru")
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          id="price-asc"
+                          name="sort"
+                          className="cursor-pointer"
+                          value="price-asc"
+                          // checked={activeFilter === "price-asc"}
+                        />
+                        <label
+                          className="w-full cursor-pointer"
+                          htmlFor="price-asc"
+                        >
+                          Terbaru
+                        </label>
+                      </div>
+
+                      <div
+                        className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"
+                        onClick={() => {
+                          handleSort("DESC");
+                          // setActiveFilter("price-desc")
+                          setFilterType("Terlama")
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          id="price-desc"
+                          name="sort"
+                          className="cursor-pointer"
+                          value="price-desc"
+                          // checked={activeFilter === "price-desc"}
+                        />
+                        <label
+                          className="w-full cursor-pointer"
+                          htmlFor="price-desc"
+                        >
+                          Terlama
+                        </label>
+                      </div>
+
+                      <div
+                        className="cursor-pointer flex gap-2 items-center px-0.5 py-1 hover:border hover:border-primary rounded-md"
+                        onClick={() => {
+                          // handleSort("", "");
+                          // setActiveFilter("")
+                          // setFilterType(null)
+                        }}
+                      >
+                        <HiOutlineTrash className="text-danger"/>
+                        Hapus Sortir
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {transaction.length > 0 &&

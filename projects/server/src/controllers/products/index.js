@@ -83,23 +83,24 @@ const getProducts = async (req, res, next) => {
             },
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
-        : promo ? 
-          await Discount_Product?.count()
         // : promo ? 
-        //   await Product_List?.count({ 
-        //     include:{
-        //       model: Discount_Product,
-        //       attributes: { exclude: ["discountProductId"] },
-        //       as: "discountProducts",
-        //       include: {
-        //         model: Discount,
-        //         where: { isDeleted: 0 },
-        //         required: !!promo,
-        //       },
-        //     },
-        //     where: { isDeleted: 0 } 
-        //   })
-        : await Product_List?.count({ where: { isDeleted: 0 } });
+        //   await Discount_Product?.count()
+        // : promo ? 
+        :
+          await Product_List?.count({ 
+            include:{
+              model: Discount_Product,
+              attributes: { exclude: ["discountProductId"] },
+              as: "discountProducts",
+              include: {
+                model: Discount,
+                where: { isDeleted: 0 },
+                required: !!promo,
+              },
+            },
+            where: { isDeleted: 0 } 
+          })
+        // : await Product_List?.count({ where: { isDeleted: 0 } });
 
     const pages = Math.ceil(total / options.limit);
 
