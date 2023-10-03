@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import formatNumber from "../../../utils/formatNumber";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function TableProducts({
   handleShowModal,
@@ -18,6 +19,9 @@ export default function TableProducts({
   isSubmitProductLoading,
   current_page
 }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   return (
     <table className="text-gray-500 w-full text-left text-sm">
       <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
@@ -60,7 +64,7 @@ export default function TableProducts({
                 className="text-gray-900 whitespace-nowrap p-3 font-medium"
               >
                 {/* {index + 1 + (current_page - 1) * 10} */}
-                {index + 1 +(current_page - 1) * 10}
+                {index + 1}
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
@@ -81,6 +85,16 @@ export default function TableProducts({
 
               <td className="p-3">
                 <div className="flex gap-3">
+                  <Button
+                    isSmall
+                    isPrimaryOutline
+                    onClick={() =>
+                      navigate(`/admin/products/history/${product?.productId}`,{state : {productId : product?.productId, productName : product?.productName}})
+                    }
+
+                    title="Stock History"
+                  />
+
                   <Button
                     isSmall
                     isPrimaryOutline

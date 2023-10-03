@@ -181,7 +181,9 @@ const createTransactions = async (req, res, next) => {
       transport: transport,
       subtotal: totalPrice,
       statusId: 1,
-      addressId : addressId
+      addressId : addressId,
+      expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
+      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -211,7 +213,7 @@ const createTransactions = async (req, res, next) => {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
         initialStock : UpdateStock.quantity,
-        type : "UpdateStock",
+        type : "Update Stock",
         status : "Pengurangan",
         quantity : startTransaction[i].quantity,
         results : newQuantity

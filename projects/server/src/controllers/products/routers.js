@@ -22,6 +22,7 @@ router.patch("/unit/make-convertion", verifyAdmin, convertion.makeConvertionUnit
 router.patch("/unit/reactivate", verifyAdmin, unit.reactivateUnits)
 router.post("/unit/:productId", verifyAdmin, unit.setProductUnits)
 router.get("/history/:productId",verifyAdmin,history.productHistory)
+router.get("/stock/:productId", verifyAdmin, history.initialStock)
 router.patch("/stock/update",  verifyAdmin, product.updateMainStock)
 router.get("/:id", product.getProductById)
 router.patch("/:id", verifyAdmin, uploader.single("file"), product.updateProduct)

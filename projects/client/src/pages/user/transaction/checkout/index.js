@@ -13,7 +13,6 @@ export default function CheckoutPage(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0;
-    const [payment, setPayment] = useState(null);
     const [shipping, setShipping] = useState(null);
     const location = useLocation();
     let address = location.state?.addressSelected;
@@ -56,7 +55,7 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : shipping, totalPrice : (+subTotal*1 + +shipping*1), addressId : address.addressId}));
+        dispatch(createTransaction({transport : shipping, totalPrice : (+subTotal*1), addressId : address.addressId}));
         navigate("/user/transaction");
     }
 
