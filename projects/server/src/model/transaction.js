@@ -48,7 +48,7 @@ const Transaction_List = db.sequelize.define("transaction_list", {
     },
     expired : {
         type : db.Sequelize.DATE,
-        allowNull : false
+        allowNull : true
     },
 },{
     timestamps:true

@@ -14,7 +14,7 @@ const {
   Transaction_Status,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
-const { Product_Detail, Product_List } = require("../../model/product");
+const { Product_Detail, Product_List, Product_Unit, Product_History } = require("../../model/product");
 const { User_Address, User_Account, User_Profile } = require("../../model/user");
 const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
@@ -221,6 +221,7 @@ const getOngoingTransactions = async (req, res, next) =>{
 
 const createTransactions = async (req, res, next) => {
   try {
+    //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
     const { transport, totalPrice, addressId } = req.body;
 
@@ -240,11 +241,13 @@ const createTransactions = async (req, res, next) => {
 
     const newTransactionList = {
       userId: userId,
-      total: totalPrice + transport,
+      total: +totalPrice + +transport,
       transport: transport,
       subtotal: totalPrice,
       statusId: 1,
-      addressId : addressId
+      addressId : addressId,
+      expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
+      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -260,11 +263,34 @@ const createTransactions = async (req, res, next) => {
         productId: startTransaction[i].productId,
       };
       await Transaction_Detail?.create(newTransactionDetail);
+
+      const UpdateStock = await Product_Detail?.findOne(
+        { include : {model : Product_Unit, as : "product_unit"},
+          where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
+      let newQuantity = UpdateStock.quantity - startTransaction[i].quantity;
+      if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
+      await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
+
+      console.log(UpdateStock);
+
+      const ProductHistory = {
+        productId : startTransaction[i].productId,
+        unit : UpdateStock.product_unit.name,
+        initialStock : UpdateStock.quantity,
+        type : "Update Stock",
+        status : "Pengurangan",
+        quantity : startTransaction[i].quantity,
+        results : newQuantity
+      }
+      await Product_History?.create(ProductHistory);
     }
 
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },
     });
+    //});
+
+    //await transaction.commit();
 
     res.status(200).json({
       type: "success",
@@ -272,6 +298,7 @@ const createTransactions = async (req, res, next) => {
       data: finishTransaction,
     });
   } catch (error) {
+    //await transaction.rollback();
     next(error);
   }
 };
