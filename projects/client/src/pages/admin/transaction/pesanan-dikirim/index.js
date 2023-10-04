@@ -140,7 +140,7 @@ export default function PesananDikirim({
         showModal={showModal.show}
         halfWidth={showModal?.context === "Detail Transaksi"}
         closeModal={handleCloseModal}
-        title={showModal.context === "Detail Transaksi" ? "Pesanan Diterima" : "Konfirmasi"}
+        title={showModal.context === "Detail Transaksi" ? "Pesanan Dikirim" : "Konfirmasi"}
       >
         {showModal.context === "Detail Transaksi" && 
           <ModalDetailTransaction

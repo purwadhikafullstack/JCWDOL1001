@@ -18,8 +18,7 @@ const { REDIRECT_URL, GMAIL } = require("../../config/index.js")
 
 async function cancelExpiredTransactions() {
   try {
-    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
-    console.log("current time", currentTime);
+    const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
 
     const transactionsToCancel = await Transaction_List.findAll({
       include:[
@@ -35,7 +34,7 @@ async function cancelExpiredTransactions() {
       where: {
         statusId: 1,
         expired: {
-          [Op.gte]: currentTime,
+          [Op.lte]: currentTime,
         },
       },
     });
