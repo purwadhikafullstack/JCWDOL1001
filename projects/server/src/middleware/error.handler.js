@@ -32,6 +32,7 @@ const TRANSACTION_NOT_FOUND = "Transaction not found"
 const DATA_NOT_FOUND = "Data not found"
 const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
 const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
+const PRODUCT_ALREADY_HAVE_DISCOUNT = "Product(s) already have discount"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -101,4 +102,5 @@ module.exports = {
     DATA_NOT_FOUND,
     CANNOT_DELETE_QUESTION,
     CANNOT_DELETE_ANSWERED_QUESTION,
+    PRODUCT_ALREADY_HAVE_DISCOUNT
 }

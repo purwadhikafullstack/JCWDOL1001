@@ -20,6 +20,8 @@ const getDiscount = async (req, res, next) => {
             include : {
                 model : Discount_Product,
                 attributes : ["productId"],
+                where:{isDeleted:0},
+                required:false,
                 as : "productDiscount",
                 include : {
                     model : Product_List,
@@ -83,8 +85,26 @@ const createDiscount = async (req, res, next) => {
             message : middlewareErrorHandling.DISCOUNT_NAME_ALREADY_EXIST
         })
 
-        const discountData = await Discount.create(req.body.data)
+        const listProductId = req.body.products.map(({productId})=>{return productId})
 
+        if (listProductId.length > 0){ 
+            const productBindWithOtherDiscount = await Discount_Product.findAll({
+                where :{
+                    [Op.and] : [
+                        {isDeleted : 0},
+                        {productId : {[Op.or] :listProductId}}
+                    ]
+                }
+            })
+
+            if(productBindWithOtherDiscount.length >0)throw({
+                status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+                message : middlewareErrorHandling.PRODUCT_ALREADY_HAVE_DISCOUNT
+            })
+        }
+
+        const discountData = await Discount.create(req.body.data)
+        
         if(req.body.products.length > 0){
             if(isPercentage == 1 ){
                 req.body.products.map((product)=>product.endingPrice = ((1 - (discountAmount/100) )* product.productPrice))
@@ -93,7 +113,8 @@ const createDiscount = async (req, res, next) => {
                 req.body.products.map((product)=>product.endingPrice = product.productPrice - discountAmount)
             }
             await req.body.products.map((product)=>product.discountId = discountData.discountId)
-            const outputProducts = req.body.products.map(({productId, endingPrice,discountId}) => { return {productId, endingPrice,discountId} })
+            const outputProducts = [...req.body.products].map(({productId, endingPrice,discountId}) => { return oneGetOne === 1 ? {productId,discountId} : {productId,endingPrice,discountId}  })
+            
             await Discount_Product.bulkCreate(outputProducts)
         }
 
@@ -139,6 +160,25 @@ const updateDiscount = async (req, res, next) =>{
             message : middlewareErrorHandling.VOUCHER_CANT_WITH_AMOUNT
         })
 
+        const listProductId = req.body.products.map(({productId})=>{return productId})
+
+        if (listProductId.length > 0){ 
+            const productBindWithOtherDiscount = await Discount_Product.findAll({
+                where :{
+                    [Op.and] : [
+                        {isDeleted : 0},
+                        {[Op.not] : [{discountId}]},
+                        {productId : {[Op.or] :listProductId}}
+                    ]
+                }
+            })
+
+            if(productBindWithOtherDiscount.length >0)throw({
+                status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+                message : middlewareErrorHandling.PRODUCT_ALREADY_HAVE_DISCOUNT
+            })
+        }
+
         await Discount.update(req.body.data, { where : { discountId } })
 
         if(req.body.products.length > 0){
@@ -155,6 +195,8 @@ const updateDiscount = async (req, res, next) =>{
             const outputProducts = req.body.products.map(({productId, endingPrice,discountId}) => { return {productId, endingPrice,discountId} })
             
             await Discount_Product.bulkCreate(outputProducts)
+        }else {
+            await Discount_Product.update({isDeleted : 1}, { where : { discountId } })
         }
 
         const discountData = await Discount.findOne({ 
@@ -201,6 +243,7 @@ const deleteDiscount = async (req, res, next) =>{
         })
         
         await Discount.update({isDeleted : 1}, { where : { discountId } })
+        await Discount_Product.update({isDeleted : 1}, { where : { discountId } })
 
         const discountData = await Discount.findAll({ 
             where : { discountId },
@@ -220,7 +263,7 @@ const deleteDiscount = async (req, res, next) =>{
 
 const checkDiscount = async (req, res, next) =>{
     try{
-        const { code, nominal, productId } = req.body
+        const { code, nominal, productId } = req.query
 
         const filter = { code, nominal, productId }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
@@ -236,11 +279,12 @@ const checkDiscount = async (req, res, next) =>{
                 where : filter.productId
             },
             where : {
-                [Op.or]: [
+                [Op.and]: [
                     { isDeleted : 0 },
                     { [Op.or] :[
+                        filter.code,
                         filter.nominal,
-                        filter.code
+                        filter.productId
                     ] }
                 ]
             },

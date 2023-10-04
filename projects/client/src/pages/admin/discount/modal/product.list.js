@@ -13,6 +13,9 @@ export default function ProductList({
     onEdit,
     selectedProducts,
     setSelectedProducts,
+    title,
+    setError,
+    error
 }) {
     const [showAllProduct, setShowAllProduct] = useState(false)
     
@@ -60,9 +63,13 @@ export default function ProductList({
     }
     
     return (
-        <div className=" px-2 mt-5 rounded-md">
+        <div className=" px-2 mt-5 rounded-md">  
             <h3 className="title mt-4 border-b-2 mb-3">Daftar Produk : </h3>
-            
+            {error.product && (
+                <div className="text-sm text-red-500 dark:text-red-400">
+                    {error.product}
+                </div>
+            )}          
             <div
                 className="mb-2 flex flex-wrap gap-2"
             >
@@ -92,7 +99,7 @@ export default function ProductList({
                 isPrimary
                 className = {`${!onEdit ? "hidden" : "lg:justify-self-start w-fit mt-3" }`}
                 title = "Tambah Produk"
-                onClick = {()=>setShowAllProduct(true)}
+                onClick = {()=>{setShowAllProduct(true);setError({ ...error, product: false })}}
             />
             <AnimatePresence>
                 {showAllProduct && (
@@ -132,7 +139,7 @@ export default function ProductList({
                         </div>
 
                     <div className="my-4 max-h-[55vh] divide-y-2 overflow-auto">
-                        {products.map((product) => (
+                        {products.filter((product)=>{return title === "Detail Diskon" ? product : product.discountProducts.length === 0}).map((product) => (
                         <div
                             key={product.productId}
                             className="group mr-2 flex justify-between"

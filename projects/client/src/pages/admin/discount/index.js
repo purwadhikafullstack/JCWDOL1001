@@ -54,15 +54,16 @@ export default function DiscountPage(){
 
     const [page, setPage] = useState(1);
 
-    useEffect(()=>{
-        dispatch(
-            getDiscount({page : currentPage,discountName : discountRef?.current.value})
-        )
-        dispatch(getProducts({page:page}))
-    },[])
+    // useEffect(()=>{
+    //     dispatch(
+    //         getDiscount({page : currentPage,discountName : discountRef?.current.value})
+    //     )
+    // },[])
 
     useEffect(() => {
-        dispatch( getProducts({ page : page }) )
+        dispatch(
+            getDiscount({page : page,discountName : discountRef?.current.value})
+        )
     }, [page])
 
     return(
@@ -118,10 +119,10 @@ export default function DiscountPage(){
                     {(showModal.context === "Detail Diskon" || 
                         showModal.context === "Tambah Baru") && (
                         <ModalDetailsDiscount
+                            title={showModal.context}
                             selectedId={selectedId}
                             handleCloseModal={handleCloseModal}
                             handleShowModal={handleShowModal}
-                            products ={products}
                             isNew={showModal.isNew}
                             success={success}
                         />

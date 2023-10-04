@@ -9,16 +9,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { getAddress } from "../../../store/slices/address/slices";
 import ShippingAddress from "../../../components/Shipping/component.address.js";
 import ShippingCost from "../../../components/Shipping/component.shipping.js";
 import { toast } from "react-toastify";
 import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/validation";
+import DiscountChecker from "../../../components/Discount Checker";
 
 export default function Cart() {
   const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
     return{
-      address : state?.address?.data,
+      address : state?.auth?.address,
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
@@ -135,7 +135,7 @@ export default function Cart() {
       limit: 12,
     })
   )
-  dispatch(getAddress())
+  setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
 },[])
 
   // useEffect(() => {
@@ -174,6 +174,7 @@ export default function Cart() {
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
+      <DiscountChecker/>
       <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
       {(error.addressId && selectedAddress.length ===0) && (
         <div className="text-sm text-red-500 dark:text-red-400">

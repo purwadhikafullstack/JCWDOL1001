@@ -10,7 +10,7 @@ import {formatDate, formatDateValue} from "../../../../utils/formatDate"
 import { toast } from "react-toastify"
 import { DiscountInfoValidationSchema } from "../../../../store/slices/discount/validation"
 
-export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,products,isNew,success}) {
+export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,title,isNew,success}) {
     const dispatch = useDispatch()
     const nameRef = useRef("")
     const codeRef = useRef("")
@@ -45,13 +45,21 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     const [error, setError] = useState("")
     const [isToastVisible, setIsToastVisible] = useState(false)
     const output = {}
-
+    
     const onButtonSave = async () => {
         try {
 
-            // buy one get one harus ada produk
-            if(isOneGetOne.id === 1 && selectedProducts.length === 0 ){
-                throw({message:"Buy One Get One must have product"}) 
+            if(isOneGetOne.id == 1 && selectedProducts.length === 0 ){
+                throw({inner : [{
+                    path : "product",
+                    message:"Buy One Get One must have product"
+                }]}) 
+            }
+            if((minimumRef?.current?.value ) && selectedProducts.length !== 0 ){
+                throw({ inner : [{
+                    path : "product",
+                    message:"Minimum Transaction can't have product(s)"
+                }]}) 
             }
             
             output.data = {
@@ -60,7 +68,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
                 "oneGetOne" : +isOneGetOne.id,
-                "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : selectedId?.minimalTransaction,
+                "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
                 "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
                 "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
             }
@@ -84,7 +92,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kembali data yang Anda masukkan!")
 
             setIsToastVisible(true)
 
@@ -93,9 +101,11 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             }, 2000)
         }
     }
+
     useEffect(() => {
         setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
     }, [])
+
     if (success) {  
         return ( 
             <SuccessMessage 
@@ -105,6 +115,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             /> 
         ) 
     }
+    
   return (
     <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
         <Button
@@ -197,6 +208,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                             checked = {isOneGetOne?.name === "Ya" ? true : false}
                             onChange={() => {
                                 amountRef.current.value =""
+                                minimumRef.current.value =""
+                                setError({ ...error, discountAmount: false, minimalTransaction:false })
+                                setIsPercentage({id:"0",name:"Tidak"})
                                 setIsOneGetOne({id:"1",name:"Ya"})
                             }}
                             
@@ -239,6 +253,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountExpired ? formatDate(selectedId?.discountExpired) : "-"}</h1>
                 <h4 className="title font-bold mt-4">Jumlah : </h4>
                 <Input 
+                    isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {amountRef}
                     placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `IDR ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
@@ -253,6 +268,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.isPercentage ? `${selectedId?.discountAmount}%` : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
                 <h4 className="title font-bold mt-4">Minimal Transaksi : </h4>
                 <Input 
+                    isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {minimumRef}
                     placeholder = {!selectedId?.minimalTransaction ? "-" : `IDR ${formatNumber(selectedId?.discountAmount)}` }
@@ -266,8 +282,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `IDR ${formatNumber(selectedId?.discountAmount)}` }</h1>
             </div>
-        </div>
-        <ProductList dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} />
+        </div>       
+        <ProductList title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>
+        
     </div>
   )
 }

@@ -74,3 +74,25 @@ export const createDiscount = createAsyncThunk(
         }
     }
 )
+
+export const checkerDiscount = createAsyncThunk(
+    "discount/checkerDiscount",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const { code } = payload
+            
+            let PARAMETER = "?"
+            
+            if(code){
+                PARAMETER +=`code=${code}&`
+            }
+
+            const { data } = await api.post("/discount/check" + encodeURI(PARAMETER))
+
+            return data
+        }catch(error){
+            toast.error(error.response.data?.message)
+            return rejectWithValue(error.response.data)
+        }
+    }
+)

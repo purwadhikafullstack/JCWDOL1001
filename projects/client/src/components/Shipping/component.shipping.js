@@ -56,7 +56,7 @@ export default function ShippingCost({
     }
 
     return (
-        <div className={selectedAddress.length === 0 &&"hidden"}>
+        <div className={selectedAddress?.length === 0 &&"hidden"}>
             Pilih jasa pengiriman : 
             <div className="flex max-w-sm gap-3">
                 <select 
