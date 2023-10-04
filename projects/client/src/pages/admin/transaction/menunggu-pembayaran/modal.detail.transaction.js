@@ -2,29 +2,32 @@ import { HiArrowLongLeft } from "react-icons/hi2";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
+import Countdown from "../../../../components/Countdown";
 
 export default function ModalDetailTransaction({
   selectedTransaction,
   handleShowModal,
-  handleCloseModal
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  const customerData = selectedTransaction?.user_account;
 
   return (
     <>
-    <div className="max-h-[65vh] overflow-auto pb-4 grid md:grid-cols-2">
-      <div className="">
-        <div className="">
-          <h3 className="subtitle">Data Pemesan</h3>
-          <div className="">
-            <p>{customerData.email}</p>
-            <p>{customerData.userProfile?.name} ({customerData.userProfile?.phone})</p>
-          </div>
+    <div className="max-h-[65vh] overflow-auto pb-4 px-1 grid lg:grid-cols-2">
+      <div className="left-container">
+        <div className="p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
+          <Countdown expired={selectedTransaction.expired}/>
         </div>
 
         <div className="my-4">
+          <h3 className="subtitle">Data Pemesan</h3>
+          <div className="">
+            <p>{selectedTransaction?.user_account?.email}</p>
+            <p>{selectedTransaction?.userProfile?.name} ({selectedTransaction?.userProfile?.phone})</p>
+          </div>
+        </div>
+
+        <div className="mb-4">
           <h3 className="subtitle">Alamat Pengiriman</h3>
           <div className="">
             <p>{shippingAddress.address}</p>
@@ -34,20 +37,26 @@ export default function ModalDetailTransaction({
         </div>
       </div>
 
-      <div className="">
+      <div className="right-container">
         <h3 className="subtitle">Detail Pesanan</h3>
         <div
           key={selectedTransaction?.transactionId}
           className="border p-4 rounded-md h-fit shadow-md"
         >
           
-          <div className="flex items-center justify-between">
-            <p className="mb-4 text-sm">
-              {formatDate(selectedTransaction?.createdAt)}
-            </p>
-            <p className="mb-4 text-sm font-semibold text-primary">
-              {selectedTransaction?.createdAt}
-            </p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-sm">
+              <p>Tanggal Pembelian</p>
+              <p className="">
+                {formatDate(selectedTransaction?.createdAt)}
+              </p>
+            </div>
+            <div className="text-sm text-right">
+              <p>Invoice</p>
+              <p className="font-semibold text-primary">
+                {selectedTransaction?.invoice}
+              </p>
+            </div>
           </div>
           <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
             {transactionDetail?.map((product, index) => (
@@ -84,20 +93,12 @@ export default function ModalDetailTransaction({
       </div>
     </div>
 
-      <div className="mt-4 flex gap-2">
-        <Button
-          isButton
-          isPrimary
-          isBLock
-          title={`Kembali`}
-          onClick={handleCloseModal}
-        />
-
+      <div className="grid lg:grid-cols-3 mt-4">
         <Button
           isButton
           isDangerOutline
-          isBLock
           title={`Batalkan Transaksi`}
+          className={`lg:col-start-3`}
           onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
         />
       </div>

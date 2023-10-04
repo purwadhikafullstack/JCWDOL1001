@@ -94,6 +94,7 @@ export default function UserPage({ user, ongoingTransactions }) {
             </div>
           )}
 
+
           {renderPageContext(context)}
         </div>
       </div>

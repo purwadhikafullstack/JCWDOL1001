@@ -9,17 +9,16 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  const customerData = selectedTransaction?.user_account;
 
   return (
     <>
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
         <div className="left-container">
           <div className="">
             <h3 className="subtitle">Data Pemesan</h3>
             <div className="">
-              <p>{customerData.email}</p>
-              <p>{customerData.userProfile?.name} ({customerData.userProfile?.phone})</p>
+              <p>{selectedTransaction?.user_account?.email}</p>
+              <p>{selectedTransaction?.userProfile?.name} ({selectedTransaction?.userProfile?.phone})</p>
             </div>
           </div>
 
@@ -32,20 +31,38 @@ export default function ModalDetailTransaction({
             </div>
           </div>
 
+          <h3 className="subtitle">Bukti Pembayaran</h3>
+          <div className="">
+            {selectedTransaction?.paymentProof ? 
+              <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
+            :
+            <p>Belum ada bukti pembayaran</p>
+            }
+          </div>
+
+        </div>
+
+        <div className="right-container w-full h-fit mt-8 md:mt-0">
           <h3 className="subtitle">Detail Pesanan</h3>
           <div
             key={selectedTransaction?.transactionId}
             className="border p-4 rounded-md h-fit shadow-md"
           >
             
-            <div className="flex items-center justify-between">
-              <p className="mb-4 text-sm">
+            <div className="flex items-center justify-between mb-4">
+            <div className="text-sm">
+              <p>Tanggal Pembelian</p>
+              <p className="">
                 {formatDate(selectedTransaction?.createdAt)}
               </p>
-              <p className="mb-4 text-sm font-semibold text-primary">
-                {selectedTransaction?.createdAt}
+            </div>
+            <div className="text-sm text-right">
+              <p>Invoice</p>
+              <p className="font-semibold text-primary">
+                {selectedTransaction?.invoice}
               </p>
             </div>
+          </div>
             <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
               {transactionDetail?.map((product, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">
@@ -79,27 +96,17 @@ export default function ModalDetailTransaction({
             </div>
           </div>
         </div>
-
-        <div className="w-full h-fit mt-8 md:mt-0">
-          <h3 className="subtitle">Bukti Pembayaran</h3>
-          <div className="">
-            {selectedTransaction?.paymentProof ? 
-              <img className="w-full h-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL + selectedTransaction?.paymentProof} alt="" />
-            :
-            <p>Belum ada bukti pembayaran</p>
-            }
-          </div>
-        </div>
-
-        </div>
-        <div className="mt-4 flex justify-center gap-2">
-          <Button
-            isButton
-            isPrimary
-            title={`Tutup`}
-            onClick={handleCloseModal}
-          />
-        </div>
+      </div>
+      
+      <div className="mt-4">
+        <Button
+          isButton
+          isPrimary
+          isBLock
+          title={`Tutup`}
+          onClick={handleCloseModal}
+        />
+      </div>
     </>
   );
 }

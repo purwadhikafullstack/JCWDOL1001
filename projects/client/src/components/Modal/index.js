@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { HiXMark } from "react-icons/hi2";
@@ -103,7 +102,7 @@ export default function Modal({
                   }}
                   >
                     {closeButtonText ? 
-                      <Button isButton isPrimaryOutline >Tutup</Button> 
+                      <Button isButton isPrimaryOutline >Kembali</Button> 
                     :
                       <HiXMark className="text-3xl" />
                     }
