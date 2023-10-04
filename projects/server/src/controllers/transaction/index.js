@@ -175,6 +175,8 @@ const createTransactions = async (req, res, next) => {
       where: { [Op.and]: [{ userId }, { inCheckOut: 1 }] },
     });
 
+    let date = new Date().getTime()
+
     const newTransactionList = {
       userId: userId,
       total: +totalPrice + +transport,
@@ -183,7 +185,7 @@ const createTransactions = async (req, res, next) => {
       statusId: 1,
       addressId : addressId,
       expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
-      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
+      invoice : userId + date
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -206,8 +208,6 @@ const createTransactions = async (req, res, next) => {
       let newQuantity = UpdateStock.quantity - startTransaction[i].quantity;
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
-
-      console.log(UpdateStock);
 
       const ProductHistory = {
         productId : startTransaction[i].productId,
