@@ -8,6 +8,7 @@ import uploadRecipeReducer from "./slices/upload-recipe"
 import discounteReducer from "./slices/discount"
 import cartReducer from "./slices/cart"
 import transactionReducer from "./slices/transaction"
+import customReducer from "./slices/custom"
 import stockReducer from "./slices/product/history"
 import reportReducer from "./slices/report"
 import forumReducer from "./slices/forum"
@@ -23,6 +24,7 @@ const store = configureStore({
         discount : discounteReducer,
         cart : cartReducer,
         transaction: transactionReducer,
+        custom: customReducer,
         stocks : stockReducer,
         report: reportReducer,
         forum: forumReducer,

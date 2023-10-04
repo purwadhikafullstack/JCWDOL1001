@@ -10,6 +10,7 @@ import {
   HiSquares2X2,
   HiXMark,
 } from "react-icons/hi2";
+import {GoChecklist} from "react-icons/go"
 import { BiSolidDiscount } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 
@@ -26,6 +27,50 @@ export default function AdminNavMenu({
 
   const { pathname } = useLocation();
 
+
+    // const menu = [
+    //     {
+    //         title:"Products",
+    //         path:"/admin/products",
+    //         icon: <HiSquares2X2 className="h-7 w-7 " />
+    //     },
+    //     {
+    //         title : "Custom Order",
+    //         path : "/admin/custom",
+    //         icon : <GoChecklist className="h-7 w-7"/>
+    //     },
+    //     {
+    //         title:"Categories",
+    //         path:"/admin/categories",
+    //         icon: <FaList className="h-7 w-7 " />
+    //     },
+    //     {
+    //         title:"Transaction",
+    //         path:"/admin/transaction",
+    //         icon: <HiBanknotes className="h-7 w-7 " />
+    //     },
+    //     {
+    //         title:"Discount",
+    //         path:"/admin/discount",
+    //         icon: <BiSolidDiscount className="h-7 w-7 " />
+    //     },
+    //     {
+    //         title:"QnA",
+    //         path:"/admin/qna",
+    //         icon: <HiMiniChatBubbleOvalLeftEllipsis className="h-7 w-7 " />
+    //     },
+    //     {
+    //         title:"Report",
+    //         path:"/admin/report",
+    //         icon: <HiClipboardDocumentList className="h-7 w-7 " />
+    //     },
+    // ]
+    // return (
+    //     <>
+        
+    //     <div
+    //     className={group mt-16 fixed top-0 h-[200vh] bg-slate-100 overflow-hidden border border-gray-300/40 py-16 duration-300  shadow-xl lg:left-0 lg:w-[calc(5rem)] lg:hover:w-64
+
   const menu = [
     {
       title: "Produk",
@@ -33,6 +78,11 @@ export default function AdminNavMenu({
       notification: null,
       icon: <HiSquares2X2 className="h-7 w-7 " />,
     },
+    {
+      title : "Pesanan Resep",
+      path : "/admin/custom",
+      icon : <GoChecklist className="h-7 w-7"/>
+  },
     {
       title: "Kategori",
       path: "/admin/categories",

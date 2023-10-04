@@ -177,9 +177,77 @@ const deleteQuestion = async (req, res, next) => {
     }
 }
 
+const answerQuestion = async (req, res, next) => {
+    try {
+        const {answer,qnaId} = req.body
+        //validate the answer(?)
+        await Forum.update(
+            {
+                answer , 
+                adminId : req.user.userId
+            },{
+            where : {
+                qnaId : qnaId
+            }
+        })
+
+        res.status(200).json({
+			type : "success",
+			message : "Pertanyaan berhasil dijawab",
+		});
+    }catch (error) {
+        next(error)
+    }
+}
+
+const getUnansweredQuestions = async (req, res) => {
+    try {
+        const { page } = req.query;
+    
+        const currentPage = page ? parseInt(page) : 1;
+
+        const options = {
+            offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+            limit : 10,
+        }
+
+        const forums = await Forum.findAll({...options,
+            where : {
+                [Op.and] :
+                [
+                    {answer:{ [Op.is] : null }},
+                    {"isDeleted" : 0},
+                ]
+            },
+            include : {
+                model :User_Profile
+            },
+            order : [[`updatedAt`, "DESC"]]
+        })
+
+        const total = await Forum.count({where : {isDeleted:0,answer:{[Op.is]:null}}})
+
+        const pages = Math.ceil(total/options.limit)
+
+        res.status(200).json({
+			type : "success",
+			message : "Data berhasil dimuat",
+            currentPage : +page ? +page : 1,
+            totalPage : pages,
+            totalQuestions : total,
+            productLimit : options.limit,
+			data : forums
+		});
+    }catch (error) {
+        next(error)
+    }
+}
+
 module.exports={
     getQuestions,
     getQuestionsForPublic,
     postQuestion,
     deleteQuestion,
+    answerQuestion,
+    getUnansweredQuestions
 }

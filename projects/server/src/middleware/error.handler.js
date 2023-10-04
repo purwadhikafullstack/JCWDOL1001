@@ -30,7 +30,12 @@ const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
+
+const NO_STOCK = "Insufficient stocks for desired product"
+const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
+
 const TRANSACTION_NOT_FOUND = "Transaksi tidak ditemukan"
+const ONLY_ONCE = "This link only valid for 1 submission."
 const DATA_NOT_FOUND = "Data not found"
 const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
 const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
@@ -100,6 +105,9 @@ module.exports = {
     VOUCHER_CODE_EMPTY,
     VOUCHER_NEED_PRODUCT,
     VOUCHER_NEED_AMOUNT,
+    NO_STOCK,
+    PRODUCT_ALREADY_CHECKEDOUT,
+    ONLY_ONCE,
     TRANSACTION_NOT_FOUND,
     ITEM_NOT_ENOUGH,
     DATA_NOT_FOUND,

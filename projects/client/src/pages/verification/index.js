@@ -178,7 +178,6 @@ export default function Verification() {
                 onProvinceChange={onProvinceChange}
                 province={dataProvince}
                 />
-
                 <GetCity
                 onCityChange={onCityChange}
                 city={dataCity}

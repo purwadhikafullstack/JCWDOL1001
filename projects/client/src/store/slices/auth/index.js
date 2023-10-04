@@ -9,8 +9,11 @@ import {
     changePassword,
     changeEmail,
     changeProfilePicture,
-    changeProfileData
+    changeProfileData,
+    forgotPass,
+    resetPass
 } from "./slices"
+// import { reset } from "../../../../../server/src/controllers/authentication";
 
 const INITIAL_STATE = {
     uuid : "",
@@ -28,7 +31,11 @@ const INITIAL_STATE = {
     isChangePasswordLoading : false,
     isChangeEmailLoading : false,
     isChangePictureLoading : false,
-    isChangeProfileLoading : false
+    isChangeProfileLoading : false,
+    isForgotPasswordLoading : false,
+    isResetPasswordLoading : false,
+    resetStatus : false,
+    isForgot : false
 }
 
 const authSlice = createSlice({
@@ -146,7 +153,28 @@ const authSlice = createSlice({
         },
         [changeProfileData.fulfilled] : (state, action) => {
             state.isChangeProfileLoading = false
-        }
+        },
+        [forgotPass.pending] : (state, action) => {
+            state.isForgotPasswordLoading = true
+            state.isForgot = false
+        },
+        [forgotPass.rejected] : (state, action) => {
+            state.isForgotPasswordLoading = false
+            state.isForgot = true
+        },
+        [forgotPass.fulfilled] : (state, action) => {
+            state.isForgotPasswordLoading= false
+        },
+        [resetPass.pending] : (state, action) => {
+            state.isResetPasswordLoading = true
+        },
+        [resetPass.rejected] : (state, action) => {
+            state.isResetPasswordLoading = false
+            state.resetStatus = true
+        },
+        [resetPass.fulfilled] : (state, action) => {
+            state.isResetPasswordLoading= false
+        },
     }
 })
 
