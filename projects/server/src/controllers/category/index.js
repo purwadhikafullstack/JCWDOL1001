@@ -4,11 +4,11 @@ const {Product_List,Categories,Product_Category} = require("../../model/relation
 
 const getCategory = async (req, res, next) => {
     try{
-        const {page} = req.query;
+        const { page, limit } = req.query;
         const currentPage = page ? parseInt(page) : 1;
         const options = {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
-            limit : 10
+            limit : limit ? +limit : 10
         }
 		const category = await Categories?.findAll({...options, where : {isDeleted : 0}, order : [["categoryDesc", "ASC"]]});
 

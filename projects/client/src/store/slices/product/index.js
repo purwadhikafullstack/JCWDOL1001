@@ -17,7 +17,7 @@ const INITIAL_STATE = {
   success: false,
   total_page: null,
   current_page: null,
-  //next_page: null,
+  total_products: null,
   isGetProductsLoading: false,
   isSubmitProductLoading: false,
   isDeleteProductLoading: false,
@@ -43,7 +43,7 @@ const productsSlice = createSlice({
         state.data = action.payload.data;
         state.total_page = action.payload.totalPage;
         state.current_page = action.payload.currentPage;
-        // state.next_page = action.payload.next_page;
+        state.total_products = action.payload.totalProducts;
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isGetProductsLoading = false;

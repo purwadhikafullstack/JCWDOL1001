@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadPaymentProof } from "../../../../store/slices/transaction/slices";
 import Button from "../../../../components/Button";
@@ -9,6 +9,7 @@ import formatNumber from "../../../../utils/formatNumber";
 import LogoBca from "../../../../assets/logo-bca.png";
 import LogoMandiri from "../../../../assets/logo-mandiri.png";
 import { toast } from "react-toastify"
+import Countdown from "../../../../components/Countdown";
 
 export default function ModalCaraBayar({
   selectedTransaction,
@@ -23,6 +24,7 @@ export default function ModalCaraBayar({
   });
   
   const [file, setFile] = useState(null);
+  const [showInputImage, setShowInputImage] = useState(true);
 
   const formData = new FormData();
 
@@ -55,8 +57,11 @@ export default function ModalCaraBayar({
     />
   }
 
+  const createdAt = new Date(selectedTransaction?.createdAt).getTime() + 24 * 3600000;
+  const date = new Date().getTime();
+
   return (
-    <div className="overflow-auto max-h-screen pb-4 md:pr-1">
+    <div className="overflow-auto max-h-screen pb-8 md:pr-1">
       <div className="flex flex-col gap-4 mt-4">
         <div className="p-4 bg-green-100 border border-primary rounded-lg flex gap-2 items-center">
           <div className="">
@@ -68,6 +73,12 @@ export default function ModalCaraBayar({
           </div>
         </div>
 
+        <div className="flex flex-col items-center">
+          <div className="p-2 border border-warning rounded-lg font-semibold text-xl">
+            <Countdown expired={selectedTransaction.expired}/>
+          </div>
+        </div>
+        
         <h3 className="subtitle text-center">Total Pembayaran: <span className="text-primary">Rp. {formatNumber(selectedTransaction.total)}</span></h3>
 
         <div className="w-fit mx-auto">
@@ -111,8 +122,9 @@ export default function ModalCaraBayar({
             </div>
           </div>
         </div>
-
-        <InputImage file={file} setFile={setFile} />
+        { date < createdAt &&
+          <InputImage file={file} setFile={setFile} />
+        }
       </div>
       <div className="mt-4 flex justify-center gap-2">
         <Button

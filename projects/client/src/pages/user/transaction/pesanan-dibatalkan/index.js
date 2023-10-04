@@ -9,20 +9,16 @@ import SkeletonTransaction from "../component.skeleton";
 import ModalDetailTransaction from "./modal.detail.transaction";
 import Pagination from "../../../../components/PaginationV2";
 
-export default function PesananDibatalkan({ statusId, statusDesc }) {
-  const dispatch = useDispatch();
-  const { transaction, isGetTransactionLoading, totalPage, currentPage } = useSelector((state) => {
-    return {
-      transaction: state.transaction?.transactions,
-      isGetTransactionLoading: state.transaction?.isGetTransactionLoading,
-      totalPage: state.transaction?.totalPage,
-      currentPage: state.transaction?.currentPage,
-    };
-  });
+export default function PesananDibatalkan({ 
+    transaction,
+    isGetTransactionLoading, 
+    totalPage,
+    currentPage,
+    setPage
+  }) {
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [page, setPage] = useState(1);
 
   const handleShowModal = (transactionId) => {
     window.scrollTo({
@@ -43,10 +39,6 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     setShowModal(false);
   };
 
-  useEffect(() => {
-    dispatch(getTransactionList({ statusId, page }));
-  }, [page]);
-
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
       <SkeletonTransaction key={index}/>
@@ -59,7 +51,6 @@ export default function PesananDibatalkan({ statusId, statusDesc }) {
     </div>
   ) : (
     <>
-    <h3 className="subtitle mt-2">{statusDesc}</h3>
       <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;

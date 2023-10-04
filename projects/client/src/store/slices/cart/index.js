@@ -4,7 +4,8 @@ import {
     getCart,
     totalProductCart,
     updateCart,
-    deleteCart
+    deleteCart,
+    inCheckOut
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -88,7 +89,17 @@ const cartSlice = createSlice({
                 isDeleteLoading : false,
             })
         }, 
-       
+        [inCheckOut.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [inCheckOut.fulfilled] : (state, action)=> {
+            state = Object.assign(state, {
+                isLoading : false
+            })
+        },
+        [inCheckOut.rejected] : (state, action) => {
+            state.isLoading = false
+        },
     }
 })
 

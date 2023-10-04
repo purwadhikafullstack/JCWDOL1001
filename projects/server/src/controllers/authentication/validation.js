@@ -60,11 +60,22 @@ const UpdateEmailValidationSchema = Yup.object({
         .required("Email is required"),
 })
 
+const ForgotPassValidationSchema = Yup.string({
+    email : Yup.string().email("Invalid email").required("Email is required")
+})
+
+const PasswordValidationSchema = Yup.string({
+    password : Yup.string().required("Password is required")
+    .min(6,"password must at least 6 characters") //min 6 characters
+})
+
 module.exports = {
     LoginValidationSchema,
     RegisterValidationSchema,
     VerifyValidationSchema,
     UpdatePasswordValidationSchema,
     UpdateProfileValidationSchema,
-    UpdateEmailValidationSchema
+    UpdateEmailValidationSchema,
+    ForgotPassValidationSchema,
+    PasswordValidationSchema
 }
