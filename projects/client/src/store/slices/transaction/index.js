@@ -10,7 +10,8 @@ import {
     confirmPayment,
     processOrder,
     sendOrder,
-    receiveOrder
+    receiveOrder,
+    rejectPayment
 } from "./slices";
 
 const INITIAL_STATE = {
@@ -149,6 +150,17 @@ const transactionsSlice = createSlice({
             state.successCancelTransaction = true
         },
         [cancelTransaction.rejected] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+        },
+
+        [rejectPayment.pending] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = true
+        },
+        [rejectPayment.fulfilled] : (state, action) => {
+            state.isUpdateOngoingTransactionLoading = false
+            state.successCancelTransaction = true
+        },
+        [rejectPayment.rejected] : (state, action) => {
             state.isUpdateOngoingTransactionLoading = false
         },
 

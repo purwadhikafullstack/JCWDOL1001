@@ -18,6 +18,7 @@ router.patch("/process-order/:transactionId", verifyAdmin, transaction.processOr
 router.patch("/send-order/:transactionId", verifyAdmin, transaction.sendOrder)
 router.patch("/receive-order/:transactionId", verifyUser, transaction.receiveOrder)
 router.patch("/cancel-transaction/:transactionId", verifyUser, transaction.cancelTransaction)
+router.patch("/reject-payment/:transactionId", verifyAdmin, transaction.rejectPayment)
 router.get("/ongoing", verifyUser, transaction.getOngoingTransactions)
 router.get("/:statusId", verifyUser,  transaction.getTransactions)
 

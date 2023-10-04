@@ -422,6 +422,9 @@ const changeEmail = async (req, res, next) => {
 
         const users = await User_Account.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
+
+        const userEmails = await User_Account.findOne({where : {email : email}});
+        if(userEmails) throw ({status : 400, message : middlewareErrorHandling.EMAIL_HAS_BEEN_USED});
         
         if (otp !== users?.dataValues?.otp) throw (
             { status : 400, 

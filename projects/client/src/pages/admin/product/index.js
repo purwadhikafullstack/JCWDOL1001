@@ -209,6 +209,7 @@ export default function AdminProducts({user}) {
             isSubmitProductLoading={isSubmitProductLoading}
             isDeleteProductLoading={isDeleteProductLoading}
             setSelectedProduct={setSelectedProduct}
+            current_page={current_page}
           />
         </div>
         <div className="mt-4 flex items-center justify-center">

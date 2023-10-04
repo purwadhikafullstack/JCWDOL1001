@@ -1,14 +1,21 @@
-import React, { useEffect } from 'react'
-import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser, HiMiniChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
+import React, { useEffect, useState } from 'react'
+import { HiOutlineClipboardDocumentList, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMapPin, HiOutlinePower, HiOutlineUser, HiOutlineChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../store/slices/auth/slices';
+import { logout, resendOtp } from '../../store/slices/auth/slices';
 
 export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions }) {
   const { context } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const [verify, setVerify] = useState(false)
+
+  const onClickVerified = ()=>{
+    dispatch(resendOtp({email : user.email}))
+    setVerify(true)
+  }
   
   const menu = [
     {
@@ -51,7 +58,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
       context : "qna",
       path : "/user/qna",
       notification: null,
-      icon : <HiMiniChatBubbleOvalLeftEllipsis className="block text-xl"/>
+      icon : <HiOutlineChatBubbleOvalLeftEllipsis className="block text-xl"/>
     },
   ]
 
@@ -78,9 +85,10 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
                 isButton
                 isPrimary
                 isBLock
-              onClick={() => navigate("/verify")}
+                onClick={onClickVerified}
                 title="Verify Account"
                 className="lg:hidden"
+                isDisabled={verify}
               />
             }
 

@@ -20,7 +20,7 @@ import Pagination from "../../components/PaginationV2";
 export default function Products({ user }) {
   const dispatch = useDispatch();
   const location = useLocation();
-  
+
   const {
     products,
     categories,
@@ -44,6 +44,7 @@ export default function Products({ user }) {
   const [sort, setSort] = useState({ sortBy: "", type: "" });
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(null)
+  const [promo, setPromo] = useState(false)
   const [filterType, setFilterType] = useState(null)
 
   const handleCart = (productId) => {
@@ -61,17 +62,38 @@ export default function Products({ user }) {
   };
 
   const handleSearch = (event) => {
+    setPage(1)
     event.preventDefault();
     setSearch(searchRef.current?.value)
     setSelectedCategory(null)
+    setPromo(false)
   };
+
+  const clearSearch = () => {
+    setSearch(null)
+    setPage(1)
+
+    searchRef.current.value = "";
+    dispatch(
+      getProducts({
+        page: page,
+        category_id: selectedCategory ? selectedCategory?.categoryId : "",
+        product_name: search,
+        sort_price: sort.sortBy === "price" ? sort.type : "",
+        sort_name: sort.sortBy === "name" ? sort.type : "",
+        limit: 12,
+        promo,
+      })
+    );
+}
 
   const handleSort = (sortBy, type) => {
     setSort({sortBy, type})
   };
 
   useEffect(() => {
-    dispatch(getCategory({ page: 1 }));
+    dispatch(getCategory({ page : 1 }));
+
     if(location.state?.categorySelected){
       setSelectedCategory(location.state?.categorySelected)
       dispatch(
@@ -100,10 +122,11 @@ export default function Products({ user }) {
         sort_price: sort.sortBy === "price" ? sort.type : "",
         sort_name: sort.sortBy === "name" ? sort.type : "",
         limit: 12,
+        promo,
       })
     );
 
-  }, [selectedCategory, search, sort, page ]);
+  }, [selectedCategory, search, sort, page, promo ]);
   
   return (
     <>
@@ -114,16 +137,32 @@ export default function Products({ user }) {
             <div className="categories-wrapper mt-4 flex flex-nowrap gap-8 overflow-auto lg:flex-col lg:items-start lg:justify-start lg:gap-4">
               <Button
                 isLink
-                className={`product-category ${!selectedCategory && "active"}`}
+                className={`product-category ${promo && "active"}`}
                 onClick={() => {
                   setSelectedCategory(null);
                   setSearch(null)
                   setPage(1)
+                  setPromo(true)
+                  searchRef.current.value = ""
+                }}
+              >
+                Promo
+              </Button>
+
+              <Button
+                isLink
+                className={`product-category ${!selectedCategory && !promo && "active"}`}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setSearch(null)
+                  setPage(1)
+                  setPromo(false)
                   searchRef.current.value = ""
                 }}
               >
                 Semua Produk
               </Button>
+
               {categories.map((category, index) => (
                 <Button
                   key={index}
@@ -136,6 +175,7 @@ export default function Products({ user }) {
                     setSelectedCategory(category);
                     setSearch(null)
                     setPage(1)
+                    setPromo(false)
                     searchRef.current.value = ""
                   }}
                 >
@@ -146,27 +186,33 @@ export default function Products({ user }) {
           </div>
 
           <div className="col-span-1 lg:col-span-4">
-            <form
-              className="relative lg:w-1/3"
-              onSubmit={(e) => {
-                handleSearch(e);
-              }}
-            >
-              <Input
-                ref={searchRef}
-                type="text"
-                placeholder="Cari kebutuhanmu disini"
-              />
-              <button
-                className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
-                type="submit"
+            <div className="flex justify-center items-center lg:justify-start gap-2">
+              <form
+                className="relative w-5/6 lg:w-1/3"
+                onSubmit={(e) => {
+                  handleSearch(e);
+                }}
               >
-                <HiMagnifyingGlass className="text-2xl text-primary" />
-              </button>
-            </form>
+                <Input
+                  ref={searchRef}
+                  type="text"
+                  placeholder="Cari kebutuhanmu disini"
+                />
+                <button
+                  className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
+                  type="submit"
+                >
+                  <HiMagnifyingGlass className="text-2xl text-primary" />
+                </button>
+              </form>
+              {search && 
+                <Button isButton isPrimary title={`Hapus`} onClick={clearSearch}/>
+              }
+            </div>
+
 
             <div className="flex items-center justify-between mt-4">
-              <h3 className="title mt-4">
+              <h3 className="title">
                 {searchRef.current?.value
                   ? `Hasil Pencarian: ${searchRef.current?.value}`
                   : selectedCategory
@@ -184,7 +230,7 @@ export default function Products({ user }) {
                   {filterType ?
                     <span className="capitalize">{filterType}</span>
                     :
-                    <span>Filter</span>
+                    <span>Sortir</span>
                   }
                   <HiOutlineFunnel className="text-lg" />
                 </Button>

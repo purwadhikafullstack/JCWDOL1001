@@ -11,7 +11,7 @@ export default function ModalDetailTransaction({
 
   return (
     <>
-            <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[50vh] p-2 lg:max-h-[65vh] overflow-y-auto">
+            <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[65vh] p-2 lg:max-h-[65vh] overflow-y-auto">
           <div className="left-container">
             <div className="mb-4">
               <h3 className="subtitle">Alamat Pengiriman</h3>

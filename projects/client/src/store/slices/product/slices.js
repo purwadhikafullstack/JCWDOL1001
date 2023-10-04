@@ -20,7 +20,7 @@ export const getProducts = createAsyncThunk(
       // const { data } = await api.get(`/products?` + encodeURI(PARAMETER));
 
 
-      const { category_id, page, sort_name, sort_price, product_name, limit} = payload;
+      const { category_id, page, sort_name, sort_price, product_name, limit, promo} = payload;
       let query = "";
 
       if(page){
@@ -40,6 +40,9 @@ export const getProducts = createAsyncThunk(
       }
       if(limit){
       query += `${query ? '&' : '?'}limit=${limit}`;
+      }
+      if(promo){
+      query += `${query ? '&' : '?'}promo=${promo}`;
       }
       const { data } = await api.get(`/products${query}`);
       return data;
