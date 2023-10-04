@@ -155,6 +155,21 @@ export const cancelTransaction = createAsyncThunk(
     }
 )
 
+export const rejectPayment = createAsyncThunk(
+    "transactions/rejectPayment",
+    async (payload, {rejectWithValue}) => {
+        try{
+            const transactionId= payload.transactionId
+            delete payload.transactionId;
+
+            await api.patch(`/transaction/reject-payment/${transactionId}`, payload);
+        }catch(error){
+            toast.error(error.response.data.message);
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+)
+
 export const getTransactionStatus = createAsyncThunk(
     "transactions/getTransactionStatus",
     async (payload, {rejectWithValue}) => {

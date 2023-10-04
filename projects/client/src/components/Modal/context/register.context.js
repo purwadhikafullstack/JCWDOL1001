@@ -46,7 +46,8 @@ export default function RegisterContext ({
         setResend(true)
     }
 
-    const onButtonRegist= () => {
+    const onButtonRegist= (e) => {
+        e.preventDefault()
         setEmail(emailRef.current?.value)
         const sendemail = emailRef.current?.value
         const name = nameRef.current?.value
@@ -91,16 +92,20 @@ export default function RegisterContext ({
                         
                     </div>
                 </div> :
-                
-                <form className="mt-8 flex flex-col gap-8" >
+                <div>
+                <form className="mt-8 flex flex-col gap-8" onSubmit={(event)=>{onButtonRegist(event)}} >
+
                     <div className="flex flex-col gap-3">
+                {/* <span className="mr-2 text-slate-600 text-sm">Mari bergabung dengan keluarga Apotech</span> */}
                         <Input
                             ref={nameRef}
                             required
                             type="text"
                             label="Username"
                             placeholder="e.g. helloworld"
+                
                         />
+
                         <Input
                             ref={phoneRef}
                             required
@@ -136,9 +141,9 @@ export default function RegisterContext ({
                         type="submit"
                         title="Daftar"
                         className="mt-4 py-3"
-                        onClick={onButtonRegist}
                     />
                 </form>
+                </div>
         }
         </div>
     )

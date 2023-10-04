@@ -62,3 +62,14 @@ export const changeProfileValidationSchema = Yup.object({
         .min(11, "Phone number must at least 11 characters")
         .max(13, "Phone number must less than 14 characters")
 })
+
+export const ForgotPassValidationSchema = Yup.object({
+    email : Yup.string().email("Email tidak valid").required("Email dibutuhkan")
+})
+
+export const PasswordValidationSchema = Yup.object({
+    password : Yup.string().required("Password dibutuhkan")
+    .min(6,"Password minimal 6 karakter"), //min 6 characters,
+    confirmPassword : Yup.string().oneOf([Yup.ref('password'), null], 
+    'Password harus sama') //min 6 characters
+})

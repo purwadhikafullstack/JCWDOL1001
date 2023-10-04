@@ -154,10 +154,33 @@ const Product_History = db.sequelize.define("product_history",{
     updatedAt: 'updatedAt'
 });
 
+const Product_Recipe = db.sequelize.define("product_recipe", {
+    recipeId : {
+        type: db.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    productId : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    ingredientProductId : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    quantity : {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    }
+},{
+    timestamps: false
+});
+
 module.exports = { 
   Product_List,
   Product_Category,
   Product_Unit,
   Product_Detail,
-  Product_History
+  Product_History,
+  Product_Recipe
 }

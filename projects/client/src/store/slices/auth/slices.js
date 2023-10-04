@@ -2,7 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
 
-import { LoginValidationSchema, RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
+import { ForgotPassValidationSchema, LoginValidationSchema, PasswordValidationSchema, 
+    RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
 
 export const login = createAsyncThunk(
@@ -71,7 +72,7 @@ export const register = createAsyncThunk(
 
             const {data} = response
 
-            alert(response?.data?.message)
+            toast.success("register Success")
 
             return data
 
@@ -103,7 +104,7 @@ export const verify = createAsyncThunk(
 
             const {data} = response
             
-            alert(response?.data?.message)
+            toast.success("verify Succeed")
             return data
             
         } catch (error) {
@@ -123,7 +124,7 @@ export const resendOtp= createAsyncThunk(
 
             const {data} = response
 
-            alert(response?.data?.message)
+            toast.success(data?.message)
             
         } catch (error) {
             alert(error.response?.data?.message)
@@ -207,6 +208,49 @@ export const changeProfileData = createAsyncThunk (
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const forgotPass = createAsyncThunk(
+    "auth/user/forgotPassword",
+     
+    async (payload, { rejectWithValue }) => {
+        try {
+            await ForgotPassValidationSchema.validate(payload)
+            const response = await api.post("auth/forgot", payload)
+
+            const {data} = response
+
+            toast.success(response?.data?.message)
+            
+        } catch (error) {
+            toast.error(error.response?.data?.message)
+
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const resetPass= createAsyncThunk(
+    "auth/user/resetPassword",
+     
+    async (payload, { rejectWithValue }) => {
+        try {
+            const {token} = payload
+            console.log(token)
+            delete payload.token
+            await PasswordValidationSchema.validate(payload)
+            const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})
+
+            const {data} = response
+
+            toast.success(response?.data?.message)
+            
+        } catch (error) {
+            toast.error(error.response?.data?.message)
+
             return rejectWithValue(error.response?.data?.message)
         }
     }

@@ -21,7 +21,7 @@ const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
 const getProducts = async (req, res, next) => {
   try {
-    const { page, id_cat, product_name, sort_price, sort_name, limit } =
+    const { page, id_cat, product_name, sort_price, sort_name, limit, promo } =
       req.query;
 
     const currentPage = page ? parseInt(page) : 1;
@@ -64,7 +64,7 @@ const getProducts = async (req, res, next) => {
           include: {
             model: Discount,
             where: { isDeleted: 0 },
-            required: false,
+            required: !!promo,
           },
         },
       ],
@@ -73,8 +73,8 @@ const getProducts = async (req, res, next) => {
     });
 
     const total =
-      id_cat || product_name
-        ? await Product_List?.count({
+      id_cat || product_name ?
+        await Product_List?.count({
             include: {
               model: Categories,
               as: "productCategories",
@@ -82,7 +82,24 @@ const getProducts = async (req, res, next) => {
             },
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
-        : await Product_List?.count({ where: { isDeleted: 0 } });
+        // : promo ? 
+        //   await Discount_Product?.count()
+        // : promo ? 
+        :
+          await Product_List?.count({ 
+            include:{
+              model: Discount_Product,
+              attributes: { exclude: ["discountProductId"] },
+              as: "discountProducts",
+              include: {
+                model: Discount,
+                where: { isDeleted: 0 },
+                required: !!promo,
+              },
+            },
+            where: { isDeleted: 0 } 
+          })
+        // : await Product_List?.count({ where: { isDeleted: 0 } });
 
     const pages = Math.ceil(total / options.limit);
 

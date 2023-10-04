@@ -18,7 +18,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
           <input
             type="radio"
             id="price-asc"
-            name="filter"
+            name="sort"
             className="cursor-pointer"
             value="price-asc"
             checked={activeFilter === "price-asc"}
@@ -42,7 +42,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
           <input
             type="radio"
             id="price-desc"
-            name="filter"
+            name="sort"
             className="cursor-pointer"
             value="price-desc"
             checked={activeFilter === "price-desc"}
@@ -66,7 +66,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
           <input
             type="radio"
             id="name-asc"
-            name="filter"
+            name="sort"
             className="cursor-pointer"
             value="name-asc"
             checked={activeFilter === "name-asc"}
@@ -90,7 +90,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
           <input
             type="radio"
             id="name-desc"
-            name="filter"
+            name="sort"
             className="cursor-pointer"
             value="price-asc"
             checked={activeFilter === "name-desc"}
@@ -112,7 +112,7 @@ export default function FilterDropdownMenu({ handleSort, setFilterType }) {
           }}
         >
           <HiOutlineTrash className="text-danger"/>
-          Hapus Filter
+          Hapus Sortir
         </div>
       </div>
     </div>

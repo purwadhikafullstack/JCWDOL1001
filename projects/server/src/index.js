@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const {errorHandler} = require("./middleware/error.handler.js");
 const { join } = require("path");
+const {  } = require("./controllers/transaction/cancelTransactionScheduler.js")
 
 const PORT = process.env.PORT || 8000;
 const path = require("path");
@@ -13,7 +14,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-     process.env.WHITELISTED_DOMAIN &&
+      process.env.WHITELISTED_DOMAIN &&
         process.env.WHITELISTED_DOMAIN.split(" "),
     ],
     exposedHeaders : "Authorization"
@@ -48,7 +49,8 @@ const RecipeRouters = require("./controllers/upload-recipe/routers.js")
 const CartRouters = require("./controllers/cart/routers.js")
 const TransactionRouters = require("./controllers/transaction/routers.js")
 const ForumRouters = require("./controllers/forum/routers.js")
-const ReportRouters = require("./controllers/report/routers.js")
+const ReportRouters = require("./controllers/report/routers.js");
+const { cancelTransactionScheduler } = require("./controllers/transaction/cancelTransactionScheduler.js");
 
 app.use("/api/auth", AuthRouters)
 app.use("/api/category",CatRouters)
@@ -85,6 +87,7 @@ app.use(errorHandler)
 
 //#endregion
 
+
 //#region CLIENT
 const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
@@ -103,3 +106,6 @@ app.listen(PORT, (err) => {
     console.log(`APP RUNNING at ${PORT} ✅`);
   }
 });
+
+cancelTransactionScheduler.start()
+

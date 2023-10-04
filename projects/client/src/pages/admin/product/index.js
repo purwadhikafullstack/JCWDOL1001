@@ -14,6 +14,7 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
+import ModalInputCustomProduct from "../custom";
 
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
@@ -208,6 +209,7 @@ export default function AdminProducts({user}) {
             isSubmitProductLoading={isSubmitProductLoading}
             isDeleteProductLoading={isDeleteProductLoading}
             setSelectedProduct={setSelectedProduct}
+            current_page={current_page}
           />
         </div>
         <div className="mt-4 flex items-center justify-center">
@@ -311,6 +313,7 @@ export default function AdminProducts({user}) {
             handleCloseModal={handleCloseModal}
           />
         )}
+
       </Modal>
     </>
   );

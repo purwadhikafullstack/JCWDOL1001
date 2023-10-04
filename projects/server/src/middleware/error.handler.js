@@ -1,5 +1,6 @@
 const SOMETHING_WENT_WRONG = "Something went wrong";
 const EMAIL_NOT_FOUND = "Email not found"
+const EMAIL_HAS_BEEN_USED = "Email was already used."
 const USER_NOT_FOUND = "User not found"
 const INCORRECT_PASSWORD = "Password is incorrect"
 const BAD_REQUEST = "Bad request"
@@ -23,12 +24,18 @@ const PRODUCT_DONT_HAVE_DEFAULT_UNIT = "Default value of this product not declar
 const INPUT_MORE_THAN_STOCK = "Stock available is less than convertion time(s)"
 const PRODUCT_HAS_CATEGORY = "The Category you want to delete has Product used it."
 const ADDRESS_NOT_FOUND = "Address not found."
+const ITEM_NOT_ENOUGH = "One or more items has less stock then what you want to buy."
 const DISCOUNT_NOT_FOUND = "Discount not found"
 const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
-const TRANSACTION_NOT_FOUND = "Transaction not found"
+
+const NO_STOCK = "Insufficient stocks for desired product"
+const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
+
+const TRANSACTION_NOT_FOUND = "Transaksi tidak ditemukan"
+const ONLY_ONCE = "This link only valid for 1 submission."
 const DATA_NOT_FOUND = "Data not found"
 const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
 const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
@@ -63,6 +70,7 @@ module.exports = {
     errorHandler,
     SOMETHING_WENT_WRONG,
     EMAIL_NOT_FOUND,
+    EMAIL_HAS_BEEN_USED,
     INCORRECT_PASSWORD,
     BAD_REQUEST,
     DEFAULT_ERROR_STATUS,
@@ -98,7 +106,11 @@ module.exports = {
     VOUCHER_CODE_EMPTY,
     VOUCHER_NEED_PRODUCT,
     VOUCHER_NEED_AMOUNT,
+    NO_STOCK,
+    PRODUCT_ALREADY_CHECKEDOUT,
+    ONLY_ONCE,
     TRANSACTION_NOT_FOUND,
+    ITEM_NOT_ENOUGH,
     DATA_NOT_FOUND,
     CANNOT_DELETE_QUESTION,
     CANNOT_DELETE_ANSWERED_QUESTION,
