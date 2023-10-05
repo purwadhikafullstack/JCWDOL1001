@@ -16,13 +16,11 @@ import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/v
 import DiscountChecker from "../../../components/Discount Checker";
 
 export default function Cart() {
-  const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
+  const {cart,products,isUpdateLoading} = useSelector(state=>{
     return{
-      address : state?.auth?.address,
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
-      isDeleteLoading : state?.cart?.isDeleteLoading,
     }
   })
   const navigate = useNavigate()
@@ -43,9 +41,6 @@ export default function Cart() {
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [trigger, setTrigger] = useState(true);
-
-  const [selectedAddress, setSelectedAddress] = useState([])
-  const [selectedShipping, setShipping] = useState([])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -135,7 +130,7 @@ export default function Cart() {
       limit: 12,
     })
   )
-  setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
+  
 },[])
 
   // useEffect(() => {
@@ -147,15 +142,8 @@ export default function Cart() {
   
   const checkOut = async () => {
     try{
-      await AddressAndShippingValidationSchema.validate({
-        "addressId" : selectedAddress.length ===0 ? "" : selectedAddress?.addressId,
-        "courierName" : selectedShipping.name
-      },{abortEarly:false})
       dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout",{ 
-        state: { addressSelected: selectedAddress, 
-          shippingSelected: selectedShipping 
-        }})
+      navigate("/checkout")
 
     }catch(error){
       const errors = {}
@@ -178,19 +166,6 @@ export default function Cart() {
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
-      <DiscountChecker/>
-      <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
-      {(error.addressId && selectedAddress.length ===0) && (
-        <div className="text-sm text-red-500 dark:text-red-400">
-          {error.addressId}
-        </div>
-      )}
-      <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
-      {(error.courierName && selectedShipping.length ===0) && (
-        <div className="text-sm text-red-500 dark:text-red-400">
-          {error.courierName}
-        </div>
-      )}
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"
@@ -369,13 +344,6 @@ export default function Cart() {
           </div>
 
           <div className="mt-4 flex items-center justify-between font-bold">
-            <p className="text-lg">Biaya Ongkir</p>
-            <p>
-              {selectedShipping.length === 0 ? "Belum Memilih Jasa Pengiriman" : `Rp.${formatNumber(selectedShipping.cost)}` }
-            </p>
-          </div>
-
-          <div className="mt-4 flex items-center justify-between font-bold">
             <p className="text-lg">Total</p>
             <p>
               Rp.{" "}
@@ -392,8 +360,7 @@ export default function Cart() {
                       // / 100;
                     return cartItem?.quantity * discountPrice;
                   })
-                  .reduce((total, price) => total + price, 0)
-              + (selectedShipping.length === 0 ? 0 : +selectedShipping.cost) )}
+                  .reduce((total, price) => total + price, 0))}
             </p>
           </div>
 

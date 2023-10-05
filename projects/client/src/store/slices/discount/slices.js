@@ -75,16 +75,19 @@ export const createDiscount = createAsyncThunk(
     }
 )
 
-export const checkerDiscount = createAsyncThunk(
+export const    checkerDiscount = createAsyncThunk(
     "discount/checkerDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            const { code } = payload
+            const { code, nominal } = payload
             
             let PARAMETER = "?"
             
             if(code){
                 PARAMETER +=`code=${code}&`
+            }
+            if(nominal){
+                PARAMETER +=`nominal=${nominal}&`
             }
 
             const { data } = await api.post("/discount/check" + encodeURI(PARAMETER))

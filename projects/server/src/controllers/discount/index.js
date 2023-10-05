@@ -2,6 +2,7 @@ const {Op} = require("sequelize")
 const { Discount, Discount_Product, Product_Detail, Product_List } = require("../../model/relation.js")
 const { DiscountInfoValidationSchema } = require("./validation.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
+const moment = require("moment")
 
 const getDiscount = async (req, res, next) => {
     try{
@@ -263,31 +264,44 @@ const deleteDiscount = async (req, res, next) =>{
 
 const checkDiscount = async (req, res, next) =>{
     try{
-        const { code, nominal, productId } = req.query
-
-        const filter = { code, nominal, productId }
+        const { code, nominal } = req.query
+        const filter = { code }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
-        if(nominal) filter.nominal = {minimalTransaction: {[Op.gte]: `${nominal}`}}
-        if(productId) filter.productId = {productId: {[Op.or]: productId}}
-
+        // if(nominal) filter.nominal = {minimalTransaction: {[Op.lte]: `${nominal}`}}
 
         const isDiscountExist = await Discount.findAll({ 
             include : {
                 model : Discount_Product,
                 attributes : ["productId"],
                 as : "productDiscount",
-                where : filter.productId
             },
             where : {
                 [Op.and]: [
                     { isDeleted : 0 },
-                    { [Op.or] :[
-                        filter.code,
-                        filter.nominal,
-                        filter.productId
-                    ] }
+                    { oneGetOne : 0 },
+                    filter.code
                 ]
             },
+        })
+
+        if(code){
+            const discount = isDiscountExist.filter((discount)=>{
+                return discount.discountCode == code
+            })
+
+            if(discount[0]?.discountExpired !== undefined && moment().isAfter(moment(discount[0].discountExpired))) throw({
+                status : middlewareErrorHandling.NOT_FOUND_STATUS,
+                message : middlewareErrorHandling.DISCOUNT_IS_EXPIRED
+            })
+            
+            if(discount[0]?.minimalTransaction !== undefined && nominal < discount[0]?.minimalTransaction) throw({
+                status : middlewareErrorHandling.NOT_FOUND_STATUS,
+                message : middlewareErrorHandling.NOT_MEET_MINIMUM_TRANSACTION
+            })
+        }
+
+        const discount = isDiscountExist.filter((discount)=>{
+            return (discount.discountExpired == null || moment() <= moment(discount.discountExpired)) && nominal >= discount.minimalTransaction
         })
         
         if(!isDiscountExist || isDiscountExist.length === 0) throw({
@@ -298,7 +312,7 @@ const checkDiscount = async (req, res, next) =>{
         res.status(200).json({
 			type : "success",
 			message : "Data berhasil dimuat",
-            data : isDiscountExist
+            data : discount
 		})
 
     }catch(error){
