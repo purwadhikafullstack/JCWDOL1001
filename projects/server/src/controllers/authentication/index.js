@@ -353,10 +353,6 @@ const changeProfilePicture = async (req, res, next) => {
             });
         } 
 
-        if(userExists?.dataValues?.profilePicture){
-            cloudinary.v2.api.delete_resources([`${userExists?.dataValues?.profilePicture}`],{type : `upload`,resource_type : 'image'});
-        }
-
         await User_Profile?.update({profilePicture : req?.file?.filename},{where : {userId : userId}});
         res.status(200).json({type : "success", message : "Profile picture uploaded.", imageURL : req?.file?.filename});
 

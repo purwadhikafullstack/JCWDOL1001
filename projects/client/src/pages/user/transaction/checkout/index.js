@@ -13,10 +13,10 @@ export default function CheckoutPage(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0;
-    const [shipping, setShipping] = useState(null);
     const location = useLocation();
     let address = location.state?.addressSelected;
-    let shippings = location.state?.shippingSelected;
+    
+    let shipping = location.state?.shippingSelected?.cost;
     const {cart} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
@@ -26,10 +26,6 @@ export default function CheckoutPage(){
     useEffect(()=>{
         dispatch(getCheckoutProducts())
     },[])
-
-    const ShippingCost = () => {
-        setShipping(shippings.cost)
-    }
 
     const PaymentMethod = () => {
                 return(
@@ -76,7 +72,7 @@ export default function CheckoutPage(){
                             return(<Item
                                 key={index}
                                 productName={cart.cartList.productName}
-                                productPrice={cart.cartList.productPrice}
+                                productPrice={cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice : cart.cartList.productPrice}
                                 productPicture={cart.cartList.productPicture}
                                 quantity={cart.quantity}
                             />)
@@ -88,7 +84,7 @@ export default function CheckoutPage(){
                     <div>
                         <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Shipping</h3>
                         <div className="w-full bg-slate-200 flex flex-row items-center p-4">
-                            { shipping && 
+                            {/*
                             <>
                                 <div className="flex-col">
                                     <h1 className=" text-3xl font-bold border-b-2 border-black">Contact Name : {address.contactName}</h1>
@@ -99,10 +95,9 @@ export default function CheckoutPage(){
                                     <h4 className="font-bold text-xl">Shipping cost : {formatNumber(shipping)}</h4>
                                 </div>
                             </>
-                            }
+                    */}
                             
                         </div>
-                        <Button isButton isPrimary title={`Get shipping cost`} className="my-4" onClick={ShippingCost}/>
                     </div>
                     <div className="mb-5 pb-2">
                         <h3 className="text-2xl font-semibold w-full">Payment Method</h3>

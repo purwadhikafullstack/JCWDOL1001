@@ -10,6 +10,7 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
+  Discount_Product,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
@@ -309,6 +310,10 @@ const getCheckoutProducts = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,
