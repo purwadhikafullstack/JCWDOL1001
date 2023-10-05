@@ -12,6 +12,7 @@ const {
   Transaction_Status,
   Discount_Transaction,
   Discount,
+  Discount_Product,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
@@ -23,6 +24,14 @@ const db = require("../../model/index.js")
 async function cancelExpiredTransactions() {
   try {
     const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
+
+    const discountExpiredList = await Discount.findAll({where : {discountExpired : {[Op.lte]:currentTime}}})
+    
+    const expiredDiscountId = discountExpiredList.map((list)=>{return list.discountId})
+    
+    await Discount.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
+    
+    await Discount_Product.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
 
     const transactionsToCancel = await Transaction_List.findAll({
       include:[

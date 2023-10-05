@@ -55,7 +55,7 @@ const setProductUnits = async( req, res, next ) => {
     const productUnitName = req?.body?.unitName ? req?.body?.unitName : isInUnitProductList.name
 
     if(!isInUnitProductList){
-      const isUnitNameExist = await Product_Unit.findOne({where : {name : req.body.unitName}})
+      const isUnitNameExist = await Product_Unit.findOne({where : {name : req.body.unitName,isSecondary : req.body.isSecondary}})
       
       if(isUnitNameExist) throw ({
           status : middlewareErrorHandling.BAD_REQUEST_STATUS, 

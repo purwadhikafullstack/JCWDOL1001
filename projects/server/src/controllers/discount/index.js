@@ -105,6 +105,13 @@ const createDiscount = async (req, res, next) => {
                         {isDeleted : 0},
                         {productId : {[Op.or] :listProductId}}
                     ]
+                },
+                include:{
+                    model: Discount,
+                    where: { 
+                        isDeleted: 0, 
+                        discountExpired :{[Op.gte] : moment()}
+                    }
                 }
             })
 

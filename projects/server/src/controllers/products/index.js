@@ -18,6 +18,7 @@ const {
 } = require("./validation.js");
 const { ValidationError } = require("yup");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js");
+const moment = require("moment")
 
 const getProducts = async (req, res, next) => {
   try {
@@ -61,11 +62,18 @@ const getProducts = async (req, res, next) => {
           model: Discount_Product,
           attributes: { exclude: ["discountProductId"] },
           as: "discountProducts",
+          where:{isDeleted:0},
           include: {
             model: Discount,
-            where: { isDeleted: 0 },
+            where: { isDeleted: 0, 
+              [Op.or] :[
+                {discountExpired :{[Op.gte] : moment()}},
+                {discountExpired :{[Op.is] : null}}
+              ]
+            },
             required: !!promo,
           },
+          required: false,
         },
       ],
       where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
