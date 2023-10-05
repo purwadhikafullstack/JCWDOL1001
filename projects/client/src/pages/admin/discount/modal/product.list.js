@@ -140,7 +140,7 @@ export default function ProductList({
                         <div className={title === "Tambah Baru" ? "text-gray-500 mt-2" :""}>{title === "Detail Diskon"  ? "" : "Product yang tidak tersedia sudah memiliki potongan"}</div>
 
                     <div className="my-4 max-h-[55vh] divide-y-2 text- overflow-auto">
-                        {products.filter((product)=>{return title === "Detail Diskon" ? product : product.discountProducts.discount !==null }).map((product) => (
+                        {products.filter((product)=>{return title === "Detail Diskon" ? product : product.discountProducts.length === 0 }).map((product) => (
                         <div
                             key={product.productId}
                             className="group mr-2 flex justify-between"

@@ -98,14 +98,14 @@ function ReportPage () {
     const onButtonFilter = () => {
         dispatch(
             getReport({
-                statusId : 7,
+                statusId : 6,
                 startFrom : startDateRef.current.value,
                 endFrom : endDateRef.current.value
             })
         )
         dispatch(
             getTransactionList({
-                statusId : 7,
+                statusId : 6,
                 startFrom : startDateRef.current.value,
                 endFrom : endDateRef.current.value,
                 sortDate: sortingDate,
@@ -145,9 +145,9 @@ function ReportPage () {
         nameRef.current.value = ""
         setSortingDate("")
         setSortingPrice("")
-        dispatch(getReport({statusId : 7}))
+        dispatch(getReport({statusId : 6}))
         dispatch(getTransactionList({
-            statusId : 7,
+            statusId : 6,
             startFrom : startDateRef.current.value,
             endFrom : endDateRef.current.value,
             sortDate: "",
@@ -160,13 +160,13 @@ function ReportPage () {
     const [page, setPage] = useState(1);
     
     useEffect(() => {
-        dispatch( getReport({statusId : 7, page : page }) )
+        dispatch( getReport({statusId : 6, page : page }) )
     }, [page])
 
     useEffect(() => {
-        dispatch(getReport({statusId : 7}))
+        dispatch(getReport({statusId : 6}))
         dispatch(getTransactionList({
-            statusId : 7,
+            statusId : 6,
             startFrom : startDateRef.current.value,
             endFrom : endDateRef.current.value,
             sortDate: sortingDate,
@@ -191,7 +191,7 @@ function ReportPage () {
                         <Button 
                             className="absolute top-[16%] left-[31%] -translate-y-1/2" 
                             onClick={()=>{
-                                dispatch(getTransactionList({statusId : 7,filterName : nameRef?.current?.value}))
+                                dispatch(getTransactionList({statusId : 6,filterName : nameRef?.current?.value}))
                                 setFilter(true)}}
                         >
                             <HiMagnifyingGlass className="text-2xl text-primary" />
