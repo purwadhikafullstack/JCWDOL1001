@@ -32,6 +32,7 @@ const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
 const DISCOUNT_IS_EXPIRED  ="Voucher is expired"
 const NOT_MEET_MINIMUM_TRANSACTION  ="Not meet the minimum transaction"
+const NOT_NEED_CODE  ="Discount product can not have discount code"
 
 const NO_STOCK = "Insufficient stocks for desired product"
 const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
@@ -118,5 +119,6 @@ module.exports = {
     CANNOT_DELETE_ANSWERED_QUESTION,
     PRODUCT_ALREADY_HAVE_DISCOUNT,
     DISCOUNT_IS_EXPIRED,
-    NOT_MEET_MINIMUM_TRANSACTION
+    NOT_MEET_MINIMUM_TRANSACTION,
+    NOT_NEED_CODE
 }

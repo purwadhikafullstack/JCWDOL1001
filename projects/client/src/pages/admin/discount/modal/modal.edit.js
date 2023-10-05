@@ -55,6 +55,18 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     message:"Buy One Get One must have product"
                 }]}) 
             }
+            if((codeRef?.current?.value||selectedId?.discountCode) && selectedProducts.length >= 0 ){
+                throw({inner : [{
+                    path : "discountCode",
+                    message:"Discount product not need discount code"
+                }]}) 
+            }
+            if((!amountRef?.current?.value||!selectedId?.discountAmount) && selectedProducts.length >= 0 ){
+                throw({inner : [{
+                    path : "discountAmount",
+                    message:"Discount product need amount"
+                }]}) 
+            }
             if((minimumRef?.current?.value ) && selectedProducts.length !== 0 ){
                 throw({ inner : [{
                     path : "product",

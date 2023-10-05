@@ -63,7 +63,7 @@ const createDiscount = async (req, res, next) => {
         await DiscountInfoValidationSchema.validate(req.body.data)
 
         const {discountCode,discountAmount,oneGetOne,minimalTransaction,isPercentage,} = req.body.data
-        
+               
         if( ( ( (discountAmount === "" || discountAmount == "0" ) && (minimalTransaction === "" || minimalTransaction =="0") ) || oneGetOne === 1 )  && discountCode === "" ) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
@@ -87,6 +87,16 @@ const createDiscount = async (req, res, next) => {
         })
 
         const listProductId = req.body.products.map(({productId})=>{return productId})
+
+        if(discountCode && listProductId.length > 0) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.NOT_NEED_CODE
+        })
+
+        if(!discountAmount && listProductId.length > 0) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
+        })
 
         if (listProductId.length > 0){ 
             const productBindWithOtherDiscount = await Discount_Product.findAll({
@@ -162,6 +172,16 @@ const updateDiscount = async (req, res, next) =>{
         })
 
         const listProductId = req.body.products.map(({productId})=>{return productId})
+
+        if(discountCode && listProductId.length > 0) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.NOT_NEED_CODE
+        })
+
+        if(!discountAmount && listProductId.length > 0) throw({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
+        })
 
         if (listProductId.length > 0){ 
             const productBindWithOtherDiscount = await Discount_Product.findAll({
@@ -267,7 +287,6 @@ const checkDiscount = async (req, res, next) =>{
         const { code, nominal } = req.query
         const filter = { code }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
-        // if(nominal) filter.nominal = {minimalTransaction: {[Op.lte]: `${nominal}`}}
 
         const isDiscountExist = await Discount.findAll({ 
             include : {
@@ -279,6 +298,7 @@ const checkDiscount = async (req, res, next) =>{
                 [Op.and]: [
                     { isDeleted : 0 },
                     { oneGetOne : 0 },
+                    { discountCode : {[Op.not]: null} },
                     filter.code
                 ]
             },
