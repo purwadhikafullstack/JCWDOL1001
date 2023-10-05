@@ -27,6 +27,7 @@ const createCloudinaryStorage = (directory, id=1) => new CloudinaryStorage({
     params: {
         folder: directory,
         public_id: (req, file) => {
+            console.log(directory)
             const type = directory.split("/")[1]
             if(type === "Profiles")
             return `IMG-${req?.user?.userId}`

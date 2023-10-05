@@ -1,6 +1,7 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
+  const moment = require("moment")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -429,7 +430,9 @@ const getUser = async( req, res, next ) => {
         transport : transportCost,
         total : subtotal + transportCost,
         statusId : 1,
-        addressId : address?.addressId
+        addressId : address?.addressId,
+        expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
+      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
       }
       const listResult = await Transaction_List.create(translist)
 

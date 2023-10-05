@@ -810,7 +810,10 @@ const cancelTransaction = async (req, res, next) => {
                 //brrti kepake 9 butir
                 //cth cmn perlu 8, brrti kepake 3 main, sisa 1
                 const totalIngredientQuantity = quantity * itemRecipe?.dataValues?.quantity
-
+                //stock obat racik : 1
+                //ingredient : 2 , convertion 2
+                //sec ingredient > convertion
+                //
                 //seandainya totalIngredientQuantity < main unit convertion?
                 if(totalIngredientQuantity < mainUnit?.dataValues?.convertion){
                 //cek dlu apakah totalIngredientQuantity + secUnit.quantity >= convertion

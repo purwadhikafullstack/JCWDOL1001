@@ -202,7 +202,7 @@ const answerQuestion = async (req, res, next) => {
 
 const getUnansweredQuestions = async (req, res) => {
     try {
-        const { page } = req.query;
+        const { page, sortDate, filterQuestion } = req.query;
     
         const currentPage = page ? parseInt(page) : 1;
 
@@ -211,21 +211,34 @@ const getUnansweredQuestions = async (req, res) => {
             limit : 10,
         }
 
+        const filter = {}
+        const sort = [[`answer`,'ASC']]
+
+        if(req.user.roleId !== 1) {
+            filter.userId = {"userId" : req.user.userId}
+            sort.push([`updatedAt`, sortDate ? sortDate : "DESC"])
+        }else {
+            sort.push([`createdAt`,sortDate ? sortDate : "ASC"])
+        }
+
+        if(filterQuestion) filter.question = {"question" : {[Op.like]: `%${filterQuestion}%`}}
+        
         const forums = await Forum.findAll({...options,
             where : {
                 [Op.and] :
                 [
-                    {answer:{ [Op.is] : null }},
+                    filter.userId,
                     {"isDeleted" : 0},
+                    filter.question
                 ]
             },
             include : {
-                model :User_Profile
+                model :User_Profile,
             },
-            order : [[`updatedAt`, "DESC"]]
+            order : sort
         })
 
-        const total = await Forum.count({where : {isDeleted:0,answer:{[Op.is]:null}}})
+        const total = req.user.roleId === 1 ? await Forum.count({where : {isDeleted:0}}) : await Forum.count({where : {isDeleted:0,userId : req.user.userId}})
 
         const pages = Math.ceil(total/options.limit)
 
@@ -236,7 +249,7 @@ const getUnansweredQuestions = async (req, res) => {
             totalPage : pages,
             totalQuestions : total,
             productLimit : options.limit,
-			data : forums
+			data : forums,
 		});
     }catch (error) {
         next(error)

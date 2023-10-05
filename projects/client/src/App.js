@@ -28,6 +28,7 @@ import ReportPage from "./pages/admin/report";
 import QnAPage from "./pages/qna";
 import ResetPassword from "./pages/reset-password";
 import StockHistory from "./pages/admin/product/history";
+import QNA from "./pages/admin/qna";
 
 function App() {
   const { pathname } = useLocation();
@@ -107,6 +108,7 @@ function App() {
               <Route path="/admin/custom" element={<CustomOrder />}/>
               <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
               <Route path="/admin/report" element={<ReportPage />}/>
+              <Route path="/admin/qna" element={<QNA/>}/>
             </>
           )}
 
