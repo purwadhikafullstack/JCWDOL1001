@@ -119,6 +119,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
           )}
+          
           <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     

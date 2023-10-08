@@ -41,25 +41,20 @@ export default function UserNavMenu({
   }
 
   const onClickKeluar = () => {
-    dispatch(logout())
-    setIsLogin(false)
-    setIsMenuVisible(false)
+    dispatch(logout()).finally(() => {
+      setIsLogin(false)
+      setIsMenuVisible(false)
+      navigate("/");
+    });
+    
   }
 
   return (
-    <div className={`nav-menu-wrapper justify-end  ${isLogin ? "lg:w-1/3" :""}`} >
-      <div className={`nav-menu mr-8 w-full ${ isLogin ? "border-primary/70 pr-8 lg:border-r-[1px]" :"" }`} >
+    <div className={`nav-menu-wrapper justify-end `} >
+      <div className={`nav-menu w-full ${ isLogin ? "border-primary/70 pr-8 lg:border-r-[1px]  mr-8" :"" }`} >
         {
           !isLogin ? 
             <div className="flex w-full gap-4 lg:w-fit">
-              <Button
-                isLink
-                path="/qna"
-                className={`flex flex-col items-center pr-5 gap-1 text-xs ${ pathname === "/qna" ? "text-primary" : "text-slate-500" } `}
-              >
-                <HiMiniChatBubbleOvalLeftEllipsis className="text-2xl"/>
-                QnA
-              </Button>
               <Button
                 isButton
                 isPrimaryOutline
@@ -86,8 +81,6 @@ export default function UserNavMenu({
         isLogin ? 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="relative flex gap-4">
-              
-
               <Button isLink path="/cart" className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
                 {total > 0 &&
@@ -104,9 +97,9 @@ export default function UserNavMenu({
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
               >
-              <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
+              <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
                 <img
-                  src=""
+                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -142,7 +135,7 @@ export default function UserNavMenu({
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
                             <div className="h-12 w-12 overflow-hidden rounded-full">
                               <img
-                                src={user.profile.profilePicture}
+                                src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
                                 alt=""
                                 className="h-full w-full object-cover"
                               />
@@ -179,9 +172,8 @@ export default function UserNavMenu({
                             className="hover:text-primary"
                           />
                           <Button
-                            isLink
+                            className="block w-full text-dark duration-200 hover:text-primary lg:w-[52px] lg:group-hover:w-full"
                             title="Keluar"
-                            className="hover:text-primary"
                             onClick={onClickKeluar}
                           />
                           <Button

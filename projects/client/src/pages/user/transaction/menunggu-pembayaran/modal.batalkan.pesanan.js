@@ -21,9 +21,9 @@ export default function ModalBatalkanPesanan({
   const [chooseReasonRef, setChooseReasonRef] = useState(null);
   const [inputReasonRef, setInputReasonRef] = useState(null);
   const reasons = [
-    { title: "Saya ingin ganti alamat" },
-    { title: "Saya ingin mengubah pesanan" },
-    { title: "Saya ingin mengubah kode voucher" },
+    { title: "Ingin ganti alamat" },
+    { title: "Ingin mengubah pesanan" },
+    { title: "Ingin mengubah kode voucher" },
     { title: "Lainnya" },
   ];
 

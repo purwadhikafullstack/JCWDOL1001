@@ -130,7 +130,7 @@ export default function QnAPage() {
                 setSelectedQuestion(list)
               }}
             >
-              <div className="nav-profile-img hidden aspect-square w-16 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
+              <div className="nav-profile-img hidden aspect-square w-16 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
                 <img className="h-full w-full object-cover"
                   src={process.env.REACT_APP_CLOUDINARY_BASE_URL + list.user_profile.profilePicture}
                 />

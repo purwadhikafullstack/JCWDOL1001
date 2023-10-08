@@ -83,9 +83,8 @@ const getProducts = async (req, res, next) => {
             },
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
-        // : promo ? 
-        //   await Discount_Product?.count()
-        // : promo ? 
+        : promo ? 
+          await Discount_Product?.count()
         :
           await Product_List?.count({ 
             include:{

@@ -12,7 +12,8 @@ import PesananDikirim from "./pesanan-dikirim";
 import PesananDibatalkan from "./pesanan-dibatalkan";
 import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
-import { HiMinus, HiOutlineTrash, HiXMark } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiMinus, HiOutlineTrash, HiXMark } from "react-icons/hi2";
+import Input from "../../../components/Input";
 
 export default function Transaction({
   ongoingTransactions
@@ -31,6 +32,7 @@ export default function Transaction({
 
   const startDateRef = useRef(null)
   const endDateRef = useRef(null)
+  const searchedInvoiceRef = useRef(null)
   
   // false = DESC, true = ASC
   const [sortDate, setSortDate] = useState(false)
@@ -41,14 +43,15 @@ export default function Transaction({
   const [isEndDateChanged, setIsEndDateChanged] = useState(false)
   const [showClearButton, setShowClearButton] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
+  const [searchedInvoice, setSearchedInvoice] = useState(null)
 
   const handleSetDate = async () => {
     try {
       if (!showClearButton) {
         await setDateValidationSchema.validate({
-          startDate: startDateRef.current?.value, 
-          endDate: endDateRef.current?.value, 
-        })
+          startDate: startDateRef.current?.value ? startDateRef.current?.value : null, 
+          endDate: endDateRef.current?.value ? endDateRef.current?.value : null, 
+        }, {abortEarly : false})
         setShowClearButton(true);
         setPage(1)
   
@@ -57,7 +60,8 @@ export default function Transaction({
             statusId : activeTab,
             startFrom : startDateRef.current?.value,
             endFrom : endDateRef.current?.value,
-            sortDate : sortDate ? "ASC" : "DESC"
+            sortDate : sortDate ? "ASC" : "DESC",
+            invoice: searchedInvoice
           })
         )
       }
@@ -69,16 +73,26 @@ export default function Transaction({
         setSortDate(false)
         setShowClearButton(false)
         setPage(1)
+        setIsStartDateChanged(false)
+        setIsEndDateChanged(false)
 
         dispatch(getTransactionList({
             statusId : activeTab,
             startFrom : startDateRef.current.value,
             endFrom : endDateRef.current.value,
-            sortDate : sortDate ? "ASC" : "DESC"
+            sortDate : sortDate ? "ASC" : "DESC",
+            invoice: searchedInvoice
         }))
       }
     } catch (error) {
-      toast.error("Tanggal akhir tidak boleh kurang dari tanggal awal")
+      if(error.inner.length > 1) {
+        toast.error("Tanggal awal dan tanggal akhir harus diisi")
+      } else {
+        error.inner.forEach((innerError) => {
+          toast.error(innerError.message);
+        });
+      }
+
       setIsToastVisible(true);
 
       setTimeout(() => {
@@ -87,20 +101,37 @@ export default function Transaction({
     }
   }
 
-  useEffect(() => {
+  const clearSearch = () => {
+    setSearchedInvoice(null)
+    setPage(1)
+    searchedInvoiceRef.current.value = "";
+  }
+
+  const resetFilter = () => {
+    setSortDate(false)
+    setShowClearButton(false)
+    setPage(1)
+    setIsStartDateChanged(false)
+    setIsEndDateChanged(false)
+    setSearchedInvoice(null)
     startDateRef.current.value = "";
     endDateRef.current.value = "";
+    searchedInvoiceRef.current.value = "";
+  }
 
-    setShowClearButton(false)
-
+  useEffect(() => {
     dispatch(getTransactionList({ 
       statusId : activeTab,
       startFrom : startDateRef.current?.value,
       endFrom : endDateRef.current?.value,
       page,
-      sortDate : sortDate ? "ASC" : "DESC"
+      sortDate : sortDate ? "ASC" : "DESC",
+      invoice: searchedInvoice
     }));
-  }, [page, activeTab, sortDate]);
+
+    if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
+
+  }, [page, activeTab, sortDate, searchedInvoice]);
   
   useEffect(() => {
     dispatch(getTransactionStatus());
@@ -108,11 +139,17 @@ export default function Transaction({
   
   useEffect(()=>{
     setPage(1)
-    dispatch(getOngoingTransactions())
-  }, [activeTab, sortDate])
-
+  }, [sortDate, searchedInvoice])
+  
   useEffect(()=>{
+    if (startDateRef.current && endDateRef.current) {  
+      startDateRef.current.value = "";
+      endDateRef.current.value = "";
+    }
+    
+    dispatch(getOngoingTransactions())
     setSortDate(false)
+    setShowClearButton(false)
   }, [activeTab])
 
   const tabContent = [
@@ -127,7 +164,7 @@ export default function Transaction({
 
   const RenderTabContent = tabContent.find(content => content.tabId === activeTab)?.component
   const statusDesc = transactionStatus?.find(status => status.statusId === activeTab)?.statusDesc
-
+  const transactionData = ongoingTransactions?.transactions.find((transaction) => transaction.statusId === activeTab)?.total;
 
   return (
     <>
@@ -158,55 +195,82 @@ export default function Transaction({
         </div>
 
         <div>
-          <div className="flex flex-col justify-between mt-4">
+          <div className="flex flex-col justify-between border-b py-2 border-primary/30">
             <h3 className="subtitle">{statusDesc}</h3>
 
             <div className="flex flex-col md:flex-row md:justify-between gap-2">
-              <div className="flex gap-2 items-center">
-                <input
-                  disabled={showClearButton}
-                  name="start" 
-                  type="date" 
-                  ref={startDateRef}
-                  onChange={() => setIsStartDateChanged(true)}
-                  className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${startDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
-                />
+              {/* {(transactionData > 0 || transaction?.length > 0) && */}
+              <>
+                <form className="relative w-full md:w-1/3" onSubmit={(e) => {
+                    e.preventDefault()
+                    setSearchedInvoice(searchedInvoiceRef?.current.value)
+                  }}
+                >
+                  <Input type="text" placeholder="Cari nomor invoice disini" ref={searchedInvoiceRef} isDisabled={transaction.length === 0}/>
+                  <Button
+                      className="absolute top-1/2 right-0 -translate-y-1/2 p-2" 
+                      type="submit" 
+                  >
+                    <HiMagnifyingGlass className="text-2xl text-primary" />
+                  </Button>
 
-              <HiMinus/>
+                  {searchedInvoice && 
+                    <Button
+                      className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
+                      onClick={clearSearch}
+                    >
+                      <HiXMark className="text-2xl text-primary" />
+                    </Button>
+                  } 
+                </form>
 
-                <input
-                  disabled={showClearButton}
-                  name="end"
-                  type="date" 
-                  ref={endDateRef}
-                  onChange={() => setIsEndDateChanged(true)}
-                  className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
-                />
+                <div className="flex gap-2 items-center">
+                  <input
+                    disabled={showClearButton || transaction.length === 0}
+                    name="start" 
+                    type="date" 
+                    ref={startDateRef}
+                    onChange={() => setIsStartDateChanged(true)}
+                    className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${startDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
+                  />
 
-                <div className="group relative">
+                <HiMinus/>
+
+                  <input
+                    disabled={showClearButton || transaction.length === 0}
+                    name="end"
+                    type="date" 
+                    ref={endDateRef}
+                    onChange={() => setIsEndDateChanged(true)}
+                    className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
+                  />
+
                   <Button
                     isButton
                     isPrimary={!showClearButton}
-                    isDangerOutline={showClearButton}
+                    isDanger={showClearButton}
                     onClick={handleSetDate}
-                    title={showClearButton ? "Hapus" : "Atur Tanggal"}
+                    title={showClearButton ? "Hapus" : "Sortir"}
                     isDisabled={!isStartDateChanged || !isEndDateChanged || isToastVisible}
                   />
-                </div>
-              </div>
 
-              {transaction.length > 0 &&
-                <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal</span>
                   <Button 
                     isButton
                     isPrimary
+                    isDisabled={transaction.length === 0}
                     className={`relative`}
                     title={sortDate ? "Terlama" : "Terbaru"}
                     onClick={() => setSortDate(prevState => !prevState)}
                     />
                 </div>
-              }
+
+                <Button 
+                  className={`text-danger font-semibold text-sm w-fit self-center py-2`}
+                  title={"Reset Filter"}
+                  onClick={resetFilter}
+                  />
+              </>
+              {/* } */}
             </div>
           </div>
 

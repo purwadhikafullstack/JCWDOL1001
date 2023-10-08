@@ -31,6 +31,9 @@ export default function InputImage({
       return;
     }
     setFile(selectedFile);
+
+    if(dataImage) setDataImage(selectedFile);
+
     if(setError){
       setError("")
     }
@@ -77,7 +80,7 @@ export default function InputImage({
         {previewImage || dataImage ? (
           <>
             <img 
-              alt=""
+              alt="Gambar tidak ditemukan"
               src={
                 previewImage ||
                 process.env.REACT_APP_CLOUDINARY_BASE_URL + dataImage

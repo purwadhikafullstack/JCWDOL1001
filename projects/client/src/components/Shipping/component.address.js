@@ -30,11 +30,14 @@ export default function ShippingAddress({
         handleCloseModal()
     }
     return (
-        <div>
+        <div className="flex flex-col md:flex-row gap-2 w-fit md:items-center">
+            <p>Dikirim ke : </p>
             <Button
+                isButton
+                isPrimaryOutline
                 onClick={()=>{handleShowModal("Daftar Alamat")}}
             >
-                Dikirim ke : {selectedAddress?.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
+                {selectedAddress?.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
             </Button>
 
             <Modal

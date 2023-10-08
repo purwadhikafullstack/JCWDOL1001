@@ -63,7 +63,7 @@ export default function ShippingCost({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     onChange={handleChangeCourier}
                 >
-                    <option disabled={true} selected={true}>Choose Courier</option>
+                    <option disabled={true} selected={true}>Pilih Kurir</option>
                     <option value="jne">JNE</option>
                     <option value="pos">POS INDONESIA</option>
                     <option value="tiki">TIKI</option>
@@ -72,7 +72,7 @@ export default function ShippingCost({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     onChange={handleChangeCourierService}
                 >
-                    <option disabled={true} selected={selectedCourier.cost === ''}>Choose Service</option>
+                    <option disabled={true} selected={selectedCourier.cost === ''}>Pilih Layanan</option>
                     {shippingCost.map((cost) => (
                         <option 
                             value={cost?.cost[0]?.value}

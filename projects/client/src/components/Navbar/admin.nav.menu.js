@@ -4,72 +4,31 @@ import Button from "../Button";
 import { logout } from "../../store/slices/auth/slices";
 import {
   HiBanknotes,
+  HiClipboardDocumentCheck,
   HiClipboardDocumentList,
   HiMiniBars3,
   HiMiniChatBubbleOvalLeftEllipsis,
   HiSquares2X2,
   HiXMark,
 } from "react-icons/hi2";
-import {GoChecklist} from "react-icons/go"
 import { BiSolidDiscount } from "react-icons/bi";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function AdminNavMenu({
   isSidebarActive,
   setIsSidebarActive,
   ongoingTransactions,
 }) {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
 
   const onClickLogOut = () => {
-    dispatch(logout());
+    dispatch(logout()).finally(() => {
+        navigate("/");
+      });
   };
 
   const { pathname } = useLocation();
-
-
-    // const menu = [
-    //     {
-    //         title:"Products",
-    //         path:"/admin/products",
-    //         icon: <HiSquares2X2 className="h-7 w-7 " />
-    //     },
-    //     {
-    //         title : "Custom Order",
-    //         path : "/admin/custom",
-    //         icon : <GoChecklist className="h-7 w-7"/>
-    //     },
-    //     {
-    //         title:"Categories",
-    //         path:"/admin/categories",
-    //         icon: <FaList className="h-7 w-7 " />
-    //     },
-    //     {
-    //         title:"Transaction",
-    //         path:"/admin/transaction",
-    //         icon: <HiBanknotes className="h-7 w-7 " />
-    //     },
-    //     {
-    //         title:"Discount",
-    //         path:"/admin/discount",
-    //         icon: <BiSolidDiscount className="h-7 w-7 " />
-    //     },
-    //     {
-    //         title:"QnA",
-    //         path:"/admin/qna",
-    //         icon: <HiMiniChatBubbleOvalLeftEllipsis className="h-7 w-7 " />
-    //     },
-    //     {
-    //         title:"Report",
-    //         path:"/admin/report",
-    //         icon: <HiClipboardDocumentList className="h-7 w-7 " />
-    //     },
-    // ]
-    // return (
-    //     <>
-        
-    //     <div
-    //     className={group mt-16 fixed top-0 h-[200vh] bg-slate-100 overflow-hidden border border-gray-300/40 py-16 duration-300  shadow-xl lg:left-0 lg:w-[calc(5rem)] lg:hover:w-64
 
   const menu = [
     {
@@ -81,7 +40,7 @@ export default function AdminNavMenu({
     {
       title : "Pesanan Resep",
       path : "/admin/custom",
-      icon : <GoChecklist className="h-7 w-7"/>
+      icon : <HiClipboardDocumentList className="h-7 w-7"/>
   },
     {
       title: "Kategori",
@@ -111,13 +70,13 @@ export default function AdminNavMenu({
       title: "Laporan",
       path: "/admin/report",
       notification: null,
-      icon: <HiClipboardDocumentList className="h-7 w-7 " />,
+      icon: <HiClipboardDocumentCheck className="h-7 w-7 " />,
     },
   ];
   return (
     <>
       <div
-        className={`group fixed top-0 mt-16 h-[200vh] overflow-hidden border border-gray-300/40 bg-slate-100 py-16 shadow-xl  duration-300 lg:left-0 lg:w-[calc(5rem)] lg:hover:w-64
+        className={`group fixed top-0 mt-16 h-[200vh] overflow-hidden border border-gray-300/40 bg-slate-100 py-10 shadow-xl  duration-300 lg:left-0 lg:w-[calc(5rem)] lg:hover:w-64
         ${isSidebarActive ? "left-0 w-full" : "-left-full"}
         `}
       >

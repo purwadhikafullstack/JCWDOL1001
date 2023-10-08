@@ -31,7 +31,7 @@ export default function TableProducts({
           <th className="p-3">Harga</th>
           <th className="p-3">Stok</th>
           <th className="p-3">Unit</th>
-          <th className="p-3">Gambar</th>
+          {/* <th className="p-3">Gambar</th> */}
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -70,7 +70,7 @@ export default function TableProducts({
               <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
               <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
               <td className="p-3">{product?.productUnits[0]?.name}</td>
-              <td className="p-3">
+              {/* <td className="p-3">
                 <div className="aspect-[4/3] w-10">
                   <img
                     src={
@@ -81,7 +81,7 @@ export default function TableProducts({
                     className="h-full w-full object-cover"
                   />
                 </div>
-              </td>
+              </td> */}
 
               <td className="p-3">
                 <div className="flex gap-3">

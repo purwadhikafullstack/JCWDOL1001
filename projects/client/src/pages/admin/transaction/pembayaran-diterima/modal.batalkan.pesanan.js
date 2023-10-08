@@ -2,10 +2,10 @@ import { useState } from "react";
 import Input from "../../../../components/Input";
 import Button from "../../../../components/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { rejectPayment } from "../../../../store/slices/transaction/slices";
+import { cancelTransaction } from "../../../../store/slices/transaction/slices";
 import Message from "../../../../components/Message";
 
-export default function ModalTolakPembayaran({
+export default function ModalBatalkanPesanan({
   handleShowModal,
   handleCloseModal,
   selectedTransaction,
@@ -22,7 +22,10 @@ export default function ModalTolakPembayaran({
   const [chooseReasonRef, setChooseReasonRef] = useState(null);
   const [inputReasonRef, setInputReasonRef] = useState(null);
   const reasons = [
-    { title: "Pembayaran tidak sesuai" },
+    { title: "Produk tidak tersedia" },
+    { title: "Pembayaran tidak tesuai" },
+    { title: "Alamat tidak ditemukan" },
+    { title: "Lainnya" },
   ];
 
   const chooseReason = (e) => {
@@ -39,7 +42,7 @@ export default function ModalTolakPembayaran({
 
   const handleCancelOrder = () =>
     dispatch(
-      rejectPayment({
+      cancelTransaction({
         transactionId: selectedTransaction.transactionId,
         message: inputReasonRef ? inputReasonRef : chooseReasonRef,
       })
@@ -49,12 +52,12 @@ export default function ModalTolakPembayaran({
     successCancelTransaction ? 
     <Message
       type={`success`} 
-      message={`Pembayaran berhasil ditolak!`} 
-      handleCloseModal={() => handleCloseModal(1)}
+      message={`Pesanan berhasil dibatalkan!`} 
+      handleCloseModal={() => handleCloseModal(7)}
     />
     :
     <div>
-      <p className="font-semibold">Pilih alasan penolakan:</p>
+      <p className="font-semibold">Pilih alasan pembatalan:</p>
 
       <div className="mt-2 flex flex-col gap-2">
         {reasons.map((reason, index) => (
@@ -100,10 +103,10 @@ export default function ModalTolakPembayaran({
         <Button
           isButton
           isLoading={isUpdateOngoingTransactionLoading}
-          isWarning={chooseReasonRef}
+          isDanger={chooseReasonRef}
           isSecondary={!chooseReasonRef}
           isDisabled={!chooseReasonRef}
-          title={`Tolak Pembayaran`}
+          title={`Batalkan Transaksi`}
           onClick={handleCancelOrder}
         />
       </div>

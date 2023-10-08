@@ -317,9 +317,14 @@ export default function ModalInputProduct({
 
         <div className={`${!confirmAdd ? "hidden" : null}`}>
           {productData ? (
+            <>
             <p className="modal-text">
               Apa kamu yakin ingin mengubah produk ini?
             </p>
+            {(!dataImage) && 
+              <p className="text-sm text-danger">Kamu tidak memilih gambar baru dan akan tetap menggunakan gambar produk sebelumnya</p>
+            }
+            </>
           ) : (
             <p className="modal-text">
               Apa kamu yakin ingin menambahkan produk{" "}
