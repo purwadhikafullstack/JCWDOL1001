@@ -253,3 +253,16 @@ export const resetPass= createAsyncThunk(
         }
     }
 )
+
+export const getProfile = createAsyncThunk(
+    "auth/user/getProfile",
+    async(payload, {rejectWithValue}) =>{
+        try{
+            const data = await api.get("auth/profile");
+            return data;
+        }catch(error){
+            toast.error(error.response?.data?.message)
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)

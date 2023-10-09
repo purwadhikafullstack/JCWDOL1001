@@ -1,15 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { changeProfileData, changeProfilePicture } from "../../../store/slices/auth/slices";
+import { changeProfileData, changeProfilePicture, getProfile, keepLogin } from "../../../store/slices/auth/slices";
 import InputImage from "../../../components/InputImage";
+import Button from "../../../components/Button";
 
 export default function Profile() {
   const dispatch = useDispatch();
   const formData = new FormData();
 
-  const {profile} = useSelector(state=>{
+  const {profile, isChangePictureLoading} = useSelector(state=>{
     return {
       profile : state.auth.profile,
+      isChangePictureLoading : state.auth.isChangePictureLoading
     }
   })
 
@@ -47,12 +49,9 @@ export default function Profile() {
               dataImage={dataImage}
               setDataImage={setDataImage}
             /></div>
-          {
-            file &&
             <div className="">
-              <button className="bg-green-500 mx-4 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded" onClick={()=>submitImage()}>Save image</button>
+              <Button isPrimary isButton isLoading={isChangePictureLoading} isDisabled={!file} title={"Ubah Gambar"} onClick={()=>submitImage()}/>
             </div>
-          }
           <div className="col-span-1 p-2 m-2">
           {
             !revision && 

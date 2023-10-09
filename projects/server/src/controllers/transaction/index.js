@@ -287,6 +287,28 @@ const createTransactions = async (req, res, next) => {
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },
     });
+
+    const customer = await User_Account?.findOne({
+      where : { userId : userId }
+    })
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const html = handlebars.compile(template)({ 
+      order: (newTransaction.transactionId),
+      invoice : (newTransactionList.invoice)
+    })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: customer?.dataValues?.email,
+        subject: `Transaksi Berhasil untuk Invoice No. ${newTransactionList.invoice}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
     //});
 
     //await transaction.commit();

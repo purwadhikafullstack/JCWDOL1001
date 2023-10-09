@@ -351,7 +351,11 @@ const changeProfilePicture = async (req, res, next) => {
                 status : middlewareErrorHandling.BAD_REQUEST_STATUS,
                 message : middlewareErrorHandling.IMAGE_NOT_FOUND
             });
-        } 
+        }
+        
+        if(userExists?.dataValues?.profilePicture){
+            cloudinary.v2.api.delete_resources([`${userExists?.dataValues?.profilePicture}`],{type : `upload`,resource_type : 'image'});
+        }
 
         await User_Profile?.update({profilePicture : req?.file?.filename},{where : {userId : userId}});
         res.status(200).json({type : "success", message : "Profile picture uploaded.", imageURL : req?.file?.filename});
@@ -456,6 +460,19 @@ const changeProfileData = async (req, res, next) => {
     }
 }
 
+const getProfile = async (req,res,next) => {
+    try{
+        const {userId} = req.user;
+
+        const data = await User_Profile.findOne({where : {userId : userId}});
+        if(!data) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
+
+        res.status(200).json({message : "success", data : data})
+    }catch(error){
+        next(error)
+    }
+}
+
 //forgotpassword (get email, send verif to reset password)
 const forgotPass = async ( req,res,next) => {
     try{
@@ -553,6 +570,7 @@ module.exports = {
    changeProfileData,
    changeProfilePicture,
    changeEmailOtp,
+   getProfile,
    forgotPass,
    reset
 }
