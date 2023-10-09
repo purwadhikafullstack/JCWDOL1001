@@ -11,7 +11,8 @@ import {
     changeProfilePicture,
     changeProfileData,
     forgotPass,
-    resetPass
+    resetPass,
+    getProfile
 } from "./slices"
 // import { reset } from "../../../../../server/src/controllers/authentication";
 
@@ -35,6 +36,7 @@ const INITIAL_STATE = {
     isChangeProfileLoading : false,
     isForgotPasswordLoading : false,
     isResetPasswordLoading : false,
+    isGetProfileLoading : false,
     resetStatus : false,
     isForgot : false
 }
@@ -177,6 +179,19 @@ const authSlice = createSlice({
         [resetPass.fulfilled] : (state, action) => {
             state.isResetPasswordLoading= false
         },
+        [getProfile.pending] : (state, action) => {
+            state.isGetProfileLoading = true
+        },
+        [getProfile.rejected] : (state, action) => {
+            state.isGetProfileLoading = false
+        },
+        [getProfile.fulfilled] : (state, action) => {
+            state = Object.assign(state, {
+                profile : action.payload?.data?.data,
+                isGetProfileLoading : false
+            })
+        }
+
     }
 })
 

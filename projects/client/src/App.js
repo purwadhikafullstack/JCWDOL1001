@@ -10,7 +10,7 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
-import { keepLogin } from "./store/slices/auth/slices";
+import { getProfile, keepLogin } from "./store/slices/auth/slices";
 import CategoryList from "./pages/admin/category";
 import AdminProducts from "./pages/admin/product";
 import NotFound from "./pages/NotFound";
@@ -36,12 +36,14 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading } = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading } = useSelector(state => {
 		return {
 			user : state?.auth,
       isLogin : state?.auth?.isLogin,
       ongoingTransactions : state?.transaction?.ongoingTransactions,
       isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
+      isChangePictureLoading : state?.auth?.isChangePictureLoading,
+      isChangeProfileLoading : state?.auth?.isChangeProfileLoading
 		}
 	})
   
@@ -69,6 +71,12 @@ function App() {
       dispatch(getOngoingTransactions())
     }
   }, [isUpdateOngoingTransactionLoading, isLogin])
+
+  useEffect(()=>{
+    if (isLogin){
+      dispatch(getProfile())
+    }
+  }, [isChangePictureLoading, isChangeProfileLoading])
 
   if (loading) {
     return (
