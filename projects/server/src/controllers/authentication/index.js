@@ -78,10 +78,15 @@ const keepLogin = async (req, res, next) => {
                 where : {
                     UUID : req.user.UUID
                 },
-                include : {
-                    model : User_Profile,
-                    as : "userProfile"
-                },
+                include : [
+                    {
+                        model : User_Profile,
+                        as : "userProfile"
+                    },
+                    {
+                        model : User_Address,
+                    },
+                ],
                 attributes : {
                     exclude : ["password"]
                 }

@@ -12,6 +12,7 @@ import {
 const INITIAL_STATE = {
   data: [],
   success: false,
+  isGetLoading: false,
   isLoading: false,
 };
 
@@ -23,16 +24,17 @@ const unitsSlice = createSlice({
   },
   extraReducers : {
       [getUnits.pending] : (state, action) => {
-        state.isLoading = true
+        state.isGetLoading = true
       },
       [getUnits.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         state = Object.assign(state, {
           data : action.payload?.unit,
-          isLoading : false,
+          success: false,
+          isGetLoading : true,
         })
       },
       [getUnits.rejected] : (state, action) => {
-        state.isLoading = true
+        state.isGetLoading = true
       },
       [deleteUnit.pending] : (state, action) => {
         state = Object.assign(state, {
@@ -113,6 +115,13 @@ const unitsSlice = createSlice({
         state = Object.assign(state, {
           isLoading : false,
         })
+      },
+      [resetUnit.pending] : (state, action) => {
+      },
+      [resetUnit.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+        state = Object.assign(state, INITIAL_STATE)
+      },
+      [resetUnit.rejected] : (state, action) => {
       },
     }
 });
