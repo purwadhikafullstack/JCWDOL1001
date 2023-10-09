@@ -17,8 +17,7 @@ export default function CheckoutPage(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0;
-    const location = useLocation();
-    const {cart,address} = useSelector((state)=>{
+    const {cart,address,listDiscount} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
             address : state?.auth?.address,
@@ -60,13 +59,14 @@ export default function CheckoutPage(){
 
     const checkOut = () => {
         dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : selectedDiscount?.discountId}));
-        // navigate("/user/transaction");
+        navigate("/user/transaction");
     }
 
     return(
         <>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
+                    <form>
                     <div>
                         <h1 className="text-3xl font-semibold w-full border-b-2 mb-5 pb-2">Checkout</h1>
                     </div>
@@ -83,7 +83,7 @@ export default function CheckoutPage(){
                         {
                         cart ?
                         cart.map((cart, index)=>{
-                            subTotal += cart.cartList.productPrice * cart.quantity;
+                            subTotal += cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice * cart.quantity : cart.cartList.productPrice * cart.quantity;
                             return(<Item
                                 key={index}
                                 productName={cart.cartList.productName}
@@ -125,8 +125,9 @@ export default function CheckoutPage(){
                             shipping && <><h1>Shipping cost : Rp. {formatNumber(shipping)}</h1>
                             <h1>Grand total : Rp. {formatNumber(subTotal*1 + shipping*1)}</h1></>
                         } */}
-                        <Button className="" isPrimary isButton title={`Check Out!`} onClick={checkOut}/>
+                        <Button className="" isPrimary isButton type="submit" title={`Check Out!`} onClick={checkOut}/>
                     </div>
+                    </form>
                 </div>
             </div>
         </>
