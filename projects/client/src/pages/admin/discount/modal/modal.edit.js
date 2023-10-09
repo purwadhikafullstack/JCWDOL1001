@@ -49,7 +49,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     const onButtonSave = async () => {
         try {
 
-            if(isOneGetOne.id == 1 && selectedProducts.length === 0 ){
+            if(isOneGetOne.id == 1 && selectedProducts.length == 0 ){
                 throw({inner : [{
                     path : "product",
                     message:"Buy One Get One must have product"
@@ -82,10 +82,10 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             
             output.data = {
                 "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-                "isPercentage" : selectedId?.isPercentage ==1 ?  1: 0  ,
+                "isPercentage" : !selectedId || selectedId.length ==0 ? +isPercentage.id : selectedId?.isPercentage ,
                 "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-                "oneGetOne" : selectedId?.oneGetOne==1 ?  1: 0,
+                "oneGetOne" : !selectedId || selectedId.length ==0 ? +isOneGetOne.id : +selectedId?.oneGetOne,
                 "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
                 "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
                 "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
@@ -289,7 +289,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "number" }`}
                     ref = {minimumRef}
-                    placeholder = {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.discountAmount)}` }
+                    placeholder = {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.minimalTransaction)}` }
                     errorInput={error.minimalTransaction }
                     onChange={() => setError({ ...error, minimalTransaction: false })}
                 />
@@ -298,7 +298,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                         {error.minimalTransaction}
                     </div>
                 )}
-                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.discountAmount)}` }</h1>
+                <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.minimalTransaction)}` }</h1>
             </div>
         </div>       
         <ProductList title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>

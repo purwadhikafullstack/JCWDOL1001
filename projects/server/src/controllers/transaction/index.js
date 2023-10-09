@@ -269,8 +269,16 @@ const createTransactions = async (req, res, next) => {
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
-
-    if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
+    if(discountId.length>0) { 
+      const discountIdList =[]
+      for(let i = 0; i < discountId.length; i++){
+        discountIdList.push({ 
+          transactionId : newTransaction.transactionId,
+          discountId : discountId[i]
+        })
+      }
+      await Discount_Transaction.bulkCreate(discountIdList)
+    }
 
     for (let i = 0; i < startTransaction.length; i++) {
       const newTransactionDetail = {
@@ -353,7 +361,8 @@ const getCheckoutProducts = async (req, res, next) => {
           as: "product_detail",
           include : {
             model: Discount_Product,
-            as: "productDiscount"
+            as: "productDiscount",
+            where:{isDeleted:0}
           },
         },
         {

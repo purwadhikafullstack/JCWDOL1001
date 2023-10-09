@@ -58,7 +58,9 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : selectedDiscount?.discountId}));
+        const discountIdList = [...cart].filter((item)=>{return item?.product_detail}).map(({product_detail})=>{return product_detail?.productDiscount[0].discountId})
+        if(selectedDiscount) discountIdList.push(selectedDiscount?.discountId)
+        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList}));
         navigate("/user/transaction");
     }
 
@@ -83,11 +85,11 @@ export default function CheckoutPage(){
                         {
                         cart ?
                         cart.map((cart, index)=>{
-                            subTotal += cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice * cart.quantity : cart.cartList.productPrice * cart.quantity;
+                            subTotal += cart.product_detail?.productDiscount[0]?.endingPrice ? cart.product_detail?.productDiscount[0]?.endingPrice * cart.quantity : cart.cartList.productPrice * cart.quantity;
                             return(<Item
                                 key={index}
                                 productName={cart.cartList.productName}
-                                productPrice={cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice : cart.cartList.productPrice}
+                                productPrice={cart.product_detail?.productDiscount[0]?.endingPrice ? cart.product_detail?.productDiscount[0]?.endingPrice : cart.cartList.productPrice}
                                 productPicture={cart.cartList.productPicture}
                                 quantity={cart.quantity}
                             />)
