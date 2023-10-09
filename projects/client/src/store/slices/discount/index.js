@@ -5,10 +5,12 @@ import {
     deleteDiscount,
     updateDiscount,
     createDiscount,
+    checkerDiscount,
 } from "./slices.js"
 
 const INITIAL_STATE = {
     data : [],
+    listDiscount : [],
     success : false,
     totalPage: "",
     currentPage: "",
@@ -62,7 +64,6 @@ const discountSlice = createSlice({
         [updateDiscount.rejected] : (state,action) => {
             state.isLoading = false
         },
-        
         [createDiscount.pending] : (state, action) => {
             state.isLoading = true
         },
@@ -73,6 +74,17 @@ const discountSlice = createSlice({
             })
         },
         [createDiscount.rejected] : (state,action) => {
+            state.isLoading = false
+        },
+        [checkerDiscount.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [checkerDiscount.fulfilled] : (state, action) => {
+            state = Object.assign(state, {
+                listDiscount : action.payload.data
+            })
+        },
+        [checkerDiscount.rejected] : (state,action) => {
             state.isLoading = false
         },
     }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, React } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { FaSortAlphaDown, FaSortAlphaUp, FaSortAmountDown,FaSortAmountUp } from "react-icons/fa"
-import Pagination from "../../../components/Pagination/index.js"
+import Pagination from "../../../components/PaginationV2/index.js"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -57,13 +57,6 @@ function ReportPage () {
     const [showModal, setShowModal] = useState({ show: false,context:"" })
     const [selectedTransaction, setSelectedTransaction] = useState([])
 
-    const onChangePagination = (type) => {
-        dispatch( getTransactionList({ 
-            page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-            statusId : 7
-        }))
-    }
-
     const handleShowModal = ({context}) => {
         setShowModal({ show: true,context })
     }
@@ -105,14 +98,14 @@ function ReportPage () {
     const onButtonFilter = () => {
         dispatch(
             getReport({
-                statusId : 7,
+                statusId : 6,
                 startFrom : startDateRef.current.value,
                 endFrom : endDateRef.current.value
             })
         )
         dispatch(
             getTransactionList({
-                statusId : 7,
+                statusId : 6,
                 startFrom : startDateRef.current.value,
                 endFrom : endDateRef.current.value,
                 sortDate: sortingDate,
@@ -152,9 +145,9 @@ function ReportPage () {
         nameRef.current.value = ""
         setSortingDate("")
         setSortingPrice("")
-        dispatch(getReport({statusId : 7}))
+        dispatch(getReport({statusId : 6}))
         dispatch(getTransactionList({
-            statusId : 7,
+            statusId : 6,
             startFrom : startDateRef.current.value,
             endFrom : endDateRef.current.value,
             sortDate: "",
@@ -164,10 +157,16 @@ function ReportPage () {
         setFilter(false)
     }
 
+    const [page, setPage] = useState(1);
+    
     useEffect(() => {
-        dispatch(getReport({statusId : 7}))
+        dispatch( getReport({statusId : 6, page : page }) )
+    }, [page])
+
+    useEffect(() => {
+        dispatch(getReport({statusId : 6}))
         dispatch(getTransactionList({
-            statusId : 7,
+            statusId : 6,
             startFrom : startDateRef.current.value,
             endFrom : endDateRef.current.value,
             sortDate: sortingDate,
@@ -192,7 +191,7 @@ function ReportPage () {
                         <Button 
                             className="absolute top-[16%] left-[31%] -translate-y-1/2" 
                             onClick={()=>{
-                                dispatch(getTransactionList({statusId : 7,filterName : nameRef?.current?.value}))
+                                dispatch(getTransactionList({statusId : 6,filterName : nameRef?.current?.value}))
                                 setFilter(true)}}
                         >
                             <HiMagnifyingGlass className="text-2xl text-primary" />
@@ -276,11 +275,7 @@ function ReportPage () {
                     </table>
                 </div>
                 <div className="w-full">
-                    <Pagination 
-                        onChangePagination={onChangePagination}
-                        disabledPrev={Number(currentPage) === 1}
-                        disabledNext={currentPage >= totalPage}
-                    />
+                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
                 <Button isButton isPrimary
                     className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center`}

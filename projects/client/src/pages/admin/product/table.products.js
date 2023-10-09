@@ -155,14 +155,14 @@ export default function TableProducts({
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
                           handleShowModal({
-                            context : "Ubah Unit", 
+                            context : "Ubah Satuan", 
                             productId : product.productId
                           })
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineCircleStack className="text-lg text-purple-500 " />
-                          Ubah Unit
+                          Ubah Satuan
                         </span>
                       </Button>
                       

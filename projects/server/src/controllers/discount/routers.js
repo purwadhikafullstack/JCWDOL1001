@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.get("/", discount.getDiscount)
 router.post("/create", discount.createDiscount)
-router.get("/check", discount.checkDiscount)
+router.post("/check", discount.checkDiscount)
 router.patch("/update/:discountId", discount.updateDiscount)
 router.patch("/delete/:discountId", discount.deleteDiscount)
 

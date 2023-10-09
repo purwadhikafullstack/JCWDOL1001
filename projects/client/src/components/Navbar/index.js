@@ -6,7 +6,6 @@ import AdminNavMenu from "./admin.nav.menu";
 import { useDispatch } from "react-redux";
 
 export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions }) {
-    const dispatch = useDispatch()
     const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
   
@@ -27,8 +26,6 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
             document.body.style.overflow = "auto"
         }
     },[isSidebarActive])
-
-    useEffect(()=>{},[isLogin])
 
 	return (
 		<div>

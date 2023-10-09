@@ -40,13 +40,13 @@ export default function TableDiscount({
                     >
                         {index + 1}
                     </th>
-                    <td className="p-3">{list.discountName}</td>
+                    <td className="p-3 break-all max-w-xs">{list.discountName}</td>
                     <td className="p-3">{list.discountCode}</td>
-                    <td className="p-3">{list.discountDesc}</td>
+                    <td className="p-3 break-all max-w-xs">{list.discountDesc}</td>
                     <td className="p-3">{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
-                    <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `IDR ${formatNumber(list.discountAmount)}` }</td>
+                    <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
                     <td className="p-3">{list.oneGetOne ? "Ya" : "Tidak" }</td>
-                    <td className="p-3">{list.minimalTransaction ? `IDR ${formatNumber(list.minimalTransaction)}` : "-"}</td>
+                    <td className="p-3">{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
                     <td className="p-3">
                         <div className="flex gap-3">
                             <Button

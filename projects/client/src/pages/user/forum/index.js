@@ -5,7 +5,7 @@ import Input from "../../../components/Input/index.js"
 import { PostQuestion, deleteQuestion, getForum } from "../../../store/slices/forum/slices"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button"
-import Pagination from "../../../components/Pagination"
+import Pagination from "../../../components/PaginationV2/index.js"
 import Modal from "../../../components/Modal"
 import Message from "../../../components/Message"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
@@ -56,14 +56,6 @@ function ForumPage () {
         document.body.style.overflow = "auto"
     }
 
-    const onChangePagination = (type) => {
-        dispatch(
-            getForum({ 
-                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-            })
-        )
-    }
-
     const onButtonFilter = () => {
         dispatch(getForum({sortDate : sortingDate,filterName : questionRef?.current.value}))
         setFilter(true)
@@ -110,8 +102,14 @@ function ForumPage () {
         }
     }
 
+    const [page, setPage] = useState(1);
+    
     useEffect(() => {
-        dispatch(getForum({sortDate :""}))
+        dispatch( getForum({page : page }) )
+    }, [page])
+
+    useEffect(() => {
+        dispatch(getForum({sortDate :"DESC"}))
     }, [])
 
     return (
@@ -165,7 +163,6 @@ function ForumPage () {
                                 <th className="p-3">Tanggal</th>
                                 <th className="p-3">Pertanyaan</th>
                                 <th className="p-3">Jawaban</th>
-                                <th className="p-3">Pengguna</th>
                                 <th className="p-3">Tindakan</th>
                             </tr>
                         </thead>
@@ -176,7 +173,6 @@ function ForumPage () {
                                         <th className="p-3 ">{formatDate(list.createdAt)}</th>
                                         <th className="p-3 ">{list.question}</th>
                                         <th className="p-3 break-all max-w-sm">{list.answer}</th>
-                                        <td className="p-3 ">{list.user_profile.name}</td>
                                         <td className="p-3 ">
                                             <Button isSmall isDanger={!list.answer} isDisabled={list.answer}
                                                 onClick={() =>{
@@ -194,12 +190,7 @@ function ForumPage () {
                     </table>
                 </div>
                 <div className="w-full flex items-center justify-center">
-                    <Pagination 
-                        onChangePagination={onChangePagination}
-                        disabledPrev={Number(currentPage) === 1}
-                        disabledNext={currentPage >= totalPage}
-                        currentPage={currentPage}
-                    />
+                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
             </div>
             <Modal fullWidth

@@ -10,6 +10,9 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
+  Discount_Transaction,
+  Discount,
+  Discount_Product,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
@@ -21,6 +24,14 @@ const db = require("../../model/index.js")
 async function cancelExpiredTransactions() {
   try {
     const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
+
+    const discountExpiredList = await Discount.findAll({where : {discountExpired : {[Op.lte]:currentTime}}})
+    
+    const expiredDiscountId = discountExpiredList.map((list)=>{return list.discountId})
+    
+    await Discount.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
+    
+    await Discount_Product.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
 
     const transactionsToCancel = await Transaction_List.findAll({
       include:[
@@ -137,6 +148,13 @@ const getTransactions = async (req, res, next) => {
           model: User_Profile,
           as: "userProfile",
           where:filtering.name,
+        },
+        {
+          model: Discount_Transaction,
+          attributes : {exclude :['productListId']},
+          include:{
+            model:Discount
+          }
         }
       ],
       where: whereCondition,
@@ -221,7 +239,7 @@ const createTransactions = async (req, res, next) => {
   try {
     //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
-    const { transport, totalPrice, addressId } = req.body;
+    const { transport, totalPrice, addressId,discountId } = req.body;
 
     const startTransaction = await Cart?.findAll({
       include: [
@@ -249,6 +267,8 @@ const createTransactions = async (req, res, next) => {
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
+
+    if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
 
     for (let i = 0; i < startTransaction.length; i++) {
       const newTransactionDetail = {
@@ -281,7 +301,7 @@ const createTransactions = async (req, res, next) => {
         results : newQuantity
       }
       await Product_History?.create(ProductHistory);
-    }
+    }    
 
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },

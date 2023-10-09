@@ -26,6 +26,10 @@ const Forum = db.sequelize.define("forum", {
         type : db.Sequelize.BOOLEAN,
         allowNull : false,
         defaultValue : 0
+    },
+    expiredDate : {
+        type : db.Sequelize.DATE,
+        allowNull : true,
     }
 })
 

@@ -1,12 +1,7 @@
 const { Op } = require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
-const { Forum, User_Profile, User_Account } = require("../../model/relation.js")
+const { Forum, User_Profile } = require("../../model/relation.js")
 const moment = require ("moment")
-const path = require("path")
-const fs = require("fs")
-const handlebars = require("handlebars")
-const {GMAIL} = require("../../config/index.js")
-const {helperTransporter} = require("../../helper/index.js")
 
 
 const getQuestions = async (req, res, next) => {
@@ -21,13 +16,10 @@ const getQuestions = async (req, res, next) => {
         }
 
         const filter = {}
-        const sort = [[`answer`,'ASC']]
+        const sort = [[`answer`,'ASC'],[`createdAt`, sortDate ? sortDate : "DESC"]]
 
         if(req.user.roleId !== 1) {
             filter.userId = {"userId" : req.user.userId}
-            sort.push([`updatedAt`, sortDate ? sortDate : "DESC"])
-        }else {
-            sort.push([`createdAt`,sortDate ? sortDate : "ASC"])
         }
 
         if(filterQuestion) filter.question = {"question" : {[Op.like]: `%${filterQuestion}%`}}
@@ -116,6 +108,7 @@ const getQuestionsForPublic = async (req, res, next) => {
 const postQuestion = async (req, res, next) => {
     try {
         req.body.userId = req.user.userId
+        req.body.expiredDate = moment().add(1,"h")
         
         const forums = await Forum.create(req.body)
 
@@ -150,11 +143,9 @@ const deleteQuestion = async (req, res, next) => {
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.CANNOT_DELETE_ANSWERED_QUESTION
         })
-
+        
         if(req.user.roleId === 2){
-            const timeDeletion = moment(forumUser.createdAt).add(1,'h')
-            
-            const canDelete = moment().isSameOrBefore(timeDeletion)
+            const canDelete = moment().isSameOrBefore(moment(forumUser.expiredDate))
     
             if(!canDelete) throw ({
                 status : middlewareErrorHandling.BAD_REQUEST_STATUS,
