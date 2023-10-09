@@ -50,7 +50,7 @@ export default function AdminNavMenu({
     },
     {
       title: "Transaksi",
-      path: "/admin/transaction",
+      path: "/admin/transaction/1",
       notification: ongoingTransactions,
       icon: <HiBanknotes className="h-7 w-7 " />,
     },
@@ -90,7 +90,7 @@ export default function AdminNavMenu({
                     path={item.path}
                     onClick={() => setIsSidebarActive(false)}
                     className={`relative block w-full rounded-lg border py-3 duration-300 lg:w-[52px] lg:group-hover:w-full ${
-                      pathname === item.path
+                      pathname.split("/").slice(0,3).join("/") === item.path.split("/").slice(0,3).join("/")
                         ? "border-primary bg-primary text-white"
                         : "border-dark text-dark hover:bg-slate-200"
                     }`}

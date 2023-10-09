@@ -105,7 +105,7 @@ function App() {
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/custom" element={<CustomOrder />}/>
-              <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
+              <Route path="/admin/transaction/:tab" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
               <Route path="/admin/report" element={<ReportPage />}/>
             </>
           )}

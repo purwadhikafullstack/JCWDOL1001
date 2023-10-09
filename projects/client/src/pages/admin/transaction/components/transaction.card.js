@@ -82,13 +82,13 @@ export default function TransactionCard({
             {transactionDetail.length > 1 && (
               <Button
                 isButton
-                isPrimaryOutline
                 isBLock
+                className={`text-primary font-semibold border border-primary/20`}
                 title={`+${moreItems} Barang Lagi`}
               />
             )}
 
-            <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
+            <div className="mt-2 flex items-center justify-between gap-2  pt-3">
               {item.statusId === 7 ? (
                 <div className="">
                   <p className="text-sm">

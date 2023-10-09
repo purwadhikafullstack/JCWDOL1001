@@ -14,11 +14,13 @@ import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
 import { HiMagnifyingGlass, HiMinus, HiOutlineTrash, HiXMark } from "react-icons/hi2";
 import Input from "../../../components/Input";
+import { useParams } from "react-router-dom";
 
 export default function Transaction({
   ongoingTransactions
 }) {
   const dispatch = useDispatch();
+  const { tab } = useParams()
 
     const { transaction, isGetTransactionLoading, totalPage, transactionStatus, isUpdateOngoingTransactionLoading } = useSelector((state) => {
     return {
@@ -41,41 +43,21 @@ export default function Transaction({
   const [activeTab, setActiveTab] = useState(1);
   const [isStartDateChanged, setIsStartDateChanged] = useState(false)
   const [isEndDateChanged, setIsEndDateChanged] = useState(false)
-  const [showClearButton, setShowClearButton] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
   const [searchedInvoice, setSearchedInvoice] = useState(null)
 
-  const handleSetDate = async () => {
+  const handleSortDate = async (type) =>{
     try {
-      if (!showClearButton) {
-        await setDateValidationSchema.validate({
-          startDate: startDateRef.current?.value ? startDateRef.current?.value : null, 
-          endDate: endDateRef.current?.value ? endDateRef.current?.value : null, 
-        }, {abortEarly : false})
-        setShowClearButton(true);
-        setPage(1)
+      
+      if (type === "start") setIsStartDateChanged(true)
+      if (type === "end") setIsEndDateChanged(true)
   
-        dispatch(
-          getTransactionList({
-            statusId : activeTab,
-            startFrom : startDateRef.current?.value,
-            endFrom : endDateRef.current?.value,
-            sortDate : sortDate ? "ASC" : "DESC",
-            invoice: searchedInvoice
-          })
-        )
-      }
-
-      if (showClearButton) {
-        startDateRef.current.value = "";
-        endDateRef.current.value = "";
-
-        setSortDate(false)
-        setShowClearButton(false)
-        setPage(1)
-        setIsStartDateChanged(false)
-        setIsEndDateChanged(false)
-
+      if(isStartDateChanged || isEndDateChanged) {
+        await setDateValidationSchema.validate({
+            startDate: startDateRef.current?.value ? startDateRef.current?.value : null, 
+            endDate: endDateRef.current?.value ? endDateRef.current?.value : null, 
+          }, {abortEarly : false})
+  
         dispatch(getTransactionList({
             statusId : activeTab,
             startFrom : startDateRef.current.value,
@@ -83,6 +65,9 @@ export default function Transaction({
             sortDate : sortDate ? "ASC" : "DESC",
             invoice: searchedInvoice
         }))
+  
+        setPage(1)
+  
       }
     } catch (error) {
       if(error.inner.length > 1) {
@@ -109,7 +94,6 @@ export default function Transaction({
 
   const resetFilter = () => {
     setSortDate(false)
-    setShowClearButton(false)
     setPage(1)
     setIsStartDateChanged(false)
     setIsEndDateChanged(false)
@@ -146,11 +130,21 @@ export default function Transaction({
       startDateRef.current.value = "";
       endDateRef.current.value = "";
     }
-    
+    searchedInvoiceRef.current.value = ""
     dispatch(getOngoingTransactions())
     setSortDate(false)
-    setShowClearButton(false)
+    setIsStartDateChanged(false)
+    setIsEndDateChanged(false)
   }, [activeTab])
+
+  useEffect(()=> setActiveTab(+tab), [tab])
+
+  useEffect(() => {
+    setTimeout(() => {
+      const statusList = document.querySelector(".transaction-status");
+      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 180, behavior:"smooth" });
+    }, 50);
+  }, [activeTab]);
 
   const tabContent = [
     { tabId: 1, component: MenungguPembayaran },
@@ -163,29 +157,27 @@ export default function Transaction({
   ]
 
   const RenderTabContent = tabContent.find(content => content.tabId === activeTab)?.component
-  const statusDesc = transactionStatus?.find(status => status.statusId === activeTab)?.statusDesc
-  const transactionData = ongoingTransactions?.transactions.find((transaction) => transaction.statusId === activeTab)?.total;
 
   return (
     <>
       <div  className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
         <h3 className="title">Transaksi</h3>
-        <div className="mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
+        <div className="transaction-status mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
           {transactionStatus.map((tab) => {
             const ongoingStatus = ongoingTransactions?.transactions?.find(item => item.statusId === tab.statusId);
             return(
               <Button
               key={tab.statusId}
-              isButton
+              isLink
+              path={`/admin/transaction/${tab.statusId}`}
               isPrimaryOutline={tab.statusId !== activeTab}
               isPrimary={tab.statusId === activeTab}
-              className={`relative`}
-              onClick={() => setActiveTab(tab.statusId)}
+              className={`relative px-4 py-3 text-sm rounded-lg whitespace-nowrap`}
               >
               {tab.statusDesc}
               
               {ongoingStatus?.total > 0 &&
-                <span className="absolute text-white right-[2px] h-4 w-4 bg-danger top-[1px] flex rounded-full items-center justify-center text-xs">
+                <span className="absolute text-white right-0 h-4 w-4 bg-danger top-0 flex rounded-full items-center justify-center text-xs">
                   {ongoingStatus?.total}
                 </span>
               }
@@ -196,10 +188,7 @@ export default function Transaction({
 
         <div>
           <div className="flex flex-col justify-between border-b py-2 border-primary/30">
-            <h3 className="subtitle">{statusDesc}</h3>
-
             <div className="flex flex-col md:flex-row md:justify-between gap-2">
-              {/* {(transactionData > 0 || transaction?.length > 0) && */}
               <>
                 <form className="relative w-full md:w-1/3" onSubmit={(e) => {
                     e.preventDefault()
@@ -226,32 +215,23 @@ export default function Transaction({
 
                 <div className="flex gap-2 items-center">
                   <input
-                    disabled={showClearButton || transaction.length === 0}
+                    disabled={isToastVisible}
                     name="start" 
                     type="date" 
                     ref={startDateRef}
-                    onChange={() => setIsStartDateChanged(true)}
+                    onChange={() => handleSortDate("start")}
                     className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${startDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
                   />
 
                 <HiMinus/>
 
                   <input
-                    disabled={showClearButton || transaction.length === 0}
+                    disabled={isToastVisible}
                     name="end"
                     type="date" 
                     ref={endDateRef}
-                    onChange={() => setIsEndDateChanged(true)}
+                    onChange={() => handleSortDate("end")}
                     className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDateRef.current?.value ? "border-primary" : "border-slate-300"}`}
-                  />
-
-                  <Button
-                    isButton
-                    isPrimary={!showClearButton}
-                    isDanger={showClearButton}
-                    onClick={handleSetDate}
-                    title={showClearButton ? "Hapus" : "Sortir"}
-                    isDisabled={!isStartDateChanged || !isEndDateChanged || isToastVisible}
                   />
 
                   <Button 
@@ -270,7 +250,6 @@ export default function Transaction({
                   onClick={resetFilter}
                   />
               </>
-              {/* } */}
             </div>
           </div>
 
