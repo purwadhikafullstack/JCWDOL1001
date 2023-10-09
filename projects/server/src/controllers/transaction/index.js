@@ -255,6 +255,8 @@ const createTransactions = async (req, res, next) => {
       where: { [Op.and]: [{ userId }, { inCheckOut: 1 }] },
     });
 
+    let date = new Date().getTime()
+
     const newTransactionList = {
       userId: userId,
       total: +totalPrice + +transport,
@@ -263,7 +265,7 @@ const createTransactions = async (req, res, next) => {
       statusId: 1,
       addressId : addressId,
       expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
-      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
+      invoice : userId + date
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -289,8 +291,6 @@ const createTransactions = async (req, res, next) => {
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
 
-      console.log(UpdateStock);
-
       const ProductHistory = {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
@@ -306,6 +306,28 @@ const createTransactions = async (req, res, next) => {
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },
     });
+
+    const customer = await User_Account?.findOne({
+      where : { userId : userId }
+    })
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const html = handlebars.compile(template)({ 
+      order: (newTransaction.transactionId),
+      invoice : (newTransactionList.invoice)
+    })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: customer?.dataValues?.email,
+        subject: `Transaksi Berhasil untuk Invoice No. ${newTransactionList.invoice}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
     //});
 
     //await transaction.commit();
@@ -329,6 +351,10 @@ const getCheckoutProducts = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,
