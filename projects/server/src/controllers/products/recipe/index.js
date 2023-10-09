@@ -17,7 +17,8 @@ const getUser = async( req, res, next ) => {
     try{
       const userlist = await User_Account.findAll({where :{
         role : 2,
-        status : 1
+        status : 1,
+       imgRecipe: {[Op.not] : null}
       },include : [{
         model : User_Profile,
         as : "userProfile"
@@ -215,6 +216,13 @@ const getUser = async( req, res, next ) => {
           email : email
         }
      })
+     await User_Account?.update({where:{
+      imgRecipe : null
+     }},{
+      where :{
+        email : email
+      }
+   })
 
      const address = await User_Address?.findOne({
       where : {

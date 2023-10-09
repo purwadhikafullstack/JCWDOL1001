@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {deleteQuestion, PostAnswer, getForum } from "../../../store/slices/forum/slices.js"
+import {deleteQuestion, PostAnswer, getForum,getUnanswered } from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/Pagination/index.js"
@@ -28,6 +28,8 @@ function QNA () {
     })
     
     const inputAnswerRef = useRef()
+    const [unansweredList, setUnansweredList] = useState([])
+    const [answeredList, setAnsweredList] = useState([])
 
     const answerRef = useRef()
 
@@ -69,7 +71,7 @@ function QNA () {
     }
 
     const onButtonFilter = () => {
-        dispatch(getForum({sortDate : (sortDate ? "DESC" : "ASC"),filterName : answerRef?.current.value}))
+        // dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
         setFilter(true)
     }
 
@@ -113,10 +115,46 @@ function QNA () {
             }, 2000)
         }
     }
+useEffect(async ()=>{
+    dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
+
+        setUnansweredList([])
+        setAnsweredList([])
+        const answerlist = []
+        const unanswerlist = []
+        questionList.map(item=>{
+            if(item.answer){
+                answerlist.push(item)
+            }
+            else{
+                unanswerlist.push(item)
+            }
+        })
+        setAnsweredList(answerlist)
+        setUnansweredList(unanswerlist)
+    
+},[])
 
     useEffect(() => {
-        dispatch(getForum({sortDate :""}))
-    }, [])
+        dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
+        if(questionList){
+            setUnansweredList([])
+            setAnsweredList([])
+            const answerlist = []
+            const unanswerlist = []
+            questionList.map(item=>{
+                if(item.answer){
+                    answerlist.push(item)
+                }
+                else{
+                    unanswerlist.push(item)
+                }
+            })
+            setAnsweredList(answerlist)
+            setUnansweredList(unanswerlist)
+        }
+    }, [sortDate])
+
 
     return (
         <div>
@@ -136,33 +174,14 @@ function QNA () {
                     >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
-                    {/* Urutkan berdasarkan :
-                    <div className="flex flex-row items-center h-auto">
-                        Tanggal 
-                        <FaSortAlphaDown className={`${sortingDate === "DESC"   ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
-                        <FaSortAlphaUp className={`${sortingDate === "ASC" || sortingDate === "" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>
-                    </div>
-                    <Button isButton isPrimary isSecondary={sortingDate === ""} isDisabled={sortingDate === ""}
-                        className="flex mx-5 items-center"
-                        onClick={onButtonFilter}
-                    >
-                        Atur
-                        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                        </svg>
-                    </Button>
-                    <button className={`flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`}
-                        onClick={clearFilter} 
-                    >
-                        Hapus Pengaturan
-                    </button> */}
+
                 <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal</span>
+                  <span className="text-sm font-semibold">Urutkan Tanggal Dari : </span>
                   <Button 
                     isButton
                     isPrimary
                     className={`relative`}
-                    title={sortDate ? "Terlama" : "Terbaru"}
+                    title={sortDate ? "Terbaru" : "Terlama"}
                     onClick={() => {
                         setSortDate(prevState => !prevState)
                         onButtonFilter()
@@ -183,22 +202,17 @@ function QNA () {
                         </thead>
                         <tbody>
                             {questionList.map((list) => {
+                                if(!list.answer){
                                 return (
                                     <tr className="items-center text-left border-b-2">
                                         <th className="p-3 ">{formatDate(list.createdAt)}</th>
                                         <td className="p-3 ">{list.user_profile.name}</td>
                                         <th className="p-3 break-all max-w-sm  text-primary">
                                         {list.question}</th>
-                                        {
-                                        list.answer ?
-                                        <th className="p-3 break-all max-w-sm "> 
-                                        {list.answer}
-                                        </th> 
-                                        : 
                                         <th className="p-3 break-all max-w-sm text-red-600"> 
                                        ...jawaban diperlukan
                                         </th> 
-                                        }
+                                      
                                         <td className="p-3 ">
                                             <Button isSmall isDanger
                                                 onClick={() =>{
@@ -223,7 +237,46 @@ function QNA () {
                                             
                                         </td>
                                     </tr>
-                                )
+                                )}
+                            })}
+                            {questionList.map((list) => {
+                                if(list.answer){
+                                return (
+                                    <tr className="items-center text-left border-b-2">
+                                        <th className="p-3 ">{formatDate(list.createdAt)}</th>
+                                        <td className="p-3 ">{list.user_profile.name}</td>
+                                        <th className="p-3 break-all max-w-sm  text-primary">
+                                        {list.question}</th>
+               
+                                        <th className="p-3 break-all max-w-sm "> 
+                                        {list.answer}
+                                        </th> 
+                                        
+                                        <td className="p-3 ">
+                                            <Button isSmall isDanger
+                                                onClick={() =>{
+                                                    handleShowModal({context : "Hapus Pertanyaan"})
+                                                    setSelectedQuestion(list)
+                                                }}
+                                            >
+                                                <HiOutlineTrash className="text-lg" />
+                                            </Button>
+                                            
+                                            
+                                            <Button isSmall isPrimary
+                                            // ={!list.answer} isDisabled={list.answer}
+                                                onClick={() =>{
+                                                    handleShowModal({context : "Menjawab Pertanyaan"})
+                                                    setSelectedQuestion(list)
+                                                }}
+                                                className="ml-2 bg-primary"
+                                            >
+                                                <RiQuestionAnswerLine  className="text-lg" />
+                                            </Button>
+                                            
+                                        </td>
+                                    </tr>
+                                )}
                             })}
                         </tbody>
                     </table>
@@ -293,7 +346,7 @@ function QNA () {
                                 onClick={() => setConfirmation(false)}
                             />
                             <Button title="Sure" isButton isPrimary isDisabled={isToastVisible}
-                                onClick={handleOnSure(selectedQuestion.qnaId)}
+                                onClick={()=>{handleOnSure(selectedQuestion.qnaId)}}
                             >
                                 Sure
                             </Button>
@@ -314,4 +367,4 @@ function QNA () {
         </div>
     )
 }
-export default QNA
+export default QNA 

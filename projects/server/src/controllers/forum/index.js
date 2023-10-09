@@ -181,6 +181,15 @@ const answerQuestion = async (req, res, next) => {
     try {
         const {answer,qnaId} = req.body
         //validate the answer(?)
+        const qna = await Forum.findOne({where:{
+            qnaId : qnaId
+        }})
+        const user = await User_Account.findOne({where:{
+            userId : qna.dataValues?.userId
+        } })
+        const profile = await User_Profile.findOne({where:{
+            userId : qna.dataValues?.userId
+        } })
         await Forum.update(
             {
                 answer , 
@@ -190,7 +199,21 @@ const answerQuestion = async (req, res, next) => {
                 qnaId : qnaId
             }
         })
-
+        //send only once
+        if(qna.dataValues?.answer === null){
+        const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnAnswer.html"), "utf8");
+        const html = handlebars.compile(template)({name : profile?.dataValues?.name ,answer: answer, question : qna.dataValues?.question})
+    
+        const mailOptions = {
+            from: `Apotech Team Support <${GMAIL}>`,
+            to: user?.dataValues?.email,
+            subject: "Pertanyaan kamu di Forum Apotech terjawab",
+            html: html}
+    
+            helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+                if (error) throw error;
+        })
+        }
         res.status(200).json({
 			type : "success",
 			message : "Pertanyaan berhasil dijawab",
@@ -200,7 +223,7 @@ const answerQuestion = async (req, res, next) => {
     }
 }
 
-const getUnansweredQuestions = async (req, res) => {
+const getUnansweredQuestions = async (req, res,next) => {
     try {
         const { page, sortDate, filterQuestion } = req.query;
     
@@ -210,16 +233,9 @@ const getUnansweredQuestions = async (req, res) => {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
             limit : 10,
         }
-
+ 
         const filter = {}
-        const sort = [[`answer`,'ASC']]
-
-        if(req.user.roleId !== 1) {
-            filter.userId = {"userId" : req.user.userId}
-            sort.push([`updatedAt`, sortDate ? sortDate : "DESC"])
-        }else {
-            sort.push([`createdAt`,sortDate ? sortDate : "ASC"])
-        }
+        const sort =  [[`createdAt`, sortDate ? sortDate : "DESC"]]
 
         if(filterQuestion) filter.question = {"question" : {[Op.like]: `%${filterQuestion}%`}}
         
@@ -251,7 +267,8 @@ const getUnansweredQuestions = async (req, res) => {
             productLimit : options.limit,
 			data : forums,
 		});
-    }catch (error) {
+    }
+    catch (error) {
         next(error)
     }
 }

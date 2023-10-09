@@ -1,10 +1,12 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 function ListOfUser({
-    user = [],
+    user = [],selected
 }){
     return user.map((item,index)=>{
         return(
-            <option value={[item?.email, item?.userProfile.name]}>
+            <option value={[item?.email, item?.userProfile.name, item?.imgRecipe]}
+            selected={item?.userProfile.name === selected }
+            >
                 {item?.userProfile.name}
             </option>
             
@@ -17,39 +19,34 @@ function ListOfUser({
 export default function UserList({
     user = [],
     onUserChange = (params)=>{},
-    // onIngredientUnitChange = (params)=>{}
+    onChange,
+    errorInput,
+    selected
 }){
+    
     const selectRef = useRef(null)
-    // const selectUnitRef = useRef(null)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     return(
         <div className="flex flex-col w-full">
-            <span>
-                Make custom order for which user?
+            <span className="font-semibold">
+                Resep dokter dari customer siapa yang hendak diproses?
             </span>
             <select 
-            className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
-            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
-            "
-            ref={selectRef} onChange={()=>{onUserChange(selectRef?.current?.value)}}>
-                <option disabled>Select User: </option>
+            className= {`w-full rounded-lg border bg-inherit px-2 py-2 outline-none 
+            ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
+            ref={selectRef} 
+            onChange={()=>{
+                // onChange()
+                onUserChange(selectRef?.current?.value)}}
+            onClick={() => setIsDropdownOpen(true)}
+            >
+                 <option disabled={isDropdownOpen}>Pilih User : </option>
                 <ListOfUser
                 user={user}
+                selected={selected}
                 />
             </select>
-            {/* <span>
-                Ingredient Unit:
-            </span>
-            <select 
-            className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
-            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
-            "
-            ref={selectUnitRef} onChange={()=>{onIngredientUnitChange(selectUnitRef?.current?.value)}}>
-                <option disabled>Select Secondary Unit: </option>
-                <ListOfUnit
-                product={product}
-                index = {index}
-                />
-            </select> */}
+
 
         </div>
     )

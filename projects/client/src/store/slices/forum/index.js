@@ -58,7 +58,10 @@ const reportSlice = createSlice({
         [deleteQuestion.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 isLoading :false,
-                success : true
+                success : true,
+                list : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
             })
         },
         [deleteQuestion.rejected] : (state, action) => {
@@ -96,7 +99,10 @@ const reportSlice = createSlice({
         [PostAnswer.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 isLoading :false,
-                success : true
+                success : true,
+                list : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
             })
         },
         [PostAnswer.rejected] : (state, action) => {

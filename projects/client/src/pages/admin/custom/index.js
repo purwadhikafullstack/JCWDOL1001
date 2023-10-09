@@ -29,25 +29,31 @@ export default function CustomOrder({ statusId, statusDesc }) {
   const [option, setOption] = useState(2)
   const optionRef = useRef(null)
   const [listAllCustomProduct, setListAllCustomProduct] = useState([])
-  // const [listAllNormalProduct, setListAllNormalProduct] = useState([])
-
+  const [image, setImage] = useState(null)
   // untuk input product custom
   const[listAllIngredient, setListAllIngredient] = useState([])
   const [ingredientId, setIngredientId] = useState(null)
+  const [titleState, setTitleState] = useState("")
   const [email, setEmail] = useState(null)
   const [ingredientName, setIngredientName] = useState(null)
   const ingredientQuantityRef = useRef(null)
-  const [ListInputProduct, setListInputProduct] = useState([])
   
   //useRef
+  const [oldNameProduct, setOldNameProduct] = useState("")
   const [productIdState, setProductIdState] = useState("")
   //useref exclusive for custom product
   const [productNameState, setProductNameState] = useState("")
   const [productPriceState, setProductPriceState] = useState("")
   const [productQuantityState, setProductQuantityState] = useState("")
   const [productDosageState, setProductDosageState] = useState("")
+  //useRef exclusive for normal product
+  const [normalProductState,setNormalProductState] = useState("")
+  //useref penentuan jenis produk
+  const [medState,setMedState] = useState(false)
+  const [userState,setUserState] = useState(false)
 
   const [showModal, setShowModal] = useState(false);
+  const [showImageModal, setShowImageModal] =useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const selectedTransactionDetail = selectedTransaction?.transactionDetail;
 
@@ -69,8 +75,10 @@ export default function CustomOrder({ statusId, statusDesc }) {
     }
   } 
 
+
   const handleShowModal = (productName) => {
     // munculin modal
+    setTitleState(true)
     setShowModal(true);
 
     //cari data di listAllCustomProduct
@@ -82,7 +90,8 @@ export default function CustomOrder({ statusId, statusDesc }) {
       if(selectedProduct.type === 1) {
       // setSelectedTransaction(transactionData);
       setListAllIngredient(selectedProduct?.ingredients)
-      setProductNameState(selectedProduct?.productName)
+      setProductNameState(selectedProduct?.productName)  
+      setOldNameProduct(selectedProduct?.productName)
       setProductPriceState(selectedProduct?.productPrice)
       setProductDosageState(selectedProduct?.productDosage)
       setProductQuantityState(selectedProduct?.quantity)
@@ -92,16 +101,29 @@ export default function CustomOrder({ statusId, statusDesc }) {
       setOption(0)
       setProductIdState(selectedProduct?.productId)
       setProductQuantityState(selectedProduct?.quantity)
+      setNormalProductState(selectedProduct?.productName)
+      setOldNameProduct(selectedProduct?.productName)
     }
     }
   };
 
   const handleCloseModal = () => {
+    setMedState(false)
+    setTitleState(false)
+    setProductNameState("")
+    setProductIdState("")
+    setProductPriceState("")
+    setProductDosageState("")
+    setProductQuantityState("")
+    setOption(2)
     setShowModal(false);
+    setShowImageModal(false)
   };
 
   const handleAddModal = () => {
+    setTitleState(false)
     const items = listAllCustomProduct;
+    if(!titleState){
     if(option === 1){
       items.push({
         // productName : productNameRef.current.value,
@@ -123,6 +145,33 @@ export default function CustomOrder({ statusId, statusDesc }) {
         type : 0,
       })
     }
+  }
+  else{
+    const result = listAllCustomProduct
+    console.log(productNameState)
+    console.log(oldNameProduct)
+      for(let i =0; i < result.length ; i++){
+        if(result[i].productName === oldNameProduct){
+          if(option === 1){
+            console.log("ini dya ",result[i].productName)
+            result[i].productName = productNameState ? productNameState : result[i].productName
+            result[i].productPrice = productPriceState
+            result[i].productDosage= productDosageState
+            result[i].quantity = productQuantityState
+            result[i].ingredients = listAllIngredient
+          }
+          if(option === 0){
+            console.log("ini dya ",result[i].productName)
+            result[i].productName = productNameState ? productNameState : result[i].productName
+            result[i].productPrice = productPriceState
+            result[i].quantity = productQuantityState
+        }
+      }
+    }
+    
+    console.log("result = ",result)
+      setListAllCustomProduct(result)
+  }
     setProductNameState("")
     setProductIdState("")
     setProductPriceState("")
@@ -131,7 +180,7 @@ export default function CustomOrder({ statusId, statusDesc }) {
     setOption(2)
     console.log(items)
     setListAllCustomProduct(items)
-
+    setMedState(false)
     setShowModal(false);
   };
 
@@ -152,16 +201,19 @@ export default function CustomOrder({ statusId, statusDesc }) {
 }
   const onNormalProductChange = (params) =>{
     const result = params.split(",")
+    console.log(result)
     // product ID
     setProductIdState(result[0])
     setProductNameState(result[1])
     setProductPriceState(result[2])
-
+    
 }
 
 const onUserChange = (params) =>{
   const result = params.split(",")
   setEmail(result[0])
+  setImage(result[2])
+  setUserState(true)
 }
 
 const submitIngredient = () =>{
@@ -204,11 +256,43 @@ const handleSubmitOrder = () =>{
 
   return (
     <>
-      <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
+      <div className="container pt-24 pb-6 lg:ml-[calc(5rem)] lg:px-8">
         <UserList
         user={dataUser}
         onUserChange={onUserChange}
         />
+      </div>
+        {userState && 
+        <div className="container lg:ml-[calc(5rem)] lg:px-8">
+        <div>
+          <span className="font-semibold">
+          Preview Resep Dokter :
+          </span>
+        <div className="h-[300px] w-[300px] mb-8 object-center duration-300 pt-3" 
+        onClick={()=>setShowImageModal(!showImageModal)}>
+        <img
+          src={process.env.REACT_APP_CLOUDINARY_BASE_URL + image}
+          alt={"image"}
+          className="h-[300px] w-[300px] object-center duration-300"
+        />
+
+        <Modal
+        showModal={showImageModal}
+        halfWidth={true}
+        closeModal={!showImageModal}
+        title={`Gambar Resep Dokter`}
+        >
+        <img
+          src={process.env.REACT_APP_CLOUDINARY_BASE_URL + image}
+          alt={"image"}
+          className="h-full w-full object-center duration-300"
+          />
+          
+      </Modal>
+        </div>
+        <span className="font-semibold">
+                List Produk : 
+            </span>
         <div className="flex flex-col gap-4 pb-24 pt-3 lg:pb-0">
         {listAllCustomProduct.map((item) => {
           // const moreItems = transactionDetail.length - 1;
@@ -296,6 +380,9 @@ const handleSubmitOrder = () =>{
 
         })}
         </div>
+        
+          {userState &&
+        <div>
         <Button
                   isButton
                   isPrimary
@@ -312,12 +399,17 @@ const handleSubmitOrder = () =>{
                   onClick={handleSubmitOrder}
                   title={`Submit Order`}
                 />
+                </div>
+        }
+
       </div>
+      </div>
+      }
       <Modal
         showModal={showModal}
         halfWidth={true}
         closeModal={()=>handleCloseModal()}
-        title={`Add Product Section`}
+        title={titleState ? `Edit Product Section` : `Add Product Section`}
       >
         {/* masukin option 2 pilihan, option dan setoptionm, tiga kondisi */}
         <span className="">
@@ -327,9 +419,11 @@ const handleSubmitOrder = () =>{
             focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
             "
             ref={optionRef} onChange={()=>{setOption(+optionRef?.current?.value)}}
+            onClick={()=>setMedState(true)}
             >
-          <option value="0" >Produk Satuan</option>
-          <option value="1" >Obat Racik</option>
+          <option disabled={medState}>Pilih jenis produk : </option>
+          <option selected={option === 0} value="0" >Produk Satuan</option>
+          <option selected={option === 1} value="1">Obat Racik</option>
         </select>
 
         { option === 1 &&
@@ -340,9 +434,7 @@ const handleSubmitOrder = () =>{
               className="border p-4 shadow-md"
             >
               <div className="flex items-center justify-between">
-                <span className="title">
-                  Add Ingredient
-                </span>
+              <h3 className="title">Tambah Bahan Obat Racik</h3>
               </div>
               <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
                 {/* isi input, quantity */}
@@ -358,7 +450,7 @@ const handleSubmitOrder = () =>{
                   <Input
                     ref={ingredientQuantityRef}
                     type="number"
-                    label="Ingredient Quantity"
+                    label="Jumlah Obat Racik"
                     placeholder="e.g. 1"
                     // errorInput={error.IngredientQtyRef}
                     // onChange={() => setError({ ...error, ingredientQtyRef: false })}
@@ -501,6 +593,7 @@ const handleSubmitOrder = () =>{
         product={dataProduct}
         onNormalProductChange={onNormalProductChange}
         productId={productIdState}
+        selected={normalProductState}
       />
       <div className="">
               <Input

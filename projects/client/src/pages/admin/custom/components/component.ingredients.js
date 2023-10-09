@@ -1,10 +1,12 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 function ListOfProduct({
     product = [],
+    selected
 }){
     return product.map((item,index)=>{
         return(
-            <option value={[item?.productId, item?.productName]}>
+            <option value={[item?.productId, item?.productName]}
+            selected={item?.productName=== selected }>
                 {item?.productName}
             </option>
             
@@ -17,39 +19,32 @@ function ListOfProduct({
 export default function IngredientList({
     product = [],
     onIngredientProductChange = (params)=>{},
-    // onIngredientUnitChange = (params)=>{}
+    onChange,
+    errorInput,
+    selected
+
 }){
     const selectProductRef = useRef(null)
-    // const selectUnitRef = useRef(null)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     return(
         <div className="flex flex-col w-full">
             <span>
-                Ingredient
+                Obat Racik
             </span>
             <select 
-            className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
-            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
-            "
-            ref={selectProductRef} onChange={()=>{onIngredientProductChange(selectProductRef?.current?.value)}}>
-                <option disabled>Select Ingredient Product: </option>
+            className= {`w-full rounded-lg border bg-inherit px-2 py-2 outline-none 
+            ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
+            ref={selectProductRef} onChange={()=>{
+                // onChange()
+                onIngredientProductChange(selectProductRef?.current?.value)}}
+            onClick={() => setIsDropdownOpen(true)}
+            >
+                 <option disabled={isDropdownOpen}>Select Ingredient Product:  </option>
                 <ListOfProduct
+                selected={selected}
                 product={product}
                 />
             </select>
-            {/* <span>
-                Ingredient Unit:
-            </span>
-            <select 
-            className="w-full rounded-lg border bg-inherit px-2 py-2 outline-none focus:ring-2
-            focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary
-            "
-            ref={selectUnitRef} onChange={()=>{onIngredientUnitChange(selectUnitRef?.current?.value)}}>
-                <option disabled>Select Secondary Unit: </option>
-                <ListOfUnit
-                product={product}
-                index = {index}
-                />
-            </select> */}
 
         </div>
     )
