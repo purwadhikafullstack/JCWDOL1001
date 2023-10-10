@@ -113,7 +113,7 @@ function App() {
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/custom" element={<CustomOrder />}/>
-              <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
+              <Route path="/admin/transaction/:tab" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
               <Route path="/admin/report" element={<ReportPage />}/>
             </>
           )}
@@ -127,6 +127,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
           )}
+          
           <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     

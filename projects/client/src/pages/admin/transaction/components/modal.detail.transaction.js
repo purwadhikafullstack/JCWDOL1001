@@ -1,19 +1,22 @@
-import Button from "../../../../components/Button";
+import Countdown from "../../../../components/Countdown";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
 
 export default function ModalDetailTransaction({
   selectedTransaction,
-  handleShowModal,
-  handleCloseModal
+  countdown,
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
 
   return (
-    <>
       <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
         <div className="left-container">
+          {countdown &&
+            <div className="mb-4 p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
+              <Countdown expired={selectedTransaction.expired}/>
+            </div>
+          }
           <div className="">
             <h3 className="subtitle">Data Pemesan</h3>
             <div className="">
@@ -52,7 +55,7 @@ export default function ModalDetailTransaction({
             <div className="flex items-center justify-between mb-4">
             <div className="text-sm">
               <p>Tanggal Pembelian</p>
-              <p className="">
+              <p className="font-semibold">
                 {formatDate(selectedTransaction?.createdAt)}
               </p>
             </div>
@@ -74,39 +77,43 @@ export default function ModalDetailTransaction({
                     }
                     alt={product.listedTransaction.productName}
                   />
-                  <div className="">
+                  <div className="w-full">
                     <p>{product.listedTransaction.productName}</p>
-                    <div className="flex gap-2">
-                      <p>{formatNumber(product.price)}</p>
-                      <span>x</span>
-                      <p>{product.quantity}</p>
+                    <div className="flex justify-between">
+                      <div className="flex gap-2">
+                        <p>Rp. {formatNumber(product.price)}</p>
+                        <span>x</span>
+                        <p>{product.quantity}</p>
+                      </div>
+                      <p className="font-semibold">Rp. {formatNumber(product.totalPrice)}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-between gap-2 border-t-2 pt-2">
-              <div className="">
+            <div className="flex flex-col gap-2 border-t-2 pt-2">
+              <div className="flex justify-between">
                 <p className="text-sm">Total Belanja</p>
                 <p className="font-bold">
-                  {formatNumber(selectedTransaction?.total)}
+                  Rp. {formatNumber(selectedTransaction?.subtotal)}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm">Ongkos Kirim</p>
+                <p className="font-bold">
+                  Rp. {formatNumber(selectedTransaction?.transport)}
+                </p>
+              </div>
+              <div className="flex justify-between border-t border-primary pt-2">
+                <p className="text-sm font-semibold">Total Pembayaran</p>
+                <p className="font-bold">
+                  Rp. {formatNumber(selectedTransaction?.total)}
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <div className="mt-4">
-        <Button
-          isButton
-          isPrimary
-          isBLock
-          title={`Proses Pesanan`}
-          onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}
-        />
-      </div>
-    </>
   );
 }

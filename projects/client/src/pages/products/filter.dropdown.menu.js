@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { HiOutlineTrash } from 'react-icons/hi2';
 
-export default function FilterDropdownMenu({ handleSort, setFilterType }) {
-  const [activeFilter, setActiveFilter] = useState(null);
-
+export default function FilterDropdownMenu({ handleSort, setFilterType, activeFilter, setActiveFilter }) {
   return (
     <div className="absolute z-50 w-full invisible group-hover:visible">
       <div className="mt-1 h-fit rounded-lg border border-primary bg-slate-100 p-2 shadow-md">

@@ -17,14 +17,14 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
         <span>Produk</span>
       </Button>
 
-      <Button
+      {/* <Button
         isLink
         path="/promo"
         className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/promo" ? "text-primary" : "text-slate-500" }`}
       >
         <BiSolidDiscount className="text-2xl" />
         <span>Promo</span>
-      </Button>
+      </Button> */}
 
       <Button
         isLink

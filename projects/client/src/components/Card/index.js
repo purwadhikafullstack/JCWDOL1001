@@ -26,13 +26,12 @@ export default function Card({ productId, productName, productPrice, productPict
         {productName}
       </h3>
       <h3 className="font-bold mt-auto">
-        {productDiscount && productDiscount.length !== 0 && !productDiscount[0]?.discount.oneGetOne
+        {productDiscount && productDiscount.length !== 0 && !productDiscount[0]?.discount?.oneGetOne
           ? 
             <div className="flex flex-col max-w-md">
               <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-              {productDiscount[0].discount.isPercentage ? `${productDiscount[0].discount.discountAmount}%` : 
-                  // `${Math.round((productDiscount[0].discount.discountAmount / productPrice)*100)}%` 
-                  `Potongan Harga ${formatNumber(productDiscount[0]?.discount.discountAmount)}`
+              {productDiscount[0].discount?.isPercentage ? `${productDiscount[0].discount.discountAmount}%` : 
+                  `Potongan Harga ${formatNumber(productDiscount[0]?.discount?.discountAmount)}`
                   }
               </span>
 

@@ -133,10 +133,10 @@ export default function Cart() {
   
 },[])
 
-  // useEffect(() => {
-  //     dispatch(getCart())
-  //     dispatch(totalProductCart())
-  //     },[cart])
+  useEffect(() => {
+      dispatch(getCart())
+      dispatch(totalProductCart())
+      },[cart])
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   
@@ -281,7 +281,7 @@ export default function Cart() {
                       isDisabled={isUpdateLoading}
                     />
                 <div className="h-full flex flex-row items-start
-               justify-center">
+                justify-center">
                 <button className=" p-[10px] rounded-md text-gray-700
                   duration-200
                 hover:bg-red-600 hover:text-white text-lg"
@@ -311,7 +311,7 @@ export default function Cart() {
               );
               const price = ( item?.discountProducts[0]?.endingPrice ?
                 item?.discountProducts[0]?.endingPrice :
-                 item?.productPrice) 
+                item?.productPrice) 
               // / 100;
               const totalItemPrice = cartItem?.quantity * price;
                 // if(totalItemPrice === NaN){
@@ -344,8 +344,8 @@ export default function Cart() {
           </div>
 
           <div className="mt-4 flex items-center justify-between font-bold">
-            <p className="text-lg">Total</p>
-            <p>
+            <p className="subtitle">Total Belanja</p>
+            <p className="subtitle">
               Rp.{" "}
               {formatNumber(
                 selectedItems
@@ -356,13 +356,44 @@ export default function Cart() {
                     const discountPrice =
                       ( item?.discountProducts[0]?.endingPrice ?
                         item?.discountProducts[0]?.endingPrice :
-                         item?.productPrice) 
+                        item?.productPrice) 
                       // / 100;
                     return cartItem?.quantity * discountPrice;
                   })
                   .reduce((total, price) => total + price, 0))}
             </p>
           </div>
+          
+          {selectedShipping?.cost &&
+            <>
+              <div className="flex items-center justify-between font-bold">
+                <p className="subtitle">Ongkos Kirim</p>
+                <p className="subtitle">
+                  Rp.{" "}
+                  {formatNumber(selectedShipping?.cost)}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between font-bold mt-2 pt-2 border-t border-primary">
+                <p className="subtitle">Total Pembayaran</p>
+                <p className="subtitle text-primary">
+                  Rp.{" "}
+                  {formatNumber(+selectedShipping?.cost + +selectedItems
+                      ?.map((item) => {
+                        const cartItem = cart.find(
+                          (cartItem) => cartItem?.productId === item?.productId
+                        );
+                        const discountPrice =
+                          ( item?.discountProducts[0]?.endingPrice ?
+                            item?.discountProducts[0]?.endingPrice :
+                            item?.productPrice) 
+                        return cartItem?.quantity * discountPrice;
+                      })
+                      .reduce((total, price) => total + price, 0))}
+                </p>
+              </div>
+            </>
+          }
 
           <div className="mt-4">
             <Button
