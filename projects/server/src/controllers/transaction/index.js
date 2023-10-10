@@ -270,7 +270,7 @@ const createTransactions = async (req, res, next) => {
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
-      invoice : userId + date
+      invoice : `${userId + new Date().getTime()}`
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
