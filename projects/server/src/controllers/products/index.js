@@ -90,8 +90,8 @@ const getProducts = async (req, res, next) => {
             },
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
-        // : promo ? 
-        //   await Discount_Product?.count()
+        : promo ? 
+          await Discount_Product?.count({where:{isDeleted:0}})
         // : promo ? 
         :
           await Product_List?.count({ 
@@ -118,6 +118,55 @@ const getProducts = async (req, res, next) => {
       totalPage: pages,
       totalProducts: total,
       productLimit: options.limit,
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getProductDiscount = async (req, res, next) => {
+  try {
+    const options = {
+      offset:0,
+      limit: 10,
+    };
+    const products = await Product_List?.findAll({
+      ...options,
+      include: [
+        {
+          model: Categories,
+          attributes: ["categoryDesc", "categoryId"],
+          as: "productCategories",
+        },
+        {
+          model: Discount_Product,
+          attributes: { exclude: ["discountProductId"] },
+          as: "discountProducts",
+          where:{isDeleted:0},
+          include: {
+            model: Discount,
+            where: { isDeleted: 0, 
+              [Op.or] :[
+                {discountExpired :{[Op.gte] : moment()}},
+                {discountExpired :{[Op.is] : null}}
+              ]
+            },
+            required: true,
+          },
+          required: false,
+        },
+      ],
+      where:{ isDeleted: 0  },
+    });
+
+    if (!products) {
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+    }
+    
+    res.status(200).json({
+      type: "success",
+      message: "Products fetched",
       data: products,
     });
   } catch (error) {
@@ -387,6 +436,7 @@ const updateMainStock = async (req, res, next) => {
 module.exports = {
   getProducts,
   getProductById,
+  getProductDiscount,
   createProduct,
   updateProduct,
   deleteProduct,

@@ -7,17 +7,17 @@ import Produk from "./components/product.component"
 import UnggahResep from "./components/unggah.resep.component"
 import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
-import { getProducts } from "../../store/slices/product/slices";
+import { getProductDiscount, getProducts } from "../../store/slices/product/slices";
 import { getCart, totalProductCart } from "../../store/slices/cart/slices";
-import Products from "../products";
 
 export default function LandingPage() {
-  const { user, role, categories, products  } = useSelector(state => {
+  const { user, role, categories, products, discountProducts  } = useSelector(state => {
 		return {
 			user : state?.auth,
 			role : state?.auth?.role,
 			categories : state?.cat?.category,
 			products : state?.products?.data,
+			discountProducts : state?.products?.dataDiscount,
 		}
 	})
 
@@ -33,19 +33,19 @@ export default function LandingPage() {
   useEffect(()=>{
     dispatch(getCategory({page : 1}))
     dispatch(
-        getProducts({
-          page: 1,
-          id_cat: "",
-          product_name: "",
-          sort_price: "",
-          sort_name: "",
-          limit:15,
-        })
-      )
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+      })
+    )
+    dispatch(getProductDiscount())  
     dispatch(getCart())
     dispatch(totalProductCart())
   },[])
-
+  
   return (
     <div>
       <div className="container pt-24">
@@ -61,7 +61,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <Produk products={products} context={"bogo"}/>
+            <Produk products={discountProducts} context={"bogo"}/>
           </div>
         </div>
 
@@ -71,7 +71,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <Produk products={products} context="produkDiskon"/>
+            <Produk products={discountProducts} context="produkDiskon"/>
           </div>
         </div>
 

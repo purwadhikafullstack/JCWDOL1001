@@ -250,6 +250,24 @@ const createTransactions = async (req, res, next) => {
         {
           model: Product_List,
           as: "cartList",
+          include:
+          {
+            model: Discount_Product,
+            attributes: { exclude: ["discountProductId"] },
+            as: "discountProducts",
+            where:{isDeleted:0},
+            include: {
+              model: Discount,
+              where: { isDeleted: 0, 
+                [Op.or] :[
+                  {discountExpired :{[Op.gte] : moment()}},
+                  {discountExpired :{[Op.is] : null}}
+                ]
+              },
+              required: false,
+            },
+            required: false,
+          },
         },
       ],
       where: { [Op.and]: [{ userId }, { inCheckOut: 1 }] },
@@ -279,7 +297,7 @@ const createTransactions = async (req, res, next) => {
       }
       await Discount_Transaction.bulkCreate(discountIdList)
     }
-
+    
     for (let i = 0; i < startTransaction.length; i++) {
       const newTransactionDetail = {
         transactionId: newTransaction.transactionId,
@@ -295,7 +313,7 @@ const createTransactions = async (req, res, next) => {
       const UpdateStock = await Product_Detail?.findOne(
         { include : {model : Product_Unit, as : "product_unit"},
           where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
-      let newQuantity = UpdateStock.quantity - startTransaction[i].quantity;
+      let newQuantity = startTransaction[i].cartList?.discountProducts?.length > 0 && startTransaction[i]?.cartList?.discountProducts[0]?.discount?.oneGetOne ? UpdateStock.quantity - (startTransaction[i].quantity*2) : UpdateStock.quantity - startTransaction[i].quantity;
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
 
@@ -304,8 +322,8 @@ const createTransactions = async (req, res, next) => {
         unit : UpdateStock.product_unit.name,
         initialStock : UpdateStock.quantity,
         type : "Update Stock",
-        status : "Pengurangan",
-        quantity : startTransaction[i].quantity,
+        status : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? "Pengurangan Buy One Get One" : "Pengurangan",
+        quantity : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? startTransaction[i].quantity*2 : startTransaction[i].quantity,
         results : newQuantity
       }
       await Product_History?.create(ProductHistory);

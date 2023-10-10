@@ -6,11 +6,13 @@ import {
   updateProduct,
   getProductById,
   updateMainStock,
+  getProductDiscount
 
 } from "./slices";
 
 const INITIAL_STATE = {
   data: [],
+  dataDiscount: [],
   productDetail: null,
   message: null,
   errorMessage:null,
@@ -58,6 +60,18 @@ const productsSlice = createSlice({
         state.productDetail = action.payload.data;
       })
       .addCase(getProductById.rejected, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.data = action.payload.data;
+      })
+
+      .addCase(getProductDiscount.pending, (state, action) => {
+        state.isGetProductsLoading = true;
+      })
+      .addCase(getProductDiscount.fulfilled, (state, action) => {
+        state.isGetProductsLoading = false;
+        state.dataDiscount = action.payload.data;
+      })
+      .addCase(getProductDiscount.rejected, (state, action) => {
         state.isGetProductsLoading = false;
         state.data = action.payload.data;
       })
