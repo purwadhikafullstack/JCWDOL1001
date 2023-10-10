@@ -41,16 +41,16 @@ export default function CheckoutPage(){
                         <div>
                             <img src={LogoBca} className=" w-48 h-24 mx-12 items-center justify-center"></img>
                             <h3>Please transfer to BCA Bank Account</h3>
-                            <h1 className="text-4xl font-bold">091 802 3981</h1>
-                            <h2 className="text-2xl font-semibold">APOTEK PRIMA JASA</h2>
+                            <h1 className="text-4xl font-bold">0918023981</h1>
+                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
                         </div>
                     </div>
                     <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
                             <img src={LogoMandiri} className="w-48 h-24 mx-12 items-center justify-center"></img>
                             <h3>Please transfer to Mandiri Bank Account</h3>
-                            <h1 className="text-4xl font-bold">1234 567 890</h1>
-                            <h2 className="text-2xl font-semibold">APOTEK PRIMA MANDIRI</h2>
+                            <h1 className="text-4xl font-bold">123456789012</h1>
+                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
                         </div>
                     </div>
                     </div>
@@ -60,8 +60,7 @@ export default function CheckoutPage(){
     const checkOut = () => {
         const discountIdList = [...cart].filter((item)=>{return item?.product_detail}).map(({product_detail})=>{return product_detail?.productDiscount[0].discountId})
         if(selectedDiscount) discountIdList.push(selectedDiscount?.discountId)
-        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList}));
-        navigate("/user/transaction");
+        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList})).finally(() => navigate("/user/transaction"));
     }
 
     return(

@@ -92,7 +92,6 @@ const getProducts = async (req, res, next) => {
           })
         : promo ? 
           await Discount_Product?.count({where:{isDeleted:0}})
-        // : promo ? 
         :
           await Product_List?.count({ 
             include:{

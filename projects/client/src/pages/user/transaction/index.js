@@ -123,7 +123,7 @@ export default function Transaction({
 
   useEffect(()=>{
     setPage(1)
-  }, [activeTab])
+  }, [activeTab, sortDate])
 
   return (
     <>
@@ -188,10 +188,10 @@ export default function Transaction({
 
               {transaction.length > 0 &&
                 <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal</span>
+                  <span className="text-sm font-semibold">Sortir</span>
                   <Button 
                     isButton
-                    isPrimaryOutline
+                    isPrimary
                     className={`relative`}
                     title={sortDate ? "Terlama" : "Terbaru"}
                     onClick={() => setSortDate(prevState => !prevState)}

@@ -220,6 +220,7 @@ export default function AdminProducts({user}) {
       <Modal
         showModal={showModal.show}
         closeModal={handleCloseModal}
+        halfWidth={showModal.context === "Detail Produk"}
         title={showModal.context}
         disableOutside
       >
