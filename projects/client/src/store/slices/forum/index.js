@@ -3,7 +3,9 @@ import {
     getForum,
     getPublicForum,
     deleteQuestion,
-    PostQuestion
+    PostQuestion,
+    getUnanswered,
+    PostAnswer
 } from "./slices"
 
 const INITIAL_STATE = {
@@ -56,7 +58,10 @@ const reportSlice = createSlice({
         [deleteQuestion.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 isLoading :false,
-                success : true
+                success : true,
+                list : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
             })
         },
         [deleteQuestion.rejected] : (state, action) => {
@@ -72,6 +77,35 @@ const reportSlice = createSlice({
             })
         },
         [PostQuestion.rejected] : (state, action) => {
+            state.isLoading = false
+        },
+        [getUnanswered.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [getUnanswered.fulfilled] : (state, action) => {
+            state = Object.assign(state, {
+                list : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
+                isLoading : false
+            })
+        },
+        [getUnanswered.rejected] : (state, action) => {
+            state.isLoading = false
+        },
+        [PostAnswer.pending] : (state, action) => {
+            state.isLoading = true
+        },
+        [PostAnswer.fulfilled] : (state, action) => {
+            state = Object.assign(state, {
+                isLoading :false,
+                success : true,
+                list : action.payload?.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
+            })
+        },
+        [PostAnswer.rejected] : (state, action) => {
             state.isLoading = false
         },
     }

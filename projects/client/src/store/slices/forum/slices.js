@@ -54,8 +54,9 @@ export const deleteQuestion = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
 
-            const { data } = await api.patch("/forum/"+payload)
-            toast.success(data.message)
+            const result = await api.patch("/forum/"+payload)
+            toast.success(result?.data?.message)
+            const { data } = await api.get("/forum/admin?")
             return data
         }catch(error){
             toast.error(error.response.data.message)
@@ -71,6 +72,45 @@ export const PostQuestion = createAsyncThunk(
 
             const { data } = await api.post("/forum/",payload)
 
+            return data
+        }catch(error){
+            toast.error(error.response.data.message)
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const getUnanswered = createAsyncThunk(
+    "forum/getUnanswered",
+    async(payload, {rejectWithValue}) => {
+        try{
+            const { page, sortDate,filterQuestion } = payload
+
+            let PARAMETER = "?"
+
+            if(page) PARAMETER += `page=${page ? page : 1 }&`
+            
+            if(sortDate) PARAMETER += `sortDate=${sortDate}&`
+
+            if(filterQuestion) PARAMETER += `filterQuestion=${filterQuestion}&`
+
+            const { data } = await api.get("/forum/admin" + encodeURI(PARAMETER))
+
+            return data
+        }catch(error){
+            toast.error(error.response.data.message)
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const PostAnswer = createAsyncThunk(
+    "forum/answer",
+    async(payload, {rejectWithValue}) => {
+        try{
+
+            await api.patch("/forum/", payload)
+            const { data } = await api.get("/forum/admin?")
             return data
         }catch(error){
             toast.error(error.response.data.message)
