@@ -12,7 +12,7 @@ import PesananDikirim from "./pesanan-dikirim";
 import PesananDibatalkan from "./pesanan-dibatalkan";
 import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
-import { HiMagnifyingGlass, HiMinus, HiOutlineTrash, HiXMark } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiMinus, HiXMark } from "react-icons/hi2";
 import Input from "../../../components/Input";
 import { useParams } from "react-router-dom";
 
@@ -37,7 +37,7 @@ export default function Transaction({
   const searchedInvoiceRef = useRef(null)
   
   // false = DESC, true = ASC
-  const [sortDate, setSortDate] = useState(false)
+  const [sortDate, setSortDate] = useState(null)
 
   const [page, setPage] = useState(1)
   const [activeTab, setActiveTab] = useState(1);
@@ -48,16 +48,16 @@ export default function Transaction({
 
   const handleSortDate = async (type) =>{
     try {
-      
       if (type === "start") setIsStartDateChanged(true)
       if (type === "end") setIsEndDateChanged(true)
-  
+      
       if(isStartDateChanged || isEndDateChanged) {
         await setDateValidationSchema.validate({
-            startDate: startDateRef.current?.value ? startDateRef.current?.value : null, 
-            endDate: endDateRef.current?.value ? endDateRef.current?.value : null, 
-          }, {abortEarly : false})
-  
+          startDate: startDateRef.current?.value ? startDateRef.current?.value : null, 
+          endDate: endDateRef.current?.value ? endDateRef.current?.value : null, 
+        }, {abortEarly : false})
+        
+        setSortDate(false)
         dispatch(getTransactionList({
             statusId : activeTab,
             startFrom : startDateRef.current.value,
@@ -93,7 +93,7 @@ export default function Transaction({
   }
 
   const resetFilter = () => {
-    setSortDate(false)
+    setSortDate(null)
     setPage(1)
     setIsStartDateChanged(false)
     setIsEndDateChanged(false)
@@ -263,7 +263,7 @@ export default function Transaction({
             isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
           />
 
-          </div>
+        </div>
       </div>
     </>
   );
