@@ -198,9 +198,10 @@ const getProductById = async (req, res, next) => {
           as: "discountProducts",
           include: {
             model: Discount,
-            where: { isDeleted: 0 },
             required: false,
           },
+          where: { isDeleted: 0 },
+          required:false
         },
       ],
       where: { productId: id },

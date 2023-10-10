@@ -9,11 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import ShippingAddress from "../../../components/Shipping/component.address.js";
-import ShippingCost from "../../../components/Shipping/component.shipping.js";
 import { toast } from "react-toastify";
-import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/validation";
-import DiscountChecker from "../../../components/Discount Checker";
 
 export default function Cart() {
   const {cart,products,isUpdateLoading} = useSelector(state=>{
@@ -25,7 +21,6 @@ export default function Cart() {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const location = useLocation()
   let status = []
   const selectedProduct = cart.map((item,index) => {
     status.push(false)
