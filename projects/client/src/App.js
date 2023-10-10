@@ -10,7 +10,7 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
-import { keepLogin } from "./store/slices/auth/slices";
+import { getProfile, keepLogin } from "./store/slices/auth/slices";
 import CategoryList from "./pages/admin/category";
 import AdminProducts from "./pages/admin/product";
 import NotFound from "./pages/NotFound";
@@ -37,12 +37,14 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading } = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading } = useSelector(state => {
 		return {
 			user : state?.auth,
       isLogin : state?.auth?.isLogin,
       ongoingTransactions : state?.transaction?.ongoingTransactions,
       isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
+      isChangePictureLoading : state?.auth?.isChangePictureLoading,
+      isChangeProfileLoading : state?.auth?.isChangeProfileLoading
 		}
 	})
   
@@ -70,6 +72,12 @@ function App() {
       dispatch(getOngoingTransactions())
     }
   }, [isUpdateOngoingTransactionLoading, isLogin])
+
+  useEffect(()=>{
+    if (isLogin){
+      dispatch(getProfile())
+    }
+  }, [isChangePictureLoading, isChangeProfileLoading])
 
   if (loading) {
     return (
@@ -106,7 +114,7 @@ function App() {
               <Route path="/admin/categories" element={<CategoryList />}/>
               <Route path="/admin/discount" element={<DiscountPage />}/>
               <Route path="/admin/custom" element={<CustomOrder />}/>
-              <Route path="/admin/transaction" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
+              <Route path="/admin/transaction/:tab" element={<AdminTransaction ongoingTransactions={ongoingTransactions}/>}/>
               <Route path="/admin/report" element={<ReportPage />}/>
               <Route path="/admin/qna" element={<QNA/>}/>
             </>
@@ -121,6 +129,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
           )}
+          
           <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     

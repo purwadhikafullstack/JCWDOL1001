@@ -7,10 +7,9 @@ export default function ShippingCost({
     selectedAddress,
     setShipping
 }) {
-    const {shippingCost, isGetCostLoading} = useSelector(state=>{
+    const {shippingCost} = useSelector(state=>{
         return{
             shippingCost : state?.address?.shippingCost,
-            isGetCostLoading : state?.address?.isGetCostLoading,
         }
     })
 
@@ -54,36 +53,45 @@ export default function ShippingCost({
             cost : event.target.selectedOptions[0].value
         })
     }
-
+    
     return (
-        <div className={selectedAddress.length === 0 &&"hidden"}>
-            Pilih jasa pengiriman : 
-            <div className="flex max-w-sm gap-3">
-                <select 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                    onChange={handleChangeCourier}
-                >
-                    <option disabled={true} selected={true}>Choose Courier</option>
-                    <option value="jne">JNE</option>
-                    <option value="pos">POS INDONESIA</option>
-                    <option value="tiki">TIKI</option>
-                </select>
-                <select 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                    onChange={handleChangeCourierService}
-                >
-                    <option disabled={true} selected={selectedCourier.cost === ''}>Choose Service</option>
-                    {shippingCost.map((cost) => (
-                        <option 
-                            value={cost?.cost[0]?.value}
-                            title={cost.service}
-                            id={cost?.cost[0]?.etd}
-                        >
-                            {`${cost?.service} \n ${formatNumber(cost.cost[0]?.value)}`}
-                        </option>
-                    ))}
-                </select>
-
+        <div className={`flex gap-8 ${selectedAddress?.length === 0 &&"hidden"}`}>
+            <div className="flex flex-col">
+                <a>Pilih pengiriman : </a>
+                <div className="flex max-w-lg gap-3 items-center">
+                    <select 
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5"
+                        onChange={handleChangeCourier}
+                    >
+                        <option disabled={true} selected={true}>Pilih Jasa</option>
+                        <option value="jne">JNE</option>
+                        <option value="pos">POS INDONESIA</option>
+                        <option value="tiki">TIKI</option>
+                    </select>
+                    <select 
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block p-2.5"
+                        onChange={handleChangeCourierService}
+                    >
+                        <option disabled={true} selected={selectedCourier.cost === ''}>Pilih Layanan</option>
+                        {shippingCost.map((cost) => (
+                            <option 
+                                value={cost?.cost[0]?.value}
+                                title={cost.service}
+                                id={cost?.cost[0]?.etd}
+                            >
+                                {cost?.service}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+            <div className="flex flex-col">
+                <a>Biaya : </a>
+                <a className="flex flex-grow items-center border border-gray-300 px-2 rounded-lg">Rp. {selectedCourier.cost ? formatNumber(selectedCourier.cost) : "-" }</a>
+            </div>
+            <div className="flex flex-col">
+                <a>Estimasi : </a>
+                <a className="flex flex-grow items-center border border-gray-300 px-2 rounded-lg">{selectedCourier.etd ? selectedCourier.etd : "-" }  Hari</a>
             </div>
         </div>
     )

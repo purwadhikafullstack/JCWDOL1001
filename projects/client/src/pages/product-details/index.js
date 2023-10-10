@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getProductById, getProducts } from "../../store/slices/product/slices";
 import formatNumber from "../../utils/formatNumber";
-import { BsDashLg, BsPlusLg } from "react-icons/bs";
+import { FaPlus, FaMinus } from "react-icons/fa";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Footer from "../../components/Footer";
@@ -12,6 +12,7 @@ import Modal from "../../components/Modal";
 import UploadRecipeButton from "../../components/UploadRecipeButton";
 import { getCart, totalProductCart, updateCart } from "../../store/slices/cart/slices";
 import LoadingProductDetail from "./loading.product.detail";
+import { toast } from "react-toastify"
 
 export default function ProductDetail({user}) {
   const dispatch = useDispatch()
@@ -26,15 +27,19 @@ export default function ProductDetail({user}) {
     }
   })
   const [qty, setQty] = useState(1);
-  const [stock, setStock] = useState(1);
+  const [stock, setStock] = useState(3);
 
   useEffect(()=>{
-    const result = cart?.filter((element) => element?.productId == id)
-    setStock(result[0]?.cartList?.product_details[0]?.quantity)
-    if(result[0]?.quantity > 0 && result[0]?.quantity <= stock){
-      setQty(result[0]?.quantity)
+
+    const result = cart?.find((element) => element?.productId == id)
+    if (result) {
+      setStock(result?.cartList?.product_details[0]?.quantity)
+      if(result?.quantity > 0 && result?.quantity <= stock){
+        setQty(result?.quantity)
+      }
+      dispatch(totalProductCart())
     }
-    dispatch(totalProductCart())
+
   },[cart])
 
   const handleQty = (type) => {
@@ -48,21 +53,19 @@ export default function ProductDetail({user}) {
   };
 
   const handleQtyInput = (event) => {
-    event.preventDefault()
     const newQty = event.target.value;
 
-    if (newQty === "" || +newQty > 0 && +newQty <= stock) {
+    if (newQty === "" || (+newQty > 0 && +newQty <= stock)) {
       setQty(newQty === "" ? "" : +newQty);
-    }
-    if(+newQty === "" || +newQty === 0) {
-      setQty(1);
+    } else if (+newQty > 0 && +newQty >= stock) {
+      setQty(+stock);
     }
   };
 
   const handleBlur = (event) => {
     const newQty = event.target.value;
 
-    if (+newQty === "") {
+    if (!newQty) {
       setQty(1);
     }
   };
@@ -73,14 +76,13 @@ export default function ProductDetail({user}) {
     if (user.role) {
       try{
         dispatch(updateCart({productId: productId , quantity : String(qty)}))
-        alert(`Produk ${productId} berhasil ditambahkan ke keranjang!`);
+        toast.success(`Produk berhasil ditambahkan ke keranjang!`);
         return
       }
       catch(err){
-        alert("error dalam cart update!")
+        toast.error("Gagal menambahkan produk ke keranjang!")
         return
       }
-      //harus diubah ke toastify
     }
 
     if (!user.role) {
@@ -93,7 +95,11 @@ export default function ProductDetail({user}) {
   }
   
   useEffect(()=>{
-    dispatch(getProductById(id))
+    dispatch(getProductById(id)).then((response) => {
+      setStock(response.payload.data.productUnits.length > 0 ? 
+        response.payload.data.productUnits[0].product_detail.quantity : 0)
+    }
+    )
 
     dispatch(
       getProducts({
@@ -104,7 +110,9 @@ export default function ProductDetail({user}) {
         sort_name: "",
       })
     );
+
     dispatch(getCart())
+    setQty(1)
 
   },[id])
 
@@ -126,13 +134,12 @@ export default function ProductDetail({user}) {
 
           <div className="col-span-2 flex w-full flex-col gap-2">
             <h3 className="title">{product?.productName}</h3>
-              {product?.discountProducts && product?.discountProducts.length !== 0 && !product?.discountProducts[0]?.discount.oneGetOne
+              {product?.discountProducts && product?.discountProducts.length !== 0 && !product?.discountProducts[0]?.discount?.oneGetOne
           ? 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
                   {product?.discountProducts[0].discount.isPercentage ? `${product?.discountProducts[0].discount.discountAmount}%` : 
-                  // `${Math.round((product?.discountProducts[0].discount.discountAmount/product?.productPrice)*100)}%` 
                   `Potongan Harga ${formatNumber(product?.discountProducts[0]?.discount.discountAmount)}`
                   }
                 </span>
@@ -144,7 +151,7 @@ export default function ProductDetail({user}) {
               
             </div>
             
-          : product?.discountProducts[0]?.discount.oneGetOne && 
+          : product?.discountProducts[0]?.discount?.oneGetOne && 
 
             <div className="flex flex-col max-w-md">
               <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
@@ -154,7 +161,7 @@ export default function ProductDetail({user}) {
           }
 
             <h3 className="text-xl lg:text-2xl font-bold text-primary">
-              Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice)}
+              Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0]?.endingPrice : product?.productPrice)}
             </h3>
             <div className="mt-4 w-4/5">
               <h3 className="subtitle">Aturan Pakai</h3>
@@ -172,28 +179,37 @@ export default function ProductDetail({user}) {
               <Button
                 isSmall
                 isSecondary
-                title={<BsDashLg className="text-white" />}
+                isDisabled={qty === 1}
+                title={<FaMinus className="text-white" />}
                 onClick={() => handleQty("reduce")}
               />
               <Input
-                type="numberSecondVariant"
+                type="number"
                 className="text-center"
                 value={qty}
+                isDisabled={stock === 0}
                 onChange={handleQtyInput}
                 onBlur={handleBlur}
               />
               <Button
                 isSmall
                 isPrimary
-                title={<BsPlusLg className="text-white" />}
+                isDisabled={!product?.productUnits[0]?.product_detail.quantity || qty === product?.productUnits[0]?.product_detail.quantity}
+                title={<FaPlus className="text-white" />}
                 onClick={() => handleQty("add")}
               />
             </div>
 
             <div className="flex items-center justify-between">
+              {stock ? 
               <h3 className="text-sm text-gray-600 ">
-                Stock: <span className="font-bold text-primary">{product?.productUnits[0]?.product_detail.quantity}</span>
+                Produk Tersedia: <span className="font-bold text-primary">{stock}</span>
               </h3>
+              :
+              <h3 className="text-sm text-danger ">
+                Produk Tidak Tersedia
+              </h3>
+              }
 
             </div>
             
@@ -204,7 +220,7 @@ export default function ProductDetail({user}) {
               </h3>
             </div>
 
-            <Button isBLock isButton isPrimary title="Masukkan Keranjang" onClick={()=>handleCart(product.productId)}/>
+            <Button isBLock isButton isPrimary isDisabled={!product?.productUnits[0]?.product_detail.quantity} title="Masukkan Keranjang" onClick={()=>handleCart(product.productId)}/>
           </div>
         </div>
 
@@ -246,7 +262,7 @@ export default function ProductDetail({user}) {
         title={`Login`}
       />
 
-      <UploadRecipeButton />
+      <UploadRecipeButton user={user} />
     </>
   );
 } 

@@ -8,7 +8,6 @@ import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Footer from "../../components/Footer";
 import SkeletonCard from "../../components/SkeletonCard";
-import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import UploadRecipeButton from "../../components/UploadRecipeButton";
 import "./index.css";
@@ -40,26 +39,12 @@ export default function Products({ user }) {
   const searchRef = useRef(null);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showModal, setShowModal] = useState({ show: false, context: "" });
   const [sort, setSort] = useState({ sortBy: "", type: "" });
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(null)
   const [promo, setPromo] = useState(false)
   const [filterType, setFilterType] = useState(null)
-
-  const handleCart = (productId) => {
-    if (user.role) {
-      alert(`Produk ${productId} berhasil ditambahkan ke keranjang!`);
-    }
-
-    if (!user.role) {
-      setShowModal({ show: true, context: "login" });
-    }
-  };
-
-  const handleCloseModal = () => {
-    setShowModal({ show: false, context: "" });
-  };
+  const [activeFilter, setActiveFilter] = useState(null);
 
   const handleSearch = (event) => {
     setPage(1)
@@ -127,6 +112,12 @@ export default function Products({ user }) {
     );
 
   }, [selectedCategory, search, sort, page, promo ]);
+
+  useEffect(()=>{
+    setSort(false)
+    setFilterType(null)
+    setActiveFilter(null)
+  }, [selectedCategory])
   
   return (
     <>
@@ -135,19 +126,6 @@ export default function Products({ user }) {
           <div className="col-span-1 h-fit w-full border-b pb-4 lg:block lg:rounded-lg lg:border lg:p-6 lg:shadow-lg ">
             <h3 className="title">Kategori</h3>
             <div className="categories-wrapper mt-4 flex flex-nowrap gap-8 overflow-auto lg:flex-col lg:items-start lg:justify-start lg:gap-4">
-              <Button
-                isLink
-                className={`product-category ${promo && "active"}`}
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setSearch(null)
-                  setPage(1)
-                  setPromo(true)
-                  searchRef.current.value = ""
-                }}
-              >
-                Promo
-              </Button>
 
               <Button
                 isLink
@@ -161,6 +139,20 @@ export default function Products({ user }) {
                 }}
               >
                 Semua Produk
+              </Button>
+
+              <Button
+                isLink
+                className={`product-category ${promo && "active"}`}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setSearch(null)
+                  setPage(1)
+                  setPromo(true)
+                  searchRef.current.value = ""
+                }}
+              >
+                Promo
               </Button>
 
               {categories.map((category, index) => (
@@ -198,16 +190,21 @@ export default function Products({ user }) {
                   type="text"
                   placeholder="Cari kebutuhanmu disini"
                 />
-                <button
+                <Button
                   className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
                   type="submit"
                 >
                   <HiMagnifyingGlass className="text-2xl text-primary" />
-                </button>
-              </form>
+                </Button>
               {search && 
-                <Button isButton isPrimary title={`Hapus`} onClick={clearSearch}/>
+                <Button
+                  className="absolute right-6 top-1/2 -translate-y-1/2 p-2"
+                  onClick={clearSearch}
+                >
+                  <HiXMark className="text-2xl text-primary" />
+                </Button>
               }
+              </form>
             </div>
 
 
@@ -217,7 +214,7 @@ export default function Products({ user }) {
                   ? `Hasil Pencarian: ${searchRef.current?.value}`
                   : selectedCategory
                   ? selectedCategory.categoryDesc
-                  : "Semua Produk"}
+                  : promo ? "Promo" : "Semua Produk"}
               </h3>
 
               <div className="group relative w-1/2 md:w-1/3 lg:w-1/5">
@@ -235,7 +232,7 @@ export default function Products({ user }) {
                   <HiOutlineFunnel className="text-lg" />
                 </Button>
 
-                <FilterDropdownMenu handleSort={handleSort} setFilterType={setFilterType}/>
+                <FilterDropdownMenu handleSort={handleSort} setFilterType={setFilterType} activeFilter={activeFilter} setActiveFilter={setActiveFilter}/>
                 
               </div>
             </div>
@@ -247,10 +244,10 @@ export default function Products({ user }) {
               ) : products.length === 0 ? (
                 <div className="col-span-full py-24 text-center">
                   <h3 className="text-dark text-xl font-semibold ">
-                    Oops. Produk belum tersedia
+                    Yah! Produk yang kamu cari tidak ditemukan :(
                   </h3>
                   <p className="text-slate-600">
-                    Coba temukan produk yang lain
+                    Yuk, coba cari produk yang lain
                   </p>
                 </div>
               ) : (
@@ -263,7 +260,6 @@ export default function Products({ user }) {
                     productDiscount={product.discountProducts}
                     productPicture={product.productPicture}
                     productStock={product.productStock}
-                    onClick={() => handleCart(product.productId)}
                     productCategories={product.productCategories}
                   />
                 ))
@@ -279,14 +275,7 @@ export default function Products({ user }) {
 
       <Footer />
 
-      <Modal
-        showModal={showModal.show}
-        closeModal={handleCloseModal}
-        context={showModal.context}
-        title={`Login`}
-      />
-
-      <UploadRecipeButton />
+      <UploadRecipeButton user={user} />
     </>
   );
 }

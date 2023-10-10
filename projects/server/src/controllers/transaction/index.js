@@ -10,6 +10,9 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
+  Discount_Transaction,
+  Discount,
+  Discount_Product,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
@@ -20,7 +23,16 @@ const db = require("../../model/index.js")
 
 async function cancelExpiredTransactions() {
   try {
-    const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
+    // const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
+    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
+
+    const discountExpiredList = await Discount.findAll({where : {discountExpired : {[Op.lte]:currentTime}}})
+    
+    const expiredDiscountId = discountExpiredList.map((list)=>{return list.discountId})
+    
+    await Discount.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
+    
+    await Discount_Product.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
 
     const transactionsToCancel = await Transaction_List.findAll({
       include:[
@@ -79,11 +91,11 @@ async function cancelExpiredTransactions() {
 const getTransactions = async (req, res, next) => {
 
   try {
-    const { userId } = req.user;
+    const { userId, roleId } = req.user;
     const { statusId } = req.params;
-    const { page, sortDate, startFrom, endFrom, sortTotal, filterName } = req.query;
+    const { page, sortDate, startFrom, endFrom, sortTotal, filterName, invoice } = req.query;
 
-    const limit = 2;
+    const limit = 5;
         
     const options = {
       offset: page > 1 ? (page - 1) * limit : 0,
@@ -94,7 +106,7 @@ const getTransactions = async (req, res, next) => {
     const sort = []
     const filtering = {}
 
-    if (userId === 1) {
+    if (roleId === 1) {
       whereCondition = { statusId };
     } else {
       whereCondition = { userId, statusId };
@@ -109,8 +121,11 @@ const getTransactions = async (req, res, next) => {
 
     if(filterName) filtering.name = {"name" : {[Op.like]: `%${filterName}%`}}
     
-    if(sortDate) sort.push(['updatedAt',sortDate ? sortDate : "DESC"])
+    if(sortDate) {
+      roleId === 1 ? sort.push(['updatedAt',sortDate ? sortDate : "DESC"]) : sort.push(['createdAt',sortDate ? sortDate : "DESC"])
+    }
     if(sortTotal) sort.push(['total',sortTotal])
+    if(invoice) whereCondition.invoice = {[Op.like]: `%${invoice}%`}
 
     const transaction = await Transaction_List?.findAll({
       include: [
@@ -137,6 +152,13 @@ const getTransactions = async (req, res, next) => {
           model: User_Profile,
           as: "userProfile",
           where:filtering.name,
+        },
+        {
+          model: Discount_Transaction,
+          attributes : {exclude :['productListId']},
+          include:{
+            model:Discount
+          }
         }
       ],
       where: whereCondition,
@@ -221,7 +243,7 @@ const createTransactions = async (req, res, next) => {
   try {
     //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
-    const { transport, totalPrice, addressId } = req.body;
+    const { transport, totalPrice, addressId,discountId } = req.body;
 
     const startTransaction = await Cart?.findAll({
       include: [
@@ -237,6 +259,9 @@ const createTransactions = async (req, res, next) => {
       where: { [Op.and]: [{ userId }, { inCheckOut: 1 }] },
     });
 
+    const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
+    let date = new Date().getTime()
+
     const newTransactionList = {
       userId: userId,
       total: +totalPrice + +transport,
@@ -244,11 +269,13 @@ const createTransactions = async (req, res, next) => {
       subtotal: totalPrice,
       statusId: 1,
       addressId : addressId,
-      expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
-      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
+      expired : expiredTime,
+      invoice : userId + date
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
+
+    if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
 
     for (let i = 0; i < startTransaction.length; i++) {
       const newTransactionDetail = {
@@ -269,8 +296,6 @@ const createTransactions = async (req, res, next) => {
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
 
-      console.log(UpdateStock);
-
       const ProductHistory = {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
@@ -281,11 +306,33 @@ const createTransactions = async (req, res, next) => {
         results : newQuantity
       }
       await Product_History?.create(ProductHistory);
-    }
+    }    
 
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },
     });
+
+    const customer = await User_Account?.findOne({
+      where : { userId : userId }
+    })
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const html = handlebars.compile(template)({ 
+      order: (newTransaction.transactionId),
+      invoice : (newTransactionList.invoice)
+    })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: customer?.dataValues?.email,
+        subject: `Transaksi Berhasil untuk Invoice No. ${newTransactionList.invoice}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
     //});
 
     //await transaction.commit();
@@ -309,6 +356,10 @@ const getCheckoutProducts = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,
@@ -708,16 +759,13 @@ const cancelTransaction = async (req, res, next) => {
       })
     }
 
-    if (transaction.dataValues.statusId === 1 ||
-        transaction.dataValues.statusId === 2 ) {
+    if ([1, 2, 3].includes(transaction.dataValues.statusId)) {
       await transaction.update({
         statusId: 7,
         message,
         canceledBy: roleId === 1 ? "Admin" : "User",
       });
     
-
-
       let reason = "";
       let information = "";
       // email jika dibatalkan oleh user
@@ -779,27 +827,17 @@ const cancelTransaction = async (req, res, next) => {
             }
           })
         }
+        
         //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
-          if(listRecipe.length !== 0){
-            await Promise.all(
-              listRecipe.map(async (itemRecipe) =>{
-                const mainUnit = await Product_Detail.findOne({
-                  where : {
-                    productId : itemRecipe?.dataValues?.ingredientProductId,
-                    isDefault : true
-                  },
-                  include :[ 
-                    {
-                      model : Product_Unit,
-                    }
-                  ]
-                })
-                const secUnit = await Product_Detail.findOne({
-                  where : {
-                    productId : itemRecipe?.dataValues?.ingredientProductId,
-                    isDefault : false
-                  },
-                  include :[
+        if(listRecipe.length !== 0){
+          await Promise.all(
+            listRecipe.map(async (itemRecipe) =>{
+              const mainUnit = await Product_Detail.findOne({
+                where : {
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  isDefault : true
+                },
+                include :[ 
                   {
                     model : Product_Unit,
                   }]
@@ -847,19 +885,73 @@ const cancelTransaction = async (req, res, next) => {
                     productId : itemRecipe?.dataValues?.ingredientProductId,
                     isDefault : true
                   }
-                })
-                await Product_Detail.update({
-                  quantity : +currentSecUnitQuantity
-                },{
-                  where : {
-                    productId : itemRecipe?.dataValues?.ingredientProductId,
-                    isDefault : false
-                  }
-                })
+                
+              })
 
+              const secUnit = await Product_Detail.findOne({
+                where : {
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  isDefault : false
+                },
+                include :[
+                {
+                  model : Product_Unit,
+                }]
+              })
+
+              //seandainya awalnya stock ada 12 sec, kepake cmn 4
+              //quantity di transaksi x quantity di resep produknya =  total ingredients yang kepakai
+              //cth : kejual 3 biji, 1 biji perlu 3 butir panadol
+              //brrti kepake 9 butir
+              //cth cmn perlu 8, brrti kepake 3 main, sisa 1
+              const totalIngredientQuantity = quantity * itemRecipe?.dataValues?.quantity
+
+              //seandainya totalIngredientQuantity < main unit convertion?
+              if(totalIngredientQuantity < mainUnit?.dataValues?.convertion){
+              //cek dlu apakah totalIngredientQuantity + secUnit.quantity >= convertion
+              //kalau iya brrti terjadi konversi; cth : total 7, sec unit 1 conv 8, brrti awalnya ada 6
+              if(totalIngredientQuantity + secUnit.dataValues?.quantity >= mainUnit?.dataValues?.convertion){
+              //update both unit
+              const currentSecUnitQuantity = totalIngredientQuantity + secUnit.dataValues?.quantity - mainUnit?.dataValues?.convertion
+              await Product_History.create({
+                productId : itemRecipe?.dataValues?.ingredientProductId,
+                unit : mainUnit.dataValues?.product_unit.name,
+                initialStock : mainUnit.dataValues?.quantity,
+                status : "Pembatalan Transaksi",
+                type : "Penambahan",
+                quantity : 1,
+                results : +mainUnit.dataValues?.quantity + 1
+              })
+              await Product_History.create({
+                productId : itemRecipe?.dataValues?.ingredientProductId,
+                unit : secUnit.dataValues?.product_unit.name,
+                initialStock : secUnit.dataValues?.quantity,
+                status : "Pembatalan Transaksi",
+                type : "Pengurangan",
+                quantity : Math.abs(totalIngredientQuantity - mainUnit?.dataValues?.convertion),
+                results : +currentSecUnitQuantity
+              })
+              //update qtynya
+              await Product_Detail.update({
+                quantity : +mainUnit.dataValues?.quantity + 1
+              },{
+                where : {
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  isDefault : true
                 }
-                //kalau kurang brrti gaterjadi konversi
-                else{
+              })
+              await Product_Detail.update({
+                quantity : +currentSecUnitQuantity
+              },{
+                where : {
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  isDefault : false
+                }
+              })
+
+              }
+              //kalau kurang brrti gaterjadi konversi
+              else {
                 //update only sec unit
                 await Product_History.create({
                   productId : itemRecipe?.dataValues?.ingredientProductId,
@@ -881,56 +973,58 @@ const cancelTransaction = async (req, res, next) => {
                 })
 
                 }
-                }
-                //kalau totalIngredientQuantity >= main unit convertion
-                //pasti terjadi konversi
-                if(totalIngredientQuantity >= mainUnit?.dataValues?.convertion){
-                  // sisa skrg 4, konversi 8, perlu 20, dulu sisa brp ? 0
-                  // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
-                  const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.dataValues?.quantity) / mainUnit?.dataValues?.convertion)
-                  const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.dataValues?.quantity) % mainUnit?.dataValues?.convertion
+              }
+              //kalau totalIngredientQuantity >= main unit convertion
+              //pasti terjadi konversi
+              if(totalIngredientQuantity >= mainUnit?.dataValues?.convertion){
+                // sisa skrg 4, konversi 8, perlu 20, dulu sisa brp ? 0
+                // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
+                const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.dataValues?.quantity) / mainUnit?.dataValues?.convertion)
+                const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.dataValues?.quantity) % mainUnit?.dataValues?.convertion
 
-                  await Product_History.create({
+                await Product_History.create({
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  unit : mainUnit.dataValues?.product_unit.name,
+                  initialStock : mainUnit.dataValues?.quantity,
+                  status : "Pembatalan Transaksi",
+                  type : "Penambahan",
+                  quantity : currentMainUnitQuantity,
+                  results : +mainUnit.dataValues?.quantity + currentMainUnitQuantity
+                })
+                await Product_History.create({
+                  productId : itemRecipe?.dataValues?.ingredientProductId,
+                  unit : secUnit.dataValues?.product_unit.name,
+                  initialStock : secUnit.dataValues?.quantity,
+                  status : "Pembatalan Transaksi",
+                  type : currentSecUnitQuantity > secUnit?.dataValues?.quantity ? "Penambahan" : "Pengurangan",
+                  quantity : Math.abs(currentSecUnitQuantity - secUnit?.dataValues?.quantity),
+                  results : currentSecUnitQuantity
+                })
+                //update qtynya
+                await Product_Detail.update({
+                  quantity : +mainUnit.dataValues?.quantity + currentMainUnitQuantity
+                },{
+                  where : {
                     productId : itemRecipe?.dataValues?.ingredientProductId,
-                    unit : mainUnit.dataValues?.product_unit.name,
-                    initialStock : mainUnit.dataValues?.quantity,
-                    status : "Pembatalan Transaksi",
-                    type : "Penambahan",
-                    quantity : currentMainUnitQuantity,
-                    results : +mainUnit.dataValues?.quantity + currentMainUnitQuantity
-                  })
-                  await Product_History.create({
+                    isDefault : true
+                  }
+                })
+                await Product_Detail.update({
+                  quantity : +currentSecUnitQuantity
+                },{
+                  where : {
                     productId : itemRecipe?.dataValues?.ingredientProductId,
-                    unit : secUnit.dataValues?.product_unit.name,
-                    initialStock : secUnit.dataValues?.quantity,
-                    status : "Pembatalan Transaksi",
-                    type : currentSecUnitQuantity > secUnit?.dataValues?.quantity ? "Penambahan" : "Pengurangan",
-                    quantity : Math.abs(currentSecUnitQuantity - secUnit?.dataValues?.quantity),
-                    results : currentSecUnitQuantity
-                  })
-                  //update qtynya
-                  await Product_Detail.update({
-                    quantity : +mainUnit.dataValues?.quantity + currentMainUnitQuantity
-                  },{
-                    where : {
-                      productId : itemRecipe?.dataValues?.ingredientProductId,
-                      isDefault : true
-                    }
-                  })
-                  await Product_Detail.update({
-                    quantity : +currentSecUnitQuantity
-                  },{
-                    where : {
-                      productId : itemRecipe?.dataValues?.ingredientProductId,
-                      isDefault : false
-                    }
-                  })
-                } 
-                
+                    isDefault : false
+                  }
+                })
+              } 
+              
+            }}
 
-              })
+            }
             )
-          }
+          )
+        }
       
       }))
 
@@ -948,7 +1042,7 @@ const cancelTransaction = async (req, res, next) => {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
           subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
-          html: html
+          html: html 
         }
 
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {

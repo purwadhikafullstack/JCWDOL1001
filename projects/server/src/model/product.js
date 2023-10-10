@@ -64,7 +64,7 @@ const Product_Unit = db.sequelize.define("product_unit", {
         allowNull: false
     },
     isSecondary : {
-        type: db.Sequelize.BOOLEAN,
+        type: db.Sequelize.TINYINT,
         allowNull: false,
         defaultValue: 0
     }

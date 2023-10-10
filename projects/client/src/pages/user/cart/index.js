@@ -9,20 +9,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { getAddress } from "../../../store/slices/address/slices";
 import ShippingAddress from "../../../components/Shipping/component.address.js";
 import ShippingCost from "../../../components/Shipping/component.shipping.js";
 import { toast } from "react-toastify";
 import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/validation";
+import DiscountChecker from "../../../components/Discount Checker";
 
 export default function Cart() {
-  const {cart,products,isDeleteLoading,isUpdateLoading, address} = useSelector(state=>{
+  const {cart,products,isUpdateLoading} = useSelector(state=>{
     return{
-      address : state?.address?.data,
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
-      isDeleteLoading : state?.cart?.isDeleteLoading,
     }
   })
   const navigate = useNavigate()
@@ -43,9 +41,6 @@ export default function Cart() {
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [trigger, setTrigger] = useState(true);
-
-  const [selectedAddress, setSelectedAddress] = useState([])
-  const [selectedShipping, setShipping] = useState([])
 
   const toggleSelectItem = (itemId, index) => {
     if(selectedStatus[index]){
@@ -135,27 +130,20 @@ export default function Cart() {
       limit: 12,
     })
   )
-  dispatch(getAddress())
+  
 },[])
 
-  // useEffect(() => {
-  //     dispatch(getCart())
-  //     dispatch(totalProductCart())
-  //     },[cart])
+  useEffect(() => {
+      dispatch(getCart())
+      dispatch(totalProductCart())
+      },[cart])
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   
   const checkOut = async () => {
     try{
-      await AddressAndShippingValidationSchema.validate({
-        "addressId" : selectedAddress.length ===0 ? "" : selectedAddress?.addressId,
-        "courierName" : selectedShipping.name
-      },{abortEarly:false})
       dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout",{ 
-        state: { addressSelected: selectedAddress, 
-          shippingSelected: selectedShipping 
-        }})
+      navigate("/checkout")
 
     }catch(error){
       const errors = {}
@@ -178,18 +166,6 @@ export default function Cart() {
   return (
     <div className="container relative py-24">
       <h3 className="title">Keranjang</h3>
-      <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
-      {(error.addressId && selectedAddress.length ===0) && (
-        <div className="text-sm text-red-500 dark:text-red-400">
-          {error.addressId}
-        </div>
-      )}
-      <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
-      {(error.courierName && selectedShipping.length ===0) && (
-        <div className="text-sm text-red-500 dark:text-red-400">
-          {error.courierName}
-        </div>
-      )}
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
           className="h-5 w-5"
@@ -305,7 +281,7 @@ export default function Cart() {
                       isDisabled={isUpdateLoading}
                     />
                 <div className="h-full flex flex-row items-start
-               justify-center">
+                justify-center">
                 <button className=" p-[10px] rounded-md text-gray-700
                   duration-200
                 hover:bg-red-600 hover:text-white text-lg"
@@ -335,7 +311,7 @@ export default function Cart() {
               );
               const price = ( item?.discountProducts[0]?.endingPrice ?
                 item?.discountProducts[0]?.endingPrice :
-                 item?.productPrice) 
+                item?.productPrice) 
               // / 100;
               const totalItemPrice = cartItem?.quantity * price;
                 // if(totalItemPrice === NaN){
@@ -368,8 +344,8 @@ export default function Cart() {
           </div>
 
           <div className="mt-4 flex items-center justify-between font-bold">
-            <p className="text-lg">Total</p>
-            <p>
+            <p className="subtitle">Total Belanja</p>
+            <p className="subtitle">
               Rp.{" "}
               {formatNumber(
                 selectedItems
@@ -380,12 +356,11 @@ export default function Cart() {
                     const discountPrice =
                       ( item?.discountProducts[0]?.endingPrice ?
                         item?.discountProducts[0]?.endingPrice :
-                         item?.productPrice) 
+                        item?.productPrice) 
                       // / 100;
                     return cartItem?.quantity * discountPrice;
                   })
-                  .reduce((total, price) => total + price, 0)
-              )}
+                  .reduce((total, price) => total + price, 0))}
             </p>
           </div>
 

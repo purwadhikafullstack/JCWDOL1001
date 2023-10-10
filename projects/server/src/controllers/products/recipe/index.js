@@ -12,6 +12,7 @@ const {} = require("./validation.js")
 const {ValidationError} = require("yup");
 const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
+const moment = require("moment")
 
 const getUser = async( req, res, next ) => {
     try{
@@ -237,7 +238,7 @@ const getUser = async( req, res, next ) => {
           html: html}
 
           helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
-              if (error) throw error;
+              // if (error) throw error;
               console.log("Email sent: " + info.response);
           })
   
@@ -404,6 +405,8 @@ const getUser = async( req, res, next ) => {
           type : "Pengurangan",
           quantity : +product?.productDescription * recipeQty,
           results : secUnit?.quantity - (+product?.productDescription * recipeQty)
+
+
         })
         await Product_Detail.update({
           quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
@@ -485,6 +488,8 @@ const getUser = async( req, res, next ) => {
         subtotal,
         transport : transportCost,
         total : subtotal + transportCost,
+        expired : moment().add(24,"hours").format("YYYY-MM-DD hh:mm:ss"),
+        invoice : `${user?.userId + new Date().getTime()}`,
         statusId : 1,
         addressId : address?.addressId,
         expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
@@ -502,6 +507,10 @@ const getUser = async( req, res, next ) => {
           productId : productResult[i].productId
       })
     }
+
+    // if (productResult.length > 0) {
+    //   await Transaction_Detail.bulkCreate(productResult);
+    // }
 
       res.status(200).json({ 
         type : "success",

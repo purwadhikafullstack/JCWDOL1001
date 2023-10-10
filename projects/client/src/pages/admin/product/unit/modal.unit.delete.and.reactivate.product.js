@@ -26,9 +26,9 @@ export default function ModalDeleteAndReactiveUnit({
       <SuccessMessage
         type="success"
         message={
-          `${messageInput.split(" ")[0] === "reactivate" 
-          ? `Reactive of product unit ${selectedUnit.name} success` 
-          : `Product unit ${selectedUnit.name} has been delete`}`}
+          `${messageInput.split(" ")[0] === "aktifkan" 
+          ? `Satuan ${selectedUnit.name} berhasil diaktifkan` 
+          : `Satuan ${selectedUnit.name} berhasil dihapus`}`}
         handleCloseModal={handleCloseModal}
       />
     );
@@ -37,31 +37,31 @@ export default function ModalDeleteAndReactiveUnit({
   return (
     <>
       <p className="modal-text">
-        Are you sure want to {messageInput} 
+        Apakah kamu yakin untuk {messageInput} 
         <span className="font-bold"> {selectedUnit.name} ?</span>
       </p>
 
       <div className="mt-4 flex justify-end gap-2">
         {!isDeleteProductLoading && (
           <Button 
-            title="No" 
+            title="Tidak" 
             isButton 
             isSecondary 
             onClick={() =>
               handleShowModal({
-                context : "Edit Unit", 
+                context : "Ubah Satuan", 
                 productId : selectedUnit.product_detail.productId
               })
             }
           />
         )}
         <Button
-          title="Yes"
+          title="Yakin"
           isButton
           isDanger
           isLoading={isDeleteProductLoading}
           onClick={() => 
-            messageInput.split(" ")[0] === "reactivate" 
+            messageInput.split(" ")[0] === "aktifkan" 
             ? handleReactivateUnit({
                 productId : selectedUnit.product_detail.productId,
                 stockId : selectedUnit.product_detail.stockId

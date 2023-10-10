@@ -31,7 +31,7 @@ export default function TableProducts({
           <th className="p-3">Harga</th>
           <th className="p-3">Stok</th>
           <th className="p-3">Unit</th>
-          <th className="p-3">Gambar</th>
+          {/* <th className="p-3">Gambar</th> */}
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -67,10 +67,10 @@ export default function TableProducts({
                 {index + 1}
               </th>
               <td className="p-3">{product.productName}</td>
-              <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
+              <td className="p-3">Rp. {formatNumber(product.productPrice)}</td>
               <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
               <td className="p-3">{product?.productUnits[0]?.name}</td>
-              <td className="p-3">
+              {/* <td className="p-3">
                 <div className="aspect-[4/3] w-10">
                   <img
                     src={
@@ -81,7 +81,7 @@ export default function TableProducts({
                     className="h-full w-full object-cover"
                   />
                 </div>
-              </td>
+              </td> */}
 
               <td className="p-3">
                 <div className="flex gap-3">
@@ -155,14 +155,14 @@ export default function TableProducts({
                         className="px-2 hover:bg-slate-200"
                         onClick={() =>
                           handleShowModal({
-                            context : "Ubah Unit", 
+                            context : "Ubah Satuan", 
                             productId : product.productId
                           })
                         }
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineCircleStack className="text-lg text-purple-500 " />
-                          Ubah Unit
+                          Ubah Satuan
                         </span>
                       </Button>
                       

@@ -12,7 +12,6 @@ async function dataCart (userId){
         {
             where : {
             userId : userId,
-            // inCheckOut : 0
         },
         include : 
         [

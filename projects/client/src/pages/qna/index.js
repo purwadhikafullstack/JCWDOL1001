@@ -5,7 +5,7 @@ import Button from "../../components/Button"
 import { formatDate, formatDateWithTime, formatTime } from "../../utils/formatDate"
 import Modal from "../../components/Modal"
 import Message from "../../components/Message"
-import Pagination from "../../components/Pagination"
+import Pagination from "../../components/PaginationV2/index.js"
 import Input from "../../components/Input"
 import { PostQuestionValidationSchema } from "../../store/slices/forum/validation"
 import { toast } from "react-toastify"
@@ -43,12 +43,6 @@ export default function QnAPage() {
     setShowModal({ show: false, context: "" })
     setSelectedQuestion([])
     document.body.style.overflow = "auto"
-  }
-
-  const onChangePagination = (type) => {
-    dispatch(getPublicForum({ 
-      page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-    }))
   }
 
   const handlePertanyaan = () => {
@@ -96,10 +90,15 @@ export default function QnAPage() {
       }, 2000)
     }
   }
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    dispatch(getPublicForum({page:"",filterQuestion:""}))
+    dispatch(getPublicForum({page:page,filterQuestion:""}))
   }, [])
+  
+  useEffect(() => {
+    dispatch( getPublicForum({page:page,filterQuestion:questionRef?.current?.value}) )
+  }, [page])
 
 
   return (
@@ -130,7 +129,7 @@ export default function QnAPage() {
                 setSelectedQuestion(list)
               }}
             >
-              <div className="nav-profile-img hidden aspect-square w-16 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 lg:block" >
+              <div className="nav-profile-img hidden aspect-square w-16 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
                 <img className="h-full w-full object-cover"
                   src={process.env.REACT_APP_CLOUDINARY_BASE_URL + list.user_profile.profilePicture}
                 />
@@ -158,18 +157,13 @@ export default function QnAPage() {
         })}
       </div>
       <div className="w-full flex items-center justify-center">
-        <Pagination 
-          onChangePagination={onChangePagination}
-          disabledPrev={Number(currentPage) === 1}
-          disabledNext={currentPage >= totalPage}
-          currentPage={currentPage}
-        />
+        <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
       </div>
       <Modal 
         showModal={showModal.show}
         closeModal={handleCloseModal}
-        context={profile.length ===0 ? showModal.context : ""}
-        title={profile.length ===0 ? `Login` : showModal.context}
+        context={profile.length ===0 && showModal.context !== "Detail Jawaban"? showModal.context : ""}
+        title={profile.length ===0 && showModal.context !== "Detail Jawaban" ? `Login` : showModal.context}
       >
         {showModal.context === "Detail Jawaban"  && (
           <>

@@ -67,7 +67,7 @@ export default function AdminProducts({user}) {
 
       units : state?.units?.data,
       unitsSuccess : state?.units?.success,
-      isLoading : state.units.isLoading, //penyebab produk ngedispatch setiap close modal
+      isLoading : state.units.isLoading,
     };
   });
 
@@ -104,7 +104,7 @@ export default function AdminProducts({user}) {
     setShowModal({ show: false, context: "" });
     setSelectedProduct(null);
     dispatch(resetSuccessProduct());
-    dispatch(resetUnit())
+    dispatch(getUnits());
     document.body.style.overflow = "auto";
   };
 
@@ -220,6 +220,7 @@ export default function AdminProducts({user}) {
       <Modal
         showModal={showModal.show}
         closeModal={handleCloseModal}
+        halfWidth={showModal.context === "Detail Produk"}
         title={showModal.context}
         disableOutside
       >
@@ -263,7 +264,7 @@ export default function AdminProducts({user}) {
         />
         )}
 
-        {showModal.context === "Ubah Unit" && (
+        {showModal.context === "Ubah Satuan" && (
           <>
             <h3 className="text-xl font-bold">| {selectedProduct.productName}</h3>
             <ModalUnitsProduct
@@ -273,7 +274,7 @@ export default function AdminProducts({user}) {
           </>
         )}
 
-        {(showModal.context === "Delete Unit" || showModal.context === "Reactivate Unit") && (
+        {(showModal.context === "Hapus Satuan" || showModal.context === "Aktifkan Satuan") && (
           <ModalDeleteAndReactiveUnit
             messageInput = {showModal.context.toLowerCase()}
             selectedUnit={selectedUnit}
@@ -284,7 +285,7 @@ export default function AdminProducts({user}) {
           />
         )}
 
-        {showModal.context === "Edit Unit Details" && (
+        {showModal.context === "Ubah Detail Satuan" && (
           <ModalInputProductUnit
             success={unitsSuccess}
             units={units}
@@ -295,7 +296,7 @@ export default function AdminProducts({user}) {
           />
         )}
 
-        {showModal.context === "Add New Unit" && (
+        {showModal.context === "Tambah Satuan Baru" && (
           <ModalAddProductUnit
             success={unitsSuccess}
             units={units}
@@ -305,7 +306,7 @@ export default function AdminProducts({user}) {
           />
         )}
 
-        {showModal.context === "Make Convertion" && (
+        {showModal.context === "Konversi Satuan" && (
           <ModalMakeConvertion
             success={unitsSuccess}
             productData={selectedProduct}

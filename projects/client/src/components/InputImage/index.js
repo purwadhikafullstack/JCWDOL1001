@@ -16,21 +16,14 @@ export default function InputImage({
   const onDrop = (acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > 1000000) {
-      toast.error("Maksimal Gambar 1MB", 
-          {
-              position: "top-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-          }
-      )
+      toast.error("Maksimal Gambar 1MB")
       return;
     }
     setFile(selectedFile);
+    setDataImage(selectedFile)
+
+    if(dataImage) setDataImage(selectedFile);
+
     if(setError){
       setError("")
     }
@@ -77,7 +70,7 @@ export default function InputImage({
         {previewImage || dataImage ? (
           <>
             <img 
-              alt=""
+              alt="Gambar tidak ditemukan"
               src={
                 previewImage ||
                 process.env.REACT_APP_CLOUDINARY_BASE_URL + dataImage

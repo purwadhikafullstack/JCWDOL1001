@@ -54,7 +54,7 @@ const makeConvertionUnit = async( req, res, next ) => {
 
     await Product_Detail.update(
       { quantity : secondaryUnit?.dataValues?.quantity +(isProductDefaultAvailable.dataValues?.convertion * req.body.times ) },
-      { where : { productId : req.body.productId, isDefault : 0 } }
+      { where : { productId : req.body.productId, isDefault : 0,isDeleted : 0 } }
     )
 
     const productUnitResult = await Product_Detail.findOne({
