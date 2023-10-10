@@ -69,6 +69,7 @@ const getCart = async (req, res, next) => {
             //     ],
             // });
             const cartExists = await dataCart(user?.userId)
+            
           
             //try to connect any data needed, like product Name, etc according to ui/ux
             if(!cartExists){

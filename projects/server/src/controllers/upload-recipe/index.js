@@ -7,7 +7,7 @@ const {helperTransporter} = require("../../helper/index.js")
 const { User_Account, User_Profile } = require("../../model/relation.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
 const uploadRecipeValidationSchema = require("./validation.js")
-
+const moment = require("moment")
 
 const uploadRecipe = async (req, res, next) => {
   try {
@@ -41,7 +41,8 @@ const uploadRecipe = async (req, res, next) => {
         { 
           imgRecipe : req?.file?.filename ,
           addressIdRecipe : address.addressId,
-          shippingRecipe : courier.name + "," + courier.type + "," + courier.cost 
+          shippingRecipe : courier.name + "," + courier.type + "," + courier.cost ,
+          createdRecipe : moment().format("YYYY-MM-DD hh:mm:ss")
         },
         { where : { UUID : req.user.UUID } }
     )

@@ -15,17 +15,27 @@ export default function ConfirmCustom() {
   const location = useLocation()
   const token = location.pathname.split('order-')[1]
   useEffect(()=>{
-    // console.log(token)
-    dispatch(setOrder(token))
+    if(role === 2){
+      dispatch(setOrder(token))
+    }
   },[])
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <h3 className="title">Please wait for a moment.</h3>
-      <p className="mb-2">We will make your order now.</p>
-      { role === 2 ?
-      status ?
+      {role !== 2 && 
       <div>
+      <h3 className="title">Please login to your account</h3>
+      <p className="mb-2">We need to make sure that only our customers could confirm the order.</p>
+      </div>
+      }
+      { (role === 2 && !status) && 
+      <div>
+      <h3 className="title">Please wait for a moment.</h3>
+      <p className="mb-2">We will verify and make your order now.</p>
+      </div>}
+      {status &&
+      <div>
+        <h3 className="title">Hurray!</h3>
       <p className="mb-2">Your order has been created.</p>
       <Button
         isButton
@@ -34,8 +44,9 @@ export default function ConfirmCustom() {
         title="Back"
         path="/"
       />
-      </div>
-       : <div></div> : <div></div>}
+      </div>}
+      
+       
     </div>
   );
 }
