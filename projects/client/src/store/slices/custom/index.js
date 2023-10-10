@@ -38,7 +38,9 @@ const customSlice = createSlice({
         [getUser.fulfilled] : (state, action) => {
             state = Object.assign(state, {
                 dataUser : action.payload?.data,
-                isLoading : false
+                isLoading : false,
+                currentPage : action.payload?.currentPage,
+                totalPage : action.payload?.totalPage
             })
         },
         [getUser.rejected] : (state,action) => {
