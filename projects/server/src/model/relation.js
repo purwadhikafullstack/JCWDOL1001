@@ -107,6 +107,8 @@ Product_Recipe.belongsTo(Product_List, {targetKey : "productId", foreignKey : "i
 Forum.belongsTo(User_Profile,{foreignKey:"userId",otherKey:"adminId"})
 User_Profile.hasMany(Forum,{foreignKey:"userId",otherKey:"adminId"})
 
+Transaction_List.hasOne(Discount_Transaction,{foreignKey : "transactionId", otherKey : "discountId"})
+
 
 module.exports = { 
     User_Account, 

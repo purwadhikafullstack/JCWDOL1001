@@ -6,7 +6,6 @@ import InputImage from "../../components/InputImage/index.js"
 import Modal from "../../components/Modal/index.js";
 import { uploadRecipe } from "../../store/slices/upload-recipe/slices.js"
 import ShippingAddress from "../../components/Shipping/component.address.js"
-import { getAddress } from "../../store/slices/address/slices.js"
 import ShippingCost from "../../components/Shipping/component.shipping.js"
 import { UploadRecipeValidationSchema } from "../../store/slices/upload-recipe/validation.js"
 import { toast } from "react-toastify"
@@ -16,7 +15,7 @@ export default function UploadRecipePage(){
     const {isLoading,address} = useSelector(state => {
 		return {
 			isLoading : state?.uploadRecipe?.isLoading,
-            address : state?.address?.data,
+            address : state?.auth?.address,
 		}
 	})
 
@@ -93,7 +92,7 @@ export default function UploadRecipePage(){
     }
 
     useEffect(() => {
-        dispatch(getAddress())
+        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
     },[])
 
     return(

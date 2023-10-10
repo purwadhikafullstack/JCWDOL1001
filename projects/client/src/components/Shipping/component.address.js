@@ -30,14 +30,13 @@ export default function ShippingAddress({
         handleCloseModal()
     }
     return (
-        <div className="flex flex-col md:flex-row gap-2 w-fit md:items-center">
-            <p>Dikirim ke : </p>
+        <div className="flex flex-col ">
+            <a>Dikirim ke :</a>
             <Button
-                isButton
-                isPrimaryOutline
+                className="border-2 rounded-lg w-fit p-2"
                 onClick={()=>{handleShowModal("Daftar Alamat")}}
             >
-                {selectedAddress?.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
+                 {selectedAddress?.length !== 0 ? ` ${selectedAddress?.contactName} | ${selectedAddress?.address}` : `Pilih Alamat`}
             </Button>
 
             <Modal
@@ -59,17 +58,17 @@ export default function ShippingAddress({
                             >                                         
                                 {listAddress?.map((list,index)=>(
                                     <Button
-                                        key={list.addressId}
+                                        key={list?.addressId}
                                         className={`flex w-full flex-shrink-0 cursor-pointer flex-col rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6 ${list.addressId == selectedAddress.addressId ? "border-2 border-teal-700" : ""} `}
                                     >
                                         <p className="text-sm font-bold text-dark md:text-base">
-                                            {list.contactName}
+                                            {list?.contactName}
                                         </p>
                                         <p className="text-sm text-dark md:text-base">
-                                            {list.contactPhone}
+                                            {list?.contactPhone}
                                         </p>
                                         <p className="text-sm text-dark md:text-base">
-                                            {list.address}
+                                            {list?.address}
                                         </p>
                                         <div className="flex gap-4 mt-4">
                                             <Button

@@ -2,6 +2,7 @@ import React from 'react'
 import formatNumber from '../../../utils/formatNumber';
 
 export default function ModalDetailsProduct({selectedProduct, categories}) {
+  
   return (
     <div className="grid max-h-[75vh] md:grid-cols-2 overflow-auto px-2 gap-4">
       <div className="">

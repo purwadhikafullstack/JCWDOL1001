@@ -5,6 +5,7 @@ import Button from "../../../../components/Button";
 import Input from "../../../../components/Input";
 import SuccessMessage from "../../../../components/Message";
 import { addUnit } from "../../../../store/slices/product/unit/slices";
+import { ProductUnitValidationSchema } from "../../../../store/slices/product/unit/validation";
 
 export default function ModalAddProductUnit({
   success,
@@ -22,45 +23,35 @@ export default function ModalAddProductUnit({
         unitId : "",
         unitName : ""
     });
-
-    const [isDefaultUnit, setIsDefaultUnit] = useState({
-        id : 0,
-        name :"Tidak"
-    })
-
     const [confirmation, setConfirmation] = useState(false);
 
     const canAddDefaultUnit = productData.productUnits.filter(
-        (unit) => unit.product_detail.isDefault.toString() === "true"
+        (unit) => unit.product_detail.isDefault && !unit.product_detail.isDeleted
     ).length < 1
 
     const canAddSecondaryUnit = productData.productUnits.filter(
-        (unit) => unit.product_detail.isDefault.toString() === "false" && unit.product_detail.isDeleted.toString() === "false"
+        (unit) => !unit.product_detail.isDefault && !unit.product_detail.isDeleted
     ).length < 1
 
     let dataUnits = []
     
-    if((canAddSecondaryUnit && !canAddDefaultUnit) || isDefaultUnit.id ==0 ){
-        dataUnits = units.filter((unit) => unit.isSecondary.toString() === canAddSecondaryUnit.toString())
+    if(canAddSecondaryUnit && !canAddDefaultUnit){
+        dataUnits = units.filter((unit) => unit.isSecondary === 1)
     }else {
-        dataUnits = units.filter((unit) => unit.isSecondary.toString() === (!canAddDefaultUnit).toString())
+        dataUnits = units.filter((unit)=> unit.isSecondary === 0)
     }
 
-    if (success) {
-        return (
-            <SuccessMessage
-                type="success"
-                message={`Berhasil menambahkan satuan ${unitSelected.unitName} ke ${productData.productName}!`}
-                handleCloseModal={handleCloseModal}
-            />
-        );
-    }
+    const [isDefaultUnit, setIsDefaultUnit] = useState({
+        id : canAddDefaultUnit ? 1 : 0,
+        name :canAddDefaultUnit ? "Ya":"Tidak"
+    })
 
     const handleChangeUnit = (event) => {
         setSelectedUnit({
             unitId :event.target.selectedOptions[0].className,
             unitName :event.target.selectedOptions[0].value
         })
+        setError({ ...error, unit: false })
     }
 
     const handleChangeDefault = (type) => {
@@ -69,6 +60,9 @@ export default function ModalAddProductUnit({
             name : type.name
         })
     }
+
+    const [error, setError] = useState("")
+    const [isToastVisible, setIsToastVisible] = useState(false)
 
     const output = {data:{},productId:""}
 
@@ -90,19 +84,76 @@ export default function ModalAddProductUnit({
         output.productId = productData.productId
         
         try {
+            if((output.data.isDefault == 1 && (output.data.quantity === 0 || output.data.convertion === 0))&& unitSelected.unitName==="default"){
+                throw({
+                    inner : 
+                    [{
+                        path : "quantity",
+                        message:"Satuan utama harus memiliki kuantitas"
+                    },{
+                        path : "convertion",
+                        message:"Satuan utama harus memiliki kuantitas per satuan"
+                    },{
+                        path : "unit",
+                        message:"Satuan harus dipilih"
+                    }]
+                })
+            }
+            
             if(output.data.isDefault == 1 && output.data.quantity === 0) {
-                return toast.error("Harus ada jumlah pada Satuan Utama")
+                throw({inner: [{
+                    path : "quantity",
+                    message:"Satuan utama harus memiliki kuantitas"
+                }]})
             }
     
             if(output.data.isDefault == 1 && output.data.convertion === 0) {
-                return toast.error("Satuan Utama harus memiliki jumlah per satuan")
+                throw({inner: [{
+                    path : "convertion",
+                    message:"Satuan Utama harus memiliki kuantitas per satuan"
+                }]})
+            }
+    
+            if(unitSelected.unitName==="default") {
+                throw({inner: [{
+                    path : "unit",
+                    message:"Satuan belum dipilih"
+                }]})
             }
 
             dispatch(addUnit(output))
 
             setConfirmation(false)
             
-        }catch (error) {}
+        }catch (error) {
+            const errors = {}
+            
+            error.inner.forEach((innerError) => {
+                errors[innerError.path] = innerError.message;
+            })
+            
+            setError(errors)
+            
+            toast.error("Check your input field!")
+
+            setConfirmation(false)
+
+            setIsToastVisible(true)
+
+            setTimeout(() => {
+                setIsToastVisible(false)
+            }, 2000)
+        }
+    }
+
+    if (success) {
+        return (
+            <SuccessMessage
+                type="success"
+                message={`Berhasil menambahkan satuan ${unitSelected.unitName} ke ${productData.productName}!`}
+                handleCloseModal={handleCloseModal}
+            />
+        );
     }
 
   return (
@@ -112,6 +163,11 @@ export default function ModalAddProductUnit({
             <div className="mt-4 flex flex-col gap-y-4">
                 <div className="h-auto max-h-[75vh] overflow-auto px-1">
                     <h3>Satuan : </h3>
+                    <Button onClick={()=>{
+                        setSelectedUnit({
+                            unitName :"default"
+                        })
+                    }} className={`${unitSelected.unitName === "other" ? "text-red-600" : "hidden"}`}>Pilihan Satuan</Button>
                     {unitSelected.unitName === "other" ?
                         <Input
                             ref={unitRef}
@@ -121,42 +177,21 @@ export default function ModalAddProductUnit({
                         <select 
                             value={unitSelected?.unitName} 
                             onChange={handleChangeUnit}
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg block w-full p-2.5 ${error.unit ? `border-red-500` : `border-gray-300` }`}
                         >
-                            <option >Pilih Satuan</option>
+                            <option value="default" >Pilih Satuan</option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}
                             <option value="other">Input Manual</option>
                         </select>
 
-                    }
-                    
-                    <fieldset className={`${canAddDefaultUnit && canAddSecondaryUnit ? "mt-4" : "hidden"}`}>
-                        <legend>Apakah Sebagai Satuan Utama?</legend>
-                        <div>
-                            <input
-                                type="radio"
-                                id="1"
-                                name="isDefault"
-                                value="Ya"
-                                checked = {isDefaultUnit.name === "Ya" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:1,name:"Ya"})}}
-                                
-                            />
-                            <label for="1" className="mr-4">Yes</label>
-
-                            <input 
-                                type="radio" 
-                                id="0" 
-                                name="isDefault" 
-                                value="Tidak" 
-                                checked = {isDefaultUnit.name === "Tidak" ? true : false}
-                                onChange={()=>{handleChangeDefault({id:0,name:"Tidak"})}}
-                            />
-                            <label for="0">No</label>
+                    }                           
+                    {error.unit && (
+                        <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.unit}
                         </div>
-                    </fieldset>
+                    )}
 
                     { (canAddDefaultUnit && canAddSecondaryUnit && isDefaultUnit.name === "Ya") || (canAddDefaultUnit && !canAddSecondaryUnit) ?
                         <div>
@@ -166,16 +201,28 @@ export default function ModalAddProductUnit({
                                 ref={qtyRef}
                                 id="qty"
                                 name="qtyUnit"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            />
+                                errorInput={error.quantity}
+                                onChange={()=>{setError({ ...error, quantity: false })}}
+                            />                            
+                            {error.quantity && (
+                                <div className="text-sm text-red-500 dark:text-red-400">
+                                    {error.quantity}
+                                </div>
+                            )}
                             <h3 className="pt-2">Jumlah per Satuan : </h3>
                             <Input
                                 type="number"
                                 ref={qtyPerUnitRef}
                                 id="qtyUnit"
                                 name="qtyPerUnit"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            />
+                                errorInput={error.convertion}
+                                onChange={()=>{setError({ ...error, convertion: false })}}
+                            />                            
+                            {error.convertion && (
+                                <div className="text-sm text-red-500 dark:text-red-400">
+                                    {error.convertion}
+                                </div>
+                            )}
                         </div>
                         :""
                     }
@@ -188,7 +235,7 @@ export default function ModalAddProductUnit({
                     isSecondary 
                     onClick={() =>
                         handleShowModal({
-                            context : "Edit Unit",
+                            context : "Ubah Satuan",
                             productId : "",
                             unitId : ""
                         })

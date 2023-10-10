@@ -5,11 +5,13 @@ const db = require("../../model/index.js")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
 
 async function dataCart (userId){
+    await Cart?.update({inCheckOut : 0},{where : {
+        userId : userId,
+    }})
     return await Cart?.findAll(
         {
             where : {
             userId : userId,
-            inCheckOut : 0
         },
         include : 
         [

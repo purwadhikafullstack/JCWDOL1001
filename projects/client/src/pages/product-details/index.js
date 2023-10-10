@@ -134,7 +134,7 @@ export default function ProductDetail({user}) {
 
           <div className="col-span-2 flex w-full flex-col gap-2">
             <h3 className="title">{product?.productName}</h3>
-              {product?.discountProducts && product?.discountProducts.length !== 0 && !product?.discountProducts[0]?.discount.oneGetOne
+              {product?.discountProducts && product?.discountProducts.length !== 0 && !product?.discountProducts[0]?.discount?.oneGetOne
           ? 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function ProductDetail({user}) {
               
             </div>
             
-          : product?.discountProducts[0]?.discount.oneGetOne && 
+          : product?.discountProducts[0]?.discount?.oneGetOne && 
 
             <div className="flex flex-col max-w-md">
               <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
@@ -161,7 +161,7 @@ export default function ProductDetail({user}) {
           }
 
             <h3 className="text-xl lg:text-2xl font-bold text-primary">
-              Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice)}
+              Rp. {formatNumber(product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0]?.endingPrice : product?.productPrice)}
             </h3>
             <div className="mt-4 w-4/5">
               <h3 className="subtitle">Aturan Pakai</h3>

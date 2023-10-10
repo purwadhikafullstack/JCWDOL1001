@@ -10,6 +10,9 @@ const {
   Transaction_List,
   Transaction_Detail,
   Transaction_Status,
+  Discount_Transaction,
+  Discount,
+  Discount_Product,
 } = require("../../model/relation.js");
 const { Cart } = require("../../model/cart.js");
 const { Product_Detail, Product_List, Product_History, Product_Unit, Product_Recipe } = require("../../model/product");
@@ -22,6 +25,14 @@ async function cancelExpiredTransactions() {
   try {
     // const currentTime = moment().add(1, "minutes").format("YYYY-MM-DD HH:mm:ss");
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
+
+    const discountExpiredList = await Discount.findAll({where : {discountExpired : {[Op.lte]:currentTime}}})
+    
+    const expiredDiscountId = discountExpiredList.map((list)=>{return list.discountId})
+    
+    await Discount.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
+    
+    await Discount_Product.update({isDeleted : 1}, { where : { discountId : {[Op.in] :expiredDiscountId } } })
 
     const transactionsToCancel = await Transaction_List.findAll({
       include:[
@@ -141,6 +152,13 @@ const getTransactions = async (req, res, next) => {
           model: User_Profile,
           as: "userProfile",
           where:filtering.name,
+        },
+        {
+          model: Discount_Transaction,
+          attributes : {exclude :['productListId']},
+          include:{
+            model:Discount
+          }
         }
       ],
       where: whereCondition,
@@ -225,7 +243,7 @@ const createTransactions = async (req, res, next) => {
   try {
     //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
-    const { transport, totalPrice, addressId } = req.body;
+    const { transport, totalPrice, addressId,discountId } = req.body;
 
     const startTransaction = await Cart?.findAll({
       include: [
@@ -242,7 +260,7 @@ const createTransactions = async (req, res, next) => {
     });
 
     const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
-
+    let date = new Date().getTime()
 
     const newTransactionList = {
       userId: userId,
@@ -252,10 +270,12 @@ const createTransactions = async (req, res, next) => {
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
-      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
+      invoice : userId + date
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
+
+    if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
 
     for (let i = 0; i < startTransaction.length; i++) {
       const newTransactionDetail = {
@@ -276,8 +296,6 @@ const createTransactions = async (req, res, next) => {
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
 
-      console.log(UpdateStock);
-
       const ProductHistory = {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
@@ -288,11 +306,33 @@ const createTransactions = async (req, res, next) => {
         results : newQuantity
       }
       await Product_History?.create(ProductHistory);
-    }
+    }    
 
     const finishTransaction = await Cart?.destroy({
       where: { [Op.and]: [{ userId: userId }, { inCheckOut: 1 }] },
     });
+
+    const customer = await User_Account?.findOne({
+      where : { userId : userId }
+    })
+
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const html = handlebars.compile(template)({ 
+      order: (newTransaction.transactionId),
+      invoice : (newTransactionList.invoice)
+    })
+
+    const mailOptions = {
+        from: `Apotech Team Support <${GMAIL}>`,
+        to: customer?.dataValues?.email,
+        subject: `Transaksi Berhasil untuk Invoice No. ${newTransactionList.invoice}`,
+        html: html
+      }
+
+      helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) throw error;
+        console.log("Email sent: " + info.response);
+      })
     //});
 
     //await transaction.commit();
@@ -316,6 +356,10 @@ const getCheckoutProducts = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,

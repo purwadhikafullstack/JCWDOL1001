@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import { ForgotPassValidationSchema, LoginValidationSchema, PasswordValidationSchema, 
     RegisterValidationSchema,VerifyValidationSchema, changeEmailValidationSchema, changePasswordValidationSchema } from "./validation";
 
-
 export const login = createAsyncThunk(
     "auth/login",
      
@@ -155,7 +154,6 @@ export const changeProfilePicture = createAsyncThunk(
     "auth/user/changeProfilePicture",
     async(payload, {rejectWithValue}) => {
         try{
-            console.log(payload)
             const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
             toast.success("Your profile picture has been updated.")
             return {}
@@ -251,6 +249,19 @@ export const resetPass= createAsyncThunk(
         } catch (error) {
             toast.error(error.response?.data?.message)
 
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+export const getProfile = createAsyncThunk(
+    "auth/user/getProfile",
+    async(payload, {rejectWithValue}) =>{
+        try{
+            const data = await api.get("auth/profile");
+            return data;
+        }catch(error){
+            toast.error(error.response?.data?.message)
             return rejectWithValue(error.response?.data?.message)
         }
     }

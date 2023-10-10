@@ -1,16 +1,20 @@
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 const cloudinary = require("cloudinary");
 const {Product_List,Categories,Product_Category} = require("../../model/relation.js")
+const { Op } = require("sequelize");
 
 const getCategory = async (req, res, next) => {
     try{
-        const { page, limit } = req.query;
+        const { page, limit, searchedCategory } = req.query;
         const currentPage = page ? parseInt(page) : 1;
         const options = {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
             limit : limit ? +limit : 10
         }
-		const category = await Categories?.findAll({...options, where : {isDeleted : 0}, order : [["categoryDesc", "ASC"]]});
+        const filter = { searchedCategory };
+        if(searchedCategory) filter.searchedCategory = {categoryDesc : {[Op.like]:`%${searchedCategory}%`}}
+		const category = await Categories?.findAll({...options, 
+            where : {[Op.and] : [filter.searchedCategory, {isDeleted : 0}]}, order : [["categoryDesc", "ASC"]]});
 
         const total = await Categories?.count();
         const pages = Math.ceil(total / options.limit);

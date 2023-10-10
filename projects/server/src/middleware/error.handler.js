@@ -30,6 +30,9 @@ const DISCOUNT_NAME_ALREADY_EXIST = "Discount name already exist"
 const VOUCHER_CODE_EMPTY = "Voucher code can't be empty"
 const VOUCHER_NEED_PRODUCT  ="One Get One voucher must have product"
 const VOUCHER_NEED_AMOUNT  ="Amount is required"
+const DISCOUNT_IS_EXPIRED  ="Voucher is expired"
+const NOT_MEET_MINIMUM_TRANSACTION  ="Not meet the minimum transaction"
+const NOT_NEED_CODE  ="Discount product can not have discount code"
 
 const NO_STOCK = "Insufficient stocks for desired product"
 const PRODUCT_ALREADY_CHECKEDOUT = "Desired orders are already checked out"
@@ -39,6 +42,7 @@ const ONLY_ONCE = "This link only valid for 1 submission."
 const DATA_NOT_FOUND = "Data not found"
 const CANNOT_DELETE_QUESTION = "Questions is exceed time deletion"
 const CANNOT_DELETE_ANSWERED_QUESTION = "Answered question can't be deleted"
+const PRODUCT_ALREADY_HAVE_DISCOUNT = "Product(s) already have discount"
 
 
 const DEFAULT_ERROR_STATUS = 500
@@ -113,4 +117,8 @@ module.exports = {
     DATA_NOT_FOUND,
     CANNOT_DELETE_QUESTION,
     CANNOT_DELETE_ANSWERED_QUESTION,
+    PRODUCT_ALREADY_HAVE_DISCOUNT,
+    DISCOUNT_IS_EXPIRED,
+    NOT_MEET_MINIMUM_TRANSACTION,
+    NOT_NEED_CODE
 }

@@ -84,6 +84,10 @@ const Discount_Product = db.sequelize.define("discount_product", {
     endingPrice : {
         type : db.Sequelize.INTEGER,
         allowNull : true
+    },
+    isDeleted : {
+        type : db.Sequelize.TINYINT,
+        allowNull : true
     }
 },{
     timestamps:false

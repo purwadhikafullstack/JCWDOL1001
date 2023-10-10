@@ -3,17 +3,21 @@ import { useEffect, useRef } from "react";
 import { useState } from "react";
 import Button from "../../../components/Button/index.js";
 import Pagination from "../../../components/PaginationV2";
+import InputImage from "../../../components/InputImage";
+import Input from "../../../components/Input";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../../store/slices/cat/slices.js";
 
 export default function CategoryList(){
     const dispatch = useDispatch()
-    const [categoryDesc, setCategoryDesc] = useState(null)
     const [newPage, setNewPage] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
     const [categoryIndex, setCategoryIndex] = useState(null);
     const [fileImage, setFileImage] = useState(null);
+    const [searchedCategory, setSearchedCategory] = useState(null)
     const [page, setPage] = useState(1);
     const categoryNameRef = useRef();
+    const searchedCategoryRef = useRef();
     const formData = new FormData();
     
     const {category, isAddLoading, isDeleteLoading, isUpdateLoading, currentPage, totalPage} = useSelector(state => {
@@ -28,8 +32,8 @@ export default function CategoryList(){
     })
     
     useEffect(()=>{
-        dispatch(getCategory({page : page}));
-    },[page, isAddLoading, isDeleteLoading, isUpdateLoading])
+        dispatch(getCategory({page : page, searchedCategory : searchedCategory}));
+    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -39,36 +43,36 @@ export default function CategoryList(){
             formData.append('data',appendData)
             dispatch(addCategory(formData))
             setNewPage(null)
+            setFileImage(null)
         }
         else if(context === "delete"){
             dispatch(deleteCategory({categoryId : categoryId}));
             setNewPage(null)
         }
         else if(context === "update"){
-            dispatch(updateCategory({categoryId : categoryId, categoryDesc : categoryDesc}))
+            dispatch(updateCategory({categoryId : categoryId, categoryDesc : categoryNameRef.current.value}))
             setNewPage(null)
         }
         else{
             formData.append('file',fileImage)
             dispatch(updateCategoryPicture({formData, categoryId}))
             setNewPage(null)
+            setFileImage(null)
         }
     }
 
     const optionPage = () => {
         switch(newPage){
             case 'add' : 
-                return(<div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
+                return(<div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                     <div className="m-4">
                     <h2 className="font-semibold text-green-900 text-2xl">Tambah Kategori</h2>
                     <form className="space-y-4 md:space-y-6 font-medium text-xl">
                         <div>
-                            <label for="categoryName" className="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Nama Kategori</label>
-                            <input type="text" className="sm:rounded-lg rounded-xl border" ref={categoryNameRef}/>
+                            <Input type="text" placeholder="Tambah Kategori Baru" label="Tambah Kategori Baru" required ref={categoryNameRef}/>
                         </div>
                         <div>
-                            <label for="categoryImage" className="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Gambar Kategori</label>
-                            <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
+                            <InputImage file={fileImage} setFile={setFileImage}/>
                         </div>
                         <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Tambah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
@@ -76,7 +80,7 @@ export default function CategoryList(){
                     </div>
                 </div>)
             case 'delete' : return(
-                <div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
+                <div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                     <div className="m-4">
                     <h2 className="font-semibold text-green-900 text-2xl">Hapus Kategori</h2>
                     <h2 className="my-4">Apa kamu yakin ingin menghapus kategori nomor {categoryIndex} ?</h2>
@@ -88,14 +92,12 @@ export default function CategoryList(){
             )
             case 'update' :
                 return(
-                <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
+                <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                     <div className="m-4">
                     <h2 className="font-semibold text-green-900 text-2xl">Ubah Nama Kategori</h2>
-                    <h2 className="my-4">Ubah kategori nomor {categoryIndex}</h2>
                     <form className="space-y-4 md:space-y-6 font-medium text-xl">
                         <div>
-                            <label for="categoryName" className="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Nama Kategori</label>
-                            <input type="text" className="sm:rounded-lg rounded-xl border" onChange={(e)=>setCategoryDesc(e.target.value)}/> 
+                            <Input type="text" placeholder="Ubah Kategori" label={`Ubah Kategori nomor ${categoryIndex}`} required ref={categoryNameRef}/>
                         </div>
                         <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
@@ -105,13 +107,13 @@ export default function CategoryList(){
             )
             case 'updateImage' :
                 return(
-                    <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8 bg-slate-300 text-black">
+                    <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                         <div className="m-4">
                         <h2 className="font-semibold text-green-900 text-2xl">Ubah Gambar Kategori</h2>
                         <h2 className="my-4">Ubah gambar kategori nomor {categoryIndex} </h2>
                         <form className="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
-                                <input type="file" onChange={(e)=>setFileImage(e.target.files[0])}/>
+                                <InputImage file={fileImage} setFile={setFileImage}/>
                                 <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                                 <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
                             </div>
@@ -135,10 +137,16 @@ export default function CategoryList(){
             <div>
                 {optionPage()}
             </div>
-            <div className="overflow-x-auto shadow-md sm:rounded-lg py-8">
-                <div className="flex flex-row border-b-4 border-double border-black">
-                    <h1 className="text-4xl flex-1"> Kategori </h1>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4" onClick={()=>setNewPage('add')}>Tambah Kategori</button>
+            <div className="overflow-x-auto shadow-md sm:rounded-lg my-8">
+                <div className="flex flex-row border-b-2">
+                    <h1 className="text-2xl font-semibold w-1/2"> Kategori </h1>
+                    <Button isPrimary isButton onClick={()=>setNewPage('add')} title={"Tambah Kategori Baru"}className="m-3"/>
+                    <form className="relative w-1/3">
+                        <Input type="text" placeholder="Cari Produk..." ref={searchedCategoryRef}/>
+                        <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedCategory(searchedCategoryRef?.current.value)}>
+                            <HiMagnifyingGlass className="text-2xl text-primary" />
+                        </button>
+                    </form>
                 </div>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -162,26 +170,20 @@ export default function CategoryList(){
                     <tbody>
                         {
                             category ?
-                            category?.map((category, index)=>(<tr className="border-b-2 dark:bg-gray-900 dark:border-gray-700">
-                                <th scope="row" className="text-gray-900 whitespace-nowrap p-3 font-medium text-medium" key={index}>
+                            category?.map((category, index)=>(<tr className="text-gray-900 whitespace-nowrap p-3 font-medium">
+                                <th scope="row" className="p-3" key={index}>
                                     {index+1}
                                 </th>
-                                <td className="p-3 text-center font-semibold text-xl text-green-700">
+                                <td className="p-3 font-semibold">
                                     {category.categoryDesc}
                                 </td>
                                 <td className="p-3">
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3">
-                                <button type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4
-                                 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700
-                                 dark:focus:ring-red-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")}>Hapus</button>
-                                <button type="button" className="focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4
-                                focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2
-                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "update")}>Ubah Nama Kategori</button>
-                                <button type="button" className="focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4
-                                focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2
-                                dark:focus:ring-yellow-900" onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")}>Ubah Gambar Kategori</button>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className="m-3"/>
+                                <Button isWarning isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className="m-3"/>
+                                <Button isWarning isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className="m-3"/>
                                 </td>
                             </tr>))
                             :

@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions }) {
     const { pathname } = useLocation()
     const dispatch = useDispatch()
+
     const [isSidebarActive, setIsSidebarActive] = useState(false)
     const [showModal, setShowModal] = useState({ show: false, context: "" })
   
@@ -31,8 +32,6 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
             document.body.style.overflow = "auto"
         }
     },[isSidebarActive])
-
-    useEffect(()=>{},[isLogin])
 
 	return (
 		<div>
