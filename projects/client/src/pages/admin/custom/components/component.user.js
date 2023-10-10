@@ -1,15 +1,35 @@
 import { useRef, useState } from "react"
+import Pagination from "../../../../components/PaginationV2"
 function ListOfUser({
-    user = [],selected
+    user = [],
+    onUserChange=(params)=>{}
 }){
     return user.map((item,index)=>{
         return(
-            <option value={[item?.email, item?.userProfile.name, item?.imgRecipe]}
-            selected={item?.userProfile.name === selected }
+            <tr 
+            className="cursor-pointer text-center hover:bg-slate-100 
+            hover:shadow capitalize"
+            onClick={()=>onUserChange([item?.email, item?.userProfile.name, item?.imgRecipe])}
             >
-                {item?.userProfile.name}
-            </option>
+                <td className="border-b-2 border-slate-300 p-3">{index+1}</td>
+                <td className="border-b-2 border-l-2 border-slate-300 p-3"> {item?.userProfile.name}</td>
+               
+            </tr>
             
+            // <table className="text-gray-500 w-full text-left text-sm">
+            // <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
+            //   <tr>
+            //     <th className="p-3">#</th>
+            //     <th className="p-3">Nama User</th>
+            //   </tr>
+            // </thead>
+            // <tbody>
+            //   {isGetProductsLoading || isSubmitProductLoading ? (
+            //     <tr className="text-center">
+            //       <td colSpan={7} className="p-3">
+            //         <LoadingSpinner isLarge />
+            //       </td>
+            //     </tr>
         )
     })
 }
@@ -19,35 +39,35 @@ function ListOfUser({
 export default function UserList({
     user = [],
     onUserChange = (params)=>{},
-    onChange,
-    errorInput,
-    selected
 }){
-    
+    const [page,setPage] = useState(1)
+    const [currentPage,setCurrentPage] = useState(1)
+    const [totalPage,setTotalPage] = useState(1)
+
     const selectRef = useRef(null)
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     return(
-        <div className="flex flex-col w-full">
-            <span className="font-semibold">
-                Resep dokter dari customer siapa yang hendak diproses?
+        <div className="flex flex-col w-full items-center justify-center">
+            <span className="font-semibold mb-6">
+                Resep dokter dari customer mana yang hendak diproses?
             </span>
-            <select 
-            className= {`w-full rounded-lg border bg-inherit px-2 py-2 outline-none 
-            ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
-            ref={selectRef} 
-            onChange={()=>{
-                // onChange()
-                onUserChange(selectRef?.current?.value)}}
-            onClick={() => setIsDropdownOpen(true)}
-            >
-                 <option disabled={isDropdownOpen}>Pilih User : </option>
-                <ListOfUser
-                user={user}
-                selected={selected}
-                />
-            </select>
-
-
+            <table className="text-gray-500 w-1/3 text-left text-sm">
+                <thead className="text-white bg-primary text-sm uppercase text-center"
+                >
+                    <tr>
+                        <th className="p-3">#</th>
+                        <th className="border-l-2 p-3">Nama User</th>
+                    </tr>
+                </thead>
+                <tbody className="cursor-pointer text-center">
+                    <ListOfUser
+                    user={user}
+                    onUserChange={onUserChange}
+                    />
+                </tbody>
+            </table>
+            <div className="mt-4 flex items-center justify-center">
+            <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+            </div>
         </div>
     )
 }

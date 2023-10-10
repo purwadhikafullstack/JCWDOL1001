@@ -33,7 +33,7 @@ async function verifyAdmin(req, res, next) {
 
         if (!token) throw ({ 
             type : "error",
-            message : "Invalid Credential" 
+            message : "Invalid Credential Admin" 
         });
 
         const decoded = helperToken.verifyToken(token);

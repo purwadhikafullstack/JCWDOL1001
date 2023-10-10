@@ -15,20 +15,68 @@ const Axios = require("axios");
 
 const getUser = async( req, res, next ) => {
     try{
-      const userlist = await User_Account.findAll({where :{
-        role : 2,
-        status : 1,
-       imgRecipe: {[Op.not] : null}
-      },include : [{
-        model : User_Profile,
-        as : "userProfile"
-    }]})
-  
-      res.status(200).json({ 
+      const{page,search,sortDate} = req.query
+    //   const userlist = await User_Account.findAll({where :{
+    //     role : 2,
+    //     status : 1,
+    //    imgRecipe: {[Op.not] : null}
+    //   },include : [{
+    //     model : User_Profile,
+    //     as : "userProfile"
+    // }]})
+
+    const currentPage = page ? parseInt(page) : 1;
+
+    const options = {
+        offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+        limit : 10,
+    }
+
+    const filter = {}
+    const sort =  [[`createdRecipe`, sortDate ? sortDate : "DESC"]]
+
+    if(search) filter.name= {[Op.like]: `%${search}%`}
+    console.log(filter)
+    const userlist = await User_Account.findAll({...options,
+        where : {
+            role : 2,
+            status : 1,
+           imgRecipe: {[Op.not] : null}
+        },
+        include : [{
+          model : User_Profile,
+          as : "userProfile",
+          where : 
+            filter?.name
+          
+        }],
+        order : sort
+    })
+    console.log(userlist)
+    const total = await User_Account.count({where : {
+      role : 2,
+      status : 1,
+     imgRecipe: {[Op.not] : null}
+  },include : {
+    model : User_Profile,
+    as : "userProfile",
+    where : {[Op.and] :
+    [
+        filter
+    ]}
+  },
+    })
+
+    const pages = Math.ceil(total/options.limit)
+
+
+      res.status(200).json({
         type : "success",
         message : "Data berhasil dimuat",
-        data : userlist
-      })
+        currentPage : +page ? +page : 1,
+        totalPage : pages,
+        data : userlist,
+      });
   
     } catch (error){
       next(error)
