@@ -58,7 +58,7 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : shipping, totalPrice : (+subTotal*1), addressId : address.addressId})).finally(() => navigate("/user/transaction"));
+        dispatch(createTransaction({transport : selectedShipping.cost, totalPrice : (+subTotal*1), addressId : address.addressId})).finally(() => navigate("/user/transaction"));
     }
 
     return(

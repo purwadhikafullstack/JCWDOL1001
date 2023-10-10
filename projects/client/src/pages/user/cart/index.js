@@ -363,37 +363,6 @@ export default function Cart() {
                   .reduce((total, price) => total + price, 0))}
             </p>
           </div>
-          
-          {selectedShipping?.cost &&
-            <>
-              <div className="flex items-center justify-between font-bold">
-                <p className="subtitle">Ongkos Kirim</p>
-                <p className="subtitle">
-                  Rp.{" "}
-                  {formatNumber(selectedShipping?.cost)}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between font-bold mt-2 pt-2 border-t border-primary">
-                <p className="subtitle">Total Pembayaran</p>
-                <p className="subtitle text-primary">
-                  Rp.{" "}
-                  {formatNumber(+selectedShipping?.cost + +selectedItems
-                      ?.map((item) => {
-                        const cartItem = cart.find(
-                          (cartItem) => cartItem?.productId === item?.productId
-                        );
-                        const discountPrice =
-                          ( item?.discountProducts[0]?.endingPrice ?
-                            item?.discountProducts[0]?.endingPrice :
-                            item?.productPrice) 
-                        return cartItem?.quantity * discountPrice;
-                      })
-                      .reduce((total, price) => total + price, 0))}
-                </p>
-              </div>
-            </>
-          }
 
           <div className="mt-4">
             <Button
