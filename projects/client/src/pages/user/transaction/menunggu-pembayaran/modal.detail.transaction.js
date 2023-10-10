@@ -1,6 +1,7 @@
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
 import { formatDate } from "../../../../utils/formatDate";
+import { useEffect } from "react";
 
 export default function ModalDetailTransaction({
   selectedTransaction,
@@ -9,6 +10,10 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
+
+  useEffect(()=>{
+    console.log(selectedTransaction);
+  },[selectedTransaction])
   return (
     <>
       <div

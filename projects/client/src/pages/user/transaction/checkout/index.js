@@ -40,7 +40,7 @@ export default function CheckoutPage(){
                     <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
                             <img src={LogoBca} className=" w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>Please transfer to BCA Bank Account</h3>
+                            <h3>BCA Bank Account</h3>
                             <h1 className="text-4xl font-bold">091 802 3981</h1>
                             <h2 className="text-2xl font-semibold">APOTEK PRIMA JASA</h2>
                         </div>
@@ -48,7 +48,7 @@ export default function CheckoutPage(){
                     <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
                             <img src={LogoMandiri} className="w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>Please transfer to Mandiri Bank Account</h3>
+                            <h3>Mandiri Bank Account</h3>
                             <h1 className="text-4xl font-bold">1234 567 890</h1>
                             <h2 className="text-2xl font-semibold">APOTEK PRIMA MANDIRI</h2>
                         </div>
@@ -68,17 +68,18 @@ export default function CheckoutPage(){
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
                     <form>
                     <div>
+                        <Button isButton isWarning title="Kembali ke Cart" onClick={()=>navigate("/cart")}/>
                         <h1 className="text-3xl font-semibold w-full border-b-2 mb-5 pb-2">Checkout</h1>
                     </div>
                     <div className="mb-10">
-                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Shipping</h3>
+                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Pengiriman</h3>
                         <div className="flex gap-20 items-center">
                             <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
                             <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
                         </div>
                     </div>
                     <div className="mb-4 border-b-2">
-                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Order Details</h3>
+                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Detail Barang</h3>
                         <div className="flex flex-col gap-2 border-green-300">
                         {
                         cart ?
@@ -97,15 +98,8 @@ export default function CheckoutPage(){
                         }</div>
                     </div>
                     <div className="mb-5 pb-2">
-                        <h3 className="text-2xl font-semibold w-full">Payment Method</h3>
-                            {/*<select value={payment} className="text-xl border-2 bg-green-200 rounded-lg md:rounded-md" onChange={(e)=>setPayment(e.target.value)}>
-                                <option value={null}>Please choose your payment Method</option>
-                                <option disabled="true">BankTransfer</option>
-                                <option value={"BCA"}>BCA</option>
-                                <option value={"Mandiri"}>Mandiri</option>
-                        </select>*/}
+                        <h3 className="text-2xl font-semibold w-full">Metode Pembayaran</h3>
                             {
-                                //payment && 
                                 PaymentMethod()
                             }
                     </div>                    
@@ -121,10 +115,6 @@ export default function CheckoutPage(){
                         </h1>
                         <h1>Total Ongkir : Rp. {selectedShipping?.length === 0 ? 0 : `${formatNumber(selectedShipping?.cost)}` }</h1>
                         <h1>Total Pembayaran : Rp. {formatNumber(subTotal + (selectedShipping.length === 0 ? 0 : +selectedShipping.cost) - (!selectedDiscount ? 0 : selectedDiscount?.isPercentage ? +selectedDiscount?.discountAmount/100 *subTotal : +selectedDiscount?.discountAmount))}</h1>
-                        {/* {
-                            shipping && <><h1>Shipping cost : Rp. {formatNumber(shipping)}</h1>
-                            <h1>Grand total : Rp. {formatNumber(subTotal*1 + shipping*1)}</h1></>
-                        } */}
                         <Button className="" isPrimary isButton type="submit" title={`Check Out!`} onClick={checkOut}/>
                     </div>
                     </form>
