@@ -40,17 +40,18 @@ export default function CheckoutPage(){
                     <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
                             <img src={LogoBca} className=" w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>BCA Bank Account</h3>
-                            <h1 className="text-4xl font-bold">091 802 3981</h1>
-                            <h2 className="text-2xl font-semibold">APOTEK PRIMA JASA</h2>
+                            <h3>Transfer Manual ke Akun Bank BCA</h3>
+                            <h1 className="text-4xl font-bold">0918023981</h1>
+                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
+
                         </div>
                     </div>
                     <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
                         <div>
                             <img src={LogoMandiri} className="w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>Mandiri Bank Account</h3>
-                            <h1 className="text-4xl font-bold">1234 567 890</h1>
-                            <h2 className="text-2xl font-semibold">APOTEK PRIMA MANDIRI</h2>
+                            <h3>Transfer Manual ke Akun Bank Mandiri</h3>
+                            <h1 className="text-4xl font-bold">123456789012</h1>
+                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
                         </div>
                     </div>
                     </div>
@@ -58,8 +59,7 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : selectedDiscount?.discountId}));
-        navigate("/user/transaction");
+        dispatch(createTransaction({transport : selectedShipping.cost, totalPrice : (+subTotal*1), addressId : address.addressId})).finally(() => navigate("/user/transaction"));
     }
 
     return(

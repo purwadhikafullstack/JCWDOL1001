@@ -48,6 +48,10 @@ const User_Account = db.sequelize.define("user_account", {
         type : db.Sequelize.STRING,
         allowNull : true
     },
+    createdRecipe: {
+        type : db.Sequelize.DATE,
+        allowNull : true,
+    },
 },{
   timestamps: false
 });

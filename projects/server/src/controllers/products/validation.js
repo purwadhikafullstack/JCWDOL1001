@@ -15,7 +15,7 @@ const inputProductValidationSchema = Yup.object({
   categoryId: Yup.array()
     .min(1, "Pilih setidaknya satu kategori")
     .required("Kategori harus diisi"),
-  productPicture: Yup.string().required('Pilih gambar'),
+  productPicture: Yup.mixed().required('Pilih gambar'),
 });
 
 const updateProductValidationSchema = Yup.object({
@@ -33,6 +33,8 @@ const updateProductValidationSchema = Yup.object({
   categoryId: Yup.array()
     .min(1, "Pilih setidaknya satu kategori")
     .required("Kategori harus diisi"),
+  productPicture: Yup.mixed()
+    .nullable(),
 });
 
 const updateMainStockValidationSchema = Yup.object({

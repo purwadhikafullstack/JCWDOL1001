@@ -49,6 +49,19 @@ export default function ModalCaraBayar({
     }, 2000);
   }
 
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const expiredTime = new Date(selectedTransaction?.expired).getTime();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
   if (successUpdateOngoingTransaction) {
     return <Message
       type={`success`} 
@@ -57,8 +70,6 @@ export default function ModalCaraBayar({
     />
   }
 
-  const createdAt = new Date(selectedTransaction?.createdAt).getTime() + 24 * 3600000;
-  const date = new Date().getTime();
 
   return (
     <div className="overflow-auto max-h-screen pb-8 md:pr-1">
@@ -81,49 +92,52 @@ export default function ModalCaraBayar({
         
         <h3 className="subtitle text-center">Total Pembayaran: <span className="text-primary">Rp. {formatNumber(selectedTransaction.total)}</span></h3>
 
-        <div className="w-fit mx-auto">
-          <div className="flex items-center gap-6 border border-primary rounded-md p-4">
-            <div className="w-20">
-              <img src={LogoBca} alt="" />
-            </div>
-            <div className="">
-              <Button
-                isBLock
-                className="flex justify-between items-center" 
-                isDisabled={isCopyTextSuccess}
-                onClick={() => copyText('0918023981')}
-              >
-                <p className="font-bold">0918023981</p>
-                <HiOutlineDocumentDuplicate
-                  className="text-primary text-lg"
-                />
-              </Button>
-              <p>Apotech Pasti Sukses</p>
-            </div>
-          </div>
+        { currentTime < expiredTime &&
+          <>
+            <div className="w-fit mx-auto">
+              <div className="flex items-center gap-6 border border-primary rounded-md p-4">
+                <div className="w-20">
+                  <img src={LogoBca} alt="" />
+                </div>
+                <div className="">
+                  <Button
+                    isBLock
+                    className="flex justify-between items-center" 
+                    isDisabled={isCopyTextSuccess}
+                    onClick={() => copyText('0918023981')}
+                  >
+                    <p className="font-bold">0918023981</p>
+                    <HiOutlineDocumentDuplicate
+                      className="text-primary text-lg"
+                    />
+                  </Button>
+                  <p>Apotech Pasti Sukses</p>
+                </div>
+              </div>
 
-          <div className="flex items-center gap-6 mt-4 border border-primary rounded-md p-4">
-            <div className="w-20">
-              <img src={LogoMandiri} alt="" />
+              <div className="flex items-center gap-6 mt-4 border border-primary rounded-md p-4">
+                <div className="w-20">
+                  <img src={LogoMandiri} alt="" />
+                </div>
+                <div className="">
+                  <Button
+                    isBLock
+                    className="flex justify-between items-center"
+                    isDisabled={isCopyTextSuccess}
+                    onClick={() => copyText('123456789012')}
+                  >
+                    <p className="font-bold">123456789012</p>
+                    <HiOutlineDocumentDuplicate
+                      className="text-primary text-lg"
+                    />
+                  </Button>
+                  <p>Apotech Pasti Sukses</p>
+                </div>
+              </div>
             </div>
-            <div className="">
-              <Button
-                isBLock
-                className="flex justify-between items-center"
-                isDisabled={isCopyTextSuccess}
-                onClick={() => copyText('1234567890')}
-              >
-                <p className="font-bold">1234567890</p>
-                <HiOutlineDocumentDuplicate
-                  className="text-primary text-lg"
-                />
-              </Button>
-              <p>Apotech Pasti Sukses</p>
-            </div>
-          </div>
-        </div>
-        { date < createdAt &&
-          <InputImage file={file} setFile={setFile} />
+          
+            <InputImage file={file} setFile={setFile} />
+          </>
         }
       </div>
       <div className="mt-4 flex justify-center gap-2">

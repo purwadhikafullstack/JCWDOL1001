@@ -27,11 +27,12 @@ const createCloudinaryStorage = (directory, id=1) => new CloudinaryStorage({
     params: {
         folder: directory,
         public_id: (req, file) => {
+            // PUblic/Profiles => img-2
             const type = directory.split("/")[1]
             if(type === "Profiles")
             return `IMG-${req?.user?.userId}` + Date.now()
             if(type !== "Profiles")
-            return 'IMG-' + Date.now()
+            return `IMG-${req?.user?.userId}` + Date.now()
         },
         allowedFormats: ['png', 'jpg', 'gif'],
         invalidate : true

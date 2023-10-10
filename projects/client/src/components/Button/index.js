@@ -32,7 +32,7 @@ export default function Button(props) {
     );
 
   props.isDanger &&
-    className.push("bg-danger hover:bg-red-600 text-white duration-300")
+    className.push(`text-white ${!props.isDisabled ? "bg-danger hover:bg-red-600 duration-300" : "bg-danger"}`)
 
   props.isWarning &&
     className.push("bg-warning hover:bg-[#e8960c] text-white duration-300")

@@ -73,8 +73,8 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
   return (
     <div className="lg:col-span-1 border rounded-lg p-4 shadow-md w-full h-fit">
           <div className="flex items-center gap-4 border-b-2 pb-4">
-            <div className="h-12 w-12 rounded-full bg-primary">
-              <img src="" alt="" /> 
+            <div className="h-12 w-12 rounded-full overflow-hidden">
+              <img src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture} alt="" /> 
             </div>
             <h3>{profile.name}</h3>
           </div>
@@ -121,9 +121,8 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
             ))}
 
             <Button 
-              isLink
               className={`items-center gap-3 flex`}
-              onClick={() => dispatch(logout())}
+              onClick={() => dispatch(logout()).finally(() => navigate("/"))}
             >
               <HiOutlinePower className="text-xl"/>
               <span>Keluar</span>

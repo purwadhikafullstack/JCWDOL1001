@@ -30,7 +30,8 @@ const Forum = db.sequelize.define("forum", {
     expiredDate : {
         type : db.Sequelize.DATE,
         allowNull : true,
-    }
+    },
+
 })
 
 module.exports = { 

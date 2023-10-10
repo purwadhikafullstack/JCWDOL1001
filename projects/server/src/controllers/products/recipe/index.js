@@ -1,6 +1,7 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
+  const moment = require("moment")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -11,22 +12,72 @@ const {} = require("./validation.js")
 const {ValidationError} = require("yup");
 const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
+const moment = require("moment")
 
 const getUser = async( req, res, next ) => {
     try{
-      const userlist = await User_Account.findAll({where :{
-        role : 2,
-        status : 1
-      },include : [{
-        model : User_Profile,
-        as : "userProfile"
-    }]})
-  
-      res.status(200).json({ 
+      const{page,search,sortDate} = req.query
+    //   const userlist = await User_Account.findAll({where :{
+    //     role : 2,
+    //     status : 1,
+    //    imgRecipe: {[Op.not] : null}
+    //   },include : [{
+    //     model : User_Profile,
+    //     as : "userProfile"
+    // }]})
+
+    const currentPage = page ? parseInt(page) : 1;
+
+    const options = {
+        offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
+        limit : 10,
+    }
+
+    const filter = {}
+    const sort =  [[`createdRecipe`, sortDate ? sortDate : "DESC"]]
+
+    if(search) filter.name= {[Op.like]: `%${search}%`}
+    console.log(filter)
+    const userlist = await User_Account.findAll({...options,
+        where : {
+            role : 2,
+            status : 1,
+           imgRecipe: {[Op.not] : null}
+        },
+        include : [{
+          model : User_Profile,
+          as : "userProfile",
+          where : 
+            filter?.name
+          
+        }],
+        order : sort
+    })
+    console.log(userlist)
+    const total = await User_Account.count({where : {
+      role : 2,
+      status : 1,
+     imgRecipe: {[Op.not] : null}
+  },include : {
+    model : User_Profile,
+    as : "userProfile",
+    where : {[Op.and] :
+    [
+        filter
+    ]}
+  },
+    })
+
+    const pages = Math.ceil(total/options.limit)
+
+
+      res.status(200).json({
         type : "success",
         message : "Data berhasil dimuat",
-        data : userlist
-      })
+        currentPage : +page ? +page : 1,
+        totalPage : pages,
+        data : userlist,
+      });
   
     } catch (error){
       next(error)
@@ -187,7 +238,7 @@ const getUser = async( req, res, next ) => {
           html: html}
 
           helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
-              if (error) throw error;
+              // if (error) throw error;
               console.log("Email sent: " + info.response);
           })
   
@@ -214,6 +265,13 @@ const getUser = async( req, res, next ) => {
           email : email
         }
      })
+     await User_Account?.update({where:{
+      imgRecipe : null
+     }},{
+      where :{
+        email : email
+      }
+   })
 
      const address = await User_Address?.findOne({
       where : {
@@ -347,6 +405,8 @@ const getUser = async( req, res, next ) => {
           type : "Pengurangan",
           quantity : +product?.productDescription * recipeQty,
           results : secUnit?.quantity - (+product?.productDescription * recipeQty)
+
+
         })
         await Product_Detail.update({
           quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
@@ -428,8 +488,12 @@ const getUser = async( req, res, next ) => {
         subtotal,
         transport : transportCost,
         total : subtotal + transportCost,
+        expired : moment().add(24,"hours").format("YYYY-MM-DD hh:mm:ss"),
+        invoice : `${user?.userId + new Date().getTime()}`,
         statusId : 1,
-        addressId : address?.addressId
+        addressId : address?.addressId,
+        expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
+      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
       }
       const listResult = await Transaction_List.create(translist)
 
@@ -443,6 +507,10 @@ const getUser = async( req, res, next ) => {
           productId : productResult[i].productId
       })
     }
+
+    // if (productResult.length > 0) {
+    //   await Transaction_Detail.bulkCreate(productResult);
+    // }
 
       res.status(200).json({ 
         type : "success",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getOngoingTransactions,
   getTransactionList,
   resetSuccessTransaction,
 } from "../../../../store/slices/transaction/slices";
@@ -25,6 +26,11 @@ export default function MenungguPembayaran({
   isUpdateOngoingTransactionLoading 
 }) {
   const dispatch = useDispatch();
+  const { successUpdateOngoingTransaction } = useSelector((state) => {
+    return {
+      successUpdateOngoingTransaction: state.transaction?.successUpdateOngoingTransaction,
+    };
+  });
 
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showModal, setShowModal] = useState({ show: false, context: null });
@@ -51,10 +57,26 @@ export default function MenungguPembayaran({
     setShowModal({ show: false, context: null });
     dispatch(resetSuccessTransaction())
 
+    if (successUpdateOngoingTransaction) {
+      setActiveTab(2)
+    }
+
     if (tab) {
       setActiveTab(tab);
     }
   };
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
@@ -72,6 +94,7 @@ export default function MenungguPembayaran({
         {transaction.map((item) => {
           const transactionDetail = item.transactionDetail;
           const moreItems = transactionDetail.length - 1;
+          const expiredTime = new Date(item.expired).getTime();
 
           return (
             <div
@@ -137,28 +160,44 @@ export default function MenungguPembayaran({
                   <p className="font-bold">{formatNumber(item.total)}</p>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button
-                    isButton
-                    isPrimary
-                    title="Cara Bayar"
-                    onClick={() =>
-                      handleShowModal("Pembayaran", item.transactionId)
+                  {currentTime < expiredTime ?
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        isButton
+                        isPrimary
+                        title="Cara Bayar"
+                        onClick={() =>
+                          handleShowModal("Pembayaran", item.transactionId)
+                        }
+                      />
+                      <Button
+                      isButton
+                      isPrimaryOutline
+                      title="Lihat Detail Transaksi"
+                      onClick={() =>
+                        handleShowModal(
+                          "Detail Transaksi",
+                          item.transactionId
+                        )
+                      }
+                      />
+                    </div>
+                  :
+                  <div className="flex flex-col">
+                    <Button
+                      isButton
+                      isDanger
+                      isDisabled
+                      title="Transaksi Dibatalkan"
+                    />
+                    {currentTime > expiredTime && 
+                      <span className="mt-1 text-xs text-danger">
+                        Cek pada menu{" "}
+                        <span className="underline cursor-pointer" onClick={() => setActiveTab(7)}>Pesanan Dibatalkan</span>
+                      </span>
                     }
-                  />
-
-                  <Button
-                    isButton
-                    isPrimaryOutline
-                    title="Lihat Detail Transaksi"
-                    onClick={() =>
-                      handleShowModal(
-                        "Detail Transaksi",
-                        item.transactionId
-                      )
-                    }
-                  />
-                </div>
+                  </div>
+                  }
               </div>
             </div>
           );

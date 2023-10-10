@@ -8,7 +8,17 @@ export const getUser = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             //validation payload
-            const { data } = await api.get("products/recipe/user")
+            const { page, sortDate,search} = payload
+
+            let PARAMETER = "?"
+
+            if(page) PARAMETER += `page=${page ? page : 1 }&`
+            
+            if(sortDate) PARAMETER += `sortDate=${sortDate}&`
+
+            if(search) PARAMETER += `search=${search}&`
+
+            const { data } = await api.get("products/recipe/user",encodeURI(PARAMETER))
             // toast.success(data?.message)
             return data
         }catch(error){
