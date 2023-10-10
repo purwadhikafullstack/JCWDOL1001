@@ -5,7 +5,7 @@ export default function ModalDetailsProduct({selectedProduct, categories}) {
   return (
     <div className="grid max-h-[75vh] md:grid-cols-2 overflow-auto px-2 gap-4">
       <div className="">
-        <div className="aspect-[3/2] w-full rounded-lg shadow-md">
+        <div className=" w-full rounded-lg shadow-md">
           <img
             src={
               process.env.REACT_APP_CLOUDINARY_BASE_URL +
@@ -15,22 +15,30 @@ export default function ModalDetailsProduct({selectedProduct, categories}) {
             className="h-full w-full rounded-lg object-cover"
           />
         </div>
-        <div className="">
-          <h3 className="title mt-4">{selectedProduct.productName}</h3>
+      </div>
+      
+      <div className="">
+        <div className="mb-4 ">
+          <h3 className="title">{selectedProduct.productName}</h3>
           <div className="flex flex-wrap gap-2">
             {selectedProduct.productCategories.map((category) => (
               <span className="text-sm border border-primary text-primary p-1 rounded-lg select-none">{category.categoryDesc}</span>
             ))}
           </div>
-          <p className="card-price mt-2">
-            IDR {formatNumber(selectedProduct.productPrice)}
+          <p className="font-semibold text-lg text-primary mt-2">
+            Rp. {formatNumber(selectedProduct.productPrice)}
           </p>
-          <p className="mt-4">{selectedProduct.productDescription}</p>
+          <div className="mt-4">
+            <h3 className="subtitle">Aturan Pakai</h3>
+            <p className="">{selectedProduct.productDosage}</p>
+          </div>
+          <div className="mt-4">
+            <h3 className="subtitle">Deskripsi</h3>
+            <p className="">{selectedProduct.productDescription}</p>
+          </div>
         </div>
-      </div>
 
-      <div className="pt-4">
-        <h3 className="text-2xl font-bold">Produk Unit</h3>
+        <h3 className="title">Produk Unit</h3>
         <table className="text-gray-500 w-full text-left text-sm">
           <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
             <tr>

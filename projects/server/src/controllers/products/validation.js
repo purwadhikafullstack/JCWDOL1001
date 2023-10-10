@@ -15,15 +15,7 @@ const inputProductValidationSchema = Yup.object({
   categoryId: Yup.array()
     .min(1, "Pilih setidaknya satu kategori")
     .required("Kategori harus diisi"),
-  // productPicture: Yup.mixed().required('Pilih gambar'),
-  productPicture: Yup.mixed()
-    .test('fileSize', 'File is too large', (value) => {
-      if (!value) return false;
-      return value.size <= imageMaxSize;
-    })
-    .required('Pilih gambar'),
-
-  
+  productPicture: Yup.mixed().required('Pilih gambar'),
 });
 
 const updateProductValidationSchema = Yup.object({
@@ -41,14 +33,8 @@ const updateProductValidationSchema = Yup.object({
   categoryId: Yup.array()
     .min(1, "Pilih setidaknya satu kategori")
     .required("Kategori harus diisi"),
-  // productPicture: Yup.mixed()
-  //   .nullable(),
   productPicture: Yup.mixed()
-  .test('fileSize', 'File is too large', (value) => {
-    if (!value) return true;
-    return value.size <= imageMaxSize;
-  })
-  .nullable(),
+    .nullable(),
 });
 
 const updateMainStockValidationSchema = Yup.object({

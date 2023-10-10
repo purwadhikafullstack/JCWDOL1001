@@ -67,7 +67,7 @@ export default function TableProducts({
                 {index + 1}
               </th>
               <td className="p-3">{product.productName}</td>
-              <td className="p-3">IDR {formatNumber(product.productPrice)}</td>
+              <td className="p-3">Rp. {formatNumber(product.productPrice)}</td>
               <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
               <td className="p-3">{product?.productUnits[0]?.name}</td>
               {/* <td className="p-3">
