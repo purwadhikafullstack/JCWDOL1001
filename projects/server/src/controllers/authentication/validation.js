@@ -31,8 +31,13 @@ const RegisterValidationSchema = Yup.object({
 })
 
 const VerifyValidationSchema = Yup.object({
-    gender : Yup.string().required("Gender is required"),
-    birthdate : Yup.date().transform(parseDateString).required("Birthdate is required") ,
+    gender : Yup.string().required("Jenis kelamin dibutuhkan"),
+    birthdate : Yup.date().test('birthdate', 'Pengguna minimal berumur 12 tahun', function (value, ctx) {
+        const dob = new Date(value);
+        const validDate = new Date();
+        const valid = validDate.getFullYear() - dob.getFullYear() >= 12;
+        return !valid ? ctx.createError() : valid; 
+      }).transform(parseDateString).required("Tanggal lahir dibutuhkan") ,
 })
 
 const UpdatePasswordValidationSchema = Yup.object({

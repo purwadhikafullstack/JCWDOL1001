@@ -31,13 +31,15 @@ export const RegisterValidationSchema = Yup.object({
 })
 
 export const VerifyValidationSchema = Yup.object({
-    gender : Yup.string().required("Gender is required"),
-    birthdate : Yup.date().transform(parseDateString).required("Birthdate is required") ,
-    // address : Yup.string().required("Address is required"),
-    // province : Yup.string().required("Province is required"),
-    // city : Yup.string().required("City is required") ,
-    // district : Yup.string().required("District is required") ,
-    // postalCode : Yup.number().required("Postal Code is required"),
+    otp: Yup.string().required("OTP dibutuhkan").min(6,"OTP harus 6 karakter")
+    .max(6,"OTP harus 6 karakter"),
+    gender : Yup.string().required("Jenis kelamin dibutuhkan"),
+    birthdate : Yup.date().test('birthdate', 'Pengguna minimal berumur 12 tahun', function (value, ctx) {
+        const dob = new Date(value);
+        const validDate = new Date();
+        const valid = validDate.getFullYear() - dob.getFullYear() >= 12;
+        return !valid ? ctx.createError() : valid; 
+      }).transform(parseDateString).required("Birthdate is required") ,
 })
 
 export const changePasswordValidationSchema = Yup.object({

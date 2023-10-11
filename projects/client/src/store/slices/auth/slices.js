@@ -78,10 +78,10 @@ export const register = createAsyncThunk(
             
         } catch (error) {
             if (error){
-                alert(error)
+                toast.error(error)
             }
             else{
-                alert(error.response?.data?.message)
+                toast.error(error.response?.data?.message)
             }
             return rejectWithValue(error.response?.data?.message)
         }
@@ -107,7 +107,7 @@ export const verify = createAsyncThunk(
             return data
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
