@@ -410,7 +410,7 @@ const getCheckoutProducts = async (req, res, next) => {
           include : {
             model: Discount_Product,
             as: "productDiscount",
-            where:{isDeleted:0}
+            where : {isDeleted : 0}
           },
         },
         {
@@ -848,6 +848,7 @@ const cancelTransaction = async (req, res, next) => {
 
           //produk satuan
           if(listRecipe.length === 0){
+           
           const defaultUnit = await Product_Detail.findOne({
             where : {
               productId : productId,
