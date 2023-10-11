@@ -1,0 +1,16 @@
+.product-category {
+  @apply relative whitespace-nowrap text-slate-500 duration-300 lg:font-semibold;
+}
+
+.product-category::after {
+  @apply absolute bottom-0 left-0 h-[2px] w-0 hover:w-1/2 duration-300 ease-out bg-primary content-[""];
+}
+
+.product-category.active {
+  @apply font-semibold text-primary;
+}
+
+.product-category.active::after {
+  @apply absolute bottom-0 left-0 h-[2px] w-full bg-primary content-[""];
+}
+

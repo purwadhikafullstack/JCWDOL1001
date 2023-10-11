@@ -1,13 +1,54 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;200;300;400;500;600;700&family=Poppins:wght@600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 font-public text-dark;
+  }
+
+  .container {
+    @apply px-4;
+  }
+
+  h3.title {
+    @apply text-lg font-bold text-dark md:text-xl;
+  }
+
+  h3.subtitle {
+    @apply text-base font-bold text-dark md:text-lg;
+  }
+
+
+  ::-webkit-scrollbar {
+    @apply h-0 w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-300;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-500;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-500;
+  }
+
+  .categories-wrapper::-webkit-scrollbar {
+    @apply h-0;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer components {
+  @import url("./components/Navbar/index.css");
+  @import url("./components/Footer/index.css");
+  /* @import url("./components/Card/index.css");
+  @import url("./components/Input/index.css"); */
+}
+
+@layer utilities {
 }
