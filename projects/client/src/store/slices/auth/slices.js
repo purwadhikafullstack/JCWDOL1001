@@ -216,12 +216,12 @@ export const forgotPass = createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
-            await ForgotPassValidationSchema.validate(payload)
+            // await ForgotPassValidationSchema.validate(payload)
             const response = await api.post("auth/forgot", payload)
 
             const {data} = response
 
-            toast.success(response?.data?.message)
+            toast.success("Form reset telah dikirim")
             
         } catch (error) {
             toast.error(error.response?.data?.message)
@@ -239,12 +239,12 @@ export const resetPass= createAsyncThunk(
             const {token} = payload
             console.log(token)
             delete payload.token
-            await PasswordValidationSchema.validate(payload)
+            // await PasswordValidationSchema.validate(payload)
             const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})
 
             const {data} = response
 
-            toast.success(response?.data?.message)
+            toast.success("Data Password telah diubah")
             
         } catch (error) {
             toast.error(error.response?.data?.message)

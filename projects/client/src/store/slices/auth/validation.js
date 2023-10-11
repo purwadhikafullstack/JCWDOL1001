@@ -73,7 +73,10 @@ export const ForgotPassValidationSchema = Yup.object({
 
 export const PasswordValidationSchema = Yup.object({
     password : Yup.string().required("Password dibutuhkan")
-    .min(6,"Password minimal 6 karakter"), //min 6 characters,
-    confirmPassword : Yup.string().oneOf([Yup.ref('password'), null], 
-    'Password harus sama') //min 6 characters
+    .min(6,"Password minimal 6 karakter")
+    .matches(passwordRegExp,
+        "Password tidak sesuai format"),
+    confirmPassword : Yup.string().required("Konfirmasi password dibutuhkan")
+    .oneOf([Yup.ref('password'), null], 
+    'Konfirmasi password tidak sesuai') //min 6 characters
 })
