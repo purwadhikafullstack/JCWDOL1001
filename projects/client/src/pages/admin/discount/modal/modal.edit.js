@@ -12,23 +12,24 @@ import { DiscountInfoValidationSchema } from "../../../../store/slices/discount/
 
 export default function ModalDetailsDiscount({selectedId, handleCloseModal, handleShowModal,title,isNew,success}) {
     const dispatch = useDispatch()
-    const nameRef = useRef("")
-    const codeRef = useRef("")
-    const descRef = useRef("")
-    const expiredRef = useRef("")
-    const amountRef = useRef("0")
-    const minimumRef = useRef("0")
-
+    
     const [onEdit, setEdit] = useState(isNew)
     
+    const expiredRef = useRef("")
+    const [name, setName] = useState(selectedId?.discountName ? selectedId?.discountName : "");
+    const [code, setCode] = useState(selectedId?.discountCode ? selectedId?.discountCode : "");
+    const [desc, setDesc] = useState(selectedId?.discountDesc ? selectedId?.discountDesc : "");
+    const [amount, setAmount] = useState(selectedId?.discountAmount ? selectedId?.discountAmount : "");
+    const [minimum, setMinimum] = useState(selectedId?.minimalTransaction ? selectedId?.minimalTransaction : "");
+    
     const [isPercentage, setIsPercentage] = useState({
-        id : `${selectedId?.isPercentage ==1 ?  1: 0 }`,
-        name : `${selectedId?.isPercentage==1 ? "Ya": "Tidak" }`
+        id : `${selectedId?.isPercentage  ?  1: 0 }`,
+        name : `${selectedId?.isPercentage ? "Ya": "Tidak" }`
     })
 
     const [isOneGetOne, setIsOneGetOne] = useState({
-        id : `${selectedId?.oneGetOne==1 ?  1: 0 }`,
-        name : `${selectedId?.oneGetOne==1 ? "Ya": "Tidak" }`
+        id : `${selectedId?.oneGetOne ?  1: 0 }`,
+        name : `${selectedId?.oneGetOne ? "Ya": "Tidak" }`
     })
 
     const onButtonCancel = () => {
@@ -48,48 +49,71 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     
     const onButtonSave = async () => {
         try {
-
+            //minimal transaksi harus ada amount dan code
+            if(((amount ==="" || amount ==0 ))  && 
+                ((minimum !=="" || minimum !=0 ) )
+            ){
+                throw({inner : [{
+                    path : "discountAmount",
+                    message:"Potongan diperlukan untuk Minimal transaksi"
+                }]}) 
+            }
+            //(amount dan produk) atau buy one get one tidak perlu kode
+            if((code !=="") && 
+                ( ( (amount !=="" || amount !=0 ) ) ||  (isOneGetOne.id == 1 ) )
+                 &&
+                selectedProducts.length > 0
+            ){
+                throw({inner : [{
+                    path : "discountCode",
+                    message:"Produk diskon tidak perlu kode"
+                }]}) 
+            }
+            // code harus ada amount atau minimal transaksi 
+            if((code ==="" ) && 
+                (((amount !=="" || amount !=0 ) ) ||
+                ((minimum !=="" || minimum !=0 ) )) &&
+                selectedProducts.length === 0
+            ){
+                throw({inner : [{
+                    path : "discountCode",
+                    message:"Kode dibutuhkan"
+                }]}) 
+            }
             if(isOneGetOne.id == 1 && selectedProducts.length == 0 ){
                 throw({inner : [{
                     path : "product",
-                    message:"Buy One Get One must have product"
+                    message:"Produk dibutuhkan"
                 }]}) 
             }
-            if((amountRef?.current?.value || selectedId?.discountAmount) && (!codeRef?.current?.value||!selectedId?.discountCode) && selectedProducts.length === 0  ){
-                throw({inner : [{
-                    path : "discountCode",
-                    message:"Code is requiredd"
-                }]}) 
-            }
-            if((codeRef?.current?.value||selectedId?.discountCode) && selectedProducts.length > 0 ){
-                throw({inner : [{
-                    path : "discountCode",
-                    message:"Discount product not need discount code"
-                }]}) 
-            }
-            if((amountRef?.current?.value|| selectedId?.discountAmount ) && selectedProducts.length === 0 ){
+            if((code !=="" || desc !=="") && (amount ==""||amount==0)&&isOneGetOne.id ==0){
                 throw({inner : [{
                     path : "discountAmount",
-                    message:"Discount product need amount"
-                }]}) 
-            }
-            if((minimumRef?.current?.value ) && selectedProducts.length !== 0 ){
-                throw({ inner : [{
-                    path : "product",
-                    message:"Minimum Transaction can't have product(s)"
+                    message:"Potongan diperlukan"
                 }]}) 
             }
             
+            // output.data = {
+            //     "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
+            //     "isPercentage" : !selectedId || selectedId.length ==0 ? +isPercentage.id : Number(selectedId?.isPercentage),
+            //     "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
+            //     "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
+            //     "oneGetOne" : !selectedId || selectedId.length ==0 ? +isOneGetOne.id : Number(selectedId?.oneGetOne),
+            //     "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
+            //     "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
+            //     "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
+            // }
             output.data = {
-                "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-                "isPercentage" : !selectedId || selectedId.length ==0 ? +isPercentage.id : selectedId?.isPercentage ,
-                "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
+                "discountDesc" : desc,
+                "isPercentage" : +isPercentage.id,
+                "discountAmount" : amount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-                "oneGetOne" : !selectedId || selectedId.length ==0 ? +isOneGetOne.id : +selectedId?.oneGetOne,
-                "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
-                "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
-                "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
+                "oneGetOne" : +isOneGetOne.id,
+                "minimalTransaction" : minimum,
+                "discountName" : name,
+                "discountCode" : code,
             }
+            console.log(output.data)
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
             
             await DiscountInfoValidationSchema.validate(output.data,{
@@ -109,7 +133,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             })
             
             setError(errors)
-            
+
             toast.error("Periksa kembali data yang Anda masukkan!")
 
             setIsToastVisible(true)
@@ -163,12 +187,13 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
         <div className="flex items-center justify-between max-w-[85%] gap-8">
             <div className="">
                 <h4 className={`title font-bold ${onEdit ? "mt-2" : "mt-4" }`}>Nama : </h4>
-                <Input 
+                <Input
                     type = {`${!onEdit ? "hidden" : "text" }`}
-                    ref = {nameRef}
-                    placeholder = {selectedId?.discountName}
-                    errorInput={error.discountName }
-                    onChange={() => setError({ ...error, discountName: false })}
+                    value={name}
+                    onChange={(e) => {
+                        setError({ ...error, discountName: false })
+                        setName(e.target.value)
+                    }}
                 />
                 {error.discountName && (
                     <div className="text-sm text-red-500 dark:text-red-400">
@@ -177,12 +202,14 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 )}
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.discountName}</h1>
                 <h4 className="title font-bold mt-4">Deskripsi : </h4>
-                <Input 
+                <Input
                     type = {`${!onEdit ? "hidden" : "textarea" }`}
-                    ref = {descRef}
-                    placeholder = {selectedId?.discountDesc}
+                    value = {desc}
                     errorInput={error.discountDesc }
-                    onChange={() => setError({ ...error, discountDesc: false })}
+                    onChange={(e) => {
+                        setError({ ...error, discountDesc: false })
+                        setDesc(e.target.value)
+                    }}
                 />
                 {error.discountDesc && (
                     <div className="text-sm text-red-500 dark:text-red-400">
@@ -225,8 +252,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                             value="Ya"
                             checked = {isOneGetOne?.name === "Ya" ? true : false}
                             onChange={() => {
-                                amountRef.current.value =""
-                                minimumRef.current.value =""
+                                setAmount("")
+                                setMinimum("")
+                                setCode("")
                                 setError({ ...error, discountAmount: false, minimalTransaction:false })
                                 setIsPercentage({id:"0",name:"Tidak"})
                                 setIsOneGetOne({id:"1",name:"Ya"})
@@ -248,12 +276,15 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             </div>
             <div className="">
                 <h4 className="title font-bold mt-4">Kode : </h4>
-                <Input 
+                <Input
+                    isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "text" }`}
-                    ref = {codeRef}
-                    placeholder = {selectedId?.discountCode ? selectedId?.discountCode : "-"}
+                    value = {code}
                     errorInput={error.discountCode }
-                    onChange={() => setError({ ...error, discountCode: false })}
+                    onChange={(e) => {
+                        setError({ ...error, discountCode: false })
+                        setCode(e.target.value)
+                    }}
                 />
                 {error.discountCode && (
                     <div className="text-sm text-red-500 dark:text-red-400">
@@ -273,10 +304,12 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <Input 
                     isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "number" }`}
-                    ref = {amountRef}
-                    placeholder = {(selectedId?.isPercentage || isPercentage.id ==1) ? `${selectedId?.discountAmount ? selectedId?.discountAmount :"0"}%` : `Rp. ${formatNumber(selectedId?.discountAmount ? selectedId?.discountAmount : "0")}` }
+                    value = {amount}
                     errorInput={error.discountAmount }
-                    onChange={() => setError({ ...error, discountAmount: false })}
+                    onChange={(e) => {
+                        setError({ ...error, discountAmount: false })
+                        setAmount(e.target.value)
+                    }}
                 />
                 {error.discountAmount && (
                     <div className="text-sm text-red-500 dark:text-red-400">
@@ -288,10 +321,12 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <Input 
                     isDisabled={isOneGetOne.id == 1}
                     type = {`${!onEdit ? "hidden" : "number" }`}
-                    ref = {minimumRef}
-                    placeholder = {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.minimalTransaction)}` }
+                    value = {minimum}
                     errorInput={error.minimalTransaction }
-                    onChange={() => setError({ ...error, minimalTransaction: false })}
+                    onChange={(e) => {
+                        setError({ ...error, minimalTransaction: false })
+                        setMinimum(e.target.value)
+                    }}
                 />
                 {error.minimalTransaction && (
                     <div className="text-sm text-red-500 dark:text-red-400">
