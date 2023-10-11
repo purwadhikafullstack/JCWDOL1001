@@ -110,7 +110,7 @@ export default function CategoryList(){
                     <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                         <div className="m-4">
                         <h2 className="font-semibold text-green-900 text-2xl">Ubah Gambar Kategori</h2>
-                        <h2 className="my-4">Ubah gambar kategori nomor {categoryIndex} </h2>
+                        <h4 className="my-4">Ubah gambar kategori nomor {categoryIndex} </h4>
                         <form className="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
                                 <InputImage file={fileImage} setFile={setFileImage}/>
@@ -137,12 +137,12 @@ export default function CategoryList(){
             <div>
                 {optionPage()}
             </div>
-            <div className="overflow-x-auto shadow-md sm:rounded-lg my-8">
-                <div className="flex flex-row border-b-2">
+            <div className="overflow-x-auto sm:rounded-lg my-8">
+                <div className="flex flex-row">
                     <h1 className="text-2xl font-semibold w-1/2"> Kategori </h1>
-                    <Button isPrimary isButton onClick={()=>setNewPage('add')} title={"Tambah Kategori Baru"}className="m-3"/>
+                    <Button isPrimary isButton onClick={()=>setNewPage('add')} title={"Tambah Kategori Baru"} className="mx-3"/>
                     <form className="relative w-1/3">
-                        <Input type="text" placeholder="Cari Produk..." ref={searchedCategoryRef}/>
+                        <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
                         <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedCategory(searchedCategoryRef?.current.value)}>
                             <HiMagnifyingGlass className="text-2xl text-primary" />
                         </button>
@@ -181,9 +181,9 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3">
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className="m-3"/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className="m-3"/>
                                 <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className="m-3"/>
-                                <Button isWarning isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className="m-3"/>
-                                <Button isWarning isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className="m-3"/>
                                 </td>
                             </tr>))
                             :

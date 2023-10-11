@@ -99,7 +99,6 @@ const deleteCategory = async (req, res, next) => {
                 }
             ]
         });
-        console.log(productExists);
 
         if(productExists.length > 0){
             throw ({ status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.PRODUCT_HAS_CATEGORY});
@@ -119,6 +118,9 @@ const updateCategory = async (req, res, next) => {
         const categoryExists = await Categories?.findOne({where : {categoryId : categoryId}});
         if(!categoryExists) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
         if(categoryExists?.dataValues?.isDeleted === 1) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_NOT_FOUND});
+
+        const categoryIn = await Categories?.findOne({where : {categoryDesc}});
+        if(categoryIn) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.CATEGORY_ALREADY_EXISTS})
 
         const categoryChanged = await Categories?.update({categoryDesc : categoryDesc},{where : {categoryId : categoryId}});
         res.status(200).json({message : "Category has been changed!", data : {categoryId : categoryId, categoryDesc : categoryDesc}});
