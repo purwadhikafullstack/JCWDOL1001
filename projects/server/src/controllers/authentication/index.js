@@ -186,7 +186,7 @@ const verify = async (req, res, next) => {
         // @create transaction
         const transaction = await db.sequelize.transaction(async()=>{   
         //@ grab input
-        const { otp, gender,address, birthdate,province, city,postalCode,district} = req.body;  
+        const { otp, gender,birthdate} = req.body;  
         delete req.body.otp
         //@ get user from uuid
         const users = await User_Account?.findOne({ where : { UUID : req.user.UUID }});
@@ -218,14 +218,14 @@ const verify = async (req, res, next) => {
             {where : { 
             userId : users?.dataValues?.userId
         }});
-        await User_Address.create({
-            address , 
-            province, 
-            city, 
-            district, 
-            postalCode,
-            userId : users?.dataValues?.userId
-        });
+        // await User_Address.create({
+        //     address , 
+        //     province, 
+        //     city, 
+        //     district, 
+        //     postalCode,
+        //     userId : users?.dataValues?.userId
+        // });
                         
         // oper data ke backend + message
         //@ get user from uuid
