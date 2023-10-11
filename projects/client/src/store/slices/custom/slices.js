@@ -9,16 +9,16 @@ export const getUser = createAsyncThunk(
         try{
             //validation payload
             const { page, sortDate,search} = payload
-
+            // console.log(page, sortDate, search)
             let PARAMETER = "?"
 
-            if(page) PARAMETER += `page=${page ? page : 1 }&`
+            if(page) PARAMETER += `page=${page ? page : 1 }`
             
-            if(sortDate) PARAMETER += `sortDate=${sortDate}&`
+            if(sortDate) PARAMETER += `&sortDate=${sortDate}&search`
 
-            if(search) PARAMETER += `search=${search}&`
-
-            const { data } = await api.get("products/recipe/user",encodeURI(PARAMETER))
+            if(search) PARAMETER += `=${search}`
+            console.log(PARAMETER)
+            const { data } = await api.get("products/recipe/user"+PARAMETER)
             // toast.success(data?.message)
             return data
         }catch(error){

@@ -1,6 +1,7 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
+// const moment = require("moment")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -28,14 +29,16 @@ const getUser = async( req, res, next ) => {
     const currentPage = page ? parseInt(page) : 1;
 
     const options = {
-        offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
-        limit : 10,
+        offset : currentPage > 1 ? parseInt(currentPage-1)*6 : 0,
+        limit : 6,
     }
 
     const filter = {}
     const sort =  [[`createdRecipe`, sortDate ? sortDate : "DESC"]]
 
-    if(search) filter.name= {[Op.like]: `%${search}%`}
+    // if(search) filter = {
+    //   name :{[Op.like]: `%${search}%`} 
+    // }
     console.log(filter)
     const userlist = await User_Account.findAll({...options,
         where : {
@@ -46,9 +49,9 @@ const getUser = async( req, res, next ) => {
         include : [{
           model : User_Profile,
           as : "userProfile",
-          where : 
-            filter?.name
-          
+          where : {
+            name :{[Op.like]: `%${search}%`} 
+          }
         }],
         order : sort
     })
@@ -60,10 +63,9 @@ const getUser = async( req, res, next ) => {
   },include : {
     model : User_Profile,
     as : "userProfile",
-    where : {[Op.and] :
-    [
-        filter
-    ]}
+    where : {
+      name :{[Op.like]: `%${search}%`} 
+    }
   },
     })
 
@@ -240,7 +242,11 @@ const getUser = async( req, res, next ) => {
               // if (error) throw error;
               console.log("Email sent: " + info.response);
           })
-  
+          
+      await User_Account.update({
+        imgRecipe : null
+      },{where : {email}})
+
       res.status(200).json({ 
         type : "success",
         message : "We have send the desired user",
@@ -296,7 +302,7 @@ const getUser = async( req, res, next ) => {
 
         subtotal += (product.productPrice * +product.productDescription)
         console.log("subtotal dari custom " ,subtotal)
-        await Product_List.update({ productPicture : "done"},{
+        await Product_List.update({ productPicture : "Public/Products/OBATRACIK"},{
           where : {
             productId : productId,
           }
@@ -366,7 +372,7 @@ const getUser = async( req, res, next ) => {
             productId : ingredientProductId,
             unit : secUnit.product_unit.name,
             initialStock : secUnit?.quantity + remainStock,
-            status : "Penjualan",
+            status : "Penjualan Obat Racik",
             type : "Pengurangan",
             quantity : +product?.productDescription * recipeQty,
             results : remainSecStock
@@ -400,7 +406,7 @@ const getUser = async( req, res, next ) => {
           productId : ingredientProductId,
           unit : secUnit.product_unit.name,
           initialStock : secUnit?.quantity,
-          status : "Penjualan",
+          status : "Penjualan Obat Racik",
           type : "Pengurangan",
           quantity : +product?.productDescription * recipeQty,
           results : secUnit?.quantity - (+product?.productDescription * recipeQty)
@@ -508,9 +514,11 @@ const getUser = async( req, res, next ) => {
       })
     }
 
-    // if (productResult.length > 0) {
-    //   await Transaction_Detail.bulkCreate(productResult);
-    // }
+    await User_Account.update({
+      addressIdRecipe : null,
+      createdRecipe : null,
+      shippingRecipe : null,
+    },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
         type : "success",
