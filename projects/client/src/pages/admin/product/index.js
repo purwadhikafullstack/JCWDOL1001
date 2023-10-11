@@ -18,7 +18,7 @@ import ModalInputCustomProduct from "../custom";
 
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
 
 import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
 import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
@@ -138,6 +138,12 @@ export default function AdminProducts({user}) {
     dispatch(getUnits())
   }, [categoriesPage])
 
+    const clearSearch = () => {
+    setSearchedProduct(null)
+    setPage(1)
+    searchedProductRef.current.value = "";
+  }
+
 
   if (!user.role) return navigate("/", "replace");
 
@@ -148,11 +154,25 @@ export default function AdminProducts({user}) {
 
           <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
 
-          <form className="relative w-1/3">
+          <form className="relative w-1/3" onSubmit={(e) => {
+            e.preventDefault()
+            setSearchedProduct(searchedProductRef?.current.value)
+          }}>
             <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
-            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}>
+            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit"
+            // onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}
+            >
               <HiMagnifyingGlass className="text-2xl text-primary" />
             </button>
+
+            {searchedProduct && 
+              <Button
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
+                onClick={clearSearch}
+              >
+                <HiXMark className="text-2xl text-primary" />
+              </Button>
+            }
           </form>
         </div>
         

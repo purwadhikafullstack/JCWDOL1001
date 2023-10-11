@@ -69,7 +69,7 @@ export default function LoginContext ({
                     onRegist()
                 }}
             />  
-            <form className="mt-8 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
+            <form className="mt-4 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
                 <div>
                     <Input
                         ref={emailRef}

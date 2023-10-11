@@ -130,7 +130,7 @@ export default function Cart() {
   //   dispatch(getCart())
   //   dispatch(totalProductCart())
   // },[cart])
-
+  
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   

@@ -9,6 +9,7 @@ import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
 import { getProductDiscount, getProducts } from "../../store/slices/product/slices";
 import { getCart, totalProductCart } from "../../store/slices/cart/slices";
+import Products from "../products";
 import Footer from "../../components/Footer";
 
 export default function LandingPage() {
@@ -86,7 +87,8 @@ export default function LandingPage() {
           <Guarantee />
         </div>
       </div>
-      <Footer/>
+
+      <Footer />
     </div>
   );
 }
