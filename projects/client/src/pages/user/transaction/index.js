@@ -66,6 +66,9 @@ export default function Transaction({
         }))
   
         setPage(1)
+
+        console.log("Start", startDateRef.current?.value);
+        console.log("End", endDateRef.current?.value);
   
       }
     } catch (error) {
@@ -114,7 +117,7 @@ export default function Transaction({
 
     if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
 
-  }, [page, activeTab, sortDate, searchedInvoice]);
+  }, [page, sortDate, searchedInvoice]);
   
   useEffect(() => {
     dispatch(getTransactionStatus());
@@ -134,6 +137,18 @@ export default function Transaction({
     setSortDate(false)
     setIsStartDateChanged(false)
     setIsEndDateChanged(false)
+    setSearchedInvoice(null)
+
+    dispatch(getTransactionList({ 
+      statusId : activeTab,
+      startFrom : startDateRef.current?.value,
+      endFrom : endDateRef.current?.value,
+      page,
+      sortDate : sortDate ? "ASC" : "DESC",
+      invoice: searchedInvoice
+    }));
+
+    if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
   }, [activeTab])
 
   useEffect(() => {

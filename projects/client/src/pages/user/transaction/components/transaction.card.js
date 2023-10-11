@@ -41,9 +41,9 @@ export default function TransactionCard({
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="text-sm">
-                <p>Diperbarui Pada</p>
+                <p>Tanggal Pembelian</p>
                 <p className="font-semibold">
-                  {formatDate(item.updatedAt)}
+                  {formatDate(item.createdAt)}
                 </p>
               </div>
 

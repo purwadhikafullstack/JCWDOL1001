@@ -29,6 +29,7 @@ import QnAPage from "./pages/qna";
 import ResetPassword from "./pages/reset-password";
 import StockHistory from "./pages/admin/product/history";
 import QNA from "./pages/admin/qna";
+import TentangKami from "./pages/tentang-kami";
 
 function App() {
   const { pathname } = useLocation();
@@ -133,6 +134,7 @@ function App() {
           <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     
+          <Route path="/tentang-kami" element={<TentangKami/>} />     
           <Route path="*" element={<NotFound />} />
         </Routes>
 

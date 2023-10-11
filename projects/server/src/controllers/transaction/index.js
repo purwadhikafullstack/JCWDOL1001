@@ -113,9 +113,22 @@ const getTransactions = async (req, res, next) => {
     }
 
     if(startFrom) {
-      whereCondition.updatedAt = {
-        [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
-        [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+      if (roleId === 1) {
+        whereCondition.updatedAt = {
+          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          // [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
+          // [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+        }
+      }
+
+      if (roleId === 2) {
+        whereCondition.createdAt = {
+          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
+        }
+        console.log("Start", moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"));
+        console.log("End", moment(endFrom).add(24 , "hours").format("YYYY-MM-DD HH:mm:ss"));
       }
     }
 

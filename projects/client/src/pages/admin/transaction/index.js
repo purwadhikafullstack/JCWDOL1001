@@ -115,7 +115,7 @@ export default function Transaction({
 
     if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
 
-  }, [page, activeTab, sortDate, searchedInvoice]);
+  }, [page, sortDate, searchedInvoice]);
   
   useEffect(() => {
     dispatch(getTransactionStatus());
@@ -126,25 +126,36 @@ export default function Transaction({
   }, [sortDate, searchedInvoice])
   
   useEffect(()=>{
+    setTimeout(() => {
+      const statusList = document.querySelector(".transaction-status");
+      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 180, behavior:"smooth" });
+    }, 50);
+
     if (startDateRef.current && endDateRef.current) {  
       startDateRef.current.value = "";
       endDateRef.current.value = "";
     }
+
     searchedInvoiceRef.current.value = ""
     dispatch(getOngoingTransactions())
     setSortDate(false)
     setIsStartDateChanged(false)
     setIsEndDateChanged(false)
+    setSearchedInvoice(null)
+
+    dispatch(getTransactionList({ 
+      statusId : activeTab,
+      startFrom : startDateRef.current?.value,
+      endFrom : endDateRef.current?.value,
+      page,
+      sortDate : sortDate ? "ASC" : "DESC",
+      invoice: searchedInvoice
+    }));
+
+    if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
   }, [activeTab])
 
   useEffect(()=> setActiveTab(+tab), [tab])
-
-  useEffect(() => {
-    setTimeout(() => {
-      const statusList = document.querySelector(".transaction-status");
-      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 180, behavior:"smooth" });
-    }, 50);
-  }, [activeTab]);
 
   const tabContent = [
     { tabId: 1, component: MenungguPembayaran },
