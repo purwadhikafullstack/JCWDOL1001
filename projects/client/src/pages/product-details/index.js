@@ -139,7 +139,7 @@ export default function ProductDetail({user}) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-                  {product?.discountProducts[0].discount.isPercentage ? `${product?.discountProducts[0].discount.discountAmount}%` : 
+                  {product?.discountProducts[0]?.discount?.isPercentage ? `${product?.discountProducts[0]?.discount?.discountAmount}%` : 
                   `Potongan Harga ${formatNumber(product?.discountProducts[0]?.discount.discountAmount)}`
                   }
                 </span>
@@ -216,7 +216,7 @@ export default function ProductDetail({user}) {
             <div className="flex lg:flex-col justify-between">
               <h3 className="">Subtotal</h3>
               <h3 className="text-lg font-bold text-primary">
-                 Rp. {formatNumber((product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0].endingPrice : product?.productPrice) * qty )}
+                 Rp. {formatNumber((product?.discountProducts[0]?.endingPrice > 0 ? product?.discountProducts[0]?.endingPrice : product?.productPrice) * qty )}
               </h3>
             </div>
 
