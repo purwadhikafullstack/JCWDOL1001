@@ -133,10 +133,13 @@ export default function Cart() {
   
 },[])
 
-  /*useEffect(() => {
-      dispatch(getCart())
-      dispatch(totalProductCart())
-      },[cart])*/
+  // useEffect(() => {
+  //     dispatch(getCart())
+  //     dispatch(totalProductCart())
+  //     },[cart])
+
+  
+
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   

@@ -12,7 +12,6 @@ import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
 
 export default function UserNavMenu({
   isLogin,
-  setIsLogin,
   user,
   handleShowModal,
   ongoingTransactions
@@ -42,12 +41,14 @@ export default function UserNavMenu({
 
   const onClickKeluar = () => {
     dispatch(logout()).finally(() => {
-      setIsLogin(false)
-      setIsMenuVisible(false)
-      navigate("/");
+      navigate("/")
     });
     
   }
+
+  useEffect(()=>{
+    setIsMenuVisible(false)
+  }, [])
 
   return (
     <div className={`nav-menu-wrapper justify-end `} >

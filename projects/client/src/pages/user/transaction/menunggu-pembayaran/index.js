@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getOngoingTransactions,
-  getTransactionList,
-  resetSuccessTransaction,
-} from "../../../../store/slices/transaction/slices";
+import { resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
 import { formatDate } from "../../../../utils/formatDate";
 import formatNumber from "../../../../utils/formatNumber";
 import Button from "../../../../components/Button";
@@ -12,9 +8,10 @@ import Modal from "../../../../components/Modal";
 import Pagination from "../../../../components/PaginationV2";
 import ModalCaraBayar from "./modal.cara.bayar";
 import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
-import ModalDetailTransaction from "./modal.detail.transaction";
-import EmptyTransaction from "../component.empty.transaction";
-import SkeletonTransaction from "../component.skeleton";
+import ModalDetailTransaction from "../components/modal.detail.transaction";
+import EmptyTransaction from "../components/empty.transaction";
+import SkeletonTransaction from "../components/skeleton";
+import TransactionCard from "../components/transaction.card";
 
 export default function MenungguPembayaran({
   transaction,
@@ -203,7 +200,7 @@ export default function MenungguPembayaran({
           );
         })}
       </div>
-      
+
       {totalPage > 1 &&
         <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
       }
@@ -239,11 +236,18 @@ export default function MenungguPembayaran({
         )}
 
         {showModal.context === "Detail Transaksi" && (
-          <ModalDetailTransaction
-            selectedTransaction={selectedTransaction}
-            handleCloseModal={handleCloseModal}
-            handleShowModal={handleShowModal}
-          />
+          <>
+            <ModalDetailTransaction
+              selectedTransaction={selectedTransaction}
+              handleCloseModal={handleCloseModal}
+              handleShowModal={handleShowModal}
+            />
+            <div className="grid md:grid-cols-3 gap-2 mt-4">
+              <Button isButton isPrimaryOutline title={`Kembali`} onClick={handleCloseModal}/>
+              <Button className={`row-start-2 md:row-start-1 md:col-start-2`} isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
+              <Button className={`row-start-1 md:col-start-3`} isButton isPrimary title={`Bayar Sekarang`} onClick={() => handleShowModal("Pembayaran", selectedTransaction.transactionId)}/>
+            </div>
+          </>
         )}
       </Modal>
     </>

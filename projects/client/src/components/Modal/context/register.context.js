@@ -8,6 +8,7 @@ import { login,register, resendOtp } from "../../../store/slices/auth/slices"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
+    onLogin = ()=>{},
 }){
 
     const {isRegister} = useSelector(state =>{
@@ -93,16 +94,27 @@ export default function RegisterContext ({
                     </div>
                 </div> :
                 <div>
-                <form className="mt-8 flex flex-col gap-8" onSubmit={(event)=>{onButtonRegist(event)}} >
+                        <span className="mr-2 text-slate-600">Sudah punya akun?</span>
+                        <Button
+                            title="Masuk"
+                            className="text-primary underline"
+                            onClick={() => {
+                                onLogin()
+                            }}
+                        />
+                      
+                
+                <form className="flex flex-col gap-8 mt-4" onSubmit={(event)=>{onButtonRegist(event)}} >
 
                     <div className="flex flex-col gap-3">
-                {/* <span className="mr-2 text-slate-600 text-sm">Mari bergabung dengan keluarga Apotech</span> */}
+                        <div className="flex gap-2">
+
                         <Input
                             ref={nameRef}
                             required
                             type="text"
-                            label="Username"
-                            placeholder="e.g. helloworld"
+                            label="Nama Lengkap"
+                            placeholder="Bob Smith"
                 
                         />
 
@@ -110,14 +122,16 @@ export default function RegisterContext ({
                             ref={phoneRef}
                             required
                             type="text"
-                            label="Phone Number"
-                            placeholder="e.g. 08123456123"
-                        />
+                            label="Nomor Telpon"
+                            placeholder="08xxxxxxxx"
+                            />
+                        </div>
+
                         <Input
                             ref={emailRef}
                             type="text"
                             label="Email"
-                            placeholder="e.g. example@email.com"
+                            placeholder="example@email.com"
                         />
 
                         <Input
@@ -125,14 +139,14 @@ export default function RegisterContext ({
                             required
                             type="password"
                             label="Password"
-                            placeholder="min. 6 characters"
+                            placeholder="Min. 6 karakter"
                         />
                         <Input
                             ref={confirmPasswordRef}
                             required
                             type="password"
-                            label="Confirm Password"
-                            placeholder="min. 6 characters"
+                            label="Konfirmasi Password"
+                            placeholder="Min. 6 karakter"
                         />
                     </div>
                     <Button

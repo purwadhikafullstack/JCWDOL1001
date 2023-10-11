@@ -51,7 +51,7 @@ export default function NormalProductList({
 },[])
     
     const [result,setResult] = useState(true)
-    const [selectProductRef,setSelectProductRef] = useState([])
+    const [selectProductRef,setSelectProductRef] = useState([0,"",0])
     const[visible,setVisible] = useState(false)
     const handleChangeValue = (e) =>{
         e.preventDefault();
@@ -73,7 +73,7 @@ export default function NormalProductList({
           }))
     }
     const resetValue =()=>{
-        setSelectProductRef(["","",""])
+        setSelectProductRef(["0","","0"])
         setVisible(false)
     }
     const clickOption = (params) =>{

@@ -50,7 +50,7 @@ export default function Modal({
 
   halfWidth === true && modalBodyClassName.push("lg:w-3/4 md:w-3/4 w-5/6 h-fit rounded-lg")
 
-  !fullWidth && !halfWidth && modalBodyClassName.push("md:w-1/2 lg:w-1/3 w-5/6 h-fit rounded-lg")
+  !fullWidth && !halfWidth && modalBodyClassName.push("md:w-[55%] lg:w-[40%] w-5/6 h-fit rounded-lg")
 
   if (showModal === true && fullWidth === false) {
     document.body.style.overflow = "hidden";
@@ -112,7 +112,7 @@ export default function Modal({
               }
             </div>
 
-            <div className="py-4">
+            <div className="">
               {context ? (
                 forgot ?
                 <ForgotContext
@@ -138,6 +138,14 @@ export default function Modal({
                   <RegisterContext
                   onDoneRegist={()=>{
                   setTitle("Next Step")}} 
+                  onLogin={
+                    ()=>{
+                      setRegist(false)
+                      setLogin(true)
+                      setTitle("Login");
+
+                    }
+                  }
                 /> : 
                 ""
               ) : (

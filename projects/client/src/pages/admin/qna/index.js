@@ -6,7 +6,7 @@ import Input from "../../../components/Input/index.js"
 import {deleteQuestion, PostAnswer, getForum,getUnanswered } from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
-import Pagination from "../../../components/PaginationV2/index.js"
+import Pagination from "../../../components/PaginationV2"
 import Modal from "../../../components/Modal/index.js"
 import Message from "../../../components/Message/index.js"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
@@ -118,41 +118,41 @@ function QNA () {
 useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
 
-        setUnansweredList([])
-        setAnsweredList([])
-        const answerlist = []
-        const unanswerlist = []
-        questionList.map(item=>{
-            if(item.answer){
-                answerlist.push(item)
-            }
-            else{
-                unanswerlist.push(item)
-            }
-        })
-        setAnsweredList(answerlist)
-        setUnansweredList(unanswerlist)
+        // setUnansweredList([])
+        // setAnsweredList([])
+        // const answerlist = []
+        // const unanswerlist = []
+        // questionList.map(item=>{
+        //     if(item.answer){
+        //         answerlist.push(item)
+        //     }
+        //     else{
+        //         unanswerlist.push(item)
+        //     }
+        // })
+        // setAnsweredList(answerlist)
+        // setUnansweredList(unanswerlist)
     
 },[])
 
     useEffect(() => {
         dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-        if(questionList){
-            setUnansweredList([])
-            setAnsweredList([])
-            const answerlist = []
-            const unanswerlist = []
-            questionList.map(item=>{
-                if(item.answer){
-                    answerlist.push(item)
-                }
-                else{
-                    unanswerlist.push(item)
-                }
-            })
-            setAnsweredList(answerlist)
-            setUnansweredList(unanswerlist)
-        }
+        // if(questionList){
+        //     setUnansweredList([])
+        //     setAnsweredList([])
+        //     const answerlist = []
+        //     const unanswerlist = []
+        //     questionList.map(item=>{
+        //         if(item.answer){
+        //             answerlist.push(item)
+        //         }
+        //         else{
+        //             unanswerlist.push(item)
+        //         }
+        //     })
+        //     setAnsweredList(answerlist)
+        //     setUnansweredList(unanswerlist)
+        // }
     }, [sortDate])
 
 
