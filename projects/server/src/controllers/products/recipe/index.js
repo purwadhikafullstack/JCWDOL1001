@@ -302,7 +302,7 @@ const getUser = async( req, res, next ) => {
 
         subtotal += (product.productPrice * +product.productDescription)
         console.log("subtotal dari custom " ,subtotal)
-        await Product_List.update({ productPicture : "done"},{
+        await Product_List.update({ productPicture : "Public/Products/OBATRACIK"},{
           where : {
             productId : productId,
           }
