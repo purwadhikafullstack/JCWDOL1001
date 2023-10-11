@@ -6,7 +6,7 @@ import Input from "../../../components/Input/index.js"
 import {deleteQuestion, PostAnswer, getForum,getUnanswered } from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
-import Pagination from "../../../components/Pagination/index.js"
+import Pagination from "../../../components/PaginationV2/index.js"
 import Modal from "../../../components/Modal/index.js"
 import Message from "../../../components/Message/index.js"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
@@ -115,7 +115,7 @@ function QNA () {
             }, 2000)
         }
     }
-useEffect(async ()=>{
+useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
 
         setUnansweredList([])

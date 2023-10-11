@@ -133,17 +133,17 @@ export default function Cart() {
   
 },[])
 
-  useEffect(() => {
+  /*useEffect(() => {
       dispatch(getCart())
       dispatch(totalProductCart())
-      },[cart])
+      },[cart])*/
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   
   const checkOut = async () => {
     try{
       dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout")
+      navigate("/checkout","replace")
 
     }catch(error){
       const errors = {}

@@ -42,59 +42,62 @@ export default function Profile() {
 
   return (
     <>
-    <div className="w-1/2">
+    <div className="flex flex-row">
+      <div className="w-1/2">
           <InputImage
               file={file}
               setFile={setFile}
               dataImage={dataImage}
               setDataImage={setDataImage}
-            /></div>
-            <div className="">
+            />
+            <div className="m-4">
               <Button isPrimary isButton isLoading={isChangePictureLoading} isDisabled={!file} title={"Ubah Gambar"} onClick={()=>submitImage()}/>
             </div>
+      </div>
           <div className="col-span-1 p-2 m-2">
           {
             !revision && 
-            <div className="py-8 mt-8 border rounded px-6">
-            <h1 className="text-4xl">Profile</h1>
-            <h2 className="text-2xl py-4">Your Name      : {profile.name}</h2>
-            <h2 className="text-2xl py-4">Your Gender    : {profile.gender}</h2>
-            <h2 className="text-2xl py-4">Your Birthdate : {profile.birthdate}</h2>
-            <h2 className="text-2xl py-4">Your Phone     : {profile.phone}</h2>
-            <button className="bg-blue-500 mx-4 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded" onClick={()=>setRevision(true)}>Ubah</button>
+            <div className="py-8 mt-2 border rounded px-6">
+            <h1 className="text-4xl">Profil</h1>
+            <h2 className="text-2xl py-4">Nama             : {profile.name}</h2>
+            <h2 className="text-2xl py-4">Jenis Kelamin    : {profile.gender}</h2>
+            <h2 className="text-2xl py-4">Tanggal Lahir    : {profile.birthdate}</h2>
+            <h2 className="text-2xl py-4">No. Handphone    : {profile.phone}</h2>
+            <Button isPrimaryOutline isButton title={"Ubah Profile"} onClick={()=>setRevision(true)}/>
             </div>
           }
           {
             revision && 
-          <div className="py-8 mt-8 border rounded px-6">
+          <div className="p-4 mt-2 border rounded">
             <form>
-              <h1 className="text-4xl items-center">Profile</h1>
+              <h1 className="text-4xl items-center">Profil</h1>
               <div className="text-2xl py-4 flex flex-row">
-                <label for="name" className="">Your Name      :</label>
+                <label for="name" className="">Nama    :</label>
                 <input type="text" id="name" value={name} onChange={(e)=>setName(e.target.value)} className="border"></input>
               </div>
               <div className="text-2xl py-4 flex flex-row">
-                <label for="gender" className="" >Your Gender    :</label>
+                <label for="gender" className="" >Jenis Kelamin    :</label>
                 <select id="gender" value={gender} onChange={(e)=>setGender(e.target.value)} className="border">
-                  <option value={"male"}>male</option>
-                  <option value={"female"}>female</option>
+                  <option value={"Pria"}>Pria</option>
+                  <option value={"Wanita"}>Wanita</option>
                 </select>
               </div>
               <div className="text-2xl py-4 flex flex-row">
-                <label for="birthdate" className="">Your Birthdate :</label>
+                <label for="birthdate" className="">Tanggal Lahir :</label>
                 <input type="date" id="birthdate" value={birthdate} onChange={(e)=>setBirthdate(e.target.value)} className="border"></input>
               </div>
               <div className="text-2xl py-4 flex flex-row">
-                <label for="phone" className="">Your Phone     :</label>
+                <label for="phone" className="">No. Handphone :</label>
                 <input type="tel" id="phone" value={phone} onChange={(e)=>setPhone(e.target.value)} className="border"></input>
               </div>
               <div className="text-2xl py-4 flex flex-row">
-                <button type="button" className="bg-green-500 mx-4 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded" onClick={()=>submitData()}>Save changes</button>
-                <button type="button" className="bg-red-500 mx-4 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded" onClick={()=>setRevision(false)}>Discard changes</button>
+                <Button isPrimary isButton title={"Simpan Profile"} className="m-2" onClick={()=>submitData()}/>
+                <Button isDanger isButton title={"Kembali ke Awal"} className="m-2" onClick={()=>setRevision(false)}/>
               </div>
             </form>
           </div>
           }
+          </div>
           </div>
     </>
   )

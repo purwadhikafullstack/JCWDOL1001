@@ -17,18 +17,18 @@ export default function CheckoutPage(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0;
-    const {cart,address,listDiscount} = useSelector((state)=>{
+    const {cart,address,listDiscount, isGetCheckoutLoading} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
             address : state?.auth?.address,
-            listDiscount: state?.discount?.listDiscount
+            listDiscount: state?.discount?.listDiscount,
+            isGetCheckoutLoading : state?.transaction?.isGetCheckoutLoading
         }
     })
 
     const [selectedAddress, setSelectedAddress] = useState([])
     const [selectedShipping, setShipping] = useState([])
     const [selectedDiscount, setDiscount] = useState(null)
-    
     useEffect(()=>{
         dispatch(getCheckoutProducts())
         setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
@@ -62,7 +62,17 @@ export default function CheckoutPage(){
         dispatch(createTransaction({transport : selectedShipping.cost, totalPrice : (+subTotal*1), addressId : address.addressId})).finally(() => navigate("/user/transaction"));
     }
 
-    return(
+    if(cart.length === 0){
+        return (
+            <>
+                <div className="container py-24 lg:px-8 flex flex-col items-center justify-center h-screen gap-2">
+                        <h1>Wah, Kamu belum punya barang untuk di Checkout!</h1>
+                        <Button isButton isWarning title="Kembali ke Home" onClick={()=>navigate("/")}/>
+                </div>
+            </>
+        )
+    }else{
+        return(
         <>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
@@ -84,11 +94,11 @@ export default function CheckoutPage(){
                         {
                         cart ?
                         cart.map((cart, index)=>{
-                            subTotal += cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice * cart.quantity : cart.cartList.productPrice * cart.quantity;
+                            subTotal += cart.product_detail?.productDiscount[0]?.endingPrice ? cart.product_detail?.productDiscount[0]?.endingPrice * cart.quantity : cart.cartList.productPrice * cart.quantity;
                             return(<Item
                                 key={index}
                                 productName={cart.cartList.productName}
-                                productPrice={cart.product_detail.productDiscount[0]?.endingPrice ? cart.product_detail.productDiscount[0]?.endingPrice : cart.cartList.productPrice}
+                                productPrice={cart.product_detail?.productDiscount[0]?.endingPrice ? cart.product_detail?.productDiscount[0]?.endingPrice : cart.cartList.productPrice}
                                 productPicture={cart.cartList.productPicture}
                                 quantity={cart.quantity}
                             />)
@@ -121,5 +131,8 @@ export default function CheckoutPage(){
                 </div>
             </div>
         </>
-    )
+        )
+    }
+
+    
 }
