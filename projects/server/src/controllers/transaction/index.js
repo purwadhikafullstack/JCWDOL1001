@@ -113,9 +113,22 @@ const getTransactions = async (req, res, next) => {
     }
 
     if(startFrom) {
-      whereCondition.updatedAt = {
-        [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
-        [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+      if (roleId === 1) {
+        whereCondition.updatedAt = {
+          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          // [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
+          // [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+        }
+      }
+
+      if (roleId === 2) {
+        whereCondition.createdAt = {
+          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
+        }
+        console.log("Start", moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"));
+        console.log("End", moment(endFrom).add(24 , "hours").format("YYYY-MM-DD HH:mm:ss"));
       }
     }
 
@@ -250,6 +263,10 @@ const createTransactions = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,
@@ -270,7 +287,7 @@ const createTransactions = async (req, res, next) => {
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
-      invoice : userId + date
+      invoice : `${userId + new Date().getTime()}`
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
@@ -278,13 +295,21 @@ const createTransactions = async (req, res, next) => {
     if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
 
     for (let i = 0; i < startTransaction.length; i++) {
+      let price = 0;
+      let totalPrice = 0;
+      if(startTransaction[i].product_detail.productDiscount[0]?.endingPrice){
+        price = startTransaction[i].product_detail.productDiscount[0].endingPrice;
+        totalPrice = startTransaction[i].product_detail.productDiscount[0].endingPrice * startTransaction[i].quantity;
+      }
+      else{
+        price = startTransaction[i].cartList.productPrice
+        totalPrice = startTransaction[i].cartList.productPrice * startTransaction[i].quantity
+      }
       const newTransactionDetail = {
         transactionId: newTransaction.transactionId,
-        price: startTransaction[i].cartList.productPrice,
+        price: price,
         quantity: startTransaction[i].quantity,
-        totalPrice:
-          startTransaction[i].cartList.productPrice *
-          startTransaction[i].quantity,
+        totalPrice: totalPrice,
         productId: startTransaction[i].productId,
       };
       await Transaction_Detail?.create(newTransactionDetail);

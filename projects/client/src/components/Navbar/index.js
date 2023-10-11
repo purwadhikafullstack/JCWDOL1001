@@ -8,7 +8,7 @@ import Button from "../Button";
 import { HiMiniChatBubbleOvalLeftEllipsis, HiMiniSquares2X2 } from "react-icons/hi2";
 import { useLocation } from "react-router-dom";
 
-export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions }) {
+export default function Navbar ({ user, isLogin, ongoingTransactions }) {
     const { pathname } = useLocation()
     const dispatch = useDispatch()
 
@@ -44,15 +44,16 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
                 >
                     <div className="navbar container flex justify-between">
                         <div className="lg:block">
-                            <a 
-                                href="/" 
+                            <Button
+                            isLink 
+                                path="/" 
                                 className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-dark"
                             >
                             <span className="absolute block h-2 w-6 rounded-full bg-dark"></span>
                             <span className="absolute rotate-90 block h-2 w-6 rounded-full bg-primary"></span>
                             <span className="absolute block h-2 w-6 rounded-full bg-dark opacity-40"></span>
                             <span className="ml-8 font-poppins">Apotech</span>
-                            </a>
+                            </Button>
                         </div>
 
                         <div className="flex items-center">
@@ -81,11 +82,10 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
 
                         {user.role === 1 &&
                             <AdminNavMenu
-                                isLogin={isLogin}
-                                setIsLogin={setIsLogin}
+                                // isLogin={isLogin}
+                                // setIsLogin={setIsLogin}
                                 isSidebarActive={isSidebarActive}
                                 setIsSidebarActive={setIsSidebarActive}
-                                user={user}
                                 ongoingTransactions={ongoingTransactions}
                             />
                         }
@@ -93,7 +93,7 @@ export default function Navbar ({ user, isLogin, setIsLogin, ongoingTransactions
                         {(!user.role || user.role === 2) && (
                             <UserNavMenu
                                 isLogin={isLogin}
-                                setIsLogin={setIsLogin}
+                                // setIsLogin={setIsLogin}
                                 handleShowModal={handleShowModal}
                                 user={user}
                                 ongoingTransactions={ongoingTransactions}
