@@ -1,5 +1,7 @@
-const dotenv = require("dotenv")
-dotenv.config();
+const path = require("path");
+require("dotenv").config({
+    path: path.resolve(__dirname, '../../.env')
+})
 
 // @create db configuration
 const db_config = Object.freeze({
