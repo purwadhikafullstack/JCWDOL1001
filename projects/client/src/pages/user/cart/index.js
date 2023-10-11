@@ -146,7 +146,7 @@ export default function Cart() {
   const checkOut = async () => {
     try{
       dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout")
+      navigate("/checkout","replace")
 
     }catch(error){
       const errors = {}

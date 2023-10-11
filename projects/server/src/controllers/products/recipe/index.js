@@ -12,7 +12,6 @@ const {} = require("./validation.js")
 const {ValidationError} = require("yup");
 const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
-const moment = require("moment")
 
 const getUser = async( req, res, next ) => {
     try{
