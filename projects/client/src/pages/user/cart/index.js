@@ -26,12 +26,11 @@ export default function Cart() {
     status.push(false)
     return item.cartList?.productName
   });
-
   //
   const cartItems = products.filter((product) =>
     selectedProduct.includes(product.productName)
   );
-
+  
   const [selectedItems, setSelectedItems] = useState([]);
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
@@ -113,25 +112,25 @@ export default function Cart() {
   };
 
   useEffect(() => {
-  dispatch(getCart())
-  dispatch(totalProductCart())
-  dispatch(
-    getProducts({
-      page: 1,
-      id_cat: "",
-      product_name: "",
-      sort_price: "",
-      sort_name: "",
-      limit: 12,
-    })
-  )
-  
-},[])
+    dispatch(getCart())
+    dispatch(totalProductCart())
+    dispatch(
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+        limit: 12,
+      })
+    )
+  },[])
 
-  useEffect(() => {
-      dispatch(getCart())
-      dispatch(totalProductCart())
-      },[cart])
+  // useEffect(() => {
+  //   dispatch(getCart())
+  //   dispatch(totalProductCart())
+  // },[cart])
+
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   

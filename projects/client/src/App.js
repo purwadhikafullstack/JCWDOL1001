@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CustomOrder from "./pages/admin/custom";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
@@ -136,7 +135,6 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
 
-      {/* <Footer /> */}
       <ToastContainer 
         position="top-center"
         autoClose={1000}

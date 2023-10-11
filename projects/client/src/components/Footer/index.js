@@ -13,12 +13,17 @@ export default function Footer() {
     <div className="w-full border-t-2">
       <div className="container grid grid-cols-1 gap-x-20 gap-y-8 pb-24 pt-8 lg:grid-cols-4 lg:pb-4">
         <div>
-          LOGO
-          <img 
-            src="" 
-            alt="" 
-            className="mb-6 w-48" 
-          />
+          <div className="lg:block">
+            <a 
+              href="/" 
+              className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-dark"
+            >
+            <span className="absolute block h-2 w-6 rounded-full bg-dark"></span>
+            <span className="absolute rotate-90 block h-2 w-6 rounded-full bg-primary"></span>
+            <span className="absolute block h-2 w-6 rounded-full bg-dark opacity-40"></span>
+            <span className="ml-8 font-poppins">Apotech</span>
+            </a>
+          </div>
 
           <Button 
             isLink 

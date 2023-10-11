@@ -11,5 +11,5 @@ export const CustomValidationSchema = Yup.object({
 
 export const NormalValidationSchema = Yup.object({
     name : Yup.string().required("Gender is required"),
-    quantity : Yup.date().transform(parseDateString).required("Birthdate is required") ,
+    // quantity : Yup.date().transform(parseDateString).required("Birthdate is required") ,
 })

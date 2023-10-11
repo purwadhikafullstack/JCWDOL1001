@@ -15,21 +15,8 @@ export default function Produk({ products, context }) {
   return (
     <>    
 
-      { context==="produkDiskon" ?
-        products?.filter((product,index)=>product.discountProducts.length !== 0 && !product.discountProducts[0].discount?.oneGetOne && index<=5).map((product) => (
-          <Card
-            key={product.productId}
-            productId={product.productId}
-            productName={product.productName}
-            productPrice={product.productPrice}
-            productDiscount={product.discountProducts}
-            productPicture={product.productPicture}
-            productStock={product.productStock}
-            productCategories={product.productCategories}
-          />
-        ))
-        : context === "bogo" ?
-          products?.filter((product,index)=>product.discountProducts[0]?.discount?.oneGetOne && index <=2).map((product) => (
+      { context==="produkPromo" ?
+          products?.slice(0,6).map((product) => (
             <Card
               key={product.productId}
               productId={product.productId}
@@ -42,7 +29,7 @@ export default function Produk({ products, context }) {
             />
           ))
         :
-        products.filter((product, index)=>product.discountProducts.length === 0).map((product) => (
+        products.filter((product)=>product.discountProducts.length === 0 ).slice(0,6).map((product) => (
           <Card
             key={product.productId}
             productId={product.productId}

@@ -59,7 +59,7 @@ export default function Guarantee() {
           className="categories-wrapper flex gap-4 justify-between overflow-x-auto scroll-smooth px-2 py-4"
         >
           {guaranteeItems.map((item, index) => (
-            <div className="flex w-[350px]  flex-shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6">
+            <div className="flex cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6">
               <div className="">
                 <h3 className="text-lg font-bold text-dark">
                   {item.title}

@@ -250,6 +250,10 @@ const createTransactions = async (req, res, next) => {
         {
           model: Product_Detail,
           as: "product_detail",
+          include : {
+            model: Discount_Product,
+            as: "productDiscount"
+          },
         },
         {
           model: Product_List,
@@ -304,13 +308,21 @@ const createTransactions = async (req, res, next) => {
     }
     
     for (let i = 0; i < startTransaction.length; i++) {
+      let price = 0;
+      let totalPrice = 0;
+      if(startTransaction[i].product_detail.productDiscount[0]?.endingPrice){
+        price = startTransaction[i].product_detail.productDiscount[0].endingPrice;
+        totalPrice = startTransaction[i].product_detail.productDiscount[0].endingPrice * startTransaction[i].quantity;
+      }
+      else{
+        price = startTransaction[i].cartList.productPrice
+        totalPrice = startTransaction[i].cartList.productPrice * startTransaction[i].quantity
+      }
       const newTransactionDetail = {
         transactionId: newTransaction.transactionId,
-        price: startTransaction[i].cartList.productPrice,
+        price: price,
         quantity: startTransaction[i].quantity,
-        totalPrice:
-          startTransaction[i].cartList.productPrice *
-          startTransaction[i].quantity,
+        totalPrice: totalPrice,
         productId: startTransaction[i].productId,
       };
       await Transaction_Detail?.create(newTransactionDetail);
@@ -326,8 +338,8 @@ const createTransactions = async (req, res, next) => {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
         initialStock : UpdateStock.quantity,
-        type : "Update Stock",
-        status : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? "Pengurangan Buy One Get One" : "Pengurangan",
+        type : "Pengurangan",
+        status : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? "Penjualan Buy One Get One" : "Penjualan",
         quantity : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? startTransaction[i].quantity*2 : startTransaction[i].quantity,
         results : newQuantity
       }
