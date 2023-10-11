@@ -211,7 +211,8 @@ export default function Verification() {
                 />
                 {error.birthdate && (
                     <div className="text-sm text-red-500 dark:text-red-400">
-                    {error.birthdate
+                    {error.birthdate === "Pengguna minimal berumur 12 tahun"? 
+                    error.birthdate : "Tanggal lahir dibutuhkan"
                     }
                     </div>
                 )}

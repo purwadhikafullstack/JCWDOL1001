@@ -1,7 +1,7 @@
 import * as Yup from "yup"
 const {parse, isDate} = require("date-fns")
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
+const passwordRegExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*\d)(?=.*[-\@$!%*#?&_])[A-Za-z\d-\@$!%*#?&_]{6,}$/
 function parseDateString(value, originalValue) {
     const parsedDate = isDate(originalValue)
       ? originalValue
@@ -18,16 +18,18 @@ export const LoginValidationSchema = Yup.object({
 })
 
 export const RegisterValidationSchema = Yup.object({
-    name : Yup.string().required("Name is required"),
-    password : Yup.string().required("Password is required")
-        .min(6,"Password must at least 6 characters"),
-    confirmPassword : Yup.string().required("Password is required")
-        .min(6,"Password must at least 6 characters").oneOf([Yup.ref('password'), null], 
-        'Must match "password" field value'), 
-    email : Yup.string().email("Invalid email").required("Email is required"),
-    phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
-        .min(11, "Phone number must at least 11 characters")
-        .max(13, "Phone number must less than 14 characters")
+    name : Yup.string().required("Nama dibutuhkan"),
+    password : Yup.string().required("Password dibutuhkan")
+        .min(6,"Password minimal 6 karakter")
+        .matches(passwordRegExp,
+            "Format : huruf kapital, huruf non-kapital, angka, dan karakter spesial"),
+    confirmPassword : Yup.string().required("Konfirmasi password dibutuhkan")
+        .min(6,"Password minimal 6 karakter").oneOf([Yup.ref('password'), null], 
+        'Konfirmasi password tidak sesuai'), 
+    email : Yup.string().email("Email tidak sesuai").required("Email dibutuhkan"),
+    phone : Yup.string().matches(phoneRegExp, 'Nomor telepon tidak sesuai')
+        .min(11, "Nomor telepon minimal 11 karakter")
+        .max(13, "Nomor telepon maksimal 13 karakter")
 })
 
 export const VerifyValidationSchema = Yup.object({

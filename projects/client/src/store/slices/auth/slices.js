@@ -51,7 +51,7 @@ export const logout = createAsyncThunk(
         try {
             localStorage.removeItem("token")
 
-            toast.success("Logout Sucess")
+            toast.success("Logout Success")
         } catch (error) {
             toast.error(error.response ? error.response.data : error)
 
@@ -71,7 +71,7 @@ export const register = createAsyncThunk(
 
             const {data} = response
 
-            toast.success("register Success")
+            toast.success("Berhasil register")
 
             return data
 
@@ -103,7 +103,7 @@ export const verify = createAsyncThunk(
 
             const {data} = response
             
-            toast.success("verify Succeed")
+            toast.success("Kamu telah terverifikasi. Selamat!")
             return data
             
         } catch (error) {
