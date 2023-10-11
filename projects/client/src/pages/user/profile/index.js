@@ -57,110 +57,89 @@ export default function Profile() {
   }, []);
 
   return (
-    <div className="grid md:grid-cols-2">
-        <div className="col-span-1 m-2 p-2">
-        {/* {!revision && (
-          <div className="mt-8 rounded border px-6 py-8">
-            <h3 className="">Your Name : {profile.name}</h3>
-            <h3 className="">Your Gender : {profile.gender}</h3>
-            <h3 className="">
-              Your Birthdate : {profile.birthdate}
-            </h3>
-            <h3 className="">Your Phone : {profile.phone}</h3>
-            <Button
-              isButton
-              isPrimary
-              onClick={() => setRevision(true)}
-            >
-              Ubah
-            </Button>
-          </div>
-        )} */}
-        {/* {revision || !revision && ( */}
-          <div className="mt-8 rounded-lg p-2 w-full">
-            <form className="w-full">
-              <div className="py-2">
-                {/* <label for="name" className="">
-                  Your Name :
-                </label> */}
-                <Input
-                  type="text"
-                  id="name"
-                  isDisabled={!revision}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  label="Nama Lengkap"
-                />
-              </div>
-              <div className="flex flex-col py-4">
-                <label for="gender" className="">
-                  Jenis Kelamin
-                </label>
-                <select
-                  id="gender"
-                  disabled={!revision}
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className={`w-full rounded-lg border bg-inherit px-2 py-2 outline-none border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary`}
-                >
-                  <option value={"Laki-laki"}>Laki-laki</option>
-                  <option value={"Perempuan"}>Perempuan</option>
-                </select>
-              </div>
-              <div className="py-2">
-                <Input
-                  type="date"
-                  id="birthdate"
-                  isDisabled={!revision}
-                  value={birthdate}
-                  onChange={(e) => setBirthdate(e.target.value)}
-                  label="Tanggal Lahir"
-                />
-              </div>
-              <div className="py-2">
-                <Input
-                  type="number"
-                  id="phone"
-                  isDisabled={!revision}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  label="Nomor Telpon"
-                />
-              </div>
-              <div className="py-2">
-                {revision ?
-                <div className="flex gap-2">
-                  <Button
-                  isButton
-                  isPrimary
-                    onClick={() => submitData()}
-                  >
-                    Simpan Perubahan
-                  </Button>
-                  <Button
-                  isButton
-                  isDanger
-                  onClick={() => setRevision(false)}
-                  >
-                    Batalkan
-                  </Button>
-                </div>
-                :
+    <div className="grid md:grid-cols-2 gap-4">
+      <div className="">
+        <h3 className="subtitle">Profil</h3>
+        <div className="rounded-lg w-full">
+          <form className="w-full">
+            <div className="py-2">
+              <Input
+                type="text"
+                id="name"
+                isDisabled={!revision}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                label="Nama Lengkap"
+              />
+            </div>
+            <div className="flex flex-col py-4">
+              <label for="gender" className="">
+                Jenis Kelamin
+              </label>
+              <select
+                id="gender"
+                disabled={!revision}
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className={`w-full rounded-lg border bg-inherit px-2 py-2 outline-none border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary`}
+              >
+                <option value={"Laki-laki"}>Laki-laki</option>
+                <option value={"Perempuan"}>Perempuan</option>
+              </select>
+            </div>
+            <div className="py-2">
+              <Input
+                type="date"
+                id="birthdate"
+                isDisabled={!revision}
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                label="Tanggal Lahir"
+              />
+            </div>
+            <div className="py-2">
+              <Input
+                type="number"
+                id="phone"
+                isDisabled={!revision}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                label="Nomor Telpon"
+              />
+            </div>
+            <div className="py-2 flex justify-center">
+              {revision ?
+              <div className="flex gap-2">
                 <Button
-                  isButton
-                  isPrimary
-                  onClick={() => setRevision(true)}
+                isButton
+                isPrimary
+                  onClick={() => submitData()}
                 >
-                  Ubah
+                  Simpan Perubahan
                 </Button>
-                }
+                <Button
+                isButton
+                isDanger
+                onClick={() => setRevision(false)}
+                >
+                  Batalkan
+                </Button>
               </div>
-            </form>
-          </div>
-        {/* )} */}
+              :
+              <Button
+                isButton
+                isPrimary
+                onClick={() => setRevision(true)}
+              >
+                Ubah Profil
+              </Button>
+              }
+            </div>
+          </form>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2 justify-center items-center">
+      <div className="flex flex-col gap-2 justify-center items-center pb-24 mt-2">
         <InputImage
           file={file}
           setFile={setFile}
