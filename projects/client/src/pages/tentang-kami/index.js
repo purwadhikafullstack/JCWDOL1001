@@ -23,7 +23,7 @@ export default function TentangKami() {
               <span className="font-semibold">Kualitas Terbaik:</span> Kami hanya menyediakan produk-produk dari merek terpercaya dan memastikan kualitas setiap produk yang kami jual.
             </li>
             <li className="list-disc list-inside">
-              <span className="font-semibold">Pelayanan Pelanggan:</span> Kami peduli tentang kesehatan Anda. Tim layanan pelanggan kami selalu siap membantu Anda dengan pertanyaan Anda
+              <span className="font-semibold">Pelayanan Pelanggan:</span> Kami peduli tentang kesehatan Anda. Tim layanan pelanggan kami selalu siap membantu Anda dengan pertanyaan Anda.
             </li>
             <li className="list-disc list-inside">
               <span className="font-semibold">Keamanan Transaksi:</span> Keamanan transaksi online Anda adalah prioritas kami. Kami menggunakan teknologi terkini untuk melindungi data pribadi Anda.

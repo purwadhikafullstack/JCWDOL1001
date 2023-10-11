@@ -3,9 +3,10 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 export default function Guarantee() {
   const guaranteeItems = [
-    { title: "100 % Obat Asli", ket: "Semua produk yang kami jual dijamin asli & kualitas terbaik untuk anda." },
-    { title: "Dijamin Hemat", ket: "Kami menjamin akan mengembalikan uang dari selisih perbedaan harga." },
-    { title: "Gratis Ongkir", ket: "Tak perlu antre, Kami kirim ke alamat Anda bebas biaya ongkos kirim!" },
+    { title: "Kualitas Terbaik", ket: "Kami hanya menyediakan produk-produk dari merek terpercaya dan memastikan kualitas setiap produk yang kami jual." },
+    { title: "Pelayanan Pelanggan", ket: "Kami peduli tentang kesehatan Anda. Tim layanan pelanggan kami selalu siap membantu Anda dengan pertanyaan Anda." },
+    { title: "Keamanan Transaksi", ket: "Keamanan transaksi online Anda adalah prioritas kami. Kami menggunakan teknologi terkini untuk melindungi data pribadi Anda." },
+    { title: "Pengiriman Cepat", ket: "Kami memahami bahwa kesehatan adalah prioritas. Produk Anda akan sampai dengan cepat dan aman." },
   ]
 
   const [guaranteeScroll, setGuaranteeScroll] = useState(0);
