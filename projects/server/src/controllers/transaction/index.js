@@ -821,6 +821,7 @@ const cancelTransaction = async (req, res, next) => {
 
           //produk satuan
           if(listRecipe.length === 0){
+           
           const defaultUnit = await Product_Detail.findOne({
             where : {
               productId : productId,
