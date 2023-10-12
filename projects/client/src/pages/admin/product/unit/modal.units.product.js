@@ -66,7 +66,7 @@ export default function ModalUnitProduct({
             <td className="p-3">{unit?.product_detail?.isDefault ? unit?.product_detail?.convertion : "-"}</td>
             <div className="flex gap-3">
               <Button
-                className="px-2 hover:bg-slate-200"
+                className={unit.product_detail.isDeleted === false ? "px-2 hover:bg-slate-200" : "hidden"}
                 onClick={() => 
                   handleShowModal({
                     context:"Ubah Detail Satuan", 

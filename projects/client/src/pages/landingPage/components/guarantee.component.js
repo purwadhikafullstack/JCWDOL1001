@@ -3,9 +3,10 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 export default function Guarantee() {
   const guaranteeItems = [
-    { title: "100 % Obat Asli", ket: "Semua produk yang kami jual dijamin asli & kualitas terbaik untuk anda." },
-    { title: "Dijamin Hemat", ket: "Kami menjamin akan mengembalikan uang dari selisih perbedaan harga." },
-    { title: "Gratis Ongkir", ket: "Tak perlu antre, Kami kirim ke alamat Anda bebas biaya ongkos kirim!" },
+    { title: "Kualitas Terbaik", ket: "Kami hanya menyediakan produk-produk dari merek terpercaya dan memastikan kualitas setiap produk yang kami jual." },
+    { title: "Pelayanan Pelanggan", ket: "Kami peduli tentang kesehatan Anda. Tim layanan pelanggan kami selalu siap membantu Anda dengan pertanyaan Anda." },
+    { title: "Keamanan Transaksi", ket: "Keamanan transaksi online Anda adalah prioritas kami. Kami menggunakan teknologi terkini untuk melindungi data pribadi Anda." },
+    { title: "Pengiriman Cepat", ket: "Kami memahami bahwa kesehatan adalah prioritas. Produk Anda akan sampai dengan cepat dan aman." },
   ]
 
   const [guaranteeScroll, setGuaranteeScroll] = useState(0);
@@ -59,7 +60,7 @@ export default function Guarantee() {
           className="categories-wrapper flex gap-4 justify-between overflow-x-auto scroll-smooth px-2 py-4"
         >
           {guaranteeItems.map((item, index) => (
-            <div className="flex w-[350px]  flex-shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6">
+            <div className="flex cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6">
               <div className="">
                 <h3 className="text-lg font-bold text-dark">
                   {item.title}

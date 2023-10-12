@@ -32,10 +32,11 @@ export default function ModalMakeConvertion({
     }
     
     const qtyUnit = productData.product_details.filter((unit)=> unit.isDefault === true)[0].quantity
+    const convertion = productData.product_details.filter((unit)=> unit.isDefault === true)[0].convertion
     
     const onChangeTimes = (e)=>{
         e.preventDefault()
-        e.target.value > qtyUnit ? setTimesValue(qtyUnit) : e.target.value <= 0 ? setTimesValue(1) : setTimesValue(e.target.value)
+        e.target.value > Math.floor(qtyUnit/convertion) ? setTimesValue(Math.floor(qtyUnit/convertion)) : e.target.value <= 0 ? setTimesValue(1) : setTimesValue(e.target.value)
     }
 
   return (
@@ -43,7 +44,7 @@ export default function ModalMakeConvertion({
         <div className="flex flex-col">
             <a>| {productData.productName} </a>
             <a>| Qty : {qtyUnit}</a>
-            <a>| Per unit : {productData.product_details.filter((unit)=> unit.isDefault === true)[0].convertion} </a>
+            <a>| Per unit : {convertion} </a>
         </div>
        <form >
             <div className="mt-4 flex flex-col gap-y-4">
