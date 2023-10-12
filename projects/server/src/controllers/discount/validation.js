@@ -2,18 +2,17 @@ const Yup = require("yup")
 
 const DiscountInfoValidationSchema = Yup.object({
     discountDesc : Yup.string()
-        .required("Description is required"),
+        .required("Deskripsi diskon dibutuhkan"),
     discountName : Yup.string()
-        .required("Name is required"),
-    discountAmount : Yup.number("Amount must be a number").nullable(),
-    discountCode : Yup.string().nullable(),
-    discountAmount : Yup.number("Amount must be a number").nullable(),
+        .required("Nama diskon dibutuhkan"),
+    discountCode : Yup.string(),
+    discountAmount : Yup.string("Potongan harus berupa angka"),
     discountExpired : Yup.date().nullable(),
-    isPercentage : Yup.number("Percentage status must be a number")
-        .required("Percentage status is required"),
-    oneGetOne : Yup.number("One Get One Status must be a number")
-        .required("One Get One Status is required"),
-    minimalTransaction : Yup.number("Minimum transaction must be a number").nullable(),
+    isPercentage : Yup.number("Persentase harus berupa angka")
+        .required("Persentase dibutuhkan"),
+    oneGetOne : Yup.number("Beli satu gratis satu harus berupa angka")
+        .required("Beli satu gratis satu dibutuhkan"),
+    minimalTransaction : Yup.string("Minimal transaksi harus berupa angka").nullable(),
     
 })
 

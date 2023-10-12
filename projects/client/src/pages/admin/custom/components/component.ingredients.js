@@ -60,7 +60,7 @@ export default function IngredientList({
 },[])
     
     const [result,setResult] = useState(true)
-    const [selectProductRef,setSelectProductRef] = useState([])
+    const [selectProductRef,setSelectProductRef] = useState([0,""])
     const[visible,setVisible] = useState(false)
     const handleChangeValue = (e) =>{
         e.preventDefault();
@@ -82,7 +82,7 @@ export default function IngredientList({
           }))
     }
     const resetValue =()=>{
-        setSelectProductRef(["",""])
+        setSelectProductRef([0,""])
         setVisible(false)
     }
     const clickOption = (params) =>{

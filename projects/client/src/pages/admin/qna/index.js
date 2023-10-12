@@ -115,44 +115,44 @@ function QNA () {
             }, 2000)
         }
     }
-useEffect(async ()=>{
+useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
 
-        setUnansweredList([])
-        setAnsweredList([])
-        const answerlist = []
-        const unanswerlist = []
-        questionList.map(item=>{
-            if(item.answer){
-                answerlist.push(item)
-            }
-            else{
-                unanswerlist.push(item)
-            }
-        })
-        setAnsweredList(answerlist)
-        setUnansweredList(unanswerlist)
+        // setUnansweredList([])
+        // setAnsweredList([])
+        // const answerlist = []
+        // const unanswerlist = []
+        // questionList.map(item=>{
+        //     if(item.answer){
+        //         answerlist.push(item)
+        //     }
+        //     else{
+        //         unanswerlist.push(item)
+        //     }
+        // })
+        // setAnsweredList(answerlist)
+        // setUnansweredList(unanswerlist)
     
 },[])
 
     useEffect(() => {
         dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-        if(questionList){
-            setUnansweredList([])
-            setAnsweredList([])
-            const answerlist = []
-            const unanswerlist = []
-            questionList.map(item=>{
-                if(item.answer){
-                    answerlist.push(item)
-                }
-                else{
-                    unanswerlist.push(item)
-                }
-            })
-            setAnsweredList(answerlist)
-            setUnansweredList(unanswerlist)
-        }
+        // if(questionList){
+        //     setUnansweredList([])
+        //     setAnsweredList([])
+        //     const answerlist = []
+        //     const unanswerlist = []
+        //     questionList.map(item=>{
+        //         if(item.answer){
+        //             answerlist.push(item)
+        //         }
+        //         else{
+        //             unanswerlist.push(item)
+        //         }
+        //     })
+        //     setAnsweredList(answerlist)
+        //     setUnansweredList(unanswerlist)
+        // }
     }, [sortDate])
 
 

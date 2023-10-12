@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout, resendOtp } from '../../store/slices/auth/slices';
+import { toast } from 'react-toastify';
 
 export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions }) {
   const { context } = useParams()
@@ -62,6 +63,21 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
     },
   ]
 
+  const [isToastVisible, setIsToastVisible] = useState(false)
+
+  const handleUnverifiedUser = ()=>{
+    toast.error("Akun belum terverifikasi")
+    setIsToastVisible(true)
+    setTimeout(() => {
+      setIsToastVisible(false)
+    }, 2000)
+  }
+
+  const handleButtonUpload = () => {
+    user.status ===0 ?  handleUnverifiedUser()
+    : navigate("/upload-recipe")
+  }
+
   useEffect(() => {
     const allowedContext = menu.find((item) => item.context === context);
 
@@ -99,10 +115,11 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
             }
 
             <Button
+              isDisabled={isToastVisible}
               isButton
               isBLock
               isPrimaryOutline
-              onClick={() => navigate("/upload-recipe")}
+              onClick={handleButtonUpload}
               title="Unggah Resep"
               />
           </div>

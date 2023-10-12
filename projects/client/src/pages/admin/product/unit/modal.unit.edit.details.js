@@ -111,7 +111,7 @@ export default function ModalEditProductUnit({
         return (
             <SuccessMessage
                 type="success"
-                message={`${selectedUnit?.product_detail?.isDefault ? `Perubahan satuan  ${unitBefore} berhasil` : `Perubahan satuan dari satuan ${unitBefore} menjadi satuan ${ unitSelected.unitName } berhasil`}`}
+                message={`${selectedUnit?.product_detail?.isDefault ? `Perubahan satuan  ${unitBefore} berhasil` : `Penggantian satuan berhasil`}`}
                 handleCloseModal={handleCloseModal}
             />
         );

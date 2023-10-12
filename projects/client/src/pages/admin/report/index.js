@@ -74,7 +74,7 @@ function ReportPage () {
             },
             title: {
                 display: true,
-                text: 'Total Sales',
+                text: 'Total',
             },
         },
     }
@@ -87,7 +87,7 @@ function ReportPage () {
         labels,
         datasets: [
             {
-                label: 'Total Sales',
+                label: 'Total',
                 data: report?.map((item)=> {return Number(item.total)}),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -115,17 +115,6 @@ function ReportPage () {
         )
         setFilter(true)
     }
-
-    // const onButtonGraph = () => {
-    //     setGraph(true)
-    //     dispatch(
-    //         getTransactionList({
-    //             statusId : 7,
-    //             startFrom : startDateRef.current.value,
-    //             endFrom : endDateRef.current.value
-    //         })
-    //     )
-    // }
 
     const onButtonSortDate = (type="")=>{
         setSortingPrice("")
@@ -181,7 +170,7 @@ function ReportPage () {
                 <div className="relative flex flex-col pb-5">
                     <div className="flex items-center align-middle gap-5 px-3 mb-5">
                         <a className="flex normal-case text-[20pt]">
-                            Report Transaction
+                            Laporan
                         </a>
                         <Input 
                             type="text" 
@@ -189,7 +178,7 @@ function ReportPage () {
                             ref={nameRef}
                         />
                         <Button 
-                            className="absolute top-[16%] left-[31%] -translate-y-1/2" 
+                            className="absolute top-[15%] left-[21%] -translate-y-1/2" 
                             onClick={()=>{
                                 dispatch(getTransactionList({statusId : 6,filterName : nameRef?.current?.value}))
                                 setFilter(true)}}
@@ -218,13 +207,13 @@ function ReportPage () {
                         </div>
                         <div className="flex mx-5 my-5 items-center h-auto gap-5">
                             Sort By :
-                            <div className="flex flex-row items-center h-auto">
-                                Date
+                            <div className="flex flex-row items-center h-auto gap-1">
+                                Tanggal
                                 <FaSortAlphaDown className={`${sortingDate === "DESC" || sortingDate ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
                                 <FaSortAlphaUp className={`${sortingDate === "ASC" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>                
                             </div>
-                            <div className="flex flex-row items-center h-auto">
-                                Total Price
+                            <div className="flex flex-row items-center h-auto gap-1">
+                                Total
                                 <FaSortAmountDown  className= {`${sortingPrice === "DESC" || sortingPrice ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("DESC")}} />
                                 <FaSortAmountUp className= {`${sortingPrice === "ASC"  ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("ASC")}}/>                
                             </div>
@@ -245,26 +234,28 @@ function ReportPage () {
                     <table class="w-full max-text-sm text-center text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                             <tr>
-                                <th scope="col" className="px-6 py-3 ">Transaction ID</th>
-                                <th scope="col" className="px-6 py-3 ">Time</th>
-                                <th scope="col" className="px-6 py-3 ">User</th>
-                                <th scope="col" className="px-6 py-3 ">Total Price</th>
-                                <th scope="col" className="px-6 py-3 ">Product</th>
+                                <th scope="col" className="px-6 py-3 ">Invoice</th>
+                                <th scope="col" className="px-6 py-3 ">Tanggal</th>
+                                <th scope="col" className="px-6 py-3 ">Pengguna</th>
+                                <th scope="col" className="px-6 py-3 ">Potongan</th>
+                                <th scope="col" className="px-6 py-3 ">Total</th>
+                                <th scope="col" className="px-6 py-3 ">Detail</th>
                             </tr>
                         </thead>
                         <tbody>
                             {transactionList.length ===0 ? <h3>Data Tidak Ditemukan</h3>
                                 : transactionList.map((list)=>{
                                     return (
-                                        <tr  className="items-center text-center">
-                                            <th className="p-3 ">Transaction#{list.transactionId}</th>
+                                        <tr className="items-center text-center">
+                                            <th className="p-3 ">{list.invoice}</th>
                                             <td className="p-3 ">{formatDate(list.updatedAt)}</td>
                                             <td className="p-3 ">{list.userProfile.name}</td>
-                                            <td className="p-3 ">IDR {formatNumber(list.total)}</td>
-                                            <Button isButton isPrimary title="Show Products" 
+                                            <td className="p-3">{list.discount_transaction ? list.discount_transaction.discount.isPercentage ? `${list.discount_transaction.discount.discountAmount}%` : `Rp ${formatNumber(list.discount_transaction.discount.discountAmount)}` :"-" }</td>
+                                            <td className="p-3 ">IDR {formatNumber(list.subtotal)}</td>
+                                            <Button isButton isPrimary title="Lihat Detail" 
                                                 onClick={()=>{
                                                     setSelectedTransaction(list)
-                                                    handleShowModal({context : "Product List" })
+                                                    handleShowModal({context : "Detail Transaksi" })
                                                 }}
                                             />
                                         </tr>
@@ -282,7 +273,7 @@ function ReportPage () {
                     onClick={()=>{setGraph(true)}}
 
                 >
-                    Show Graph
+                    Lihat Grafik
                     <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                     </svg>
@@ -292,7 +283,7 @@ function ReportPage () {
                     onClick={()=>{setGraph(false)}}
 
                 >
-                    Hide Graph
+                    Sembunyikan Grafik
                     <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                     </svg>
@@ -305,31 +296,53 @@ function ReportPage () {
                     closeModal={handleCloseModal}
                     title={showModal.context}
                 >
-                    {showModal.context === "Product List" && (
-                        <table class="w-full max-text-sm text-left text-gray-500">
-                            <thead class="text-sm text-center text-gray-700 uppercase bg-gray-50 ">
-                                <tr>
-                                    <th scope="col" className="p-3 text-left">Product Name</th>
-                                    <th scope="col" className="p-3 ">Qty</th>
-                                    <th scope="col" className="p-3 ">@</th>
-                                    <th scope="col" className="p-3 text-right">Total Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {selectedTransaction.transactionDetail.length ===0 ? <h3>Data Tidak Ditemukan</h3>
-                                    : selectedTransaction.transactionDetail.map((detail)=>{
-                                        return (
+                    {showModal.context === "Detail Transaksi" && (
+                        <>
+                            <a className="text-lg underline underline-offset-4">Detail Produk</a>
+                            <table class="w-full max-text-sm text-left text-gray-500 mb-5">
+                                <thead class="text-sm text-center text-gray-700 uppercase bg-gray-50 ">
+                                    <tr>
+                                        <th scope="col" className="p-3 text-left">Nama Produk</th>
+                                        <th scope="col" className="p-3 ">Kuantitas</th>
+                                        <th scope="col" className="p-3 ">@</th>
+                                        <th scope="col" className="p-3 text-right">Harga</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedTransaction.transactionDetail.length ===0 ? <a>Data Tidak Ditemukan</a>
+                                        : selectedTransaction.transactionDetail.map((detail)=>{
+                                            return (
+                                                <tr  className="items-center text-left">
+                                                    <td className="p-3 ">{detail.listedTransaction.productName}</td>
+                                                    <td className="p-3 text-center ">{detail.quantity}</td>
+                                                    <td className="p-3 text-right">{formatNumber(detail.price)}</td>
+                                                    <td className="p-3 text-right">IDR {formatNumber(detail.totalPrice)}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            <a className="text-lg underline underline-offset-4">Detail Diskon</a>
+                            <table class="w-full max-text-sm text-left text-gray-500">
+                                <thead class="text-sm  text-gray-700 uppercase bg-gray-50 ">
+                                    <tr>
+                                        <th className="p-3">Nama Diskon</th>
+                                        <th className="p-3">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {!selectedTransaction.discount_transaction ? <a>Data Tidak Ditemukan</a>
+                                        : 
                                             <tr  className="items-center text-left">
-                                                <td className="p-3 ">{detail.listedTransaction.productName}</td>
-                                                <td className="p-3 text-center ">{detail.quantity}</td>
-                                                <td className="p-3 text-right">{formatNumber(detail.price)}</td>
-                                                <td className="p-3 text-right">IDR {formatNumber(detail.totalPrice)}</td>
+                                                <td className="p-3">{selectedTransaction.discount_transaction.discount.discountName}</td>
+                                                <td className="p-3">{selectedTransaction.discount_transaction.discount.isPercentage ? `${selectedTransaction.discount_transaction.discount.discountAmount}%` : `Rp ${formatNumber(selectedTransaction.discount_transaction.discount.discountAmount)}` }</td>
                                             </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
+                                        
+                                    }
+                                </tbody>
+                            </table>
+                        </>
                     )}
                 </Modal>
             </div>

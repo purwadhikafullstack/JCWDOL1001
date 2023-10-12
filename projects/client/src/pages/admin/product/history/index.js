@@ -52,7 +52,7 @@ export default function StockHistory (){
         <div className="container py-24 ml-[calc(5rem)]">
             <div>
                 <h1 className="title text-4xl border-b-2">{productName}</h1>
-                <h1 className="text-3xl">Current Stock</h1>
+                <h1 className="text-3xl">Stok saat ini : </h1>
                 {
                     stock ? stock?.map ((stock, index) => (
                         <div className="text-gray-700 bg-slate-100 text-sm uppercase">
@@ -62,25 +62,25 @@ export default function StockHistory (){
                     <tr></tr>
                 }
                 <div className="flex flex-row">
-                    <div className="mx-2 border border-black rounded">
-                        <label>Start Date :</label>
-                        <input type="date" onChange={(e)=>setStartDate(e.target.value)}></input>
+                    <div className="mx-2 flex gap-2 items-center">
+                        <label>Tanggal awal pencarian :</label>
+                        <input type="date" onChange={(e)=>setStartDate(e.target.value)} className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${startDate ? "border-primary" : "border-slate-300"}`}></input>
                     </div>
-                    <div className="mx-2 border border-black rounded">
-                        <label className="ml-4">End Date :</label>
-                        <input type="date" onChange={(e)=>setEndDate(e.target.value)}></input>
+                    <div className="mx-2 flex gap-2 items-center">
+                        <label className="ml-4">Tanggal akhir pencarian :</label>
+                        <input type="date" onChange={(e)=>setEndDate(e.target.value)} className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDate ? "border-primary" : "border-slate-300"}`}></input>
                     </div>
-                    <div className="mx-2 border border-black rounded">
-                        <label className="ml-4">Sort Type :</label>
-                        <select value={sortType} onChange={(e)=>setSortType(e.target.value)}>
+                    <div className="mx-2 flex gap-2 items-center">
+                        <label className="ml-4">Sortir Tipe berdasarkan :</label>
+                        <select value={sortType} onChange={(e)=>setSortType(e.target.value)} className="border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5">
                         <option value={""}></option>
                         <option value={"ASC"}>A-Z</option>
                         <option value={"DESC"}>Z-A</option>
                         </select>
                     </div>
-                    <div className="mx-2 border border-black rounded">
-                        <label className="ml-4">Sort Status :</label>
-                        <select value={sortStatus} onChange={(e)=>setSortStatus(e.target.value)}>
+                    <div className="mx-2 flex gap-2 items-center">
+                        <label className="ml-4">Sortir Status berdasarkan:</label>
+                        <select value={sortStatus} onChange={(e)=>setSortStatus(e.target.value)} className="border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5">
                         <option value={""}></option>
                         <option value={"ASC"}>A-Z</option>
                         <option value={"DESC"}>Z-A</option>
@@ -91,25 +91,25 @@ export default function StockHistory (){
                     <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
                         <tr>
                             <th scope="col" class="p-3 font-extrabold">
-                                Datetime
+                                Tanggal
                             </th>
                             <th scope="col" class="p-3">
-                                Transaction Type
+                                Tipe Transaksi
                             </th>
                             <th scope="col" class="p-3">
-                                Transaction Status
+                                Status Transaksi
                             </th>
                             <th scope="col" class="p-3">
-                                Unit
+                                Satuan
                             </th>
                             <th scope="col" class="p-3">
-                                Initial Stock
+                                Stok Awal
                             </th>
                             <th scope="col" class="p-3">
-                                Quantity
+                                Jumlah yang diperlukan
                             </th>
                             <th scope="col" class="p-3">
-                                Results
+                                Stok Akhir
                             </th>
                         </tr>
                     </thead>

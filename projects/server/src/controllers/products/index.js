@@ -91,7 +91,7 @@ const getProducts = async (req, res, next) => {
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
         : promo ? 
-          await Discount_Product?.count()
+          await Discount_Product?.count({where:{isDeleted:0}})
         :
           await Product_List?.count({ 
             include:{
@@ -124,6 +124,55 @@ const getProducts = async (req, res, next) => {
   }
 };
 
+const getProductDiscount = async (req, res, next) => {
+  try {
+    const options = {
+      offset:0,
+      limit: 10,
+    };
+    const products = await Product_List?.findAll({
+      ...options,
+      include: [
+        {
+          model: Categories,
+          attributes: ["categoryDesc", "categoryId"],
+          as: "productCategories",
+        },
+        {
+          model: Discount_Product,
+          attributes: { exclude: ["discountProductId"] },
+          as: "discountProducts",
+          where:{isDeleted:0},
+          include: {
+            model: Discount,
+            where: { isDeleted: 0, 
+              [Op.or] :[
+                {discountExpired :{[Op.gte] : moment()}},
+                {discountExpired :{[Op.is] : null}}
+              ]
+            },
+            required: true,
+          },
+          required: false,
+        },
+      ],
+      where:{ isDeleted: 0  },
+    });
+
+    if (!products) {
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+    }
+    
+    res.status(200).json({
+      type: "success",
+      message: "Products fetched",
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -149,9 +198,10 @@ const getProductById = async (req, res, next) => {
           as: "discountProducts",
           include: {
             model: Discount,
-            where: { isDeleted: 0 },
             required: false,
           },
+          where: { isDeleted: 0 },
+          required:false
         },
       ],
       where: { productId: id },
@@ -386,6 +436,7 @@ const updateMainStock = async (req, res, next) => {
 module.exports = {
   getProducts,
   getProductById,
+  getProductDiscount,
   createProduct,
   updateProduct,
   deleteProduct,
