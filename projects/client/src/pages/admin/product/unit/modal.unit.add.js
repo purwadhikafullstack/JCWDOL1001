@@ -33,10 +33,14 @@ export default function ModalAddProductUnit({
         (unit) => !unit.product_detail.isDefault && !unit.product_detail.isDeleted
     ).length < 1
 
-    let dataUnits = []
+    const defaultUnitName = productData.productUnits.filter(
+        (unit) => unit.product_detail.isDefault && !unit.product_detail.isDeleted
+    )
     
+    let dataUnits = []
+
     if(canAddSecondaryUnit && !canAddDefaultUnit){
-        dataUnits = units.filter((unit) => unit.isSecondary === 1)
+        dataUnits = units.filter((unit) => unit.isSecondary === 1 && unit.name.toLowerCase() !== defaultUnitName[0]?.name.toLowerCase() )
     }else {
         dataUnits = units.filter((unit)=> unit.isSecondary === 0)
     }
@@ -121,6 +125,13 @@ export default function ModalAddProductUnit({
                 }]})
             }
 
+            if(unitRef.current.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) {
+                throw({inner: [{
+                    path : "unit",
+                    message:"Nama satuan tidak boleh sama dengan satuan yang aktif"
+                }]})
+            }
+            
             dispatch(addUnit(output))
 
             setConfirmation(false)

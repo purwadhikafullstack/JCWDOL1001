@@ -12,10 +12,11 @@ import { toast } from "react-toastify"
 
 export default function UploadRecipePage(){
 
-    const {isLoading,address} = useSelector(state => {
+    const {isLoading,address,userStatus} = useSelector(state => {
 		return {
 			isLoading : state?.uploadRecipe?.isLoading,
             address : state?.auth?.address,
+            userStatus : state?.auth?.status,
 		}
 	})
 
@@ -43,7 +44,7 @@ export default function UploadRecipePage(){
     const formData = new FormData()
 
     const handleShowModal = () => {
-        setShowModal({ show: true, context:"Confirmation" })
+        setShowModal({ show: true, context:"Konfirmasi" })
         document.body.style.overflow = "hidden"
     }
 
@@ -69,7 +70,7 @@ export default function UploadRecipePage(){
             formData.append("file",file)
             formData.append("address",JSON.stringify(selectedAddress))
             formData.append("courier",JSON.stringify(selectedCourier))
-            dispatch(uploadRecipe(formData))
+            dispatch(uploadRecipe(formData)).finally(()=>navigate("/","replace"))
             handleCloseModal()
 
         }catch(error){
@@ -90,9 +91,13 @@ export default function UploadRecipePage(){
             }, 2000)
         }
     }
-
+    
     useEffect(() => {
         setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
+        if(userStatus===0){
+            navigate("/","replace")
+            toast.error("Akun belum terverifikasi")
+        } 
     },[])
 
     return(
@@ -162,7 +167,7 @@ export default function UploadRecipePage(){
                     <Button
                         title="Ya"
                         isButton
-                        isDanger
+                        isPrimary
                         isDisabled={isToastVisible}
                         onClick={onClickYes}
                     />

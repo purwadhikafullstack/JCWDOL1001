@@ -92,7 +92,7 @@ export default function TableProducts({
                       navigate(`/admin/products/history/${product?.productId}`,{state : {productId : product?.productId, productName : product?.productName}})
                     }
 
-                    title="Stock History"
+                    title="Riwayat Stok"
                   />
 
                   <Button

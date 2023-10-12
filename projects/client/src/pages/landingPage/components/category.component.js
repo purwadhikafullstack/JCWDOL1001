@@ -62,7 +62,7 @@ export default function Categories({ categories }) {
               className="flex w-48 flex-shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6"
             >
               <div className="h-8 w-8 md:h-10 md:w-10">
-                <img src={process.env.CLOUDINARY_BASE_URL+ categories.categoryPicture} alt="" />
+                <img className="h-full w-full" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} alt="" />
               </div>
               <p className="text-sm font-bold text-dark md:text-base">
                 {category.categoryDesc}

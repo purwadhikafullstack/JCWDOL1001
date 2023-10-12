@@ -56,30 +56,30 @@ export default function Verification() {
         const otp = otpRef.current?.value
         const gender = genderRef.current?.value
         const date = dateRef.current?.value
-        const address = addressRef.current?.value
-        const district = districtRef.current?.value
-        const city = cityRef
-        const province = provinceRef
-        const postal = postalCodeState
+        // const address = addressRef.current?.value
+        // const district = districtRef.current?.value
+        // const city = cityRef
+        // const province = provinceRef
+        // const postal = postalCodeState
         const token = location.pathname.split('reg-')[1]
-
+        console.log("huahahaha")
         dispatch(verify({
             token : token,
             otp : otp,
             gender : gender,
             birthdate : date,
-            address : address,
-            district : district,
-            city : city,
-            province : province,
-            postalCode : postal,
+            // address : address,
+            // district : district,
+            // city : city,
+            // province : province,
+            // postalCode : postal,
         }))
     }
 
-    useEffect(()=>{
-        dispatch(listProvince())
-        dispatch(listCity({province : 1 }))
-    },[])
+    // useEffect(()=>{
+    //     dispatch(listProvince())
+    //     dispatch(listCity({province : 1 }))
+    // },[])
     
     useEffect(()=>{
         //ada tombol setelah 5 detik, terus countdown ikutin dari verify aja
@@ -170,7 +170,7 @@ export default function Verification() {
                 />
              </div>
 
-             <div className="font-semibold text-lg mb-2 text-teal-600">
+             {/* <div className="font-semibold text-lg mb-2 text-teal-600">
                 Informasi Alamat :
              </div>
              <div className="flex flex-col gap-3 mb-5">
@@ -211,7 +211,7 @@ export default function Verification() {
                 </div>
 
 
-                </div>
+                </div> */}
                 <div className="w-full flex flex-col items-center">
                     <Button
                         isButton
