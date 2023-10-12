@@ -31,6 +31,7 @@ export default function UserPage({ user, ongoingTransactions }) {
         <Address
           showHandlePageContext={showHandlePageContext}
           setShowHandlePageContext={setShowHandlePageContext}
+          user={user}
         />
       ),
 

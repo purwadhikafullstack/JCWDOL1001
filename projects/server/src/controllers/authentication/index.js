@@ -13,6 +13,7 @@ const fs = require("fs")
 const handlebars = require("handlebars")
 const cloudinary = require("cloudinary");
 const { LINK_EXPIRED_STATUS, LINK_EXPIRED } = require("../../middleware/error.handler.js")
+const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
 
 const login = async (req, res, next) => {
@@ -127,7 +128,7 @@ const register= async (req, res, next) => {
         });
         await User_Profile?.create({
             userId : userAcc?.dataValues?.userId,
-            name : name,
+            name : capitalizeEachWords(trimString(name)),
             phone : phone
         });
 
@@ -452,13 +453,21 @@ const changeEmail = async (req, res, next) => {
 const changeProfileData = async (req, res, next) => {
     try{
         const {userId} = req.params;
+        const { name, phone, gender, birthdate } = req.body
 
-        await validation.UpdateProfileValidationSchema.validate(req.body);
+        const profileData = {
+            name: capitalizeEachWords(trimString(name)),
+            phone,
+            gender,
+            birthdate
+        }
+
+        await validation.UpdateProfileValidationSchema.validate(profileData);
 
         const users = await User_Profile.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
 
-        const profileAdded = User_Profile.update(req.body,{where : {userId : userId}});
+        users.update(profileData,{where : {userId : userId}});
         res.status(200).json({message : "Data changed!"});
     }catch(error){
         next(error)

@@ -4,7 +4,7 @@ const fs = require("fs")
 const {middlewareErrorHandling} = require("../../middleware/index.js");
 
 const { InputAddressValidationSchema } = require("./validation.js")
-const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities } = require("../../model/relation.js");
+const { User_Address, Rajaongkir_Provinces, Rajaongkir_Cities, User_Account } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
@@ -26,15 +26,16 @@ const getAddress = async (req, res, next) =>{
             ...options
         })
 
-        if (!addresses) {
-            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
-        }
+        if (!addresses) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: middlewareErrorHandling.ADDRESS_NOT_FOUND
+        })
 
         const totalAddress = await User_Address.count()
         const totalPage = Math.ceil(totalAddress / limit)
 
         res.status(200).json({ 
-            message : "Address fetched!",
+            message : "Berhasil memuat data alamat!",
             data: {
                 totalPage,
                 currentPage: +page,
@@ -61,6 +62,12 @@ const addAddress = async (req, res, next) => {
             contactName,
         } = req.body;
 
+        const isUserVerified = await User_Account.findOne({where: { userId, status : 1 }})
+        if (!isUserVerified)  throw ({
+            status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message: "Verifikasi terlebih dahulu!"
+            })
+
         const existingAddresses = await User_Address.findAll({ where: { userId } });
 
         const isPrimary = existingAddresses.length === 0 ? 1 : 0;
@@ -82,7 +89,7 @@ const addAddress = async (req, res, next) => {
         const newAddress = await User_Address.create(addressData);
 
         res.status(200).json({
-            message: 'Address created successfully!',
+            message: 'Alamat berhasil ditambahkan!',
             data: newAddress,
         });
     } catch (error) {
@@ -109,9 +116,10 @@ const updateAddress = async (req, res, next) =>{
             where : {[Op.and] : [{ addressId }, { userId }]},
         })
 
-        if (!addressExists) {
-            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
-        }
+        if (!addressExists) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: middlewareErrorHandling.ADDRESS_NOT_FOUND
+        })
 
         const addressData = {
             address : capitalizeEachWords(trimString(address)),
@@ -128,7 +136,7 @@ const updateAddress = async (req, res, next) =>{
         const updatedAddress = await addressExists.update(addressData)
         
         res.status(200).json({ 
-            message : "Address updated successfully!",
+            message : "Alamat berhasil diubah!",
             data: updatedAddress
         })
     } catch (error) {
@@ -143,26 +151,29 @@ const updatePrimaryAddress = async (req, res, next) => {
 
         const primaryAddress = await User_Address.findOne({where : { userId, isPrimary : 1 }})
 
-        if (!primaryAddress) {
-            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
-        }
+        if (!primaryAddress) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: middlewareErrorHandling.ADDRESS_NOT_FOUND
+        })
         
         const newPrimaryAddress = await User_Address.findOne({where : { userId, addressId }})
         
-        if (!newPrimaryAddress) {
-            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
-        }
+        if (!newPrimaryAddress) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: middlewareErrorHandling.ADDRESS_NOT_FOUND
+        })
 
-        if (primaryAddress.dataValues?.addressId === +addressId) {
-            throw new Error("No changes were made!");
-        }
+        if (primaryAddress.dataValues?.addressId === +addressId) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: "Tidak ada perubahan alamat"
+        })
         
         await primaryAddress.update({ isPrimary : 0 })
         await newPrimaryAddress.update({ isPrimary : 1 })
         
 
         res.status(200).json({ 
-            message : "Primary address updated successfully!",
+            message : "Alamat utama berhasil diubah!",
         })
     } catch (error) {
         next(error)
@@ -178,18 +189,20 @@ const deleteAddress = async (req, res, next) =>{
             where : {[Op.and] : [{ addressId }, { userId }]},
         })
 
-        if (!addressExists) {
-            throw new Error(middlewareErrorHandling.ADDRESS_NOT_FOUND);
-        }
+        if (!addressExists) throw ({
+            status: middlewareErrorHandling.NOT_FOUND_STATUS,
+            message: middlewareErrorHandling.ADDRESS_NOT_FOUND
+        })
 
-        if (addressExists.dataValues?.isPrimary === 1) {
-            throw new Error("Primary address cannot be deleted!");
-        }
+        if (addressExists.dataValues?.isPrimary === 1) throw ({
+            status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message: "Alamat utama tidak dapat dihapus!"
+        })
 
         await addressExists.update({ isDeleted: 1 });
 
         res.status(200).json({ 
-            message : "Address Deleted!",
+            message : "Alamat berhasil dihapus!",
         })
     } catch (error) {
         next(error)

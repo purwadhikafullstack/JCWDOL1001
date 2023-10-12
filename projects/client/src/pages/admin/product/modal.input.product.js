@@ -299,7 +299,7 @@ export default function ModalInputProduct({
               isBLock
               isSecondary
               title="Kembali"
-              handleCloseModal={()=>{
+              onClick={()=>{
                 handleCloseModal();
                 setSelectedCategories([]);
               }}
@@ -321,7 +321,7 @@ export default function ModalInputProduct({
             <p className="modal-text">
               Apa kamu yakin ingin mengubah produk ini?
             </p>
-            {(!dataImage) && 
+            {(!file) && 
               <p className="text-sm text-danger">Kamu tidak memilih gambar baru dan akan tetap menggunakan gambar produk sebelumnya</p>
             }
             </>
