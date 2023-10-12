@@ -150,11 +150,11 @@ export default function AdminProducts({user}) {
   return (
     <>
       <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-        <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
+        <div className="flex items-center justify-between border-b-2 pb-2">
 
-          <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
+          <h3 className="title">Produk</h3>
 
-          <form className="relative w-1/3" onSubmit={(e) => {
+          <form className="relative w-1/2 lg:w-1/3" onSubmit={(e) => {
             e.preventDefault()
             setSearchedProduct(searchedProductRef?.current.value)
           }}>
@@ -176,7 +176,7 @@ export default function AdminProducts({user}) {
           </form>
         </div>
         
-        <div className="mt-4 grid lg:grid-cols-2">
+        <div className="mt-4">
           <Button
             isButton
             isPrimary
@@ -184,40 +184,35 @@ export default function AdminProducts({user}) {
             title="Tambah Produk"
             onClick={() => handleShowModal({context:"Tambah Produk"})}
           />
-          <div className="flex flex-1"></div>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="searchcat" className="pr-2">Pilih Kategori</label>
-            <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              {
-                categories ?
-                  categories?.map((categories, index)=>(
-                    <option value={categories.categoryId}>{categories.categoryDesc}</option>
-                  ))
-                  :
-                  <></>
-              }
-            </select>
-          </div>
+          <div className="flex gap-4 lg:flex-row flex-col mt-2">
+              <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Pilih Kategori</option>
+                {
+                  categories ?
+                    categories?.map((categories, index)=>(
+                      <option value={categories.categoryId}>{categories.categoryDesc}</option>
+                    ))
+                    :
+                    <></>
+                }
+              </select>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortname" className="pr-2">Urutkan Nama</label>
-            <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              <option value="ASC">A - Z</option>
-              <option value="DESC">Z - A</option>
-            </select>
-          </div>
+              <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Urutkan Nama</option>
+                <option value="ASC">A - Z</option>
+                <option value="DESC">Z - A</option>
+              </select>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortprice" className="pr-2">Urutkan Harga</label>
-            <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              <option value="ASC">Terendah - Tertinggi</option>
-              <option value="DESC">Tertinggi - Terendah</option>
+              <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Urutkan Harga</option>
+                <option value="ASC">Terendah - Tertinggi</option>
+                <option value="DESC">Tertinggi - Terendah</option>
+              </select>
 
-            </select>
+              <Button className="text-danger" onClick={()=>setOptions({sortName : "", sortPrice : "", categoryId : ""})}>
+                Reset Filter
+              </Button>
           </div>
         </div>
 

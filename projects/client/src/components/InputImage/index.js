@@ -19,8 +19,8 @@ export default function InputImage({
       toast.error("Maksimal Gambar 1MB")
       return;
     }
+    
     setFile(selectedFile);
-    setDataImage(selectedFile)
 
     if(dataImage) setDataImage(selectedFile);
 

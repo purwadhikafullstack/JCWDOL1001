@@ -37,7 +37,7 @@ const Input = React.forwardRef(({
       errorInput
         ? "focus:ring-danger/50 dark:focus:ring-danger border-danger/50 focus:border-danger"
         : "focus:ring-primary/50 dark:focus:ring-primary border-slate-300 focus:border-primary"
-    }`
+    } ${isDisabled && "text-slate-400"}`
   );
 
   if (type === "password") {

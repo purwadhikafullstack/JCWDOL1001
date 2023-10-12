@@ -157,7 +157,7 @@ export default function ModalCaraBayar({
             isButton
             isLoading={isUpdateOngoingTransactionLoading}
             isPrimary
-            title={`Unggah Bukti Pembayaran`}
+            title={`Unggah`}
             onClick={uploadImage}
           />
         )}
