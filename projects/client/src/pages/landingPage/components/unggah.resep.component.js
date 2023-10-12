@@ -3,6 +3,7 @@ import unggahImg from "../../../assets/unggah-resep.svg";
 import Button from "../../../components/Button";
 import { useState } from "react";
 import Modal from "../../../components/Modal";
+import { toast } from "react-toastify";
 
 export default function UnggahResep({user}) {
   const navigate = useNavigate()
@@ -13,8 +14,19 @@ export default function UnggahResep({user}) {
     setShowModal({ show: false, context: "" });
   }
 
+  const [isToastVisible, setIsToastVisible] = useState(false)
+
+  const handleUnverifiedUser = ()=>{
+    toast.error("Akun belum terverifikasi")
+    setIsToastVisible(true)
+    setTimeout(() => {
+      setIsToastVisible(false)
+    }, 2000)
+  }
+  
   const handleButtonUpload = () => {
     !user.uuid ? setShowModal({ show: true, context: "login" })
+    : user.status ===0 ?  handleUnverifiedUser()
     : navigate("/upload-recipe")
   }
 
@@ -37,6 +49,7 @@ export default function UnggahResep({user}) {
             Unggah resep doktermu!
           </h3>
           <Button
+            isDisabled={isToastVisible}
             isButton
             isPrimary
             onClick={handleButtonUpload}
