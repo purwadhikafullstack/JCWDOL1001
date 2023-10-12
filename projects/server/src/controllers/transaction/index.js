@@ -844,6 +844,7 @@ const cancelTransaction = async (req, res, next) => {
             results : +defaultUnit.dataValues?.quantity + quantity
           })
           //update qtynya
+
           await Product_Detail.update({
             quantity : +defaultUnit?.dataValues?.quantity + quantity
           },{
@@ -884,14 +885,18 @@ const cancelTransaction = async (req, res, next) => {
                 //brrti kepake 9 butir
                 //cth cmn perlu 8, brrti kepake 3 main, sisa 1
                 const totalIngredientQuantity = quantity * itemRecipe?.dataValues?.quantity
-                //stock obat racik : 1
+
+                //stock obat racik : 1 quantity untuk obat raciknya
                 //ingredient : 2 , convertion 2
                 //sec ingredient > convertion
                 console.log("nilainya ",totalIngredientQuantity)
                 //seandainya totalIngredientQuantity < main unit convertion?
+
+
                 if(totalIngredientQuantity < mainUnit?.dataValues?.convertion){
                 //cek dlu apakah totalIngredientQuantity + secUnit.quantity >= convertion
                 //kalau iya brrti terjadi konversi; cth : total 7, sec unit 1 conv 8, brrti awalnya ada 6
+
                 if(totalIngredientQuantity + secUnit.dataValues?.quantity >= mainUnit?.dataValues?.convertion){
                 //update both unit
                 const currentSecUnitQuantity = totalIngredientQuantity + secUnit.dataValues?.quantity - mainUnit?.dataValues?.convertion
@@ -963,7 +968,8 @@ const cancelTransaction = async (req, res, next) => {
                   // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
                   const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.dataValues?.quantity) / mainUnit?.dataValues?.convertion)
                   const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.dataValues?.quantity) % mainUnit?.dataValues?.convertion
-
+                  console.log("main unit qty : ",mainUnit.dataValues?.quantity)
+                  console.log("sec unit qty",secUnit.dataValues?.quantity)
                   await Product_History.create({
                     productId : itemRecipe?.dataValues?.ingredientProductId,
                     unit : mainUnit.dataValues?.product_unit.name,

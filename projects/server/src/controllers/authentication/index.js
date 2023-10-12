@@ -244,6 +244,7 @@ const verify = async (req, res, next) => {
             UUID: result?.dataValues?.UUID, 
             email : result?.dataValues?.email,
             roleId : result?.dataValues?.role,
+            userId : users?.dataValues?.userId
         });
        
         // @return response

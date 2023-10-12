@@ -42,11 +42,11 @@ export default function ModalEditStock({
 
   const valueChange = (e) => {
     e.preventDefault();
-    if(valueType?.current?.value === "Add"){
-      setValueTypeState("Add")
+    if(valueType?.current?.value === "tambah"){
+      setValueTypeState("tambah")
     }
-    if(valueType?.current?.value === "Remove"){
-      setValueTypeState("Remove")
+    if(valueType?.current?.value === "hapus"){
+      setValueTypeState("hapus")
       if(quantity >= productData?.product_details[0]?.quantity){
         setQuantity(productData?.product_details[0]?.quantity)
       }
@@ -56,7 +56,7 @@ export default function ModalEditStock({
 const plusButton = (e) => {
   e.preventDefault();
   setQuantity(quantity + 1)
-  if(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "Remove"){
+  if(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "hapus"){
     setQuantity(productData?.product_details[0]?.quantity)
   }
 }
@@ -72,7 +72,7 @@ const inputStockChange = (e) => {
   e.preventDefault();
   let newValue = parseInt(e.target.value);
     if (!isNaN(newValue)) {
-      if(newValue >= productData?.product_details[0]?.quantity && valueTypeState === "Remove" ) {
+      if(newValue >= productData?.product_details[0]?.quantity && valueTypeState === "hapus" ) {
         newValue = productData?.product_details[0]?.quantity
       }
       setQuantity(newValue);
@@ -83,7 +83,7 @@ const inputStockChange = (e) => {
     //nilai value dan productId
      let value = quantity;
      const productId = productData.productId;
-    if(valueTypeState === "Remove"){
+    if(valueTypeState === "hapus"){
         value = -1 * quantity
     }
     const request = {
@@ -118,7 +118,7 @@ const inputStockChange = (e) => {
     return (
       <Message
         type="success"
-        message={"Stock Updated Successfully"}
+        message={"Stock produk berhasil diubah"}
         handleCloseModal={handleCloseModal}
       />
     );
@@ -143,18 +143,25 @@ const inputStockChange = (e) => {
         <div className={`${confirmAdd ? "hidden" : null}`}>
  
 
-          <div className="mt-4 flex flex-col gap-y-4">
-            <div className="font-semibold">
+          <div className="my-4 flex flex-col gap-y-4">
+            {/* <div className="font-semibold">
               <Input
                 type="text"
                 label="Product Name"
                 placeholder={productData?.productName}
                 isDisabled = {true}
               />
+            </div> */}
+            <div className="flex flex-col lg:flex-row gap-2">
+              {`Nama produk : `}<div className="text-primary">{productData?.productName}</div>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-2">
+            {"Stok saat ini : "} <div className="text-primary">
+                {productData?.product_details[0]?.quantity}</div>
             </div>
           </div>
           
-          <div className="mt-4 flex flex-col gap-y-4">
+          {/* <div className="mt-4 flex flex-col gap-y-4">
             <div className="font-semibold">
               <Input
                 type="text"
@@ -163,30 +170,30 @@ const inputStockChange = (e) => {
                 isDisabled = {true}
               />
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex flex-col my-5">
+          <div className="flex flex-col my-5 ">
           <div className="font-bold text-lg text-teal-600">
-          Update Section
+          Perubahan Stok
           </div>
           <span className="text-xs">
-            Please choose whether to add / reduce current stock(s).
+            Silahkan pilih, apakah ingin menambah / mengurangi stok saat ini
             </span>
           </div>
           <div>
           <select className="rounded-lg border bg-inherit px-2 py-2 mb-6 outline-none focus:ring-2 " 
           ref={valueType} onChange={valueChange}
                 >
-                    <option value="Add" 
+                    <option value="tambah" 
                     >
-                    Add Stocks</option>
-                    <option value="Remove"
+                    Tambah Stok</option>
+                    <option value="hapus"
                     >
-                      Remove Stocks</option>
+                    Hapus Stok</option>
           </select>
           </div>
           <span className="text-xs my-10">
-            How many unit you would like to {valueTypeState.toLowerCase() || ""}?
+            Berapa banyak unit(pcs) yang mau di{valueTypeState || ""}?
             </span>
 
           
@@ -201,7 +208,7 @@ const inputStockChange = (e) => {
             </button>
             <Input
                   type="numberSecondVariant"
-                  value={(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "Remove")
+                  value={(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "hapus")
                    ? productData?.product_details[0]?.quantity : 
                    quantity < 0 ? 0 : quantity }
                   onChange={inputStockChange}
@@ -234,16 +241,16 @@ const inputStockChange = (e) => {
               className={`w-full 
               select-none 
               rounded-lg 
-              ${valueTypeState === "Add" ? "bg-green-700" : "bg-red-700"}
+              ${valueTypeState === "tambah" ? "bg-green-700" : "bg-red-700"}
               px-6 
               py-2 
               text-sm 
               text-white 
               duration-300 
-              ${valueTypeState === "Add" ? "hover:bg-green-500" : "hover:bg-red-500"}`}
+              ${valueTypeState === "tambah" ? "hover:bg-green-500" : "hover:bg-red-500"}`}
               type="submit"
             >
-              {valueTypeState === "Add" ? "Add" : "Remove" }
+              {valueTypeState === "tambah" ? "Tambah" : "Hapus" }
             </button>
           </div>
         </div>
@@ -252,8 +259,7 @@ const inputStockChange = (e) => {
           <div className={``}>
   
               <p className="modal-text">
-                Are you sure you want to {valueTypeState.toLowerCase()} stock(s)
-                 {valueTypeState === "Add" ? " to" : " from"} this product?
+              Apakah kamu yakin ingin {valueTypeState} stok untuk produk ini?
               </p>
           
 

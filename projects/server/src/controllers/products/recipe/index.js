@@ -243,9 +243,9 @@ const getUser = async( req, res, next ) => {
               console.log("Email sent: " + info.response);
           })
           
-      await User_Account.update({
-        imgRecipe : null
-      },{where : {email}})
+      // await User_Account.update({
+      //   imgRecipe : null
+      // },{where : {email}})
 
       res.status(200).json({ 
         type : "success",
@@ -270,13 +270,13 @@ const getUser = async( req, res, next ) => {
           email : email
         }
      })
-     await User_Account?.update({where:{
-      imgRecipe : null
-     }},{
-      where :{
-        email : email
-      }
-   })
+  //    await User_Account?.update({where:{
+  //     imgRecipe : null
+  //    }},{
+  //     where :{
+  //       email : email
+  //     }
+  //  })
 
      const address = await User_Address?.findOne({
       where : {
@@ -291,6 +291,8 @@ const getUser = async( req, res, next ) => {
         const {productId, name,type} = item
 
       if(type === 1){
+        const arrayOne = []
+        
         const product = await Product_List.findOne({
           where :{
             productId : productId,
@@ -343,10 +345,18 @@ const getUser = async( req, res, next ) => {
 
       if(secUnit?.quantity < (+product?.productDescription * recipeQty)){
 
+      // const
       const remainStock = (+product?.productDescription * recipeQty) - secUnit?.quantity
+      // 2 x 3 - 5 = 1
+      //case 2 : 5 x 5 - 5 = 20 
+
       const checker = Math.ceil(remainStock / mainUnit?.convertion)
-      const remainSecStock = remainStock % mainUnit?.convertion
-      
+      // 1/10.ceil = 1
+        // 20/10.ceil = 2
+      const remainSecStock = (mainUnit?.convertion * checker) - remainStock
+      // 1%10 = 1 => 10 * 1 - 1 = 9
+        //case 2 : 10 * 2 - 20 = 0
+
         if(mainUnit?.quantity >= checker){
 
           //masukin product History
@@ -365,13 +375,13 @@ const getUser = async( req, res, next ) => {
             initialStock : secUnit?.quantity,
             status : "Unit Conversion",
             type : "Penambahan",
-            quantity : remainStock,
-            results : secUnit?.quantity + remainStock
+            quantity : +mainUnit?.convertion * checker,
+            results : secUnit?.quantity + (+mainUnit?.convertion * checker)
           })
           await Product_History.create({
             productId : ingredientProductId,
             unit : secUnit.product_unit.name,
-            initialStock : secUnit?.quantity + remainStock,
+            initialStock : secUnit?.quantity + (+mainUnit?.convertion * checker),
             status : "Penjualan Obat Racik",
             type : "Pengurangan",
             quantity : +product?.productDescription * recipeQty,
@@ -410,8 +420,6 @@ const getUser = async( req, res, next ) => {
           type : "Pengurangan",
           quantity : +product?.productDescription * recipeQty,
           results : secUnit?.quantity - (+product?.productDescription * recipeQty)
-
-
         })
         await Product_Detail.update({
           quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
@@ -459,9 +467,11 @@ const getUser = async( req, res, next ) => {
         results : product?.product_details[0].quantity - quantity
       })
 
-      await Product_Detail.update({quantity : product?.product_details[0].quantity - quantity},{
+      await Product_Detail.update(
+        {quantity : product?.product_details[0].quantity - quantity},{
         where : {
-          productId : productId
+          productId : productId,
+          isDefault: true
         }
       })
       subtotal += (product.productPrice * quantity)
@@ -514,11 +524,11 @@ const getUser = async( req, res, next ) => {
       })
     }
 
-    await User_Account.update({
-      addressIdRecipe : null,
-      createdRecipe : null,
-      shippingRecipe : null,
-    },{where :  {userId : user?.userId}})
+    // await User_Account.update({
+    //   addressIdRecipe : null,
+    //   createdRecipe : null,
+    //   shippingRecipe : null,
+    // },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
         type : "success",
