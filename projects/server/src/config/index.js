@@ -1,5 +1,7 @@
-const dotenv = require("dotenv")
-dotenv.config();
+const path = require("path");
+require("dotenv").config({
+    path: path.resolve(__dirname, '../../.env')
+})
 
 // @create db configuration
 const db_config = Object.freeze({
@@ -34,7 +36,6 @@ const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET
 const REDIRECT_URL = process.env.REDIRECT_URL 
 const REDIRECT_BACKEND_URL = process.env.REDIRECT_BACKEND_URL
-
 
 module.exports = {
     db_config,

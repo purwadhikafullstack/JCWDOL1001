@@ -59,7 +59,9 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
-        dispatch(createTransaction({transport : selectedShipping.cost, totalPrice : (+subTotal*1), addressId : address.addressId})).finally(() => navigate("/user/transaction"));
+        const discountIdList = [...cart].filter((item)=>{return item?.product_detail}).map(({product_detail})=>{return product_detail?.productDiscount[0].discountId})
+        if(selectedDiscount) discountIdList.push(selectedDiscount?.discountId)
+        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList})).finally(() => navigate("/user/transaction"));
     }
 
     if(cart.length === 0){

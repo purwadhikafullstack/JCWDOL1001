@@ -47,7 +47,7 @@ export default function Card({ productId, productName, productPrice, productPict
           : productDiscount[0]?.discount.oneGetOne ?
             <div className="flex flex-col max-w-md">
               <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
-                Buy One Get One
+                Beli Satu Gratis Satu
               </span>
               Rp.  {formatNumber(productPrice)}
             </div>

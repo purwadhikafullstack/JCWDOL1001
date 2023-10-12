@@ -53,10 +53,24 @@ export const getProducts = createAsyncThunk(
 );
 
 export const getProductById = createAsyncThunk(
-  "products/getProductById",
+  "products/getProductDiscount",
   async (payload, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/products/" + encodeURI(payload));
+
+      return data;
+    } catch (error) {
+      toast.error(error.response.data.message)
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getProductDiscount = createAsyncThunk(
+  "products/getProductById",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/products/discount");
 
       return data;
     } catch (error) {
