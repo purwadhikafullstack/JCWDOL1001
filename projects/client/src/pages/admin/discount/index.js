@@ -54,12 +54,6 @@ export default function DiscountPage(){
 
     const [page, setPage] = useState(1);
 
-    // useEffect(()=>{
-    //     dispatch(
-    //         getDiscount({page : currentPage,discountName : discountRef?.current.value})
-    //     )
-    // },[])
-
     useEffect(() => {
         dispatch(
             getDiscount({page : page,discountName : discountRef?.current.value})

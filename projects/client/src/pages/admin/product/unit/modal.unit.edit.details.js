@@ -142,7 +142,7 @@ export default function ModalEditProductUnit({
                             onChange={handleChangeUnit}
                             className={`bg-gray-50 border  text-gray-900 text-sm rounded-lg block w-full p-2.5 ${error.unit ? `border-red-600` : `border-gray-300`}`}
                         >
-                            <option value="default" >Pilih satuan </option>
+                            <option value="default" disabled >Pilih satuan </option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name} id={unit.isSecondary.toString()}>{unit.name}</option>
                             ))}

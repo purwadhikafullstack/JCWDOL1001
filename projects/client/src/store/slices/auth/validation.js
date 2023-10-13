@@ -12,9 +12,9 @@ function parseDateString(value, originalValue) {
 
 export const LoginValidationSchema = Yup.object({
     email : Yup.string()
-        .email("Invalid email")
-        .required("Email is required"),
-    password : Yup.string().required("Password is required")
+        .email("Format email tidak sesuai")
+        .required("Email dibutuhkan"),
+    password : Yup.string().required("Password dibutuhkan")
 })
 
 export const RegisterValidationSchema = Yup.object({

@@ -140,20 +140,16 @@ export default function Cart() {
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   
-  const checkOut = async () => {
-    try{
-      dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout","replace")
-
-    }catch(error){
+  const checkOut = () => {
+    dispatch(inCheckOut({data : selectedItems})).then(()=>navigate("/checkout","replace")).catch((error)=>{
       const errors = {}
-        
+
       error.inner.forEach((innerError) => {
         errors[innerError.path] = innerError.message;
       })
-      
+
       setError(errors)
-      
+
       toast.error("Check your input field!")
 
       setIsToastVisible(true)
@@ -161,7 +157,7 @@ export default function Cart() {
       setTimeout(() => {
         setIsToastVisible(false)
       }, 2000)
-    }
+    })
   }
   return (
     <div className="container relative py-24">

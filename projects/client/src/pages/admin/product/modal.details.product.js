@@ -46,12 +46,15 @@ export default function ModalDetailsProduct({selectedProduct, categories}) {
               <th className="p-3">Kuantitas</th>
             </tr>
           </thead>
-          {selectedProduct.productUnits.filter((unit)=>!unit.product_detail.isDeleted).map((unit) => (
-            <tbody>
-              <td className="p-3">{unit.name}</td>
-              <td className="p-3">{unit.product_detail.quantity}</td>
-            </tbody>
-          ))}
+          {selectedProduct.productUnits.length ===0 ? <h3>Data Tidak Ditemukan</h3>
+            :
+            selectedProduct.productUnits.filter((unit)=>!unit.product_detail.isDeleted).map((unit) => (
+              <tbody>
+                <td className="p-3">{unit.name}</td>
+                <td className="p-3">{unit.product_detail.quantity}</td>
+              </tbody>
+            )
+          )}
         </table>
       </div>
     </div>

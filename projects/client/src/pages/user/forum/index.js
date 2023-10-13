@@ -167,7 +167,7 @@ function ForumPage () {
                             </tr>
                         </thead>
                         <tbody>
-                            {questionList.map((list) => {
+                            {questionList?.map((list) => {
                                 return (
                                     <tr className="items-center text-left">
                                         <th className="p-3 ">{formatDate(list.createdAt)}</th>
@@ -213,13 +213,13 @@ function ForumPage () {
                             </div>
                         )}
                         <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                            <Button title="Back" isButton isSecondary 
+                            <Button title="Kembali" isButton isSecondary 
                                 onClick={() =>{
                                     handleCloseModal()
                                     setError({ ...error, question: false })
                                 }}
                             />
-                            <Button isButton isPrimary title="Confirm"
+                            <Button isButton isPrimary title="Tanyakan"
                                 onClick={()=>{setConfirmation(true)}}
                             />
                         </div>
@@ -232,9 +232,9 @@ function ForumPage () {
                         </p>
                         <div className="mt-4 flex justify-end gap-2">
                             {!isLoading && (
-                                <Button title="No" isButton isSecondary onClick={handleCloseModal} />
+                                <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
                             )}
-                            <Button title="Yes" isButton isDanger 
+                            <Button title="Iya" isButton isDanger 
                                 isLoading={isLoading}
                                 onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
@@ -247,14 +247,12 @@ function ForumPage () {
                             Apakah pertanyaan Anda sudah benar?
                         </p>
                         <div className="flex gap-2">
-                            <Button title="Cancel"  isButton  isSecondary 
+                            <Button title="Batal"  isButton  isSecondary 
                                 onClick={() => setConfirmation(false)}
                             />
-                            <Button title="Sure" isButton isPrimary isDisabled={isToastVisible}
+                            <Button title="Iya" isButton isPrimary isDisabled={isToastVisible}
                                 onClick={handleOnSure}
-                            >
-                                Sure
-                            </Button>
+                            />
                         </div>
                     </div>
                 )}

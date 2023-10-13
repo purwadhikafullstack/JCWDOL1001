@@ -201,7 +201,7 @@ useEffect( ()=>{
                             </tr>
                         </thead>
                         <tbody>
-                            {questionList.map((list) => {
+                            {questionList?.map((list) => {
                                 if(!list.answer){
                                 return (
                                     <tr className="items-center text-left border-b-2">

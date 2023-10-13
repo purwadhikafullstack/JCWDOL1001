@@ -33,7 +33,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     })
 
     const onButtonCancel = () => {
-        
         if(selectedId.length === 0){ 
             handleCloseModal()
         }else{
@@ -92,17 +91,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     message:"Potongan diperlukan"
                 }]}) 
             }
-            
-            // output.data = {
-            //     "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-            //     "isPercentage" : !selectedId || selectedId.length ==0 ? +isPercentage.id : Number(selectedId?.isPercentage),
-            //     "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
-            //     "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-            //     "oneGetOne" : !selectedId || selectedId.length ==0 ? +isOneGetOne.id : Number(selectedId?.oneGetOne),
-            //     "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
-            //     "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
-            //     "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
-            // }
+
             output.data = {
                 "discountDesc" : desc,
                 "isPercentage" : +isPercentage.id,
@@ -113,7 +102,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 "discountName" : name,
                 "discountCode" : code,
             }
-            console.log(output.data)
+
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
             
             await DiscountInfoValidationSchema.validate(output.data,{
@@ -337,7 +326,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             </div>
         </div>       
         <ProductList title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>
-        
     </div>
   )
 }

@@ -219,13 +219,13 @@ export default function QnAPage() {
                 </div>
               )}
               <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                  <Button title="Back" isButton isSecondary 
+                  <Button title="Kembali" isButton isSecondary 
                     onClick={() =>{
                       handleCloseModal() 
                       setError({ ...error, question: false })
                     }}
                   />
-                  <Button isButton isPrimary title="Confirm"
+                  <Button isButton isPrimary title="Tanyakan"
                     onClick={()=>{setConfirmation(true)}}
                   />
               </div>
@@ -237,12 +237,10 @@ export default function QnAPage() {
                   Apakah pertanyaan Anda sudah benar?
               </p>
               <div className="flex gap-2">
-                  <Button title="Cancel" isButton isSecondary 
+                  <Button title="Kembali" isButton isSecondary 
                     onClick={() => setConfirmation(false)}
                   />
-                  <Button onClick={handleOnSure} title="Sure" isDisabled={isToastVisible} isButton isPrimary >
-                    Sure
-                  </Button>
+                  <Button onClick={handleOnSure} title="Iya" isDisabled={isToastVisible} isButton isPrimary />
               </div>
             </div>
           )}

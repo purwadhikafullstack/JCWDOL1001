@@ -113,7 +113,6 @@ const updateProductUnits = async( req, res, next ) => {
 
     const productUnitName = req?.body?.unitName ? req?.body?.unitName : stock?.dataValues?.product_unit?.name
 
-
     const unitProductList = await Product_Unit.findOne({ where :{unitId : req.body.unitId}})
 
     if(!unitProductList){
@@ -130,7 +129,7 @@ const updateProductUnits = async( req, res, next ) => {
     }
 
     req.body.productId = productId
-    
+    console.log(req.body)
     await Product_Detail.update( req.body, {where : {stockId}} )
 
     const unitProduct =await Product_Detail.findOne({where:{stockId}})
@@ -138,10 +137,10 @@ const updateProductUnits = async( req, res, next ) => {
     await Product_History.create({
       productId : req.body.productId,
       unit : productUnitName,
-      initialStock : stock?.dataValues?.quantity,
-      status : "Perubahan",
+      initialStock : stock?.dataValues?.convertion === req.body.convertion ? stock?.dataValues?.quantity : stock?.dataValues?.convertion ,
+      status : `Perubahan ke ${req.body.unitName ? req.body.unitName : unitProductList.dataValues.name }`,
       type : "Update Unit",
-      quantity : req.body.quantity,
+      quantity : stock?.dataValues?.convertion === req.body.convertion ? 0 :  req.body.convertion,
       results : unitProduct?.dataValues?.quantity
     })
 

@@ -1,61 +1,41 @@
 import { useEffect, useState, useRef, React } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { toast } from "react-toastify";
+import { HiMagnifyingGlass } from "react-icons/hi2"
 import { FaSortAlphaDown, FaSortAlphaUp, FaSortAmountDown,FaSortAmountUp } from "react-icons/fa"
-import Pagination from "../../../components/PaginationV2/index.js"
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
 import moment from "moment"
+import { Line } from 'react-chartjs-2';
+import {  Chart as ChartJS,  CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { getReport } from "../../../store/slices/report/slices"
 import { getTransactionList } from "../../../store/slices/transaction/slices.js"
-import formatNumber from "../../../utils/formatNumber.js"
-import { formatDate } from "../../../utils/formatDate.js"
+import { filterDateReportValidationSchema } from "../../../store/slices/report/validation.js";
 import Button from "../../../components/Button/index.js"
-import Modal from "../../../components/Modal/index.js";
 import Input from "../../../components/Input/index.js"
-import { HiMagnifyingGlass } from "react-icons/hi2"
-
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import TransactionList from "./component.transaction";
+ChartJS.register( CategoryScale,  LinearScale, PointElement,  LineElement, Title, Tooltip, Legend);
 
 function ReportPage () {
     const dispatch = useDispatch()
-    
     const { transactionList, currentPage, totalPage, report} = useSelector(state => {
         return {
-            transactionList : state.transaction.transactions,
-            report : state.report.list,
-            currentPage : state.report.list.currentPage,
-            totalPage : state.report.list.totalPage
+            transactionList : state?.transaction?.transactions,
+            report : state?.report?.list,
+            currentPage : state?.transaction?.currentPage ? state?.transaction?.currentPage : 1,
+            totalPage : state?.transaction?.totalPage ? state?.transaction?.totalPage : 1
         }
     })
 
     const startDateRef = useRef()
     const endDateRef = useRef()
     const nameRef = useRef()
-
     const [graph,setGraph] = useState(false)
     const [filter,setFilter] = useState(false)
-    const [sortingDate,setSortingDate] = useState("")
+    const [sortingDate,setSortingDate] = useState("DESC")
     const [sortingPrice,setSortingPrice] = useState("")
     const [showModal, setShowModal] = useState({ show: false,context:"" })
     const [selectedTransaction, setSelectedTransaction] = useState([])
+    const [page, setPage] = useState(1);
+    const [isToastVisible, setIsToastVisible] = useState(false)
 
     const handleShowModal = ({context}) => {
         setShowModal({ show: true,context })
@@ -79,41 +59,54 @@ function ReportPage () {
         },
     }
 
-    const labels = report?.map((item)=> {
-        return moment(item.tanggal).format("DD-MM-Y")
-    })
+    const labels = report?.map((item)=> { return moment(item.tanggal).format("DD-MM-Y") })
     
-    const data = {
-        labels,
-        datasets: [
-            {
-                label: 'Total',
-                data: report?.map((item)=> {return Number(item.total)}),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            }
-        ]
+    const data = {labels,
+        datasets: [{
+            label: 'Total',
+            data: report?.map((item)=> {return Number(item.total)}),
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        }]
     }
-    
-    const onButtonFilter = () => {
-        dispatch(
-            getReport({
+
+    const onButtonFilter = async () => {
+        try {
+            startDateRef?.current?.value && endDateRef?.current?.value && await filterDateReportValidationSchema.validate({
+                startFrom : startDateRef?.current?.value,
+                endFrom : endDateRef?.current?.value
+            })
+
+            dispatch(getReport({
                 statusId : 6,
                 startFrom : startDateRef.current.value,
                 endFrom : endDateRef.current.value
-            })
-        )
-        dispatch(
-            getTransactionList({
-                statusId : 6,
-                startFrom : startDateRef.current.value,
-                endFrom : endDateRef.current.value,
-                sortDate: sortingDate,
-                sortTotal:sortingPrice,
-                filterName : nameRef.current.value
-            })
-        )
-        setFilter(true)
+            }))
+
+            onButtonSearchName()
+
+            setFilter(true)
+        }catch(error){
+            if(error.inner.length === 0) {
+                toast.error("Tanggal awal dan tanggal akhir harus diisi")
+            }
+
+            setIsToastVisible(true);
+
+            setTimeout(() => { setIsToastVisible(false)}, 2000);
+        }
+    }
+
+    const onButtonSearchName = () =>{
+        dispatch(getTransactionList({
+            statusId : 6,
+            startFrom : startDateRef.current.value,
+            endFrom : endDateRef.current.value,
+            sortDate: sortingDate,
+            sortTotal:sortingPrice,
+            filterName : nameRef?.current?.value,
+            page:1
+        }))
     }
 
     const onButtonSortDate = (type="")=>{
@@ -132,21 +125,18 @@ function ReportPage () {
         startDateRef.current.value = ""
         endDateRef.current.value = ""
         nameRef.current.value = ""
-        setSortingDate("")
+        setSortingDate("DESC")
         setSortingPrice("")
         dispatch(getReport({statusId : 6}))
         dispatch(getTransactionList({
             statusId : 6,
-            startFrom : startDateRef.current.value,
-            endFrom : endDateRef.current.value,
-            sortDate: "",
-            sortTotal:"",
+            startFrom : "",
+            endFrom : "",
+            sortDate: "DESC",
             filterName :""
         }))
         setFilter(false)
     }
-
-    const [page, setPage] = useState(1);
     
     useEffect(() => {
         dispatch( getReport({statusId : 6, page : page }) )
@@ -154,200 +144,56 @@ function ReportPage () {
 
     useEffect(() => {
         dispatch(getReport({statusId : 6}))
-        dispatch(getTransactionList({
-            statusId : 6,
-            startFrom : startDateRef.current.value,
-            endFrom : endDateRef.current.value,
-            sortDate: sortingDate,
-            sortTotal:sortingPrice,
-            filterName :""
-        }))
+        onButtonSearchName()
 	}, [])
     
     return (
         <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-            <div className="pb-10">
-                <div className="relative flex flex-col pb-5">
-                    <div className="flex items-center align-middle gap-5 px-3 mb-5">
-                        <a className="flex normal-case text-[20pt]">
-                            Laporan
-                        </a>
-                        <Input 
-                            type="text" 
-                            placeholder="Search User" 
-                            ref={nameRef}
-                        />
-                        <Button 
-                            className="absolute top-[15%] left-[21%] -translate-y-1/2" 
-                            onClick={()=>{
-                                dispatch(getTransactionList({statusId : 6,filterName : nameRef?.current?.value}))
-                                setFilter(true)}}
-                        >
-                            <HiMagnifyingGlass className="text-2xl text-primary" />
-                        </Button>
-                        
-                        <button className={`flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`}
-                            onClick={clearFilter} 
-                        >
-                            Clear filter
-                        </button>
+            <div className="relative flex flex-col pb-15">
+                <div className="flex items-center align-middle gap-5 px-3 mb-5">
+                    <a className="flex normal-case text-[20pt]">  Laporan </a>
+                    <Input type="text" placeholder="Cari Pengguna" ref={nameRef}/>
+                    <Button className="absolute top-[15%] left-[21%] -translate-y-1/2" 
+                        onClick={()=>{
+                            onButtonSearchName()
+                            setFilter(true)}}
+                    >
+                        <HiMagnifyingGlass className="text-2xl text-primary" />
+                    </Button>
+                    <Button title="Hapus pengaturan" onClick={clearFilter}  className={`flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
+                </div>
+                <div className="flex items-center">
+                    <span className="mx-4 text-gray-500">dari</span>
+                    <div className="relative">
+                        <input ref={startDateRef} name="start" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full pl-10 p-2.5"/>
                     </div>
-                    <div className="flex items-center">
-                        <span className="mx-4 text-gray-500">dari</span>
-                        <div className="relative">
-                            <input name="start" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full pl-10 p-2.5" 
-                                ref={startDateRef}
-                            />
-                        </div>
-                        <span className="mx-4 text-gray-500">sampai</span>
-                        <div className="relative">
-                            <input name="end" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2.5" 
-                                ref={endDateRef}
-                            />
-                        </div>
-                        <div className="flex mx-5 my-5 items-center h-auto gap-5">
-                            Sort By :
-                            <div className="flex flex-row items-center h-auto gap-1">
-                                Tanggal
-                                <FaSortAlphaDown className={`${sortingDate === "DESC" || sortingDate ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
-                                <FaSortAlphaUp className={`${sortingDate === "ASC" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>                
-                            </div>
-                            <div className="flex flex-row items-center h-auto gap-1">
-                                Total
-                                <FaSortAmountDown  className= {`${sortingPrice === "DESC" || sortingPrice ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("DESC")}} />
-                                <FaSortAmountUp className= {`${sortingPrice === "ASC"  ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("ASC")}}/>                
-                            </div>
-                        </div>
-                        <Button isButton isPrimary
-                            className="flex mx-5 items-center"
-                            onClick={onButtonFilter}
-                        >
-                            Filter
-                            <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                            </svg>
-                        </Button>
+                    <span className="mx-4 text-gray-500">sampai</span>
+                    <div className="relative">
+                        <input ref={endDateRef} name="end" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2.5"/>
                     </div>
-
-                </div>                
-                <div class="my-10 mr-20 w-full shadow-md sm:rounded-lg">
-                    <table class="w-full max-text-sm text-center text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 ">Invoice</th>
-                                <th scope="col" className="px-6 py-3 ">Tanggal</th>
-                                <th scope="col" className="px-6 py-3 ">Pengguna</th>
-                                <th scope="col" className="px-6 py-3 ">Potongan</th>
-                                <th scope="col" className="px-6 py-3 ">Total</th>
-                                <th scope="col" className="px-6 py-3 ">Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {transactionList.length ===0 ? <h3>Data Tidak Ditemukan</h3>
-                                : transactionList.map((list)=>{
-                                    return (
-                                        <tr className="items-center text-center">
-                                            <th className="p-3 ">{list.invoice}</th>
-                                            <td className="p-3 ">{formatDate(list.updatedAt)}</td>
-                                            <td className="p-3 ">{list.userProfile.name}</td>
-                                            <td className="p-3">{list.discount_transaction ? list.discount_transaction.discount.isPercentage ? `${list.discount_transaction.discount.discountAmount}%` : `Rp ${formatNumber(list.discount_transaction.discount.discountAmount)}` :"-" }</td>
-                                            <td className="p-3 ">IDR {formatNumber(list.subtotal)}</td>
-                                            <Button isButton isPrimary title="Lihat Detail" 
-                                                onClick={()=>{
-                                                    setSelectedTransaction(list)
-                                                    handleShowModal({context : "Detail Transaksi" })
-                                                }}
-                                            />
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
+                    <div className="flex mx-5 my-5 items-center h-auto gap-5">
+                        Sort By :
+                        <div className="flex flex-row items-center h-auto gap-1">
+                            Tanggal
+                            <FaSortAlphaDown className={`${sortingDate === "DESC" || sortingDate ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
+                            <FaSortAlphaUp className={`${sortingDate === "ASC" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>                
+                        </div>
+                        <div className="flex flex-row items-center h-auto gap-1">
+                            Total
+                            <FaSortAmountDown  className= {`${sortingPrice === "DESC" || sortingPrice ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("DESC")}} />
+                            <FaSortAmountUp className= {`${sortingPrice === "ASC"  ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortPrice("ASC")}}/>                
+                        </div>
+                    </div>
+                    <Button title="Filter" isButton isPrimary className="flex mx-5 items-center" isDisabled={isToastVisible} onClick={onButtonFilter} />
                 </div>
-                <div className="w-full">
-                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
-                </div>
-                <Button isButton isPrimary
-                    className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center`}
-                    onClick={()=>{setGraph(true)}}
-
-                >
-                    Lihat Grafik
-                    <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                    </svg>
-                </Button>
-                <Button isButton isSecondary
-                    className={`${!graph ? "hidden" : ""} flex items-center`}
-                    onClick={()=>{setGraph(false)}}
-
-                >
-                    Sembunyikan Grafik
-                    <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                    </svg>
-                </Button>
-                <div className={`${graph ? "" : "hidden"}`}>
-                    <Line options={options} data={data} />
-                </div>
-                <Modal
-                    showModal={showModal.show}
-                    closeModal={handleCloseModal}
-                    title={showModal.context}
-                >
-                    {showModal.context === "Detail Transaksi" && (
-                        <>
-                            <a className="text-lg underline underline-offset-4">Detail Produk</a>
-                            <table class="w-full max-text-sm text-left text-gray-500 mb-5">
-                                <thead class="text-sm text-center text-gray-700 uppercase bg-gray-50 ">
-                                    <tr>
-                                        <th scope="col" className="p-3 text-left">Nama Produk</th>
-                                        <th scope="col" className="p-3 ">Kuantitas</th>
-                                        <th scope="col" className="p-3 ">@</th>
-                                        <th scope="col" className="p-3 text-right">Harga</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedTransaction.transactionDetail.length ===0 ? <a>Data Tidak Ditemukan</a>
-                                        : selectedTransaction.transactionDetail.map((detail)=>{
-                                            return (
-                                                <tr  className="items-center text-left">
-                                                    <td className="p-3 ">{detail.listedTransaction.productName}</td>
-                                                    <td className="p-3 text-center ">{detail.quantity}</td>
-                                                    <td className="p-3 text-right">{formatNumber(detail.price)}</td>
-                                                    <td className="p-3 text-right">IDR {formatNumber(detail.totalPrice)}</td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                            <a className="text-lg underline underline-offset-4">Detail Diskon</a>
-                            <table class="w-full max-text-sm text-left text-gray-500">
-                                <thead class="text-sm  text-gray-700 uppercase bg-gray-50 ">
-                                    <tr>
-                                        <th className="p-3">Nama Diskon</th>
-                                        <th className="p-3">Jumlah</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {!selectedTransaction.discount_transaction ? <a>Data Tidak Ditemukan</a>
-                                        : 
-                                            <tr  className="items-center text-left">
-                                                <td className="p-3">{selectedTransaction.discount_transaction.discount.discountName}</td>
-                                                <td className="p-3">{selectedTransaction.discount_transaction.discount.isPercentage ? `${selectedTransaction.discount_transaction.discount.discountAmount}%` : `Rp ${formatNumber(selectedTransaction.discount_transaction.discount.discountAmount)}` }</td>
-                                            </tr>
-                                        
-                                    }
-                                </tbody>
-                            </table>
-                        </>
-                    )}
-                </Modal>
+            </div>
+            <TransactionList transactionList={transactionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} handleShowModal={handleShowModal} handleCloseModal={handleCloseModal} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction} showModal={showModal} />              
+            <Button title="Lihat Grafik"isButton isPrimary onClick={()=>{setGraph(true)}} className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center`} />
+            <Button title="Sembunyikan Grafik" isButton isSecondary onClick={()=>{setGraph(false)}} className={`${!graph ? "hidden" : ""} flex items-center`} />
+            <div className={`${graph ? "" : "hidden"}`}>
+                <Line options={options} data={data} />
             </div>
         </div>
     )
 }
-
 export default ReportPage

@@ -9,13 +9,14 @@ import ShippingAddress from "../../components/Shipping/component.address.js"
 import ShippingCost from "../../components/Shipping/component.shipping.js"
 import { UploadRecipeValidationSchema } from "../../store/slices/upload-recipe/validation.js"
 import { toast } from "react-toastify"
+import { getAddress } from "../../store/slices/address/slices.js"
 
 export default function UploadRecipePage(){
 
     const {isLoading,address,userStatus} = useSelector(state => {
 		return {
 			isLoading : state?.uploadRecipe?.isLoading,
-            address : state?.auth?.address,
+            address : state?.address?.data,
             userStatus : state?.auth?.status,
 		}
 	})
@@ -90,15 +91,19 @@ export default function UploadRecipePage(){
                 setIsToastVisible(false)
             }, 2000)
         }
-    }
-    
+    }    
     useEffect(() => {
-        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
+        dispatch(getAddress({page:1}))
+        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
         if(userStatus===0){
             navigate("/","replace")
             toast.error("Akun belum terverifikasi")
         } 
     },[])
+
+    useEffect(() => {
+        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
+    },[address])
 
     return(
         <div className="container max-w-3xl pt-24">

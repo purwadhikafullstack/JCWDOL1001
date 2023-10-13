@@ -93,6 +93,7 @@ const addressSlice = createSlice({
         [addAddress.fulfilled] : (state, action) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             state = Object.assign(state, {
                 isSubmitAddressLoading : false,
+                success:true
             })
         },
         [addAddress.rejected] : (state, action) => {
@@ -108,6 +109,7 @@ const addressSlice = createSlice({
             state = Object.assign(state, {
                 data : action.payload?.data,
                 isSubmitAddressLoading : false,
+                success:true
             })
         },
         [updateAddress.rejected] : (state, action) => {

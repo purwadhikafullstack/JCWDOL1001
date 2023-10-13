@@ -125,13 +125,13 @@ export default function ModalAddProductUnit({
                 }]})
             }
 
-            if(unitRef.current.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) {
+            if(unitRef?.current?.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) {
                 throw({inner: [{
                     path : "unit",
                     message:"Nama satuan tidak boleh sama dengan satuan yang aktif"
                 }]})
             }
-            
+
             dispatch(addUnit(output))
 
             setConfirmation(false)
@@ -139,7 +139,7 @@ export default function ModalAddProductUnit({
         }catch (error) {
             const errors = {}
             
-            error.inner.forEach((innerError) => {
+            error.inner?.forEach((innerError) => {
                 errors[innerError.path] = innerError.message;
             })
             
@@ -190,7 +190,7 @@ export default function ModalAddProductUnit({
                             onChange={handleChangeUnit}
                             className={`bg-gray-50 border text-gray-900 text-sm rounded-lg block w-full p-2.5 ${error.unit ? `border-red-500` : `border-gray-300` }`}
                         >
-                            <option value="default" >Pilih Satuan</option>
+                            <option value="default" disabled >Pilih Satuan</option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}
