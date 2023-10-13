@@ -29,7 +29,7 @@ export default function ModalEditStock({
 
   const productNameRef = useRef(null);
   const valueType = useRef(null);
-  const [valueTypeState, setValueTypeState] = useState("Add")
+  const [valueTypeState, setValueTypeState] = useState("tambah")
 
   const [error, setError] = useState("");
   const [confirmAdd, setConfirmAdd] = useState(false);
@@ -37,7 +37,7 @@ export default function ModalEditStock({
   const [inputFormData, setInputFormData] = useState(null)
   const [file, setFile] = useState(null);
   const [dataImage, setDataImage] = useState(null);
-  const [quantity, setQuantity] = useState(0)
+  const [quantity, setQuantity] = useState(1)
 
 
   const valueChange = (e) => {
@@ -63,7 +63,7 @@ const plusButton = (e) => {
 
 const minusButton = (e) => {
   e.preventDefault();
-  if(quantity > 0){
+  if(quantity > 1){
     setQuantity(quantity - 1)
   }
 }
@@ -137,7 +137,7 @@ const inputStockChange = (e) => {
   return (
     <div className="max-h-[75vh] overflow-auto px-1">
       <form 
-      onSubmit={handleSubmit}
+      onSubmit={event=>handleSubmit(event)}
       
       >
         <div className={`${confirmAdd ? "hidden" : null}`}>
@@ -172,16 +172,16 @@ const inputStockChange = (e) => {
             </div>
           </div> */}
 
-          <div className="flex flex-col my-5 ">
-          <div className="font-bold text-lg text-teal-600">
+          <div className="flex flex-col my-3 border-t pt-6">
+          {/* <div className="font-bold text-lg text-teal-600">
           Perubahan Stok
-          </div>
+          </div> */}
           <span className="text-xs">
-            Silahkan pilih, apakah ingin menambah / mengurangi stok saat ini
+            Silahkan pilih, apakah ingin menambah / mengurangi stok saat ini?
             </span>
           </div>
           <div>
-          <select className="rounded-lg border bg-inherit px-2 py-2 mb-6 outline-none focus:ring-2 " 
+          <select className="rounded-lg border bg-inherit px-2 pb-2 mb-6 outline-none focus:ring-2 " 
           ref={valueType} onChange={valueChange}
                 >
                     <option value="tambah" 
@@ -210,8 +210,10 @@ const inputStockChange = (e) => {
                   type="numberSecondVariant"
                   value={(quantity >= productData?.product_details[0]?.quantity && valueTypeState === "hapus")
                    ? productData?.product_details[0]?.quantity : 
-                   quantity < 0 ? 0 : quantity }
-                  onChange={inputStockChange}
+                   quantity < 1 ? 1 : quantity }
+                  onChange={event =>{inputStockChange(event)
+                    setError({ ...error, value: false })
+                  }}
                   errorInput={error.value}
                 />
                 {error.value && (
@@ -221,7 +223,7 @@ const inputStockChange = (e) => {
               )}
           <button     
             className="p-2  duration-300 border-2
-             rounded-lg border-gray-600 hover:text-white hover:bg-green-500 hover:border-green-500
+             rounded-lg border-gray-600 hover:text-white hover:bg-primary hover:border-primary
              text-gray-600 text-lg"
             onClick={plusButton}
             >
@@ -241,13 +243,13 @@ const inputStockChange = (e) => {
               className={`w-full 
               select-none 
               rounded-lg 
-              ${valueTypeState === "tambah" ? "bg-green-700" : "bg-red-700"}
+              ${valueTypeState === "tambah" ? "bg-primary" : "bg-red-700"}
               px-6 
               py-2 
               text-sm 
               text-white 
               duration-300 
-              ${valueTypeState === "tambah" ? "hover:bg-green-500" : "hover:bg-red-500"}`}
+              ${valueTypeState === "tambah" ? "hover:bg-primary" : "hover:bg-red-500"}`}
               type="submit"
             >
               {valueTypeState === "tambah" ? "Tambah" : "Hapus" }

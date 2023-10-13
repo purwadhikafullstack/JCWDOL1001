@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { HiOutlineTrash,HiMagnifyingGlass } from "react-icons/hi2"
+import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {deleteQuestion, PostAnswer, getForum,getUnanswered } from "../../../store/slices/forum/slices.js"
+import {PostAnswer, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
@@ -27,16 +27,18 @@ function QNA () {
         }
     })
     
-    const inputAnswerRef = useRef()
+    const [inputAnswer,setInputAnswer] = useState("")
     const [unansweredList, setUnansweredList] = useState([])
     const [answeredList, setAnsweredList] = useState([])
 
-    const answerRef = useRef()
+    const questionRef = useRef()
 
     const [sortDate,setSortDate] = useState(false)
 
     const [showModal, setShowModal] = useState({ show: false, context: "" })
   
+    const [page,setPage] = useState(1)
+
     const [selectedQuestion, setSelectedQuestion] = useState([])
 
     const [confirmation, setConfirmation] = useState(false);
@@ -57,7 +59,8 @@ function QNA () {
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
         setSelectedQuestion([])
-        dispatch(getForum({sortDate :""}))
+        // dispatch(getForum({sortDate :""}))
+        dispatch(resetSuccessForum())
         document.body.style.overflow = "auto"
     }
 
@@ -78,23 +81,34 @@ function QNA () {
     const clearFilter = () => {
         setSortingDate("")
         dispatch(getForum({sortDate :""}))
-        answerRef.current.value = ""
+        questionRef.current.value = ""
         setFilter(false)
     }
 
     const [error, setError] = useState("")
     const [isToastVisible, setIsToastVisible] = useState(false)
-    const output = {}
+
+    const onSearch = async (e,question) =>{
+        e.preventDefault()
+        const sort = sortDate ? "DESC" : "ASC"
+        dispatch(getUnanswered({filterQuestion : question, sortDate : sort}))
+        setFilter(true)
+    }
 
     const handleOnSure = async (qnaId) => {
         try {
-            Object.assign(output,{answer : inputAnswerRef.current.value, qnaId : qnaId })
+            const sort = sortDate ? "DESC" : "ASC"
+            const output = 
+            {answer : inputAnswer, qnaId : qnaId, sortDate : sort}
             
-            await AnswerValidationSchema.validate({answer : inputAnswerRef.current.value},{
+            await AnswerValidationSchema.validate({answer : inputAnswer},{
                 abortEarly:false
             })
+            
 
-            dispatch(PostAnswer(output))
+            console.log(output)
+            dispatch(PostAnswer(output)).then(()=>
+            dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")}))))
             setConfirmation(false)
 
         }catch(error) {
@@ -115,6 +129,13 @@ function QNA () {
             }, 2000)
         }
     }
+    const onChangeValue = (event, state) =>{
+        const newValue = event.target.value
+        if(newValue){
+          state(newValue)
+        }
+      } 
+
 useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
 
@@ -155,25 +176,27 @@ useEffect( ()=>{
         // }
     }, [sortDate])
 
-
+    
     return (
         <div>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <a className="flex items-center normal-case text-[20pt] pb-3">
                     Daftar Pertanyaan
                 </a>
-                <div className="relative mx-5 my-5 items-center h-auto gap-5 flex flex-row justify-between">
-                    <Input type="text" placeholder="Search" 
-                        ref={answerRef}
-                    />
+                <div className="my-5 items-center h-auto gap-3 flex flex-row justify-between w-full">
+                    <div className="relative w-1/2 lg:w-1/3">
+                    <form onSubmit={(event)=>{onSearch(event,questionRef.current.value)}}>
+                    <Input type="text" placeholder="Cari pertanyaan..." 
+                        ref={questionRef}
+                        />                
                     <Button 
-                        className="absolute top-1/2 left-40 -translate-y-1/2 p-2" 
-                        onClick={()=>{
-                            dispatch(getForum({filterQuestion : answerRef?.current.value}))
-                            setFilter(true)}}
-                    >
+                        className="absolute top-1/2 right-5 lg:right-10 -translate-y-1/2 p-2" 
+                        type="submit"
+                            >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
+                    </form>
+                    </div>
 
                 <div className="flex gap-2 items-center">
                   <span className="text-sm font-semibold">Urutkan Tanggal Dari : </span>
@@ -229,10 +252,11 @@ useEffect( ()=>{
                                                 onClick={() =>{
                                                     handleShowModal({context : "Menjawab Pertanyaan"})
                                                     setSelectedQuestion(list)
+                                                    setInputAnswer("")
                                                 }}
                                                 className="ml-2 bg-primary"
                                             >
-                                                <RiQuestionAnswerLine  className="text-lg" />
+                                                <HiOutlinePencilSquare className="text-lg" />
                                             </Button>
                                             
                                         </td>
@@ -268,10 +292,11 @@ useEffect( ()=>{
                                                 onClick={() =>{
                                                     handleShowModal({context : "Menjawab Pertanyaan"})
                                                     setSelectedQuestion(list)
+                                                    setInputAnswer(list.answer)
                                                 }}
                                                 className="ml-2 bg-primary"
                                             >
-                                                <RiQuestionAnswerLine  className="text-lg" />
+                                                <HiOutlinePencilSquare className="text-lg" />
                                             </Button>
                                             
                                         </td>
@@ -282,12 +307,13 @@ useEffect( ()=>{
                     </table>
                 </div>
                 <div className="w-full flex items-center justify-center pt-8">
-                    <Pagination 
+                    {/* <Pagination 
                         onChangePagination={onChangePagination}
                         disabledPrev={Number(currentPage) === 1}
                         disabledNext={currentPage >= totalPage}
                         currentPage={currentPage}
-                    />
+                    /> */}
+                     <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
             </div>
             <Modal halfWidth
@@ -297,10 +323,14 @@ useEffect( ()=>{
             >
                 {(showModal.context === "Menjawab Pertanyaan" && !success) && (
                     <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
-                        <p className="mt-2">Masukan Jawaban Anda : </p>
-                        <Input ref={inputAnswerRef} type="textarea" 
+                        <h3 className="mt-2 text-sm font-bold text-gray-600">Pertanyaan : </h3>
+                        {selectedQuestion.question}
+                        <h3 className="mt-2 text-sm font-bold text-gray-600">Masukan Jawaban Anda : </h3>
+                        <Input value={inputAnswer} type="textarea" 
                             errorInput={error.answer }
-                            onChange={() => setError({ ...error, answer: false })}
+                            onChange={(event) => {setError({ ...error, answer: false })
+                            onChangeValue(event,setInputAnswer)
+                        }}
                         />
                         {error.answer && (
                             <div className="text-sm text-red-500 dark:text-red-400">
@@ -331,7 +361,7 @@ useEffect( ()=>{
                             )}
                             <Button title="Yes" isButton isDanger 
                                 isLoading={isLoading}
-                                onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
+                                // onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
                         </div>
                     </>
