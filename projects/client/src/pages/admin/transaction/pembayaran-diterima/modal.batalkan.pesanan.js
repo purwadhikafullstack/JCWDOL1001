@@ -24,7 +24,6 @@ export default function ModalBatalkanPesanan({
   const reasons = [
     { title: "Produk tidak tersedia" },
     { title: "Pembayaran tidak tesuai" },
-    { title: "Alamat tidak ditemukan" },
     { title: "Lainnya" },
   ];
 

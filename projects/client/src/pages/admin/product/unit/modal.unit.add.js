@@ -131,7 +131,6 @@ export default function ModalAddProductUnit({
                     message:"Nama satuan tidak boleh sama dengan satuan yang aktif"
                 }]})
             }
-
             dispatch(addUnit(output))
 
             setConfirmation(false)

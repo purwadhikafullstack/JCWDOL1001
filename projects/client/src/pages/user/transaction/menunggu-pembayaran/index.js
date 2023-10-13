@@ -104,14 +104,18 @@ export default function MenungguPembayaran({
                   handleShowModal("Detail Transaksi", item.transactionId)
                 }
               >
-                <div className="flex items-center justify-between">
-                  <div className="mb-4">
-                  <p className="text-sm font-semibold">{formatDate(item.createdAt)}</p>
-                  <p className="text-sm">Diperbarui Pada {formatDate(item.updatedAt)}</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="">
+                    <p className="text-sm">Tanggal Pembelian</p>
+                    <p className="text-sm font-semibold">{formatDate(item.createdAt)}</p>
                   </div>
-                  <p className="mb-4 text-sm font-semibold text-primary">
-                    {item.createdAt}
-                  </p>
+
+                  <div className="">
+                    <p className="text-sm text-right">Invoice</p>
+                    <p className="mb-4 text-sm font-semibold text-primary">
+                      {item.invoice}
+                    </p>
+                  </div>
                 </div>
                 <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
                   {transactionDetail
