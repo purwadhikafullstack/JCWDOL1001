@@ -39,7 +39,8 @@ const INITIAL_STATE = {
     isGetProfileLoading : false,
     resetStatus : false,
     isForgot : false,
-    passwordChangeStatus : null
+    passwordChangeStatus : null,
+    emailChangeStatus : null
 }
 
 const authSlice = createSlice({
@@ -142,10 +143,16 @@ const authSlice = createSlice({
             state.isChangeEmailLoading = true
         },
         [changeEmail.rejected] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+                emailChangeStatus : null
+            })
         },
         [changeEmail.fulfilled] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+                emailChangeStatus : "success"
+            })
         },
         [changeProfilePicture.pending] : (state, action) => {
             state.isChangePictureLoading = true

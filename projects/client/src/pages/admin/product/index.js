@@ -233,7 +233,7 @@ export default function AdminProducts({user}) {
           />
         </div>
         <div className="mt-4 flex items-center justify-center">
-          <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
+          {total_page > 1 && <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>}
         </div>
       </div>
 

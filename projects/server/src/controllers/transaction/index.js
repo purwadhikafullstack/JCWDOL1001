@@ -382,7 +382,6 @@ const createTransactions = async (req, res, next) => {
 
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
         if (error) throw error;
-        console.log("Email sent: " + info.response);
       })
     //});
 

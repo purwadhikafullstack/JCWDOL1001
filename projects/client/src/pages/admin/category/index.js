@@ -16,6 +16,7 @@ export default function CategoryList(){
     const [fileImage, setFileImage] = useState(null);
     const [searchedCategory, setSearchedCategory] = useState(null)
     const [page, setPage] = useState(1);
+    const [categoryDesc, setCategoryDesc] = useState(null);
     const categoryNameRef = useRef();
     const searchedCategoryRef = useRef();
     const formData = new FormData();
@@ -83,7 +84,7 @@ export default function CategoryList(){
                 <div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                     <div className="m-4">
                     <h2 className="font-semibold text-green-900 text-2xl">Hapus Kategori</h2>
-                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori nomor {categoryIndex} ?</h2>
+                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori {categoryDesc} ?</h2>
                     <form className="space-y-4 md:space-y-6 font-medium text-xl">
                         <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Hapus!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
@@ -97,7 +98,7 @@ export default function CategoryList(){
                     <h2 className="font-semibold text-green-900 text-2xl">Ubah Nama Kategori</h2>
                     <form className="space-y-4 md:space-y-6 font-medium text-xl">
                         <div>
-                            <Input type="text" placeholder="Ubah Kategori" label={`Ubah Kategori nomor ${categoryIndex}`} required ref={categoryNameRef}/>
+                            <Input type="text" placeholder="Ubah Kategori" label={`Ubah nama kategori untuk ${categoryDesc}`} required ref={categoryNameRef}/>
                         </div>
                         <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
                         <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
@@ -110,7 +111,7 @@ export default function CategoryList(){
                     <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
                         <div className="m-4">
                         <h2 className="font-semibold text-green-900 text-2xl">Ubah Gambar Kategori</h2>
-                        <h4 className="my-4">Ubah gambar kategori nomor {categoryIndex} </h4>
+                        <h4 className="my-4">Ubah gambar kategori untuk {categoryDesc} </h4>
                         <form className="space-y-4 md:space-y-6 font-medium text-xl">
                             <div>
                                 <InputImage file={fileImage} setFile={setFileImage}/>
@@ -125,11 +126,12 @@ export default function CategoryList(){
         }
     }
 
-    const handleButtonClick = (categoryId, categoryIndex, context) => {
+    const handleButtonClick = (categoryId, categoryIndex, context, categoryDesc) => {
         setFileImage(null);
         setNewPage(context);
         setCategoryId(categoryId);
         setCategoryIndex(categoryIndex);
+        setCategoryDesc(categoryDesc);
     }
 
     return(
@@ -141,9 +143,12 @@ export default function CategoryList(){
                 <div className="flex flex-row">
                     <h1 className="text-2xl font-semibold w-1/2"> Kategori </h1>
                     <Button isPrimary isButton onClick={()=>setNewPage('add')} title={"Tambah Kategori Baru"} className="mx-3"/>
-                    <form className="relative w-1/3">
+                    <form className="relative w-1/3" onSubmit={(e)=>{
+                        e.preventDefault()
+                        setSearchedCategory(searchedCategoryRef?.current.value)
+                    }}>
                         <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
-                        <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedCategory(searchedCategoryRef?.current.value)}>
+                        <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
                             <HiMagnifyingGlass className="text-2xl text-primary" />
                         </button>
                     </form>
@@ -181,9 +186,9 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3">
-                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className="m-3"/>
-                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className="m-3"/>
-                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className="m-3"/>
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className="m-3"/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage" ,category.categoryDesc)} title={"Ubah Gambar Kategori"} className="m-3"/>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete",category.categoryDesc)} title={"Hapus"} className="m-3"/>
                                 </td>
                             </tr>))
                             :
@@ -193,7 +198,7 @@ export default function CategoryList(){
                     </tbody>
                 </table>
                 <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+                    {totalPage > 1 && <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>}
                 </div>
             </div>
             

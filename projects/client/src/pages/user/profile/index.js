@@ -78,13 +78,13 @@ export default function Profile() {
               <div className="text-2xl py-4 flex flex-row">
                 <label for="gender" className="" >Jenis Kelamin    :</label>
                 <select id="gender" value={gender} onChange={(e)=>setGender(e.target.value)} className="border">
-                  <option value={"Pria"}>Pria</option>
-                  <option value={"Wanita"}>Wanita</option>
+                  <option value={"Laki-Laki"}>Laki-Laki</option>
+                  <option value={"Perempuan"}>Perempuan</option>
                 </select>
               </div>
               <div className="text-2xl py-4 flex flex-row">
                 <label for="birthdate" className="">Tanggal Lahir :</label>
-                <input type="date" id="birthdate" value={birthdate} onChange={(e)=>setBirthdate(e.target.value)} className="border"></input>
+                <input type="date" id="birthdate" value={birthdate} onChange={(e)=>setBirthdate(e.target.value)} className="border" min={"1900-01-01"}></input>
               </div>
               <div className="text-2xl py-4 flex flex-row">
                 <label for="phone" className="">No. Handphone :</label>
