@@ -89,7 +89,7 @@ export default function CategoryList(){
             case 'delete' : return(
                 <div className="overflow-x-auto">
                     <h3 className="title">Hapus Kategori</h3>
-                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori nomor {categoryIndex} ?</h2>
+                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori {categoryDesc} ?</h2>
                     <form className="flex justify-center gap-2 mt-4">
                         <Button isButton isDanger title="Kembali" className="" onClick={()=>{
                             setShowModal(false)
@@ -118,7 +118,7 @@ export default function CategoryList(){
             case 'updateImage' :
                 return(
                     <div className="overflow-x-auto">
-                        <h3 className="title">Ubah Gambar Kategori</h3>
+                        <h3 className="title">Ubah Gambar Kategori {categoryDesc}</h3>
                         <form className="mt-4">
                             <div>
                                 <InputImage file={fileImage} setFile={setFileImage}/>
@@ -141,6 +141,7 @@ export default function CategoryList(){
         setNewPage(context);
         setCategoryId(categoryId);
         setCategoryIndex(categoryIndex);
+        setCategoryDesc(categoryDesc);
         setShowModal(true)
     }
 
@@ -207,9 +208,9 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3 flex gap-2">
-                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className=""/>
-                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className=""/>
-                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className=""/>
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className=""/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage",category.categoryDesc)} title={"Ubah Gambar Kategori"} className=""/>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete",category.categoryDesc)} title={"Hapus"} className=""/>
                                 </td>
                             </motion.tr>))
                             :
