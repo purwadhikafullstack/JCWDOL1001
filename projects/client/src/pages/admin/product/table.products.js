@@ -31,7 +31,6 @@ export default function TableProducts({
           <th className="p-3">Harga</th>
           <th className="p-3">Stok</th>
           <th className="p-3">Unit</th>
-          {/* <th className="p-3">Gambar</th> */}
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -63,25 +62,13 @@ export default function TableProducts({
                 scope="row"
                 className="text-gray-900 whitespace-nowrap p-3 font-medium"
               >
-                {/* {index + 1 + (current_page - 1) * 10} */}
-                {index + 1}
+                {index + 1 + ((current_page - 1) * 10)}
+                {/* {index + 1} */}
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">Rp. {formatNumber(product.productPrice)}</td>
               <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
               <td className="p-3">{product?.productUnits[0]?.name}</td>
-              {/* <td className="p-3">
-                <div className="aspect-[4/3] w-10">
-                  <img
-                    src={
-                      process.env.REACT_APP_CLOUDINARY_BASE_URL +
-                      product.productPicture
-                    }
-                    alt={`${product.productName}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </td> */}
 
               <td className="p-3">
                 <div className="flex gap-3">
@@ -92,7 +79,7 @@ export default function TableProducts({
                       navigate(`/admin/products/history/${product?.productId}`,{state : {productId : product?.productId, productName : product?.productName}})
                     }
 
-                    title="Stock History"
+                    title="Riwayat Stok"
                   />
 
                   <Button

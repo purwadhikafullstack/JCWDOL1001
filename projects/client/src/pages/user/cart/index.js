@@ -9,11 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../../../store/slices/cart/slices";
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import ShippingAddress from "../../../components/Shipping/component.address.js";
-import ShippingCost from "../../../components/Shipping/component.shipping.js";
 import { toast } from "react-toastify";
-import { AddressAndShippingValidationSchema } from "../../../store/slices/cart/validation";
-import DiscountChecker from "../../../components/Discount Checker";
 
 export default function Cart() {
   const {cart,products,isUpdateLoading} = useSelector(state=>{
@@ -25,18 +21,16 @@ export default function Cart() {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const location = useLocation()
   let status = []
   const selectedProduct = cart.map((item,index) => {
     status.push(false)
     return item.cartList?.productName
   });
-
   //
   const cartItems = products.filter((product) =>
     selectedProduct.includes(product.productName)
   );
-
+  
   const [selectedItems, setSelectedItems] = useState([]);
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
@@ -68,9 +62,12 @@ export default function Cart() {
     }
   }
 
-  const handleQty = (type,qty,productId) => {
+  const handleQty = (type,qty,productId,isOneGetOne,productStock) => {
     if (type === "add") {
       // console.log(qty + 1);
+      if(isOneGetOne && (qty+1)*2 > productStock ) throw(
+        toast.error("Kuantitas melebihi stok")
+      )
       dispatch(updateCart({productId : productId, quantity : String(qty + 1)}))
       setTrigger(!trigger)
     }
@@ -82,9 +79,12 @@ export default function Cart() {
     }
   };
 
-  const handleQtyInput = (event,productId,productStock) => {
+  const handleQtyInput = (event,productId,productStock,isOneGetOne) => {
     event.preventDefault()
     const newQty = event?.target?.value;
+    if(isOneGetOne && newQty*2 > productStock ) throw(
+      toast.error("Kuantitas melebihi stok")
+    )
     if (newQty === "" || (+newQty > 0 && +newQty <= productStock )) {
       if(+newQty !== 0){
 
@@ -118,53 +118,46 @@ export default function Cart() {
   };
 
   useEffect(() => {
-  dispatch(getCart())
-  dispatch(totalProductCart())
-  dispatch(
-    getProducts({
-      page: 1,
-      id_cat: "",
-      product_name: "",
-      sort_price: "",
-      sort_name: "",
-      limit: 12,
-    })
-  )
-  
-},[])
+    dispatch(getCart())
+    dispatch(totalProductCart())
+    dispatch(
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+        limit: 12,
+      })
+    )
+  },[])
 
   // useEffect(() => {
-  //     dispatch(getCart())
-  //     dispatch(totalProductCart())
-  //     },[cart])
-
+  //   dispatch(getCart())
+  //   dispatch(totalProductCart())
+  // },[cart])
   
-
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
   
-  const checkOut = async () => {
-    try{
-      dispatch(inCheckOut({data : selectedItems}))
-      navigate("/checkout")
-
-    }catch(error){
-      const errors = {}
+  const checkOut = () => {
+      dispatch(inCheckOut({data : selectedItems})).then(()=>navigate("/checkout","replace")).catch((error)=>{
+        const errors = {}
         
-      error.inner.forEach((innerError) => {
-        errors[innerError.path] = innerError.message;
+        error.inner.forEach((innerError) => {
+          errors[innerError.path] = innerError.message;
+        })
+      
+        setError(errors)
+      
+        toast.error("Check your input field!")
+
+        setIsToastVisible(true)
+
+        setTimeout(() => {
+          setIsToastVisible(false)
+        }, 2000)
       })
-      
-      setError(errors)
-      
-      toast.error("Check your input field!")
-
-      setIsToastVisible(true)
-
-      setTimeout(() => {
-        setIsToastVisible(false)
-      }, 2000)
-    }
   }
   return (
     <div className="container relative py-24">
@@ -211,7 +204,7 @@ export default function Cart() {
                 <div className="">
                   <h3 className="text-teal-600">{item?.productName}</h3>
                   <div className="items-center gap-2">
-                    {item.discountProducts[0]?.endingPrice ? 
+                    {item.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
                     <div>
                       <div className="mt-auto flex items-center gap-2">
                         <span className="rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
@@ -232,6 +225,23 @@ export default function Cart() {
                         item?.discountProducts[0]?.endingPrice)
                         //  / 100
                          )}
+                      </h3>
+                    </div>
+                    : item.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === true ?
+                    <div>
+                      <div className="mt-auto flex items-center gap-2">
+                        <span className="w-fit rounded-md border border-red-400 px-2 py-1 text-xs font-semibold text-red-400">
+                          Beli Satu Gratis Satu
+                        </span>
+                      </div>
+
+                      <h3 className="font-bold">
+                        Rp.{" "}
+                        {formatNumber((
+                          // (100 - item?.discount) *
+                          1 * item?.productPrice)
+                          //  / 100
+                          )}
                       </h3>
                     </div>
                     :
@@ -270,7 +280,7 @@ export default function Cart() {
                       }
                       onChange={event =>{handleQtyInput(event,item?.productId,
                         cart.find((cartItem) => cartItem?.productId === item?.productId)
-                        ?.cartList?.product_details[0]?.quantity)}}
+                        ?.cartList?.product_details[0]?.quantity,item?.discountProducts[0]?.discount?.oneGetOne)}}
                       onBlur={handleBlur}
                       isDisabled={isUpdateLoading}
                     
@@ -280,7 +290,8 @@ export default function Cart() {
                       isPrimary
                       title={isUpdateLoading ? <LoadingSpinner isSuperSmall/> : <BsPlusLg className="text-white mx-[1px]" />}
                       onClick={() => handleQty("add", cart.find((cartItem) => cartItem?.productId === item?.productId)
-                      ?.quantity,  item?.productId)}
+                      ?.quantity,  item?.productId,item?.discountProducts[0]?.discount?.oneGetOne,cart.find((cartItem) => cartItem?.productId === item?.productId)
+                        ?.cartList?.product_details[0]?.quantity)}
                       isDisabled={isUpdateLoading}
                     />
                 <div className="h-full flex flex-row items-start

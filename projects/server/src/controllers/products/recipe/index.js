@@ -1,7 +1,7 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
-// const moment = require("moment")
+const moment = require("moment")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -12,7 +12,6 @@ const {} = require("./validation.js")
 const {ValidationError} = require("yup");
 const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
-const moment = require("moment")
 
 const getUser = async( req, res, next ) => {
     try{
@@ -243,9 +242,9 @@ const getUser = async( req, res, next ) => {
               console.log("Email sent: " + info.response);
           })
           
-      // await User_Account.update({
-      //   imgRecipe : null
-      // },{where : {email}})
+      await User_Account.update({
+        imgRecipe : null
+      },{where : {email}})
 
       res.status(200).json({ 
         type : "success",
@@ -524,11 +523,11 @@ const getUser = async( req, res, next ) => {
       })
     }
 
-    // await User_Account.update({
-    //   addressIdRecipe : null,
-    //   createdRecipe : null,
-    //   shippingRecipe : null,
-    // },{where :  {userId : user?.userId}})
+    await User_Account.update({
+      addressIdRecipe : null,
+      createdRecipe : null,
+      shippingRecipe : null,
+    },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
         type : "success",

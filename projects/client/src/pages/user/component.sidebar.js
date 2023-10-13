@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout, resendOtp } from '../../store/slices/auth/slices';
+import { toast } from 'react-toastify';
 
 export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions }) {
   const { context } = useParams()
@@ -62,6 +63,21 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
     },
   ]
 
+  const [isToastVisible, setIsToastVisible] = useState(false)
+
+  const handleUnverifiedUser = ()=>{
+    toast.error("Akun belum terverifikasi")
+    setIsToastVisible(true)
+    setTimeout(() => {
+      setIsToastVisible(false)
+    }, 2000)
+  }
+
+  const handleButtonUpload = () => {
+    user.status ===0 ?  handleUnverifiedUser()
+    : navigate("/upload-recipe")
+  }
+
   useEffect(() => {
     const allowedContext = menu.find((item) => item.context === context);
 
@@ -73,8 +89,14 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
   return (
     <div className="lg:col-span-1 border rounded-lg p-4 shadow-md w-full h-fit">
           <div className="flex items-center gap-4 border-b-2 pb-4">
-            <div className="h-12 w-12 rounded-full overflow-hidden">
+            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center">
+              {user?.profile?.profilePicture ?
               <img src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture} alt="" /> 
+              :
+              <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-xl">
+                {user?.profile.name.charAt(0)}
+              </div>
+            }
             </div>
             <h3>{profile.name}</h3>
           </div>
@@ -93,10 +115,11 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
             }
 
             <Button
+              isDisabled={isToastVisible}
               isButton
               isBLock
               isPrimaryOutline
-              onClick={() => navigate("/upload-recipe")}
+              onClick={handleButtonUpload}
               title="Unggah Resep"
               />
           </div>

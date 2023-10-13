@@ -38,7 +38,8 @@ const INITIAL_STATE = {
     isResetPasswordLoading : false,
     isGetProfileLoading : false,
     resetStatus : false,
-    isForgot : false
+    isForgot : false,
+    passwordChangeStatus : null
 }
 
 const authSlice = createSlice({
@@ -127,10 +128,16 @@ const authSlice = createSlice({
             state.isChangePasswordLoading = true
         },
         [changePassword.rejected] : (state, action) => {
-            state.isChangePasswordLoading = false
+            state = Object.assign(state, {
+                isChangePasswordLoading : false,
+                passwordChangeStatus : null
+            })
         },
         [changePassword.fulfilled] : (state, action) => {
-            state.isChangePasswordLoading = false
+            state = Object.assign(state, {
+                isChangePasswordLoading : false,
+                passwordChangeStatus : "success"
+            })
         },
         [changeEmail.pending] : (state, action) => {
             state.isChangeEmailLoading = true

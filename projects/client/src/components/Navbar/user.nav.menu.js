@@ -48,7 +48,7 @@ export default function UserNavMenu({
 
   useEffect(()=>{
     setIsMenuVisible(false)
-  }, [])
+  }, [user])
 
   return (
     <div className={`nav-menu-wrapper justify-end `} >
@@ -99,11 +99,18 @@ export default function UserNavMenu({
               onMouseLeave={() => setIsMenuVisible(false)}
               >
               <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
-                <img
-                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
+                {user?.profile?.profilePicture ?
+                  <img
+                    src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                :
+                  <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-xl">
+                    {user?.profile.name.charAt(0)}
+                  </div>
+                }
+
                 {ongoingTransactions > 0 &&
                   <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">
                     {ongoingTransactions}
@@ -135,11 +142,17 @@ export default function UserNavMenu({
                         <div className="" onClick={() => navigate("/user/profile")}>
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
                             <div className="h-12 w-12 overflow-hidden rounded-full">
-                              <img
-                                src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
+                              {user?.profile?.profilePicture ?
+                                <img
+                                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                />
+                              :
+                                <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-xl">
+                                  {user?.profile.name.charAt(0)}
+                                </div>
+                              }
                             </div>
                             <div className="">
                               <h3>{user.profile.name}</h3>

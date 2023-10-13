@@ -17,15 +17,6 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
         <span>Produk</span>
       </Button>
 
-      {/* <Button
-        isLink
-        path="/promo"
-        className={`flex flex-col items-center gap-1 text-xs ${ pathname === "/promo" ? "text-primary" : "text-slate-500" }`}
-      >
-        <BiSolidDiscount className="text-2xl" />
-        <span>Promo</span>
-      </Button> */}
-
       <Button
         isLink
         path="/upload-recipe"
@@ -47,17 +38,24 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
       <Button
         isLink
         path={pathname.includes("user")  ? null : "/user/profile"}
-        className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/profile" ? "text-primary" : "text-slate-500"}`}
+        className={`flex flex-col items-center gap-1 text-xs lg:hidden ${  pathname === "/user/profile" ? "text-primary" : "text-slate-500"}`}
       >
         <div className={`profile-img-wrapper`}>
           <div
             className={`nav-profile-img aspect-square w-7 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 `}
           >
-            <img
-              src=""
-              alt=""
-              className="h-full w-full object-cover"
-            />
+            {user?.profile?.profilePicture ?
+              <img
+                src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            :
+              <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-lg">
+                {user?.profile.name.charAt(0)}
+              </div>
+            }
+
             {ongoingTransactions > 0 &&
               <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger right-6 bottom-6 text-white group-hover:right-1 text-[12px]">
                 {ongoingTransactions}

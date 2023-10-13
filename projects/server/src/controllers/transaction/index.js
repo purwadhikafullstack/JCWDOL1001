@@ -271,6 +271,24 @@ const createTransactions = async (req, res, next) => {
         {
           model: Product_List,
           as: "cartList",
+          include:
+          {
+            model: Discount_Product,
+            attributes: { exclude: ["discountProductId"] },
+            as: "discountProducts",
+            where:{isDeleted:0},
+            include: {
+              model: Discount,
+              where: { isDeleted: 0, 
+                [Op.or] :[
+                  {discountExpired :{[Op.gte] : moment()}},
+                  {discountExpired :{[Op.is] : null}}
+                ]
+              },
+              required: false,
+            },
+            required: false,
+          },
         },
       ],
       where: { [Op.and]: [{ userId }, { inCheckOut: 1 }] },
@@ -291,9 +309,17 @@ const createTransactions = async (req, res, next) => {
     };
 
     const newTransaction = await Transaction_List?.create(newTransactionList);
-
-    if(discountId) await Discount_Transaction.create({transactionId: newTransaction.transactionId,discountId})
-
+    if(discountId.length>0) { 
+      const discountIdList =[]
+      for(let i = 0; i < discountId.length; i++){
+        discountIdList.push({ 
+          transactionId : newTransaction.transactionId,
+          discountId : discountId[i]
+        })
+      }
+      await Discount_Transaction.bulkCreate(discountIdList)
+    }
+    
     for (let i = 0; i < startTransaction.length; i++) {
       let price = 0;
       let totalPrice = 0;
@@ -317,7 +343,7 @@ const createTransactions = async (req, res, next) => {
       const UpdateStock = await Product_Detail?.findOne(
         { include : {model : Product_Unit, as : "product_unit"},
           where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
-      let newQuantity = UpdateStock.quantity - startTransaction[i].quantity;
+      let newQuantity = startTransaction[i].cartList?.discountProducts?.length > 0 && startTransaction[i]?.cartList?.discountProducts[0]?.discount?.oneGetOne ? UpdateStock.quantity - (startTransaction[i].quantity*2) : UpdateStock.quantity - startTransaction[i].quantity;
       if(newQuantity < 0) throw ({status : middlewareErrorHandling.BAD_REQUEST_STATUS, message : middlewareErrorHandling.ITEM_NOT_ENOUGH});
       await Product_Detail?.update({quantity : newQuantity},{where : {[Op.and]: [{productId : startTransaction[i].productId},{isDefault : 1}]}});
 
@@ -325,9 +351,9 @@ const createTransactions = async (req, res, next) => {
         productId : startTransaction[i].productId,
         unit : UpdateStock.product_unit.name,
         initialStock : UpdateStock.quantity,
-        type : "Update Stock",
-        status : "Pengurangan",
-        quantity : startTransaction[i].quantity,
+        type : "Pengurangan",
+        status : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? "Penjualan Buy One Get One" : "Penjualan",
+        quantity : startTransaction[i].cartList?.discountProducts[0]?.discount?.oneGetOne ? startTransaction[i].quantity*2 : startTransaction[i].quantity,
         results : newQuantity
       }
       await Product_History?.create(ProductHistory);
@@ -383,7 +409,8 @@ const getCheckoutProducts = async (req, res, next) => {
           as: "product_detail",
           include : {
             model: Discount_Product,
-            as: "productDiscount"
+            as: "productDiscount",
+            where : {isDeleted : 0}
           },
         },
         {

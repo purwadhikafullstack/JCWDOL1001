@@ -2,26 +2,15 @@ import * as Yup from "yup";
 
 export const DiscountInfoValidationSchema = Yup.object({
     discountDesc : Yup.string()
-        .required("Description is required"),
+        .required("Deskripsi diskon dibutuhkan"),
     discountName : Yup.string()
-        .required("Discount name is required"),
-    discountCode : Yup.string()
-        .when(["discountAmount","minimalTransaction"], ([discountAmount,minimalTransaction], schema) => {
-            if(minimalTransaction && discountAmount) 
-                return schema.required("Voucher Code is required")
-            return schema
-        }),
-    discountAmount : Yup.number("Amount must be a number")
-        .when(["discountName","amount","oneHaveOne"], ([discountName,discountAmount,oneGetOne], schema) => {
-            if(oneGetOne ===1 ) {
-                return schema.nullable()
-            }else if(!discountName || !discountAmount) return schema.required("Discount Amount is required")
-            return schema
-        }),
+        .required("Nama diskon dibutuhkan"),
+    discountCode : Yup.string(),
+    discountAmount : Yup.string("Potongan harus berupa angka"),
     discountExpired : Yup.date().nullable(),
-    isPercentage : Yup.number("Percentage status must be a number")
-        .required("Percentage status is required"),
-    oneGetOne : Yup.number("One Get One Status must be a number")
-        .required("One Get One Status is required"),
-    minimalTransaction : Yup.number("Minimum transaction must be a number").nullable(),
+    isPercentage : Yup.number("Persentase harus berupa angka")
+        .required("Persentase dibutuhkan"),
+    oneGetOne : Yup.number("Beli satu gratis satu harus berupa angka")
+        .required("Beli satu gratis satu dibutuhkan"),
+    minimalTransaction : Yup.string("Minimal transaksi harus berupa angka").nullable(),
 })

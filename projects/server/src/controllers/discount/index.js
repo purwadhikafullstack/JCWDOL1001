@@ -93,10 +93,10 @@ const createDiscount = async (req, res, next) => {
             message : middlewareErrorHandling.NOT_NEED_CODE
         })
 
-        if(!discountAmount && listProductId.length > 0) throw({
-            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
-        })
+        // if(!discountAmount && listProductId.length > 0) throw({
+        //     status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+        //     message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
+        // })
 
         if (listProductId.length > 0){ 
             const productBindWithOtherDiscount = await Discount_Product.findAll({
@@ -185,10 +185,10 @@ const updateDiscount = async (req, res, next) =>{
             message : middlewareErrorHandling.NOT_NEED_CODE
         })
 
-        if(!discountAmount && listProductId.length > 0) throw({
-            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
-        })
+        // if(!discountAmount && listProductId.length > 0) throw({
+        //     status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+        //     message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
+        // })
 
         if (listProductId.length > 0){ 
             const productBindWithOtherDiscount = await Discount_Product.findAll({

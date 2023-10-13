@@ -129,6 +129,7 @@ function QNA () {
             }, 2000)
         }
     }
+
     const onChangeValue = (event, state) =>{
         const newValue = event.target.value
         if(newValue){
