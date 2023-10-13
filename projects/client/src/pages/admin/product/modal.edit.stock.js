@@ -124,6 +124,7 @@ const inputStockChange = (e) => {
     );
   }
 
+
   if (errorMessage) {
     return (
       <Message

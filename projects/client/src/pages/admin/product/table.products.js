@@ -136,20 +136,24 @@ export default function TableProducts({
                           Ubah Detail
                         </span>
                       </Button>
-
+                      { product.product_details.length !== 0 &&
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        onClick={() =>
-                          handleShowModal({context:"Ubah Stok", productId:product.productId})
-                        }
+                        onClick={() =>{
+                          // const context = product.product_details.length === 0 ?  "Ubah Satuan" : "Ubah Stok"                
+                          handleShowModal({
+                            context : "Ubah Stok" , 
+                            productId : product.productId
+                          })
+                        }}
                       >
                         <span className="flex items-center gap-2 py-2">
                           <HiOutlineSquare3Stack3D className="text-lg text-primary" />
                           Ubah Stok
                         </span>
                       </Button>
-
+                      }
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
