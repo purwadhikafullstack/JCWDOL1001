@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import {useState, useRef } from "react";
-import { changePassword } from "../../../store/slices/auth/slices";
+import { changePassword} from "../../../store/slices/auth/slices";
 import Input from "../../../components/Input";
 import { changePasswordValidationSchema } from "../../../store/slices/auth/validation";
 import Button from "../../../components/Button";
@@ -18,9 +18,10 @@ export default function Password() {
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [submit,setSubmit] = useState(false);
 
-  const {profile} = useSelector(state=>{
+  const {profile, passwordChangeStatus} = useSelector(state=>{
     return {
       profile : state.auth.profile,
+      passwordChangeStatus : state.auth.passwordChangeStatus
     }
   })
 
@@ -38,8 +39,8 @@ export default function Password() {
           newPassword : newPasswordRef.current.value,
           rePassword : rePasswordRef.current.value
           }))
-        setError("")
-        setSubmit(true)
+          setError("")
+          setSubmit(true)
       }
     }catch(error){
       const errors = {}
@@ -49,8 +50,11 @@ export default function Password() {
       })
 
       setError(errors)
-      console.log(error)
-      toast.error(error.message)
+      if(error.message.includes("errors")){
+        toast.error("Harap periksa kembali isian Anda.")
+      }else{
+        toast.error(error.message)
+      }
 
       setIsToastVisible(true)
 
@@ -58,6 +62,12 @@ export default function Password() {
         setIsToastVisible(false)
       }, 2000)
     }
+  }
+  
+  if(passwordChangeStatus === "success"){
+    oldPasswordRef.current.value = null;
+    newPasswordRef.current.value = null;
+    rePasswordRef.current.value = null;
   }
 
   return (
@@ -72,7 +82,7 @@ export default function Password() {
                     ref={oldPasswordRef}
                     required
                     type="password"
-                    label="Your Old Password"
+                    label="Password Lama Anda"
                     placeholder="******"
                     errorInput={error.oldPassword}
                   />
@@ -87,7 +97,7 @@ export default function Password() {
                     ref={newPasswordRef}
                     required
                     type="password"
-                    label="Your New Password"
+                    label="Password Baru Anda"
                     placeholder="******"
                     errorInput={error.newPassword}
                   />
@@ -102,7 +112,7 @@ export default function Password() {
                     ref={rePasswordRef}
                     required
                     type="password"
-                    label="Confirm your new Password"
+                    label="Konfirmasi Password Baru"
                     placeholder="******"
                     errorInput={error.rePassword}
                   />
@@ -112,12 +122,6 @@ export default function Password() {
                             </div>
                   )}
                 </div>
-              
-              {/*<button type="submit" className="border border-black border-double bg-white hover:bg-slate-200 w-24 items-center" onClick={()=>dispatch(changePassword({userId : profile.userId, 
-                oldPassword : oldPasswordRef.current.value,
-                newPassword : newPasswordRef.current.value,
-                rePassword : rePasswordRef.current.value
-                }))}>Change Password</button>*/}
                 <Button isButton isPrimary isDisabled={isToastVisible} type={isToastVisible ? "button" : "submit"} title="Change Password" className="mt-4 py-3"/>
             </form>
           </div>

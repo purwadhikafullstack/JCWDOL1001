@@ -41,13 +41,13 @@ export const VerifyValidationSchema = Yup.object({
 })
 
 export const changePasswordValidationSchema = Yup.object({
-    oldPassword : Yup.string().required("Old Password is required")
-        .min(6,"Password must at least 6 characters"),
-    newPassword : Yup.string().required("New Password is required")
-        .min(6,"Password must at least 6 characters"),
-    rePassword : Yup.string().required("Password is required")
-        .min(6,"Password must at least 6 characters").oneOf([Yup.ref('newPassword'), null], 
-        'Must match "New password" field value'), 
+    oldPassword : Yup.string().required("Password Lama harus diisi!")
+        .min(6,"Password harus minimal 6 karakter"),
+    newPassword : Yup.string().required("Password Baru harus diisi!")
+        .min(6,"Password harus minimal 6 karakter"),
+    rePassword : Yup.string().required("Konfirmasi ini harus diisi!")
+        .min(6,"Password harus minimal 6 karakter").oneOf([Yup.ref('newPassword'), null], 
+        'Harus sama dengan password baru anda!'), 
 })
 
 export const changeEmailValidationSchema = Yup.object({
