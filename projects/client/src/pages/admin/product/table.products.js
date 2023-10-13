@@ -68,11 +68,11 @@ export default function TableProducts({
               </th>
               <td className="p-3">{product.productName}</td>
               <td className="p-3">Rp. {formatNumber(product.productPrice)}</td>
-              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
-              <td className="p-3">{product?.productUnits[0]?.name}</td>
+              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity ? product?.productUnits[0]?.product_detail.quantity : "-"}</td>
+              <td className="p-3">{product?.productUnits[0]?.name ? product?.productUnits[0]?.name : "-"}</td>
               {/* <td className="p-3">
                 <div className="aspect-[4/3] w-10">
-                  <img
+                  <img  
                     src={
                       process.env.REACT_APP_CLOUDINARY_BASE_URL +
                       product.productPicture
