@@ -10,7 +10,7 @@ export default function ModalDetailTransaction({
   const shippingAddress = selectedTransaction?.user_address;
 
   return (
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto mt-2">
         <div className="left-container">
           {countdown &&
             <div className="mb-4 p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
@@ -67,29 +67,69 @@ export default function ModalDetailTransaction({
             </div>
           </div>
             <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-              {transactionDetail?.map((product, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
+            {transactionDetail?.map((product, index) => {
+              const discount = product.listedTransaction?.discountProducts;
+              const isOneGetOne = discount?.length !== 0 && discount[0]?.discount?.oneGetOne === true;
+              
+              return (
+                <div key={index} className="flex items-center gap-2 border-b-2 py-2 text-sm ">
                   <img
                     className="w-14 border"
-                    src={
-                      process.env.REACT_APP_CLOUDINARY_BASE_URL +
-                      product.listedTransaction.productPicture
-                    }
+                    src={`${process.env.REACT_APP_CLOUDINARY_BASE_URL}${product.listedTransaction.productPicture}`}
                     alt={product.listedTransaction.productName}
                   />
                   <div className="w-full">
                     <p>{product.listedTransaction.productName}</p>
-                    <div className="flex justify-between">
-                      <div className="flex gap-2">
-                        <p>Rp. {formatNumber(product.price)}</p>
-                        <span>x</span>
-                        <p>{product.quantity}</p>
+                    {discount?.length !== 0 ? (
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <div className="mt-auto flex items-center gap-2">
+                            {isOneGetOne ? (
+                              <span className="w-fit rounded-md border border-red-400 p-1 text-xs font-semibold text-red-400">
+                                Beli Satu Gratis Satu
+                              </span>
+                            ) : (
+                              <>
+                                <span className="rounded-md border border-red-400 p-1 text-xs font-semibold text-red-400">
+                                  {discount[0]?.discount?.isPercentage
+                                    ? `${discount[0]?.discount?.discountAmount}%`
+                                    : `Rp. ${formatNumber(discount[0]?.discount?.discountAmount)} off`}
+                                </span>
+                                <h3 className="text-sm text-slate-400 line-through">
+                                  Rp. {formatNumber(product.price)}
+                                </h3>
+                              </>
+                            )}
+                          </div>
+
+                          <h3 className="flex gap-2 font-semibold">
+                            Rp. {formatNumber(isOneGetOne ? product.price : discount[0]?.endingPrice)}
+                            <span>x</span>
+                            <p>{product.quantity}</p>
+                          </h3>
+                        </div>
+
+                        <p className="font-bold">
+                          Rp. {formatNumber(product.totalPrice)}
+                        </p>
                       </div>
-                      <p className="font-semibold">Rp. {formatNumber(product.totalPrice)}</p>
-                    </div>
+                    ) : (
+                      <div className="flex items-end justify-between">
+                        <h3 className="flex gap-2 font-semibold">
+                          Rp. {formatNumber(product.price)}
+                          <span>x</span>
+                          <p>{product.quantity}</p>
+                        </h3>
+
+                        <p className="font-bold">
+                          Rp. {formatNumber(product.totalPrice)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
 
             <div className="flex flex-col gap-2 border-t-2 pt-2">

@@ -160,7 +160,6 @@ export default function AdminProducts({user}) {
           }}>
             <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
             <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit"
-            // onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}
             >
               <HiMagnifyingGlass className="text-2xl text-primary" />
             </button>
