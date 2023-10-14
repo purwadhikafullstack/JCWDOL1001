@@ -57,7 +57,7 @@ function ForumPage () {
     }
 
     const onButtonFilter = () => {
-        dispatch(getForum({sortDate : sortingDate,filterName : questionRef?.current.value}))
+        dispatch(getForum({sortDate : sortingDate,filterQuestion : questionRef?.current.value}))
         setFilter(true)
     }
 

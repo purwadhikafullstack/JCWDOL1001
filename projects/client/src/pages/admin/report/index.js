@@ -87,8 +87,8 @@ function ReportPage () {
 
             setFilter(true)
         }catch(error){
-            if(error.inner.length === 0) {
-                toast.error("Tanggal awal dan tanggal akhir harus diisi")
+            if(error) {
+                toast.error(error.message)
             }
 
             setIsToastVisible(true);

@@ -24,7 +24,8 @@ export default function TableDiscount({
             </tr>
         </thead>
         <tbody>
-            {discountList?.map((list, index) => (
+            {discountList.length ===0 ? <h3>Data Tidak Ditemukan</h3>
+            : discountList?.map((list, index) => (
                 <motion.tr
                     initial={{
                         opacity: 0,
