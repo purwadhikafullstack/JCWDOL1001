@@ -213,7 +213,7 @@ export default function Transaction({
                     setSearchedInvoice(searchedInvoiceRef?.current.value)
                   }}
                 >
-                  <Input type="text" placeholder="Cari nomor invoice disini" ref={searchedInvoiceRef} isDisabled={transaction.length === 0}/>
+                  <Input type="number" placeholder="Cari nomor invoice disini" ref={searchedInvoiceRef} isDisabled={transaction.length === 0}/>
                   <Button
                       className="absolute top-1/2 right-0 -translate-y-1/2 p-2" 
                       type="submit" 

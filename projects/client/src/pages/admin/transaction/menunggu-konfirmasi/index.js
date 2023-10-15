@@ -84,7 +84,7 @@ export default function MenungguKonfirmasi({
             <Button
               isButton
               isDangerOutline
-              title={`Batalkan Transaksi`}
+              title={`Batalkan Pesanan`}
               className={`lg:col-start-3 md:row-start-1`}
               onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
             />

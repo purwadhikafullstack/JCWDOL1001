@@ -74,14 +74,6 @@ export default function PembayaranDiterima({
               handleCloseModal={handleCloseModal}
               handleShowModal={handleShowModal}
             />
-            <div className="mt-4 justify-center flex gap-2">
-            <Button
-              isButton
-              isPrimary
-              title={`Kembali`}
-              onClick={handleCloseModal}
-            />
-          </div>
         </>
         }
       </Modal>

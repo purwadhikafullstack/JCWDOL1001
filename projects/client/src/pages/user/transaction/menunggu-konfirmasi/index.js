@@ -74,14 +74,6 @@ export default function MenungguKonfirmasi({
             handleCloseModal={handleCloseModal}
             handleShowModal={handleShowModal}
           />
-          <div className="mt-4 flex justify-center w-full">
-          <Button
-            isButton
-            isPrimary
-            title={`Kembali`}
-            onClick={handleCloseModal}
-          />
-        </div>
         </>
         }
       </Modal>

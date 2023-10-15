@@ -73,14 +73,6 @@ export default function PesananDibatalkan({
         {showModal.show &&
         <>
           <ModalDetailTransaction handleCloseModal={handleCloseModal} selectedTransaction={selectedTransaction}/>
-            <div className="mt-4 justify-center flex gap-2">
-              <Button
-                isButton
-                isPrimary
-                title={`Kembali`}
-                onClick={() => handleCloseModal()}
-              />
-            </div>
         </>
         }
       </Modal>

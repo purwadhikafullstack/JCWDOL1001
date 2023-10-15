@@ -36,7 +36,7 @@ const getProducts = async (req, res, next) => {
     const filter = { id_cat, product_name };
     if (id_cat) filter.id_cat = { categoryId: id_cat };
     if (product_name)
-      filter.product_name = { productName: { [Op.like]: `%${product_name}%` } };
+      filter.product_name = { productName: { [Op.like]: `%${trimString(product_name)}%` } };
 
     let sort = [];
     if (sort_price) sort.push([`productPrice`, sort_price]);
