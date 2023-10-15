@@ -104,7 +104,7 @@ export default function QnAPage() {
 
   return (
     <div>
-      <div className="container pt-24 w-[50%]">
+      <div className={`container pt-24  ${window.screen.width <= 500 ? "w-fit" : "w-[50%]"} `}>
         <h3 className="title ">Tanya Apotech</h3>
         <h3 className="text-sm text-slate-400 mb-5 ">Pertanyaan yang ditampilkan hanya pertanyaan yang telah ada jawabannya</h3>
         <Button isSmall isPrimaryOutline isPrimary title="Ingin Bertanya" className="mb-5"
@@ -122,7 +122,7 @@ export default function QnAPage() {
               Hapus Pencarian
           </button>
         </div>
-        <div className="flex flex-col gap-5 pb-6 mt-10">
+        <div className="flex flex-col gap-5 pb-3 mt-10">
           {questionList.map((list) => {
             return (
               <Button className="flex w-full gap-4 rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6"
@@ -158,7 +158,7 @@ export default function QnAPage() {
             )
           })}
         </div>
-        <div className="w-full flex items-center justify-center mb-5">
+        <div className="w-full flex items-center justify-center mb-10">
           <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
         </div>
         <Modal 

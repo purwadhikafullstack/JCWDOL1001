@@ -11,6 +11,7 @@ import Message from "../../../components/Message"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
 import { PostQuestionValidationSchema } from "../../../store/slices/forum/validation.js"
 import { toast } from "react-toastify"
+import QuestionsTable from "./component.questions.js"
 
 function ForumPage () {
     const dispatch = useDispatch()
@@ -47,6 +48,9 @@ function ForumPage () {
 
     const handleShowModal = ({context,}) => {
         setShowModal({ show: true, context })
+        window.scrollTo({
+            top: 0,
+          });
     }
 
     const handleCloseModal = () => {
@@ -123,12 +127,12 @@ function ForumPage () {
                         handleShowModal({context : "Memberikan Pertanyaan"})
                     }}
                 />
-                <div className="relative flex mx-5 my-5 items-center h-auto gap-5">
+                <div className={`relative flex ${window.screen.width <= 500 ? "flex-col w-[50%]" : "flex-row items-center mx-5"} my-5  h-auto gap-5`}>
                     <Input type="text" placeholder="Search" 
                         ref={questionRef}
                     />
                     <Button 
-                        className="absolute top-1/2 left-40 -translate-y-1/2 p-2" 
+                        className={`absolute ${window.screen.width <= 500 ? " top-5 left-36" : "top-1/2 left-40"} -translate-y-1/2 p-2`} 
                         onClick={()=>{
                             dispatch(getForum({filterQuestion : questionRef?.current.value}))
                             setFilter(true)}}
@@ -136,13 +140,13 @@ function ForumPage () {
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
                     Urutkan berdasarkan :
-                    <div className="flex flex-row items-center h-auto">
+                    <div className={`flex ${window.screen.width <= 500 && "pl-2"} gap-2  items-center h-auto`}>
                         Tanggal 
                         <FaSortAlphaDown className={`${sortingDate === "DESC"   ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
                         <FaSortAlphaUp className={`${sortingDate === "ASC" || sortingDate === "" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>
                     </div>
                     <Button isButton isPrimary isSecondary={sortingDate === ""} isDisabled={sortingDate === ""}
-                        className="flex mx-5 items-center"
+                        className={`flex ${window.screen.width <= 500 ? "w-fit" : "mx-5"} items-center`}
                         onClick={onButtonFilter}
                     >
                         Atur
@@ -156,42 +160,7 @@ function ForumPage () {
                         Hapus Pengaturan
                     </button>
                 </div>
-                <div>
-                    <table className="text-gray-500 w-full text-left text-sm">
-                        <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
-                            <tr>
-                                <th className="p-3">Tanggal</th>
-                                <th className="p-3">Pertanyaan</th>
-                                <th className="p-3">Jawaban</th>
-                                <th className="p-3">Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {questionList?.map((list) => {
-                                return (
-                                    <tr className="items-center text-left">
-                                        <th className="p-3 ">{formatDate(list.createdAt)}</th>
-                                        <th className="p-3 ">{list.question}</th>
-                                        <th className="p-3 break-all max-w-sm">{list.answer}</th>
-                                        <td className="p-3 ">
-                                            <Button isSmall isDanger={!list.answer} isDisabled={list.answer}
-                                                onClick={() =>{
-                                                    handleShowModal({context : "Hapus Pertanyaan"})
-                                                    setSelectedQuestion(list)
-                                                }}
-                                            >
-                                                <HiOutlineTrash className="text-lg" />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="w-full flex items-center justify-center">
-                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
-                </div>
+                <QuestionsTable handleShowModal={handleShowModal} setSelectedQuestion={setSelectedQuestion} questionList={questionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} />
             </div>
             <Modal fullWidth
                 showModal={showModal.show}

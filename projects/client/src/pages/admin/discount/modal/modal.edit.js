@@ -173,7 +173,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 onClick = {onButtonSave}
             />
         </div>
-        <div className="flex items-center justify-between max-w-[85%] gap-8">
+        <div className={`flex ${window.screen.width <= 500 ? "flex-col w-fit" : "max-w-[85%] gap-8 items-center justify-between"}    `}>
             <div className="">
                 <h4 className={`title font-bold ${onEdit ? "mt-2" : "mt-4" }`}>Nama : </h4>
                 <Input

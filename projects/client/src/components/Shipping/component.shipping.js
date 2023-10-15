@@ -55,7 +55,7 @@ export default function ShippingCost({
     }
     
     return (
-        <div className={`flex gap-8 ${selectedAddress?.length === 0 &&"hidden"}`}>
+        <div className={`flex ${window.screen.width <= 500 ? "flex-col gap-2" : "flex-row gap-8"}  ${selectedAddress?.length === 0 &&"hidden"}`}>
             <div className="flex flex-col">
                 <a>Pilih pengiriman : </a>
                 <div className="flex max-w-lg gap-3 items-center">
@@ -85,11 +85,11 @@ export default function ShippingCost({
                     </select>
                 </div>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-fit">
                 <a>Biaya : </a>
                 <a className="flex flex-grow items-center border border-gray-300 px-2 rounded-lg">Rp. {selectedCourier.cost ? formatNumber(selectedCourier.cost) : "-" }</a>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-fit">
                 <a>Estimasi : </a>
                 <a className="flex flex-grow items-center border border-gray-300 px-2 rounded-lg">{selectedCourier.etd ? selectedCourier.etd : "-" }  Hari</a>
             </div>

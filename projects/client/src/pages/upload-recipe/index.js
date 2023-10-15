@@ -106,7 +106,7 @@ export default function UploadRecipePage(){
     },[address])
 
     return(
-        <div className="container max-w-3xl pt-24">
+        <div className={`container max-w-3xl pt-24  ${window.screen.width <= 500 && "pb-24"}`}>
             <div className="flex flex-col gap-5">
                 <h3 className="title">Jasa Pengiriman</h3>
                 <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
