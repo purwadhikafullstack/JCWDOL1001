@@ -21,8 +21,6 @@ export default function ModalInputProduct({
   categoriesTotalPage,
   setCategoriesPage,
   productData,
-  // selectedCategories,
-  // setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
   categoriesCurrentPage
@@ -107,27 +105,27 @@ export default function ModalInputProduct({
 
     try {
       if (productData) {
+        if (!confirmAdd) {
         await updateProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
         });
 
         setError("");
         setConfirmAdd(true);
-
-        if (confirmAdd) {
+        } else {
           dispatch(updateProduct({ id: productData.productId, formData }));
         }
       }
 
       if (!productData) {
-        await inputProductValidationSchema.validate(inputProductData, {
+        if (!confirmAdd) {
+          await inputProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
         });
 
         setError("");
         setConfirmAdd(true);
-
-        if (confirmAdd) {
+        } else {
           dispatch(createProduct(formData));
         }
       }
