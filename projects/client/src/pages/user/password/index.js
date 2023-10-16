@@ -51,7 +51,7 @@ export default function Password() {
 
       setError(errors)
       if(error.message.includes("errors")){
-        toast.error("Harap periksa kembali isian Anda.")
+        toast.error("Periksa kolom pengisian!")
       }else{
         toast.error(error.message)
       }

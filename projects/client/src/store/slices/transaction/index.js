@@ -71,7 +71,7 @@ const transactionsSlice = createSlice({
             state.isGetCheckoutLoading = true
         },
         [getCheckoutProducts.fulfilled] : (state, action) => {
-            state = Object.assign(state, {cart : action.payload?.data, isGetCheckoutLoading : false})
+            state = Object.assign(state, {cart : action.payload?.data, isGetCheckoutLoading : false, checkoutStatus : null})
         },
         [getCheckoutProducts.rejected] : (state, action) => {
             state = Object.assign(state, {isGetCheckoutLoading : false})

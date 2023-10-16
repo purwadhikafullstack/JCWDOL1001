@@ -60,6 +60,19 @@ export const logout = createAsyncThunk(
     }
 )
 
+export const forcedLogout = createAsyncThunk(
+    "auth/forcedLogout",
+    async (payload, { rejectWithValue }) => {
+        try {
+            localStorage.removeItem("token")
+        } catch (error) {
+            toast.error(error.response ? error.response.data : error)
+
+            return rejectWithValue(error.response ? error.response.data : error)
+        }
+    }
+)
+
 export const register = createAsyncThunk(
     "auth/admin/register",
      
@@ -185,7 +198,7 @@ export const changeEmail = createAsyncThunk (
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-email/${userId}`,payload)
-            toast.success("Email telah dirubah.")
+            toast.success("Email telah berhasil dirubah! Silahkan Login kembali dengan Email yang baru.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
