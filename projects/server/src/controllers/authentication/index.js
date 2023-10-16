@@ -163,7 +163,7 @@ const register= async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have sent OTP and redirect link to your email address",
+            message: "Kami telah mengirim OTP dan tautan verifikasi ke alamat email Anda",
             // userAcc
         });
         
@@ -251,7 +251,7 @@ const verify = async (req, res, next) => {
         // @return response
         res
         .header("Authorization", `Bearer ${accessToken}`)
-        .status(200).json({ message : "Account verified successfully",  data : result, profile : profile})
+        .status(200).json({ message : "Selamat! Akun kamu telah terverifikasi",  data : result, profile : profile})
     }); 
     } catch (error) {
         next(error)
@@ -311,7 +311,7 @@ const resendOtp = async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have resent OTP to your email address",
+            message: "Kami telah mengirim ulang OTP ke alamat email Anda",
             // userAcc
         });
     }); 
@@ -531,7 +531,7 @@ const forgotPass = async ( req,res,next) => {
            res
                .status(200)
                .json({
-               message: "We have sent verification email for reset password",
+               message: "Kami telah mengirimkan email verifikasi untuk reset password",
            });
         });
 
@@ -567,7 +567,7 @@ const reset = async(req,res,next) =>{
         res
         .status(200)
         .json({
-        message: "Success! Your new password is ready to use. Go back to login page",
+        message: "Berhasil! Password baru kamu siap digunakan. Silahkan kembali ke halaman login",
     });
     } catch(error){
         next(error)

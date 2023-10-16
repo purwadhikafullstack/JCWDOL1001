@@ -236,7 +236,7 @@ const getUser = async( req, res, next ) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: "Your uploaded prescription has been reviewed.",
+          subject: "Resep dokter kamu sudah diulas",
           html: html}
 
           helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
@@ -539,7 +539,8 @@ const getUser = async( req, res, next ) => {
 
       res.status(200).json({ 
         type : "success", 
-        message : `Order #${listResult?.transactionId} berhasil dibuat!`,
+        // message : `Order #${listResult?.transactionId} berhasil dibuat!`,
+        message : `Orderan kamu berhasil dibuat!`,
         data : listResult
       })
   

@@ -126,7 +126,7 @@ export const resendOtp= createAsyncThunk(
             toast.success(data?.message)
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }

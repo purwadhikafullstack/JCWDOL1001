@@ -63,12 +63,12 @@ const UpdateEmailValidationSchema = Yup.object({
 })
 
 const ForgotPassValidationSchema = Yup.string({
-    email : Yup.string().email("Invalid email").required("Email is required")
+    email : Yup.string().email("Email tidak valid").required("Email dibutuhkan")
 })
 
 const PasswordValidationSchema = Yup.string({
-    password : Yup.string().required("Password is required")
-    .min(6,"password must at least 6 characters") //min 6 characters
+    password : Yup.string().required("Password dibutuhkan")
+    .min(6,"password minimal 6 karakter") //min 6 characters
 })
 
 module.exports = {

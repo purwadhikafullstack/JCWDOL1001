@@ -74,6 +74,7 @@ function App() {
   useEffect(()=>{
     if (isLogin) {
       dispatch(getOngoingTransactions())
+      dispatch(totalProductCart())
     }
   }, [isUpdateOngoingTransactionLoading, isLogin])
 
@@ -83,6 +84,11 @@ function App() {
     }
   }, [isChangePictureLoading, isChangeProfileLoading])
 
+  useEffect(()=>{
+    if (isLogin) {
+      dispatch(totalProductCart())
+    }
+  },[])
   if (loading) {
     return (
       <div className="grid place-content-center h-screen">
