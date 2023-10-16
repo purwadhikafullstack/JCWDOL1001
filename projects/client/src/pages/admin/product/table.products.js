@@ -68,7 +68,6 @@ export default function TableProducts({
               <td className="p-3 hidden lg:table-cell">Rp. {formatNumber(product.productPrice)}</td>
               <td className="p-3 hidden lg:table-cell">{product?.productUnits[0]?.product_detail.quantity ? product?.productUnits[0]?.product_detail.quantity : "-"}</td>
               <td className="p-3 hidden lg:table-cell">{product?.productUnits[0]?.name ? product?.productUnits[0]?.name : "-"}</td>
-
               <td className="p-3">
                 <div className="flex gap-3">
                   <Button

@@ -8,6 +8,7 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
+  console.log(selectedTransaction)
 
   return (
       <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto mt-2">
@@ -105,6 +106,12 @@ export default function ModalDetailTransaction({
                 <p className="text-sm">Ongkos Kirim</p>
                 <p className="font-bold">
                   Rp. {formatNumber(selectedTransaction?.transport)}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm">Discount</p>
+                <p className="font-bold">
+                  - ( Rp. {formatNumber(+selectedTransaction?.discount)})
                 </p>
               </div>
               <div className="flex justify-between border-t border-primary pt-2">

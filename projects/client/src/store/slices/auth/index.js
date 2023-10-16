@@ -12,7 +12,8 @@ import {
     changeProfileData,
     forgotPass,
     resetPass,
-    getProfile
+    getProfile,
+    forcedLogout
 } from "./slices"
 // import { reset } from "../../../../../server/src/controllers/authentication";
 
@@ -38,7 +39,8 @@ const INITIAL_STATE = {
     isResetPasswordLoading : false,
     isGetProfileLoading : false,
     resetStatus : false,
-    isForgot : false
+    isForgot : false,
+    passwordChangeStatus : null,
 }
 
 const authSlice = createSlice({
@@ -94,7 +96,16 @@ const authSlice = createSlice({
         },
         [logout.rejected] : (state, action) => {
             state.isLogoutLoading = false
-        }, 
+        },
+        [forcedLogout.pending] : (state, action) => {
+            state.isLogoutLoading = true
+        },
+        [forcedLogout.fulfilled] : (state, action) => {
+            state = Object.assign(state, INITIAL_STATE)         
+        },
+        [forcedLogout.rejected] : (state, action) => {
+            state.isLogoutLoading = false
+        },  
         [register.pending] : (state, action) => {
             state.isRegisterLoading = true
         },
@@ -126,19 +137,29 @@ const authSlice = createSlice({
             state.isChangePasswordLoading = true
         },
         [changePassword.rejected] : (state, action) => {
-            state.isChangePasswordLoading = false
+            state = Object.assign(state, {
+                isChangePasswordLoading : false,
+                passwordChangeStatus : null
+            })
         },
         [changePassword.fulfilled] : (state, action) => {
-            state.isChangePasswordLoading = false
+            state = Object.assign(state, {
+                isChangePasswordLoading : false,
+                passwordChangeStatus : "success"
+            })
         },
         [changeEmail.pending] : (state, action) => {
             state.isChangeEmailLoading = true
         },
         [changeEmail.rejected] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+            })
         },
         [changeEmail.fulfilled] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+            })
         },
         [changeProfilePicture.pending] : (state, action) => {
             state.isChangePictureLoading = true
