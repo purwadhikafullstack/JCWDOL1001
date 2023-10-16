@@ -31,6 +31,7 @@ import QNA from "./pages/admin/qna";
 import TentangKami from "./pages/tentang-kami";
 import KebijakanPrivasi from "./pages/kebijakan-privasi";
 import SyaratKetentuan from "./pages/syarat-ketentuan";
+import { totalProductCart } from "./store/slices/cart/slices";
 
 function App() {
   const { pathname } = useLocation();
@@ -73,6 +74,7 @@ function App() {
   useEffect(()=>{
     if (isLogin) {
       dispatch(getOngoingTransactions())
+      dispatch(totalProductCart())
     }
   }, [isUpdateOngoingTransactionLoading, isLogin])
 
@@ -82,6 +84,11 @@ function App() {
     }
   }, [isChangePictureLoading, isChangeProfileLoading, isChangeEmailLoading])
 
+  useEffect(()=>{
+    if (isLogin) {
+      dispatch(totalProductCart())
+    }
+  },[])
   if (loading) {
     return (
       <div className="grid place-content-center h-screen">
@@ -92,7 +99,7 @@ function App() {
 
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions?.totalTransactions}/>
+      <Navbar user={user} isLogin={isLogin}  ongoingTransactions={ongoingTransactions?.totalTransactions}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/qna" element={<QnAPage />} />

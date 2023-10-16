@@ -2,8 +2,8 @@ const Yup = require("yup")
 
 const UpdateCartValidationSchema = Yup.object({
     productId: Yup.string()
-      .required("productId is required")
-      .matches(/^[0-9]+$/, "productId must contain only numbers"),
+      .required("Data Produk dibutuhkan")
+      .matches(/^[0-9]+$/, "Id produk hanya berupa angka"),
     quantity: Yup.number()
     .min(1, 'The minimum amount is one')
     .typeError('The amount invalid')

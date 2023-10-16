@@ -8,6 +8,7 @@ const {
   Product_History,
   Discount_Product,
   Discount,
+  Cart,
 } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const cloudinary = require("cloudinary");
@@ -420,6 +421,27 @@ const updateMainStock = async (req, res, next) => {
     });
 
     await detail.update({ quantity: history?.results });
+
+    //get cart where productId = productId
+    //map aja, promise all, if quantity > result di history, brrti update cartnya
+    const itemInCart = await Cart.findAll({where : {
+      productId : productId
+    }})
+
+    await Promise.all(
+      itemInCart.map(async(item)=>{
+        if(item.quantity > detail?.quantity){
+          // console.log("user "+item.userId+" punya "+item.quantity)
+          await Cart.update({
+            quantity : (detail?.quantity)
+          },{
+            where : {
+              cartId : item?.dataValues?.cartId
+            }
+          })
+        }
+      })
+    )
 
     res
       .status(200)
