@@ -256,7 +256,7 @@ const createTransactions = async (req, res, next) => {
   try {
     //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
-    const { transport, totalPrice, addressId,discountId } = req.body;
+    const { transport, totalPrice, addressId,discountId, discount } = req.body;
 
     const startTransaction = await Cart?.findAll({
       include: [
@@ -299,9 +299,10 @@ const createTransactions = async (req, res, next) => {
 
     const newTransactionList = {
       userId: userId,
-      total: +totalPrice + +transport,
+      total: +totalPrice + +transport + -discount,
       transport: transport,
       subtotal: totalPrice,
+      discount: discount,
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
@@ -383,7 +384,6 @@ const createTransactions = async (req, res, next) => {
 
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
         if (error) throw error;
-        console.log("Email sent: " + info.response);
       })
     //});
 
