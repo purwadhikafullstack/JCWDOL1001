@@ -5,7 +5,7 @@ const DiscountInfoValidationSchema = Yup.object({
         .required("Deskripsi diskon dibutuhkan"),
     discountName : Yup.string()
         .required("Nama diskon dibutuhkan"),
-    discountCode : Yup.string(),
+    discountCode : Yup.string().nullable(),
     discountAmount : Yup.string("Potongan harus berupa angka"),
     discountExpired : Yup.date().nullable(),
     isPercentage : Yup.number("Persentase harus berupa angka")

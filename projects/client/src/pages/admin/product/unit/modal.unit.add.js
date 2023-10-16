@@ -19,10 +19,6 @@ export default function ModalAddProductUnit({
     const qtyRef = useRef()
     const qtyPerUnitRef = useRef()
 
-    const [unitSelected, setSelectedUnit] = useState({
-        unitId : "",
-        unitName : ""
-    });
     const [confirmation, setConfirmation] = useState(false);
 
     const canAddDefaultUnit = productData.productUnits.filter(
@@ -44,6 +40,11 @@ export default function ModalAddProductUnit({
     }else {
         dataUnits = units.filter((unit)=> unit.isSecondary === 0)
     }
+    
+    const [unitSelected, setSelectedUnit] = useState({
+        unitId : dataUnits[0].unitId,
+        unitName : dataUnits[0].unitName
+    });
 
     const [isDefaultUnit, setIsDefaultUnit] = useState({
         id : canAddDefaultUnit ? 1 : 0,
@@ -125,13 +126,12 @@ export default function ModalAddProductUnit({
                 }]})
             }
 
-            if(unitRef.current.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) {
+            if((unitRef?.current?.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) && (unitRef?.current?.value !== undefined && defaultUnitName[0]?.name !== undefined)) {
                 throw({inner: [{
                     path : "unit",
                     message:"Nama satuan tidak boleh sama dengan satuan yang aktif"
                 }]})
             }
-            
             dispatch(addUnit(output))
 
             setConfirmation(false)
@@ -139,13 +139,13 @@ export default function ModalAddProductUnit({
         }catch (error) {
             const errors = {}
             
-            error.inner.forEach((innerError) => {
+            error.inner?.forEach((innerError) => {
                 errors[innerError.path] = innerError.message;
             })
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setConfirmation(false)
 
@@ -161,7 +161,7 @@ export default function ModalAddProductUnit({
         return (
             <SuccessMessage
                 type="success"
-                message={`Berhasil menambahkan satuan ${unitSelected.unitName} ke ${productData.productName}!`}
+                message={`Berhasil menambahkan satuan ke ${productData.productName}!`}
                 handleCloseModal={handleCloseModal}
             />
         );
@@ -190,7 +190,7 @@ export default function ModalAddProductUnit({
                             onChange={handleChangeUnit}
                             className={`bg-gray-50 border text-gray-900 text-sm rounded-lg block w-full p-2.5 ${error.unit ? `border-red-500` : `border-gray-300` }`}
                         >
-                            <option value="default" >Pilih Satuan</option>
+                            <option value="default" disabled >Pilih Satuan</option>
                             {dataUnits.map((unit) => (
                                 <option selected={unitSelected.unitId === unit.unitId} className={unit.unitId.toString()} value={unit.name}>{unit.name}</option>
                             ))}

@@ -33,7 +33,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     })
 
     const onButtonCancel = () => {
-        
         if(selectedId.length === 0){ 
             handleCloseModal()
         }else{
@@ -50,8 +49,8 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     const onButtonSave = async () => {
         try {
             //minimal transaksi harus ada amount dan code
-            if(((amount ==="" || amount ==0 ))  && 
-                ((minimum !=="" || minimum !=0 ) )
+            if((amount =="" || amount ==0 )  && 
+                (minimum !="" || minimum !=0 ) && selectedProducts.length >0
             ){
                 throw({inner : [{
                     path : "discountAmount",
@@ -92,34 +91,24 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     message:"Potongan diperlukan"
                 }]}) 
             }
-            
-            // output.data = {
-            //     "discountDesc" : descRef?.current?.value ? descRef?.current?.value : selectedId?.discountDesc,
-            //     "isPercentage" : !selectedId || selectedId.length ==0 ? +isPercentage.id : Number(selectedId?.isPercentage),
-            //     "discountAmount" : amountRef?.current?.value ? amountRef?.current?.value : selectedId?.discountAmount,
-            //     "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
-            //     "oneGetOne" : !selectedId || selectedId.length ==0 ? +isOneGetOne.id : Number(selectedId?.oneGetOne),
-            //     "minimalTransaction" : minimumRef?.current?.value ? minimumRef?.current?.value : isOneGetOne.id ===1 ? ""  : selectedId?.minimalTransaction,
-            //     "discountName" : nameRef?.current?.value ? nameRef?.current?.value : selectedId?.discountName,
-            //     "discountCode" : codeRef?.current?.value ? codeRef?.current?.value : selectedId?.discountCode,
-            // }
+
             output.data = {
                 "discountDesc" : desc,
                 "isPercentage" : +isPercentage.id,
                 "discountAmount" : amount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
                 "oneGetOne" : +isOneGetOne.id,
-                "minimalTransaction" : minimum,
+                "minimalTransaction" : minimum =="" ? null : minimum,
                 "discountName" : name,
-                "discountCode" : code,
+                "discountCode" : code =="" ? null : code,
             }
-            console.log(output.data)
+
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
             
             await DiscountInfoValidationSchema.validate(output.data,{
                 abortEarly:false
             })
-            
+
             if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
@@ -134,7 +123,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             
             setError(errors)
 
-            toast.error("Periksa kembali data yang Anda masukkan!")
+            toast.error("Periksa kolom pengisian!")
 
             setIsToastVisible(true)
 
@@ -143,6 +132,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             }, 2000)
         }
     }
+
+    const width = window.screen.width
+    const mobileWidth = 414
 
     useEffect(() => {
         setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
@@ -159,7 +151,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     }
     
   return (
-    <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
+    <div className={`flex  ${width <= mobileWidth ? "h-[90vh]" : "max-h-[75vh]"} flex-col overflow-auto px-2`}>
         <Button
             isButton
             isPrimary
@@ -184,7 +176,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 onClick = {onButtonSave}
             />
         </div>
-        <div className="flex items-center justify-between max-w-[85%] gap-8">
+        <div className={`flex ${width <= mobileWidth ? "flex-col w-fit" : "max-w-[85%] gap-8 items-center justify-between"}    `}>
             <div className="">
                 <h4 className={`title font-bold ${onEdit ? "mt-2" : "mt-4" }`}>Nama : </h4>
                 <Input
@@ -337,7 +329,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             </div>
         </div>       
         <ProductList title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>
-        
     </div>
   )
 }

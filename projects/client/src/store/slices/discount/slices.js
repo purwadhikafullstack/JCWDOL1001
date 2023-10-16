@@ -7,7 +7,7 @@ export const getDiscount = createAsyncThunk(
     "discount/allDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            const { page, discountName} = payload
+            const { page, discountName, limit} = payload
             let parameter = "?"
 
             if(page){
@@ -16,6 +16,10 @@ export const getDiscount = createAsyncThunk(
 
             if(discountName){
                 parameter +=`discountName=${discountName}&`
+            }
+
+            if(limit){
+                parameter +=`limit=${limit}&`
             }
 
             const { data } = await api.get("/discount" + encodeURI(parameter))
