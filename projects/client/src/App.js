@@ -31,6 +31,7 @@ import QNA from "./pages/admin/qna";
 import TentangKami from "./pages/tentang-kami";
 import KebijakanPrivasi from "./pages/kebijakan-privasi";
 import SyaratKetentuan from "./pages/syarat-ketentuan";
+import { totalProductCart } from "./store/slices/cart/slices";
 
 function App() {
   const { pathname } = useLocation();
@@ -39,14 +40,15 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading } = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, 
+    isChangeProfileLoading} = useSelector(state => {
 		return {
 			user : state?.auth,
       isLogin : state?.auth?.isLogin,
       ongoingTransactions : state?.transaction?.ongoingTransactions,
       isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
       isChangePictureLoading : state?.auth?.isChangePictureLoading,
-      isChangeProfileLoading : state?.auth?.isChangeProfileLoading
+      isChangeProfileLoading : state?.auth?.isChangeProfileLoading,
 		}
 	})
   
@@ -91,7 +93,7 @@ function App() {
 
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions?.totalTransactions}/>
+      <Navbar user={user} isLogin={isLogin}  ongoingTransactions={ongoingTransactions?.totalTransactions}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/qna" element={<QnAPage />} />

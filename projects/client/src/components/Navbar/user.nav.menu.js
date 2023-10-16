@@ -8,17 +8,19 @@ import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout, resendOtp } from "../../store/slices/auth/slices"
 import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
+import { totalProductCart } from "../../store/slices/cart/slices"
 
 
 export default function UserNavMenu({
   isLogin,
   user,
   handleShowModal,
-  ongoingTransactions
+  ongoingTransactions,
+  // total
 }) {
   const {total}= useSelector(state=>{
     return {
-      total : state?.cart?.total
+      total : state?.cart?.total,
     }
   })
 

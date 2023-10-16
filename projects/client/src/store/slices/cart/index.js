@@ -42,7 +42,7 @@ const cartSlice = createSlice({
         },
         [totalProductCart.fulfilled] : (state, action)=> {
             state = Object.assign(state, {
-                total : action.payload?.total,
+                total : +action.payload?.total[0].quantity,
                 isLoading : false
             })
         },
@@ -60,7 +60,7 @@ const cartSlice = createSlice({
                 isLoading : false,
                 isUpdateLoading : false,
                 cart : action.payload?.data.data,
-                total : action.payload?.total.total,
+                total : +action.payload?.total?.total[0].quantity,
             })
         },
         [updateCart.rejected] : (state, action) => {
@@ -80,7 +80,7 @@ const cartSlice = createSlice({
                 isLoading : false,
                 isDeleteLoading : false,
                 cart : action.payload?.data.data,
-                total : action.payload?.total.total,
+                total : +action.payload?.total?.total[0].quantity,
             })
         },
         [deleteCart.rejected] : (state, action) => {

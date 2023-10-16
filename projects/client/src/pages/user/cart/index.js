@@ -10,15 +10,18 @@ import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { toast } from "react-toastify";
+import AssetCart from "../../../assets/asset-cart.png";
 
 export default function Cart() {
-  const {cart,products,isUpdateLoading} = useSelector(state=>{
+  const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
+      statusUser : state?.auth?.status
     }
   })
+  
   const navigate = useNavigate()
   const dispatch = useDispatch()
   let status = []
@@ -104,17 +107,22 @@ export default function Cart() {
     }
   };
 
-  const handleDeleteStock = (productId) => {
-        dispatch(deleteCart({productId : productId}))
-        setTrigger(!trigger)
-  };
-
   const handleBlur = (event) => {
     const newQty = event.target.value;
 
-    if (newQty === "") {
+    if (!newQty) {
       setQty(1);
     }
+  };
+
+  const handleDeleteStock = (productId) => {
+        dispatch(deleteCart({productId : productId}))
+        setSelectedItems(selectedItems.filter(
+          (cartItem) => cartItem?.productId !== productId
+        ))
+        // selectedItems = a
+        console.log(selectedItems)
+        setTrigger(!trigger)
   };
 
   useEffect(() => {
@@ -127,15 +135,18 @@ export default function Cart() {
         product_name: "",
         sort_price: "",
         sort_name: "",
-        limit: 12,
+        limit: 1000,
       })
     )
+    console.log(products)
+    if(!statusUser){
+      // console.log("jalan")
+      navigate("/")
+      // toast.error("Kamu harus verifikasi data diri untuk bisa mengakses halaman keranjang.")
+    }
   },[])
 
-  // useEffect(() => {
-  //   dispatch(getCart())
-  //   dispatch(totalProductCart())
-  // },[cart])
+
   
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -161,6 +172,18 @@ export default function Cart() {
   }
   return (
     <div className="container relative py-24">
+      {
+        (cartItems.length === 0 && statusUser) && 
+                  <div className="flex flex-col items-center ">
+        <div className="w-80">
+                  <img src={AssetCart} alt="" />
+                </div>
+        <h3 className="title mt-9">Keranjang kamu kosong</h3>
+        <p className="mb-2">Kamu yakin udah pesen?</p>
+        </div>
+      }
+      { (cartItems.length !== 0  && statusUser)&&
+      <>
       <h3 className="title">Keranjang</h3>
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
@@ -278,10 +301,12 @@ export default function Cart() {
                         cart.find((cartItem) => cartItem?.productId === item?.productId)
                           ?.quantity
                       }
+                      onBlur={handleBlur}
                       onChange={event =>{handleQtyInput(event,item?.productId,
                         cart.find((cartItem) => cartItem?.productId === item?.productId)
-                        ?.cartList?.product_details[0]?.quantity,item?.discountProducts[0]?.discount?.oneGetOne)}}
-                      onBlur={handleBlur}
+                        ?.cartList?.product_details[0]?.quantity,item?.discountProducts[0]?.discount?.oneGetOne)
+                        }
+                        }
                       isDisabled={isUpdateLoading}
                     
                     />
@@ -390,6 +415,8 @@ export default function Cart() {
           </div>
         </div>
       </div>
+      </>
+}
     </div>
   );
 }
