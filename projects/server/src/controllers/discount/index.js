@@ -6,11 +6,11 @@ const moment = require("moment")
 
 const getDiscount = async (req, res, next) => {
     try{
-        const { page, discountName } = req.query
+        const { page, discountName,limit } = req.query
 
         const options = {
-            offset: page > 1 ? parseInt(page - 1) * 5 : 0,
-            limit : 5,
+            offset: page > 1 ? parseInt(page - 1) * (limit ? +limit : 10) : 0,
+            limit : limit ? +limit : 10,
         }
 
         const filter = { discountName }
@@ -51,6 +51,7 @@ const getDiscount = async (req, res, next) => {
 			message : "Data berhasil dimuat",
             currentPage : page ? page : 1,
             totalPage : pages,
+            limit:options.limit,
 			discount : discount
 		})
 	}catch(error){

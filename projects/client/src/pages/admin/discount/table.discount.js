@@ -2,11 +2,13 @@ import { HiOutlineTrash } from "react-icons/hi2"
 import Button from "../../../components/Button"
 import { motion } from "framer-motion"
 import formatNumber from "../../../utils/formatNumber"
-import {formatDate, formatDateValue} from "../../../utils/formatDate"
+import {formatDate} from "../../../utils/formatDate"
 
 export default function TableDiscount({
   discountList,
   handleShowModal,
+  currentPage,
+  limit
 }) {
     const width = window.screen.width
     const mobileWidth = 414
@@ -41,7 +43,7 @@ export default function TableDiscount({
                         scope="row"
                         className="text-gray-900 whitespace-nowrap p-3 font-medium"
                     >
-                        {index + 1}
+                        {index + 1 + ((currentPage - 1) * limit)}
                     </th>
                     <td className="p-3 break-all max-w-xs">{list.discountName}</td>
                     <td className="p-3">{list.discountCode}</td>

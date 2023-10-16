@@ -14,11 +14,12 @@ import { getProducts } from "../../../store/slices/product/slices.js"
 
 export default function DiscountPage(){
     
-    const { discountList, totalPage, currentPage, success,isDeleteLoading, products } = useSelector((state) => {
+    const { discountList, totalPage, currentPage, success,isDeleteLoading,limit, products } = useSelector((state) => {
         return {
             discountList : state?.discount?.data,
             totalPage : state?.discount?.totalPage,
             currentPage : state?.discount?.currentPage,
+            limit : state?.discount?.limit,
             success : state?.discount?.success,
             isDeleteLoading : state?.discount?.isDeleteLoading,
             products : state?.products?.data,
@@ -40,7 +41,7 @@ export default function DiscountPage(){
     const handleShowModal = ({context, name, id, isNew}) => {
         setShowModal({ show: true, context, name, id, isNew : isNew})
         
-        dispatch(getDiscount({page : currentPage,discountName : discountRef?.current.value}))
+        dispatch(getDiscount({page : currentPage,discountName : discountRef?.current.value,limit:""}))
         
         if(id){
             const selectedDiscount = discountList.find((discount)=> discount.discountId === id)
@@ -67,7 +68,7 @@ export default function DiscountPage(){
 
     useEffect(() => {
         dispatch(
-            getDiscount({page : page,discountName : discountRef?.current.value})
+            getDiscount({page : page,discountName : discountRef?.current.value,limit:""})
         )
     }, [page])
 
@@ -106,7 +107,7 @@ export default function DiscountPage(){
                     <Button title="Hapus pengaturan" onClick={clearSearch}  className={`flex flex-row items-center h-auto text-red-700 ${search ? "" : "hidden"}`} />
                     </form>
                 </div>
-                <TableDiscount discountList={discountList} handleShowModal={handleShowModal}/>
+                    <TableDiscount limit={limit} currentPage={currentPage} discountList={discountList} handleShowModal={handleShowModal}/>
                 <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
                     <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
