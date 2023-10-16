@@ -10,7 +10,7 @@ import Button from "../../components/Button";
 import { HiArrowLongLeft } from "react-icons/hi2";
 import ForumPage from "./forum";
 
-export default function UserPage({ user, ongoingTransactions }) {
+export default function UserPage({ user, ongoingTransactions, verify, setVerify }) {
   const { context } = useParams();
 
   const profile = user.profile;
@@ -69,6 +69,8 @@ export default function UserPage({ user, ongoingTransactions }) {
           user={user}
           setMobileContextActive={setMobileContextActive}
           ongoingTransactions={ongoingTransactions}
+          verify={verify}
+          setVerify={setVerify}
         />
 
         <div
