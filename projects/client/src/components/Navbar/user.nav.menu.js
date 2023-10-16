@@ -152,7 +152,9 @@ export default function UserNavMenu({
                               <p className="text-sm font-normal text-slate-500">
                                 Profil & Pengaturan
                               </p>
-                              <p className="text-xs text-danger">Silahkan lakukan verifikasi</p>
+                              {user.status === 0 &&
+                                <p className="text-xs text-danger">Silahkan lakukan verifikasi</p>
+                              }
                             </div>
                             <div className="ml-auto flex h-8 w-8 items-center justify-center rounded-full shadow-md">
                               <HiChevronRight className="text-dark" />
