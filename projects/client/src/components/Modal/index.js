@@ -125,6 +125,7 @@ export default function Modal({
                     }}
                     onRegist={() => {
                       setRegist(true);
+                      setLogin(false);
                       setTitle("Register");
                     }}
                     onForgot={() => {
@@ -137,7 +138,10 @@ export default function Modal({
                 ) : regist ? 
                   <RegisterContext
                   onDoneRegist={()=>{
-                  setTitle("Next Step")}} 
+                    setTitle("Next Step")
+                    setLogin(false);
+                    setRegist(true);
+                  }} 
                   onLogin={
                     ()=>{
                       setRegist(false)

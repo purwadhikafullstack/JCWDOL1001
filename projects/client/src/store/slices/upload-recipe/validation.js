@@ -2,9 +2,9 @@ import * as Yup from "yup";
 
 export const UploadRecipeValidationSchema = Yup.object({
   addressId: Yup.string()
-    .required("address is required"),
+    .required("Alamat dibutuhkan"),
   courierName: Yup.string()
-    .required("courier is required"),
+    .required("Jasa pengiriman dibutuhkan"),
   file: Yup.string()
-    .required("Image is required")
+    .required("Gambar resep dibutuhkan")
 })

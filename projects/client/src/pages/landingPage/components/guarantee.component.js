@@ -57,7 +57,7 @@ export default function Guarantee() {
       <h3 className="title text-2xl">Kenapa membeli di kami</h3>
       <div className="relative">
         <div
-          className="categories-wrapper flex gap-4 justify-between overflow-x-auto scroll-smooth px-2 py-4"
+          className={`categories-wrapper flex ${window.screen.width <= 500 ? "flex-col" : "flex-row"} gap-8 justify-between overflow-x-auto scroll-smooth px-2 py-4`}
         >
           {guaranteeItems.map((item, index) => (
             <div className="flex cursor-pointer flex-col items-center justify-center rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6">
