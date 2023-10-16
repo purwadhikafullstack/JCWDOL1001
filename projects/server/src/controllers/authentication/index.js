@@ -424,7 +424,7 @@ const changeEmail = async (req, res, next) => {
         const{userId} = req.params;
         const{email, otp} = req.body;
         
-        await validation.UpdateEmailValidationSchema.validate(req.body);
+        await validation.UpdateEmailValidationSchema.validate({email});
 
         const users = await User_Account.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
@@ -441,7 +441,7 @@ const changeEmail = async (req, res, next) => {
         if (isExpired) throw ({ status : middlewareErrorHandling.LINK_EXPIRED_STATUS,
              message : middlewareErrorHandling.LINK_EXPIRED });
 
-        const userUpdated = await User_Account?.update({email : email},{where : {userId : userId}});
+        const userUpdated = await User_Account?.update({email : email, otp : null, expiredOtp : null},{where : {userId : userId}});
         res.status(200).json({message : "Email changed!"});
 
         

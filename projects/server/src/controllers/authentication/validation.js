@@ -41,18 +41,18 @@ const UpdatePasswordValidationSchema = Yup.object({
 })
 
 const UpdateProfileValidationSchema = Yup.object({
-    name : Yup.string().required("Name is required"),
-    phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
-        .min(11, "Phone number must at least 11 characters")
-        .max(13, "Phone number must less than 14 characters"),
-    gender : Yup.string().required("Gender is required"),
-    birthdate : Yup.date().transform(parseDateString).required("Birthdate is required") ,   
+    name : Yup.string().required("Nama harus ada."),
+    phone : Yup.string().matches(phoneRegExp, 'No Handphone/Telepon tidak valid.')
+        .min(11, "No Handphone/Telepon minimal 11 angka")
+        .max(13, "No Handphone/Telepon maximal 13 angka"),
+    gender : Yup.string().required("Jenis kelamin harus ada."),
+    birthdate : Yup.date().transform(parseDateString).required("Tanggal Lahir harus ada.") ,   
 })
 
 const UpdateEmailValidationSchema = Yup.object({
     email : Yup.string()
-        .email("Email is invalid")
-        .required("Email is required"),
+        .email("Email tidak valid.")
+        .required("Email dibutuhkan"),
 })
 
 const ForgotPassValidationSchema = Yup.string({

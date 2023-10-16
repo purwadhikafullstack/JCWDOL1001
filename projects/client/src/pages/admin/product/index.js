@@ -160,7 +160,6 @@ export default function AdminProducts({user}) {
           }}>
             <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
             <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit"
-            // onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}
             >
               <HiMagnifyingGlass className="text-2xl text-primary" />
             </button>
@@ -228,7 +227,7 @@ export default function AdminProducts({user}) {
           />
         </div>
         <div className="mt-4 flex items-center justify-center">
-          <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
+          {total_page > 1 && <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>}
         </div>
       </div>
 

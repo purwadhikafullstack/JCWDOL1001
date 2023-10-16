@@ -59,8 +59,7 @@ const initialStock = async(req, res, next) => {
                 model : Product_Unit,
                 as : "product_unit"
             },
-            where : productId
-        })
+            where : {[Op.and] : productId, isDeleted : false}})
         res.status(200).json({
             type : "success",
             message : "initial Stock Get",

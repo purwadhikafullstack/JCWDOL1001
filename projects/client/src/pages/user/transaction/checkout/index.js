@@ -10,19 +10,17 @@ import LogoMandiri from "../../../../assets/logo-mandiri.png";
 import ShippingAddress from "../../../../components/Shipping/component.address";
 import ShippingCost from "../../../../components/Shipping/component.shipping";
 import DiscountChecker from "../../../../components/Discount Checker";
-import moment from "moment"
 
 export default function CheckoutPage(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    let subTotal = 0;
-    const {cart,address,listDiscount, isGetCheckoutLoading} = useSelector((state)=>{
+    let subTotal = 0; let discount = 0;
+    const {cart,address,listDiscount} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
             address : state?.auth?.address,
             listDiscount: state?.discount?.listDiscount,
-            isGetCheckoutLoading : state?.transaction?.isGetCheckoutLoading
         }
     })
 
@@ -59,24 +57,27 @@ export default function CheckoutPage(){
         }
 
     const checkOut = () => {
+        if(selectedDiscount?.isPercentage){
+            discount = selectedDiscount?.discountAmount/100 *subTotal
+        }else{
+            discount = selectedDiscount?.discountAmount
+        }
         const discountIdList = [...cart].filter((item)=>{return item?.product_detail}).map(({product_detail})=>{return product_detail?.productDiscount[0].discountId})
         if(selectedDiscount) discountIdList.push(selectedDiscount?.discountId)
-        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList})).finally(() => navigate("/user/transaction"));
+        dispatch(createTransaction({transport : selectedShipping?.cost, totalPrice : (+subTotal*1), addressId : selectedAddress.addressId, discountId : discountIdList, discount : discount})).finally(() => navigate("/user/transaction"));
     }
-
-    if(cart.length === 0){
-        return (
-            <>
+        return(
+        <>
+            {
+                cart.length === 0 && <>
                 <div className="container py-24 lg:px-8 flex flex-col items-center justify-center h-screen gap-2">
                         <h1>Wah, Kamu belum punya barang untuk di Checkout!</h1>
                         <Button isButton isWarning title="Kembali ke Home" onClick={()=>navigate("/")}/>
                 </div>
-            </>
-        )
-    }else{
-        return(
-        <>
-            <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
+                </>  
+            }
+            {
+                cart.length !== 0 && <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
                     <form>
                     <div>
@@ -127,14 +128,16 @@ export default function CheckoutPage(){
                         </h1>
                         <h1>Total Ongkir : Rp. {selectedShipping?.length === 0 ? 0 : `${formatNumber(selectedShipping?.cost)}` }</h1>
                         <h1>Total Pembayaran : Rp. {formatNumber(subTotal + (selectedShipping.length === 0 ? 0 : +selectedShipping.cost) - (!selectedDiscount ? 0 : selectedDiscount?.isPercentage ? +selectedDiscount?.discountAmount/100 *subTotal : +selectedDiscount?.discountAmount))}</h1>
-                        <Button className="" isPrimary isButton type="submit" title={`Check Out!`} onClick={checkOut}/>
+                        <Button className="" isPrimary isButton type="button" title={`Check Out!`} onClick={checkOut}/>
                     </div>
                     </form>
                 </div>
             </div>
+            }
+            
         </>
         )
-    }
+
 
     
 }

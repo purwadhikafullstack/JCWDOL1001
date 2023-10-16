@@ -93,13 +93,6 @@ export default function PesananDikirim({
           <div className="mt-4 flex justify-end gap-2">
             <Button
               isButton
-              isPrimaryOutline
-              title={`Kembali`}
-              onClick={handleCloseModal}
-            />
-
-            <Button
-              isButton
               isPrimary
               title={`Pesanan Sudah Diterima`}
               onClick={() => handleShowModal("Konfirmasi", selectedTransaction.transactionId)}

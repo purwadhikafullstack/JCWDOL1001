@@ -247,7 +247,6 @@ export default function MenungguPembayaran({
               handleShowModal={handleShowModal}
             />
             <div className="grid md:grid-cols-3 gap-2 mt-4">
-              <Button isButton isPrimaryOutline title={`Kembali`} onClick={handleCloseModal}/>
               <Button className={`row-start-2 md:row-start-1 md:col-start-2`} isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
               <Button className={`row-start-1 md:col-start-3`} isButton isPrimary title={`Bayar Sekarang`} onClick={() => handleShowModal("Pembayaran", selectedTransaction.transactionId)}/>
             </div>
