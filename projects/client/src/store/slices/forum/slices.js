@@ -55,7 +55,7 @@ export const deleteQuestion = createAsyncThunk(
 
             const result = await api.patch("/forum/"+payload)
             toast.success(result?.data?.message)
-            const { data } = await api.get("/forum/admin?")
+            const { data } = await api.get("/forum/admin")
             return data
         }catch(error){
             toast.error(error.response.data.message)
@@ -107,9 +107,11 @@ export const PostAnswer = createAsyncThunk(
     "forum/answer",
     async(payload, {rejectWithValue}) => {
         try{
-
+            const {sortDate} = payload
+            delete payload?.sortDate
             await api.patch("/forum/", payload)
-            const { data } = await api.get("/forum/admin?")
+            const { data } = await api.get(`/forum/admin?sortDate=${sortDate}&`)
+            toast.success(sortDate)
             return data
         }catch(error){
             toast.error(error.response.data.message)
@@ -117,3 +119,7 @@ export const PostAnswer = createAsyncThunk(
         }
     }
 )
+
+export const resetSuccessForum = () => ({
+    type: "forum/resetSuccessForum",
+  });

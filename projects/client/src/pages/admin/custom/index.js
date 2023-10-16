@@ -19,13 +19,13 @@ import { toast } from "react-toastify";
 
 export default function CustomOrder({}) {
   const dispatch = useDispatch();
-  const {dataUser, message} = useSelector((state) => {
+  const {dataUser} = useSelector((state) => {
     return {
       // dataProduct: state?.products?.data,
       dataUser : state?.custom?.dataUser,
       totalPage : state?.custom?.totalPage,
       currentPage : state?.custom?.currentPage,
-      message : state?.custom?.message
+      // message : state?.custom?.message
     };
   });
 
@@ -43,6 +43,7 @@ export default function CustomOrder({}) {
   const [name,setName] = useState(null)
   const [ingredientName, setIngredientName] = useState(null)
   const ingredientQuantityRef = useRef(null)
+  const [ingredientSubmit, setIngredientSubmit] = useState(false)
   
   //useRef
   const [oldNameProduct, setOldNameProduct] = useState("")
@@ -306,7 +307,11 @@ const submitIngredient = async () =>{
     console.log(result)
     setListAllIngredient(result)
     ingredientQuantityRef.current.value = null
+    setIngredientSubmit(true)
 
+    setTimeout(() => {
+      setIngredientSubmit(false)
+    }, 2000);
     setError("");
   }
   catch(error){
@@ -371,7 +376,7 @@ const handleSubmitOrder = () =>{
         <div>
           <div className="mt-4 mb-2">
             <span className="font-semibold">
-            Preview Resep Dokter :
+            Pratinjau Resep Dokter :
             </span>
           </div>
         <div className="h-[300px] w-[300px] mb-8 object-center duration-300 pt-3" 
@@ -398,7 +403,7 @@ const handleSubmitOrder = () =>{
         </div>
         <div className="flex flex-col ">
             <span className="font-semibold">
-                List Produk : 
+                Daftar Produk : 
             </span>
             {listAllCustomProduct.length === 0 && 
             <span className="italic font-medium text-gray-600">
@@ -481,19 +486,20 @@ const handleSubmitOrder = () =>{
                   isButton
                   isPrimary
                   isBLock
-                  className={"mt-2"}
+                  className={"my-5"}
                   onClick={handleShowAllModal}
                   title={`Add New Product`}
                 />
+                {listAllCustomProduct.length !== 0 &&
                 <Button
                   isButton
                   // isPrimary
                   isBLock
-                  isDisabled={listAllCustomProduct.length === 0 ? true : false }
-                  className={"mt-5 bg-green-500 text-white"}
+                  // isDisabled={listAllCustomProduct.length === 0 ? true : false }
+                  className={"mb-10 bg-green-500 text-white"}
                   onClick={()=>setShowConfirmModal(true)}
                   title={`Submit Order`}
-                />
+                />}
                 <Modal
                 showModal={showConfirmModal}
                 halfWidth={true}
@@ -542,7 +548,7 @@ const handleSubmitOrder = () =>{
         showModal={showModal}
         halfWidth={true}
         closeModal={()=>handleCloseModal()}
-        title={titleState ? `Edit Product Section` : `Add Product Section`}
+        title={titleState ? `Ubah Produk` : `Tambah Produk`}
       >
         {/* masukin option 2 pilihan, option dan setoptionm, tiga kondisi */}
         <span className="">
@@ -576,6 +582,7 @@ const handleSubmitOrder = () =>{
                 <div onChange={() => setError({ ...error, ingredientId: false })}>
                 <IngredientList
                 onIngredientProductChange={onIngredientProductChange}
+                isSubmit={ingredientSubmit}
                 />
                 </div>
                 {error.ingredientId && (
@@ -608,7 +615,7 @@ const handleSubmitOrder = () =>{
                   <Button
               isButton
               isPrimary
-              title={`Add Ingredient`}
+              title={`Tambahkan ke Daftar`}
               isDisabled={isToastVisible}
               onClick={() => submitIngredient()}
               />
@@ -636,7 +643,7 @@ const handleSubmitOrder = () =>{
             <h3 className="title">Summary</h3>
             <div className="border-2  p-3 shadow-sm rounded-lg">
               <div className="font-bold">
-                Ingredients
+                Daftar Bahan Obat Racik
               </div>
             <div className="flex flex-col gap-3" 
             onChange={() => setError({ ...error, ingredientList: false })}>

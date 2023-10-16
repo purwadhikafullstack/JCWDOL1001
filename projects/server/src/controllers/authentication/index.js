@@ -150,7 +150,7 @@ const register= async (req, res, next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
             console.log(mailOptions)
 
@@ -163,7 +163,7 @@ const register= async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have sent OTP and redirect link to your email address",
+            message: "Kami telah mengirim OTP dan tautan verifikasi ke alamat email Anda",
             // userAcc
         });
         
@@ -245,12 +245,13 @@ const verify = async (req, res, next) => {
             UUID: result?.dataValues?.UUID, 
             email : result?.dataValues?.email,
             roleId : result?.dataValues?.role,
+            userId : users?.dataValues?.userId
         });
        
         // @return response
         res
         .header("Authorization", `Bearer ${accessToken}`)
-        .status(200).json({ message : "Account verified successfully",  data : result, profile : profile})
+        .status(200).json({ message : "Selamat! Akun kamu telah terverifikasi",  data : result, profile : profile})
     }); 
     } catch (error) {
         next(error)
@@ -282,7 +283,7 @@ const resendOtp = async (req, res, next) => {
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            name : user?.user_profile?.name,
+            name : user?.userProfile?.name,
             UUID: user?.UUID, 
             email : email,
             roleId : user?.role,
@@ -292,13 +293,13 @@ const resendOtp = async (req, res, next) => {
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
 
-        const html = handlebars.compile(template)({ name: (user?.user_profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (user?.userProfile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
@@ -310,7 +311,7 @@ const resendOtp = async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have resent OTP to your email address",
+            message: "Kami telah mengirim ulang OTP ke alamat email Anda",
             // userAcc
         });
     }); 
@@ -520,7 +521,7 @@ const forgotPass = async ( req,res,next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Forgot Password",
+            subject: "Lupa Password",
             html: html}
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;
@@ -530,7 +531,7 @@ const forgotPass = async ( req,res,next) => {
            res
                .status(200)
                .json({
-               message: "We have sent verification email for reset password",
+               message: "Kami telah mengirimkan email verifikasi untuk reset password",
            });
         });
 
@@ -566,7 +567,7 @@ const reset = async(req,res,next) =>{
         res
         .status(200)
         .json({
-        message: "Success! Your new password is ready to use. Go back to login page",
+        message: "Berhasil! Password baru kamu siap digunakan. Silahkan kembali ke halaman login",
     });
     } catch(error){
         next(error)

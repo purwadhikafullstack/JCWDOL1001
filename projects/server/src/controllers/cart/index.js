@@ -2,6 +2,7 @@ const { ValidationError } = require("yup")
 const { User_Account,Cart, Product_Detail, Product_List} = require("../../model/relation.js")
 const {UpdateCartValidationSchema, DeleteCartValidationSchema} = require("./validation.js")
 const db = require("../../model/index.js")
+const{ Sequelize, Op ,QueryTypes} =require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
 
 async function dataCart (userId){
@@ -166,7 +167,18 @@ const totalProductCart = async (req, res, next) => {
                 //grab user from UUid
                 const user = await User_Account.findOne({where : {UUID : req?.user?.UUID}})
                 //find all product in cart from userId 
-                const total = await Cart.sum('quantity', { where: { userId : user?.userId , inCheckOut : 0} }); 
+                const total = await db.sequelize.query(`
+                SELECT SUM(carts.quantity) AS quantity
+                FROM carts
+                INNER JOIN product_lists ON carts.productId = product_lists.productId
+                INNER JOIN product_details ON product_lists.productId = product_details.productId
+                WHERE carts.userId = :userId AND carts.inCheckOut = 0
+                AND product_details.isDefault = 1
+                AND product_lists.isDeleted = 0;
+              `, {
+                replacements: { userId: user.dataValues?.userId },
+                type: QueryTypes.SELECT
+              })
             res.status(200).json({ 
                 message : "Current Total Products in cart",
                 total: total

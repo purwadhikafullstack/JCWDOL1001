@@ -10,28 +10,39 @@ import { getCart, totalProductCart, updateCart,deleteCart,inCheckOut } from "../
 import { getProducts } from "../../../store/slices/product/slices";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { toast } from "react-toastify";
+import AssetCart from "../../../assets/asset-cart.png";
 
-export default function Cart({ user }) {
-  const {cart,products,isUpdateLoading} = useSelector(state=>{
+export default function Cart() {
+  const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
+
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
+      statusUser : state?.auth?.status
     }
   })
+  
   const navigate = useNavigate()
   const dispatch = useDispatch()
   let status = []
-  const selectedProduct = cart.map((item,index) => {
+  let quantityList = []
+  const selectedProduct = cart?.map((item,index) => {
     status.push(false)
+    quantityList.push({productId : item?.productId, quantity : item?.quantity})
     return item.cartList?.productName
   });
-  //
-  const cartItems = products.filter((product) =>
-    selectedProduct.includes(product.productName)
+  
+  const [selectedQuantity, setSelectedQuantity] = useState(quantityList)
+  
+  
+  const cartItems = products.filter((product,index) =>{
+    return selectedProduct.includes(product.productName)
+  }
   );
   
   const [selectedItems, setSelectedItems] = useState([]);
+
   const [allSelected, setAllSelected] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [trigger, setTrigger] = useState(true);
@@ -69,19 +80,60 @@ export default function Cart({ user }) {
         toast.error("Kuantitas melebihi stok")
       )
       dispatch(updateCart({productId : productId, quantity : String(qty + 1)}))
+      changeQty((+qty+1),productId)
       setTrigger(!trigger)
     }
 
     if (type === "reduce" && qty > 1) {
       // console.log(qty - 1);
       dispatch(updateCart({productId : productId, quantity : String(qty - 1)}))
+      changeQty((+qty-1),productId)
       setTrigger(!trigger)
     }
   };
 
+  function changeQty(value,productId){
+    setSelectedQuantity(selectedQuantity.map(item=>{
+      if(item?.productId === productId){
+        return {productId : item?.productId ,quantity : String(value)}
+      }
+      else
+      {return {productId : item?.productId ,quantity : item?.quantity}}
+    }))
+  }
+
   const handleQtyInput = (event,productId,productStock,isOneGetOne) => {
     event.preventDefault()
     const newQty = event?.target?.value;
+    if (!newQty) {
+      changeQty(1,productId)
+    }
+    if(isOneGetOne && newQty*2 > productStock ) throw(
+      toast.error("Kuantitas melebihi stok")
+    )
+    if (newQty === "" || (+newQty > 0 && +newQty <= productStock )) {
+      if(+newQty !== 0){
+
+        changeQty(+newQty,productId)
+      }
+      else{
+
+        changeQty(1,productId)
+      }
+    }
+    if((+newQty > productStock)){
+
+      changeQty(productStock,productId)
+
+    }
+  };
+
+  const handleBlur = (event,productId,productStock,isOneGetOne) => {
+    event.preventDefault()
+    let newQty = event?.target?.value;
+    if (!newQty) {
+      dispatch(updateCart({productId : productId, quantity : String(1)}))
+    }
     if(isOneGetOne && newQty*2 > productStock ) throw(
       toast.error("Kuantitas melebihi stok")
     )
@@ -92,13 +144,13 @@ export default function Cart({ user }) {
         setTrigger(!trigger)
       }
       else{
-
+        // newQty = 1
         dispatch(updateCart({productId : productId, quantity : String(1)}))
         setTrigger(!trigger)
       }
     }
     if((+newQty > productStock)){
-   
+
       dispatch(updateCart({productId : productId, quantity : String(productStock)}))
       setTrigger(!trigger)
     }
@@ -106,19 +158,20 @@ export default function Cart({ user }) {
 
   const handleDeleteStock = (productId) => {
         dispatch(deleteCart({productId : productId}))
+        setSelectedItems(selectedItems.filter(
+          (cartItem) => cartItem?.productId !== productId
+        ))
+        // selectedItems = a
+        console.log(selectedItems)
         setTrigger(!trigger)
   };
 
-  const handleBlur = (event) => {
-    const newQty = event.target.value;
-
-    if (newQty === "") {
-      setQty(1);
-    }
-  };
-
   useEffect(() => {
+    const quantityList = []
     dispatch(getCart())
+    .then(response=>response?.payload?.data.map((item) => {
+      quantityList.push({productId : item?.productId, quantity : item?.quantity})
+    })).finally(()=>setSelectedQuantity(quantityList))
     dispatch(totalProductCart())
     dispatch(
       getProducts({
@@ -127,15 +180,21 @@ export default function Cart({ user }) {
         product_name: "",
         sort_price: "",
         sort_name: "",
-        limit: 12,
+        limit: 1000,
       })
     )
+
+    if(!statusUser){
+
+      navigate("/")
+
+    }
   },[])
 
-  // useEffect(() => {
-  //   dispatch(getCart())
-  //   dispatch(totalProductCart())
-  // },[cart])
+  useEffect(()=>{
+    console.log("select",selectedQuantity)
+  },[selectedQuantity])
+
   
   const [error, setError] = useState("")
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -161,6 +220,18 @@ export default function Cart({ user }) {
   }
   return (
     <div className="container relative py-24">
+      {
+        (cartItems.length === 0 && statusUser) && 
+                  <div className="flex flex-col items-center ">
+        <div className="w-80">
+                  <img src={AssetCart} alt="" />
+                </div>
+        <h3 className="title mt-9">Keranjang kamu kosong</h3>
+        <p className="mb-2">Kamu yakin udah pesen?</p>
+        </div>
+      }
+      { (cartItems.length !== 0  && statusUser)&&
+      <>
       <h3 className="title">Keranjang</h3>
       <div className=" mt-3 gap-3 flex flex-row items-center">
         <input
@@ -275,13 +346,19 @@ export default function Cart({ user }) {
                       type="numberSecondVariant"
                       className="h-full text-center w-full"
                       value={
-                        cart.find((cartItem) => cartItem?.productId === item?.productId)
+                        selectedQuantity.find((cartItem) => cartItem?.productId === item?.productId)
                           ?.quantity
                       }
                       onChange={event =>{handleQtyInput(event,item?.productId,
                         cart.find((cartItem) => cartItem?.productId === item?.productId)
-                        ?.cartList?.product_details[0]?.quantity,item?.discountProducts[0]?.discount?.oneGetOne)}}
-                      onBlur={handleBlur}
+                        ?.cartList?.product_details[0]?.quantity, item?.discountProducts[0]?.discount?.oneGetOne)} } 
+
+                      onBlur={event =>{
+                        handleBlur(event,item?.productId,
+                        cart.find((cartItem) => cartItem?.productId === item?.productId)
+                        ?.cartList?.product_details[0]?.quantity, item?.discountProducts[0]?.discount?.oneGetOne)
+                        }
+                        }
                       isDisabled={isUpdateLoading}
                     
                     />
@@ -394,6 +471,8 @@ export default function Cart({ user }) {
           </div>
         </div>
       </div>
+      </>
+}
     </div>
   );
 }

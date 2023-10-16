@@ -14,9 +14,9 @@ export default function CategoryList(){
     const dispatch = useDispatch()
     const [newPage, setNewPage] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
-    const [categoryIndex, setCategoryIndex] = useState(null);
     const [fileImage, setFileImage] = useState(null);
     const [searchedCategory, setSearchedCategory] = useState(null)
+    const [sortCat, setSortCat] = useState(null);
     const [page, setPage] = useState(1);
     const [categoryDesc, setCategoryDesc] = useState(null);
     const categoryNameRef = useRef();
@@ -36,8 +36,8 @@ export default function CategoryList(){
     })
     
     useEffect(()=>{
-        dispatch(getCategory({page : page, searchedCategory : searchedCategory}));
-    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory])
+        dispatch(getCategory({page : page, searchedCategory : searchedCategory, sortCat : sortCat}));
+    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory, sortCat])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -136,11 +136,10 @@ export default function CategoryList(){
         }
     }
 
-    const handleButtonClick = (categoryId, categoryIndex, context, categoryDesc) => {
+    const handleButtonClick = (categoryId, context, categoryDesc) => {
         setFileImage(null);
         setNewPage(context);
         setCategoryId(categoryId);
-        setCategoryIndex(categoryIndex);
         setCategoryDesc(categoryDesc);
         setShowModal(true)
     }
@@ -170,7 +169,6 @@ export default function CategoryList(){
                     <Button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
-
                     {searchedCategory && 
                         <Button
                             className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
@@ -228,10 +226,10 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3 flex gap-2">
-                                <Button isPrimary isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama"} className=""/>
-                                <Button isPrimaryOutline isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar"} className=""/>
-                                <Button isDanger isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className=""/>
 
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className=""/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, "updateImage",category.categoryDesc)} title={"Ubah Gambar Kategori"} className=""/>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, "delete",category.categoryDesc)} title={"Hapus"} className=""/>
                                 </td>
                             </motion.tr>))
                             :
