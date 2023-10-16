@@ -143,7 +143,7 @@ export default function StockHistory (){
                 </table>
             </div>
             <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-                <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+                {totalPage > 1 && <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>}
             </div>
             <Button isWarning isButton title={`Go Back to Product List`} onClick={()=>navigate("/admin/products")}/>
         </div>

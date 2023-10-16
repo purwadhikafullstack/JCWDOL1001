@@ -40,8 +40,7 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, 
-    isChangeProfileLoading} = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading, isChangeEmailLoading } = useSelector(state => {
 		return {
 			user : state?.auth,
       isLogin : state?.auth?.isLogin,
@@ -49,6 +48,7 @@ function App() {
       isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
       isChangePictureLoading : state?.auth?.isChangePictureLoading,
       isChangeProfileLoading : state?.auth?.isChangeProfileLoading,
+      isChangeEmailLoading : state?.auth?.isChangeEmailLoading
 		}
 	})
   
@@ -82,7 +82,7 @@ function App() {
     if (isLogin){
       dispatch(getProfile())
     }
-  }, [isChangePictureLoading, isChangeProfileLoading])
+  }, [isChangePictureLoading, isChangeProfileLoading, isChangeEmailLoading])
 
   useEffect(()=>{
     if (isLogin) {

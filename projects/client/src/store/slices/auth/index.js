@@ -12,7 +12,8 @@ import {
     changeProfileData,
     forgotPass,
     resetPass,
-    getProfile
+    getProfile,
+    forcedLogout
 } from "./slices"
 // import { reset } from "../../../../../server/src/controllers/authentication";
 
@@ -39,7 +40,7 @@ const INITIAL_STATE = {
     isGetProfileLoading : false,
     resetStatus : false,
     isForgot : false,
-    passwordChangeStatus : null
+    passwordChangeStatus : null,
 }
 
 const authSlice = createSlice({
@@ -95,7 +96,16 @@ const authSlice = createSlice({
         },
         [logout.rejected] : (state, action) => {
             state.isLogoutLoading = false
-        }, 
+        },
+        [forcedLogout.pending] : (state, action) => {
+            state.isLogoutLoading = true
+        },
+        [forcedLogout.fulfilled] : (state, action) => {
+            state = Object.assign(state, INITIAL_STATE)         
+        },
+        [forcedLogout.rejected] : (state, action) => {
+            state.isLogoutLoading = false
+        },  
         [register.pending] : (state, action) => {
             state.isRegisterLoading = true
         },
@@ -143,10 +153,14 @@ const authSlice = createSlice({
             state.isChangeEmailLoading = true
         },
         [changeEmail.rejected] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+            })
         },
         [changeEmail.fulfilled] : (state, action) => {
-            state.isChangeEmailLoading = false
+            state = Object.assign(state, {
+                isChangeEmailLoading : false,
+            })
         },
         [changeProfilePicture.pending] : (state, action) => {
             state.isChangePictureLoading = true

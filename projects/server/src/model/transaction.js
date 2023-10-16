@@ -22,6 +22,10 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    discount : {
+        type : db.Sequelize.INTEGER,
+        allowNull : true
+    },
     subtotal : {
         type : db.Sequelize.INTEGER,
         allowNull : false

@@ -14,7 +14,7 @@ const getCategory = async (req, res, next) => {
         const filter = { searchedCategory };
         if(searchedCategory) filter.searchedCategory = {categoryDesc : {[Op.like]:`%${searchedCategory}%`}}
 		const category = await Categories?.findAll({...options, 
-            where : {[Op.and] : [filter.searchedCategory, {isDeleted : 0}]}, order : [["categoryDesc", "ASC"]]});
+            where : {[Op.and] : [filter.searchedCategory, {isDeleted : 0}]}});
 
         const total = await Categories?.count();
         const pages = Math.ceil(total / options.limit);

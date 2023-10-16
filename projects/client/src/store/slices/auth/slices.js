@@ -60,6 +60,19 @@ export const logout = createAsyncThunk(
     }
 )
 
+export const forcedLogout = createAsyncThunk(
+    "auth/forcedLogout",
+    async (payload, { rejectWithValue }) => {
+        try {
+            localStorage.removeItem("token")
+        } catch (error) {
+            toast.error(error.response ? error.response.data : error)
+
+            return rejectWithValue(error.response ? error.response.data : error)
+        }
+    }
+)
+
 export const register = createAsyncThunk(
     "auth/admin/register",
      
@@ -141,7 +154,7 @@ export const changePassword = createAsyncThunk (
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-password/${userId}`,payload)
-            toast.success("Password has been changed.")
+            toast.success("Password telah dirubah.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -155,7 +168,7 @@ export const changeProfilePicture = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
-            toast.success("Your profile picture has been updated.")
+            toast.success("Tampilan anda telah dirubah.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -169,7 +182,7 @@ export const changeEmailOtp = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.post(`auth/changeOtp/${payload.userId}`)
-            toast.success("We are sending you the OTP, please check your mail.")
+            toast.success("OTP telah dikirim ke Email Anda.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -184,9 +197,8 @@ export const changeEmail = createAsyncThunk (
         try{
             const userId = payload.userId;
             delete payload.userId;
-            console.log(payload);
             const response = await api.patch(`auth/change-email/${userId}`,payload)
-            toast.success("Email has been changed.")
+            toast.success("Email telah berhasil dirubah! Silahkan Login kembali dengan Email yang baru.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
