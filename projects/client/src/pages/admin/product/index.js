@@ -14,13 +14,12 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
-import ModalInputCustomProduct from "../custom";
 
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
 
-import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
+import { getUnits } from "../../../store/slices/product/unit/slices";
 import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
@@ -133,6 +132,12 @@ export default function AdminProducts({user}) {
     );
   }, [searchedProduct, options, page, isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
 
+  const handleSearch = (event) => {
+    setPage(1)
+    event.preventDefault();
+    setSearchedProduct(searchedProductRef?.current.value)
+  };
+
   useEffect(() => {
     dispatch(getCategory({page : categoriesPage}));
     dispatch(getUnits())
@@ -144,7 +149,6 @@ export default function AdminProducts({user}) {
     searchedProductRef.current.value = "";
   }
 
-
   if (!user.role) return navigate("/", "replace");
 
   return (
@@ -155,8 +159,7 @@ export default function AdminProducts({user}) {
           <h3 className="title">Produk</h3>
 
           <form className="relative w-1/2 lg:w-1/3" onSubmit={(e) => {
-            e.preventDefault()
-            setSearchedProduct(searchedProductRef?.current.value)
+            handleSearch(e)
           }}>
             <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
             <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit"
@@ -226,15 +229,17 @@ export default function AdminProducts({user}) {
             current_page={current_page}
           />
         </div>
+
         <div className="mt-4 flex items-center justify-center">
           {total_page > 1 && <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>}
         </div>
+
       </div>
 
       <Modal
         showModal={showModal.show}
         closeModal={handleCloseModal}
-        halfWidth={showModal.context === "Detail Produk"}
+        halfWidth={["Detail Produk", "Tambah Produk", "Ubah Detail"].includes(showModal.context)}
         title={showModal.context}
         disableOutside
       >

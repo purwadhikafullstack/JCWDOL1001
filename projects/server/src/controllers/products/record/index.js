@@ -1,4 +1,3 @@
-const {middlewareErrorHandling} = require("../../../middleware/index.js")
 const {Product_History, Product_Detail, Product_Unit} = require("../../../model/product.js")
 const { Op } = require("sequelize");
 const moment = require("moment");

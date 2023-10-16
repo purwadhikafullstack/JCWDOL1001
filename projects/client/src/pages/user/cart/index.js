@@ -14,6 +14,7 @@ import AssetCart from "../../../assets/asset-cart.png";
 
 export default function Cart() {
   const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
+
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
@@ -458,11 +459,15 @@ export default function Cart() {
             <Button
               isBLock
               isButton
-              isPrimary
+              isPrimary={user.status !== 0}
+              isSecondary={user.status === 0}
               title="Check Out"
-              isDisabled={selectedItems?.length === 0 || isToastVisible }
+              isDisabled={selectedItems?.length === 0 || isToastVisible || user.status === 0}
               onClick={checkOut}
             />
+            {user.status === 0 &&
+              <p className="text-xs text-danger text-center mt-1">Silahkan lakukan <span className="underline cursor-pointer" onClick={() => navigate("/user/profile")}>verifikasi</span></p>
+            }
           </div>
         </div>
       </div>

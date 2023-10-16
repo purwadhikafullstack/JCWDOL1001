@@ -4,7 +4,7 @@ import { createTransaction, getCheckoutProducts } from "../../../../store/slices
 import Item from "../../../../components/Item";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LogoBca from "../../../../assets/logo-bca.png";
 import LogoMandiri from "../../../../assets/logo-mandiri.png";
 import ShippingAddress from "../../../../components/Shipping/component.address";
@@ -34,24 +34,18 @@ export default function CheckoutPage(){
 
     const PaymentMethod = () => {
                 return(
-                    <div className="flex flex-row">
-                    <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
-                        <div>
-                            <img src={LogoBca} className=" w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>Transfer Manual ke Akun Bank BCA</h3>
-                            <h1 className="text-4xl font-bold">0918023981</h1>
-                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
+                    <div className="flex flex-col lg:flex-row gap-4">
+                        <div class="flex flex-col gap-2 justify-center items-center border border-primary rounded-lg py-4 px-8">
+                            <img src={LogoBca} className=" w-32 items-center justify-center"></img>
+                            <h1 className="lg:text-xl font-bold">0918023981</h1>
+                            <h2 className="lg:text-xl font-semibold tracking-tight">Apotech Pasti Sukses</h2>
+                        </div>
 
+                        <div class="flex flex-col gap-2 justify-center items-center border border-primary rounded-lg py-4 px-8">
+                            <img src={LogoMandiri} className="w-32 items-center justify-center"></img>
+                            <h1 className="lg:text-xl font-bold">123456789012</h1>
+                            <h2 className="lg:text-xl font-semibold tracking-tight">Apotech Pasti Sukses</h2>
                         </div>
-                    </div>
-                    <div class="m-4 overflow-x-auto w-96 shadow-md sm:rounded-lg py-8 bg-slate-100 text-black items-center text-center">
-                        <div>
-                            <img src={LogoMandiri} className="w-48 h-24 mx-12 items-center justify-center"></img>
-                            <h3>Transfer Manual ke Akun Bank Mandiri</h3>
-                            <h1 className="text-4xl font-bold">123456789012</h1>
-                            <h2 className="text-2xl font-semibold">Apotech Pasti Sukses</h2>
-                        </div>
-                    </div>
                     </div>
                 )
         }
@@ -82,18 +76,18 @@ export default function CheckoutPage(){
                     <form>
                     <div>
                         <Button isButton isWarning title="Kembali ke Cart" onClick={()=>navigate("/cart")}/>
-                        <h1 className="text-3xl font-semibold w-full border-b-2 mb-5 pb-2">Checkout</h1>
+                        <h3 className="title w-full border-b-2 mb-5 pb-2">Checkout</h3>
                     </div>
                     <div className="mb-10">
-                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Pengiriman</h3>
+                        <h3 className="subtitle w-full border-b-2 mb-5 pb-2">Pengiriman</h3>
                         <div className="flex gap-20 items-center">
                             <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
                             <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
                         </div>
                     </div>
                     <div className="mb-4 border-b-2">
-                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Detail Barang</h3>
-                        <div className="flex flex-col gap-2 border-green-300">
+                        <h3 className="subtitle w-full border-b-2 pb-2">Detail Barang</h3>
+                        <div className="flex flex-col divide-y-2 gap-2 border-green-300">
                         {
                         cart ?
                         cart.map((cart, index)=>{
@@ -110,18 +104,18 @@ export default function CheckoutPage(){
                         <h1> Your cart is empty as your wallet.</h1> 
                         }</div>
                     </div>
-                    <div className="mb-5 pb-2">
-                        <h3 className="text-2xl font-semibold w-full">Metode Pembayaran</h3>
+                    <div className="mb-5 pb-2 flex justify-center flex-col gap-2 items-center">
+                        <h3 className="subtitle">Metode Pembayaran</h3>
                             {
                                 PaymentMethod()
                             }
                     </div>                    
                     <div className="flex flex-col gap-2 my-10">
-                        <h3 className="text-2xl font-semibold w-full border-b-2 mb-5 pb-2">Kode Kupon</h3>
+                        <h3 className="subtitle w-full border-b-2 mb-5 pb-2">Kode Kupon</h3>
                         <DiscountChecker setDiscount={setDiscount} subTotal={subTotal} selectedDiscount={selectedDiscount}
                         />
                     </div>
-                    <div className="text-2xl font-semibold w-auto border mb-5 pb-2">
+                    <div className="border rounded-lg p-4 font-semibold">
                         <h1>Sub Total : Rp. {formatNumber(subTotal)}</h1>
                         <h1>Total Diskon : (Rp. {!selectedDiscount ? 0 : 
                             formatNumber(`${selectedDiscount?.isPercentage ? selectedDiscount?.discountAmount/100 *subTotal : selectedDiscount?.discountAmount}`) })

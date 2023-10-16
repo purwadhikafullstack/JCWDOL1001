@@ -115,20 +115,18 @@ const getTransactions = async (req, res, next) => {
     if(startFrom) {
       if (roleId === 1) {
         whereCondition.updatedAt = {
-          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
-          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
-          // [Op.gte]: moment(startFrom).add(1,"d").subtract(4,"h").format("YYYY-MM-DD hh:mm:ss"),
-          // [Op.lte]: moment(endFrom).add(2,"d").subtract(5,"h").format("YYYY-MM-DD hh:mm:ss"),
+          [Op.gte]: moment.utc(startFrom).format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment.utc(endFrom).add(23, "hours").add(59, "minutes").add(59, "seconds").format("YYYY-MM-DD HH:mm:ss"),
         }
       }
 
       if (roleId === 2) {
         whereCondition.createdAt = {
-          [Op.gte]: moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"),
-          [Op.lte]: moment(endFrom).add(24, "hours").format("YYYY-MM-DD HH:mm:ss"),
+          [Op.gte]: moment.utc(startFrom).format("YYYY-MM-DD HH:mm:ss"),
+          [Op.lte]: moment.utc(endFrom).add(23, "hours").add(59, "minutes").add(59, "seconds").format("YYYY-MM-DD HH:mm:ss"),
         }
-        console.log("Start", moment(startFrom).subtract(12, "hours").format("YYYY-MM-DD HH:mm:ss"));
-        console.log("End", moment(endFrom).add(24 , "hours").format("YYYY-MM-DD HH:mm:ss"));
+        console.log("Start", moment.utc(startFrom).format("YYYY-MM-DD HH:mm:ss"));
+        console.log("End", moment.utc(endFrom).add(23, "hours").add(59, "minutes").add(59, "seconds").format("YYYY-MM-DD HH:mm:ss"));
       }
     }
 
