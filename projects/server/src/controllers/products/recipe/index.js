@@ -244,13 +244,13 @@ const getUser = async( req, res, next ) => {
               console.log("Email sent: " + info.response);
           })
           
-      // await User_Account.update({
-      //   imgRecipe : null
-      // },{where : {email}})
+      await User_Account.update({
+        imgRecipe : null
+      },{where : {email}})
 
       res.status(200).json({ 
         type : "success",
-        message : "We have send the desired user",
+        message : "Permintaan konfirmasi telah diberikan ke user terkait",
         data : filteredResult
       })
       
@@ -531,11 +531,11 @@ const getUser = async( req, res, next ) => {
       })
     }
 
-    // await User_Account.update({
-    //   addressIdRecipe : null,
-    //   createdRecipe : null,
-    //   shippingRecipe : null,
-    // },{where :  {userId : user?.userId}})
+    await User_Account.update({
+      addressIdRecipe : null,
+      createdRecipe : null,
+      shippingRecipe : null,
+    },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
         type : "success", 
