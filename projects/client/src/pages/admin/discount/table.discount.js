@@ -8,6 +8,8 @@ export default function TableDiscount({
   discountList,
   handleShowModal,
 }) {
+    const width = window.screen.width
+    const mobileWidth = 414
   return (
     <table className="text-gray-500 w-full text-left text-sm">
         <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
@@ -15,11 +17,11 @@ export default function TableDiscount({
                 <th className="p-3">No.</th>
                 <th className="p-3">Nama</th>
                 <th className="p-3">Kode</th>
-                <th className="p-3">Deskripsi</th>
-                <th className="p-3">Tanggal Berakhir</th>
-                <th className="p-3">Jumlah</th>
-                <th className="p-3">Beli Satu Gratis Satu</th>
-                <th className="p-3">Minimal Transaksi</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Deskripsi</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Tanggal Berakhir</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Jumlah</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Beli Satu Gratis Satu</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Minimal Transaksi</th>
                 <th className="p-3">Actions</th>
             </tr>
         </thead>
@@ -43,11 +45,11 @@ export default function TableDiscount({
                     </th>
                     <td className="p-3 break-all max-w-xs">{list.discountName}</td>
                     <td className="p-3">{list.discountCode}</td>
-                    <td className="p-3 break-all max-w-xs">{list.discountDesc}</td>
-                    <td className="p-3">{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
-                    <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
-                    <td className="p-3">{list.oneGetOne ? "Ya" : "Tidak" }</td>
-                    <td className="p-3">{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
+                    <td className={`p-3 break-all max-w-xs ${width <= mobileWidth && "hidden"}`}>{list.discountDesc}</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.oneGetOne ? "Ya" : "Tidak" }</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
                     <td className="p-3">
                         <div className="flex gap-3">
                             <Button

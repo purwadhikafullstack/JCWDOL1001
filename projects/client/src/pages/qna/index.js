@@ -82,7 +82,7 @@ export default function QnAPage() {
       
       setError(errors)
       
-      toast.error("Check your input field!")
+      toast.error("Periksa kolom pengisian!")
 
       setIsToastVisible(true)
 
@@ -92,6 +92,9 @@ export default function QnAPage() {
     }
   }
   const [page, setPage] = useState(1);
+
+  const width = window.screen.width
+  const mobileWidth = 414
 
   useEffect(() => {
     dispatch(getPublicForum({page:page,filterQuestion:""}))
@@ -104,7 +107,7 @@ export default function QnAPage() {
 
   return (
     <div>
-      <div className={`container pt-24  ${window.screen.width <= 500 ? "w-fit" : "w-[50%]"} `}>
+      <div className={`container pt-24  ${width <= mobileWidth ? "w-fit" : "w-[50%]"} `}>
         <h3 className="title ">Tanya Apotech</h3>
         <h3 className="text-sm text-slate-400 mb-5 ">Pertanyaan yang ditampilkan hanya pertanyaan yang telah ada jawabannya</h3>
         <Button isSmall isPrimaryOutline isPrimary title="Ingin Bertanya" className="mb-5"
@@ -144,8 +147,16 @@ export default function QnAPage() {
                     <p className="text-sm text-left text-dark md:text-base">
                       Oleh : {list.user_profile.name}
                     </p>
+                    <div className={`flex flex-col items-start grow  ${width <= mobileWidth ? "" : "hidden"}`}>
+                      <p className="text-sm text-dark md:text-base">
+                        {formatDateWithTime(list.createdAt)}
+                      </p>
+                      <p className="text-sm text-dark md:text-base">
+                        Dijawab : {formatDateWithTime(list.updatedAt)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col grow text-right">
+                  <div className={`flex grow flex-col text-right ${width <= mobileWidth &&"hidden"}`}>
                     <p className="text-sm text-dark md:text-base">
                       {formatDateWithTime(list.createdAt)}
                     </p>

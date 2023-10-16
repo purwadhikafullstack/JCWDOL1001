@@ -138,6 +138,9 @@ function ReportPage () {
         setFilter(false)
     }
     
+    const width = window.screen.width
+    const mobileWidth = 414
+
     useEffect(() => {
         dispatch( getReport({statusId : 6, page : page }) )
     }, [page])
@@ -150,29 +153,30 @@ function ReportPage () {
     return (
         <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
             <div className="relative flex flex-col pb-15">
-                <div className="flex items-center align-middle gap-5 px-3 mb-5">
+                <div className={`flex ${width <= mobileWidth ? "flex-col w-fit" : "items-center align-middle"} gap-5 px-3 mb-5`}>
                     <a className="flex normal-case text-[20pt]">  Laporan </a>
-                    <Input type="text" placeholder="Cari Pengguna" ref={nameRef}/>
-                    <Button className="absolute top-[15%] left-[21%] -translate-y-1/2" 
-                        onClick={()=>{
-                            onButtonSearchName()
-                            setFilter(true)}}
-                    >
-                        <HiMagnifyingGlass className="text-2xl text-primary" />
-                    </Button>
-                    <Button title="Hapus pengaturan" onClick={clearFilter}  className={`flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
+                        <Input type="text" placeholder="Cari Pengguna" ref={nameRef}/>
+                        <Button className={`absolute ${width <= mobileWidth ? "top-[23%] right-[45%]" : "top-[15%] left-[21%]"} -translate-y-1/2`}
+                            onClick={()=>{
+                                onButtonSearchName()
+                                setFilter(true)}}
+                        >
+                            <HiMagnifyingGlass className="text-2xl text-primary" />
+                        </Button>
+                    <Button title="Hapus pengaturan" onClick={clearFilter}  className={` ${width <= mobileWidth && "hidden"} flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
                 </div>
-                <div className="flex items-center">
+                <div className={`flex  ${width <= mobileWidth ? "flex-col items-start" :"items-center"}`}>
+                    
                     <span className="mx-4 text-gray-500">dari</span>
-                    <div className="relative">
-                        <input ref={startDateRef} name="start" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full pl-10 p-2.5"/>
+                    <div className="relative ">
+                        <input ref={startDateRef} name="start" type="date" className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg ${width <= mobileWidth ? "ml-5" :""}  block w-full pl-10 p-2.5`}/>
                     </div>
                     <span className="mx-4 text-gray-500">sampai</span>
                     <div className="relative">
-                        <input ref={endDateRef} name="end" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2.5"/>
+                        <input ref={endDateRef} name="end" type="date" className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg ${width <= mobileWidth ? "ml-5" :""}  block w-full pl-10 p-2.5`}/>
                     </div>
                     <div className="flex mx-5 my-5 items-center h-auto gap-5">
-                        Sort By :
+                        Urutkan :
                         <div className="flex flex-row items-center h-auto gap-1">
                             Tanggal
                             <FaSortAlphaDown className={`${sortingDate === "DESC" || sortingDate ==="" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
@@ -185,10 +189,12 @@ function ReportPage () {
                         </div>
                     </div>
                     <Button title="Filter" isButton isPrimary className="flex mx-5 items-center" isDisabled={isToastVisible} onClick={onButtonFilter} />
+                    <Button title="Hapus pengaturan" onClick={clearFilter}  className={` ${width > mobileWidth && "hidden"} mt-3 ml-5 items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
+
                 </div>
             </div>
-            <TransactionList transactionList={transactionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} handleShowModal={handleShowModal} handleCloseModal={handleCloseModal} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction} showModal={showModal} />              
-            <Button title="Lihat Grafik"isButton isPrimary onClick={()=>{setGraph(true)}} className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center`} />
+            <TransactionList width={width} mobileWidth={mobileWidth} transactionList={transactionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} handleShowModal={handleShowModal} handleCloseModal={handleCloseModal} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction} showModal={showModal} />              
+            <Button title="Lihat Grafik" isSmall={true} isButton isPrimary onClick={()=>{setGraph(true)}} className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center mt-5`} />
             <Button title="Sembunyikan Grafik" isButton isSecondary onClick={()=>{setGraph(false)}} className={`${!graph ? "hidden" : ""} flex items-center`} />
             <div className={`${graph ? "" : "hidden"}`}>
                 <Line options={options} data={data} />

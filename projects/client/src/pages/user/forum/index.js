@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { HiOutlineTrash,HiMagnifyingGlass } from "react-icons/hi2"
+import { HiMagnifyingGlass } from "react-icons/hi2"
 import Input from "../../../components/Input/index.js"
 import { PostQuestion, deleteQuestion, getForum } from "../../../store/slices/forum/slices"
-import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button"
-import Pagination from "../../../components/PaginationV2/index.js"
 import Modal from "../../../components/Modal"
 import Message from "../../../components/Message"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
@@ -96,7 +94,7 @@ function ForumPage () {
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setIsToastVisible(true)
 
@@ -107,6 +105,9 @@ function ForumPage () {
     }
 
     const [page, setPage] = useState(1);
+
+    const width = window.screen.width
+    const mobileWidth = 414
     
     useEffect(() => {
         dispatch( getForum({page : page }) )
@@ -127,12 +128,12 @@ function ForumPage () {
                         handleShowModal({context : "Memberikan Pertanyaan"})
                     }}
                 />
-                <div className={`relative flex ${window.screen.width <= 500 ? "flex-col w-[50%]" : "flex-row items-center mx-5"} my-5  h-auto gap-5`}>
+                <div className={`relative flex ${width <= mobileWidth ? "flex-col w-[50%]" : "flex-row items-center mx-5"} my-5  h-auto gap-5`}>
                     <Input type="text" placeholder="Search" 
                         ref={questionRef}
                     />
                     <Button 
-                        className={`absolute ${window.screen.width <= 500 ? " top-5 left-36" : "top-1/2 left-40"} -translate-y-1/2 p-2`} 
+                        className={`absolute ${width <= mobileWidth ? " top-5 left-36" : "top-1/2 left-40"} -translate-y-1/2 p-2`} 
                         onClick={()=>{
                             dispatch(getForum({filterQuestion : questionRef?.current.value}))
                             setFilter(true)}}
@@ -140,13 +141,13 @@ function ForumPage () {
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
                     Urutkan berdasarkan :
-                    <div className={`flex ${window.screen.width <= 500 && "pl-2"} gap-2  items-center h-auto`}>
+                    <div className={`flex ${width <= mobileWidth && "pl-2"} gap-2  items-center h-auto`}>
                         Tanggal 
                         <FaSortAlphaDown className={`${sortingDate === "DESC"   ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("DESC")}} />
                         <FaSortAlphaUp className={`${sortingDate === "ASC" || sortingDate === "" ? "hidden" : "text-2xl text-primary"}`} onClick={()=>{onButtonSortDate("ASC")}}/>
                     </div>
                     <Button isButton isPrimary isSecondary={sortingDate === ""} isDisabled={sortingDate === ""}
-                        className={`flex ${window.screen.width <= 500 ? "w-fit" : "mx-5"} items-center`}
+                        className={`flex ${width <= mobileWidth ? "w-fit" : "mx-5"} items-center`}
                         onClick={onButtonFilter}
                     >
                         Atur

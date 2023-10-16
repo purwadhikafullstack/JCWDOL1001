@@ -4,7 +4,6 @@ import { formatDate } from "../../../utils/formatDate"
 import { HiOutlineTrash } from "react-icons/hi2"
 
 export default function QuestionsTable ({handleShowModal,setSelectedQuestion,questionList, currentPage, totalPage, setPage}){
-    console.log(questionList)
     return(
         <>
             <div>

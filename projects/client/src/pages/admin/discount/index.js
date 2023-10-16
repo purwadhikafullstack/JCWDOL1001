@@ -62,6 +62,8 @@ export default function DiscountPage(){
         setSearch(false)
     }
     
+    const width = window.screen.width
+    const mobileWidth = 414
 
     useEffect(() => {
         dispatch(
@@ -109,6 +111,7 @@ export default function DiscountPage(){
                     <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
                 <Modal
+                    fullWidth={width <= mobileWidth}
                     showModal={showModal.show}
                     closeModal={handleCloseModal}
                     title={showModal.context}

@@ -49,8 +49,8 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     const onButtonSave = async () => {
         try {
             //minimal transaksi harus ada amount dan code
-            if(((amount ==="" || amount ==0 ))  && 
-                ((minimum !=="" || minimum !=0 ) )
+            if((amount =="" || amount ==0 )  && 
+                (minimum !="" || minimum !=0 ) && selectedProducts.length >0
             ){
                 throw({inner : [{
                     path : "discountAmount",
@@ -98,9 +98,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 "discountAmount" : amount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
                 "oneGetOne" : +isOneGetOne.id,
-                "minimalTransaction" : minimum,
+                "minimalTransaction" : minimum =="" ? null : minimum,
                 "discountName" : name,
-                "discountCode" : code,
+                "discountCode" : code =="" ? null : code,
             }
 
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
@@ -108,7 +108,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             await DiscountInfoValidationSchema.validate(output.data,{
                 abortEarly:false
             })
-            
+
             if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
@@ -123,7 +123,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             
             setError(errors)
 
-            toast.error("Periksa kembali data yang Anda masukkan!")
+            toast.error("Periksa kolom pengisian!")
 
             setIsToastVisible(true)
 
@@ -132,6 +132,9 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             }, 2000)
         }
     }
+
+    const width = window.screen.width
+    const mobileWidth = 414
 
     useEffect(() => {
         setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
@@ -148,7 +151,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
     }
     
   return (
-    <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
+    <div className={`flex  ${width <= mobileWidth ? "h-[90vh]" : "max-h-[75vh]"} flex-col overflow-auto px-2`}>
         <Button
             isButton
             isPrimary
@@ -173,7 +176,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 onClick = {onButtonSave}
             />
         </div>
-        <div className={`flex ${window.screen.width <= 500 ? "flex-col w-fit" : "max-w-[85%] gap-8 items-center justify-between"}    `}>
+        <div className={`flex ${width <= mobileWidth ? "flex-col w-fit" : "max-w-[85%] gap-8 items-center justify-between"}    `}>
             <div className="">
                 <h4 className={`title font-bold ${onEdit ? "mt-2" : "mt-4" }`}>Nama : </h4>
                 <Input

@@ -106,7 +106,7 @@ function QNA () {
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setIsToastVisible(true)
 

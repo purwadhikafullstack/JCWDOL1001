@@ -13,20 +13,22 @@ export default function TransactionList({
     handleCloseModal,
     setSelectedTransaction,
     selectedTransaction,
-    showModal
+    showModal,
+    width,
+    mobileWidth
 }) 
 {
     return (
         <>
             <div class="my-10 mr-20 w-full shadow-md sm:rounded-lg">
-                <table class="w-full max-text-sm text-center text-gray-500">
+                <table class="w-full max-text-sm text-center text-gray-500 " >
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
                             <th scope="col" className="px-6 py-3 ">Invoice</th>
-                            <th scope="col" className="px-6 py-3 ">Tanggal</th>
+                            <th scope="col" className={`px-6 py-3 ${width <= mobileWidth && "hidden"}`}>Tanggal</th>
                             <th scope="col" className="px-6 py-3 ">Pengguna</th>
-                            <th scope="col" className="px-6 py-3 ">Potongan</th>
-                            <th scope="col" className="px-6 py-3 ">Total</th>
+                            <th scope="col" className={`px-6 py-3 ${width <= mobileWidth && "hidden"}`}>Potongan</th>
+                            <th scope="col" className={`px-6 py-3`}>Total</th>
                             <th scope="col" className="px-6 py-3 ">Detail</th>
                         </tr>
                     </thead>
@@ -34,11 +36,11 @@ export default function TransactionList({
                         {transactionList.length ===0 ? <h3>Data Tidak Ditemukan</h3>
                             : transactionList.map((list)=>{
                                 return (
-                                    <tr className="items-center text-center">
-                                        <th className="p-3 ">{list.invoice}</th>
-                                        <td className="p-3 ">{formatDate(list.updatedAt)}</td>
-                                        <td className="p-3 ">{list.userProfile.name}</td>
-                                        <td className="p-3">
+                                    <tr className="items-center text-center justify-center">
+                                        <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.invoice}</th>
+                                        <td className={`p-3 ${width <= mobileWidth && "text-sm"}`}>{formatDate(list.updatedAt)}</td>
+                                        <td className={`p-3 ${width <= mobileWidth && "text-sm"}`}>{list.userProfile.name}</td>
+                                        <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>
                                             { 
                                                 list.discount_transaction ? 
                                                 list.discount_transaction.discount.isPercentage ?  `${list.discount_transaction.discount.discountAmount}%`
@@ -47,13 +49,15 @@ export default function TransactionList({
                                                 :"-"  
                                             }
                                             </td>
-                                        <td className="p-3 ">IDR {formatNumber(list.subtotal)}</td>
-                                        <Button isButton isPrimary title="Lihat Detail" 
-                                            onClick={()=>{
-                                                setSelectedTransaction(list)
-                                                handleShowModal({context : "Detail Transaksi" })
-                                            }}
-                                        />
+                                        <td className={`p-3 ${width <= mobileWidth && "text-sm"}`}>IDR {formatNumber(list.subtotal)}</td>
+                                        <td >
+                                            <Button isSmall={width <= mobileWidth} isButton={width > mobileWidth} isPrimary title={`${width <= mobileWidth ? "Detail" : "Lihat Detail"}`}
+                                                onClick={()=>{
+                                                    setSelectedTransaction(list)
+                                                    handleShowModal({context : "Detail Transaksi" })
+                                                }}
+                                            />
+                                        </td>
                                     </tr>
                                 )
                             })
@@ -77,8 +81,8 @@ export default function TransactionList({
                                 <tr>
                                     <th scope="col" className="p-3 text-left">Nama Produk</th>
                                     <th scope="col" className="p-3 ">Kuantitas</th>
-                                    <th scope="col" className="p-3 ">@</th>
-                                    <th scope="col" className="p-3 text-right">Harga</th>
+                                    <th scope="col" className={`p-3 ${width <= mobileWidth && "hidden"}`}>@</th>
+                                    <th scope="col" className="p-3 text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -88,8 +92,8 @@ export default function TransactionList({
                                             <tr  className="items-center text-left">
                                                 <td className="p-3 ">{detail.listedTransaction.productName}</td>
                                                 <td className="p-3 text-center ">{detail.quantity}</td>
-                                                <td className="p-3 text-right">{formatNumber(detail.price)}</td>
-                                                <td className="p-3 text-right">IDR {formatNumber(detail.totalPrice)}</td>
+                                                <td className={`p-3 text-right ${width <= mobileWidth && "hidden"}`}>{formatNumber(detail.price)}</td>
+                                                <td className={`p-3  ${width <= mobileWidth ? "text-center":"text-right"}`}>IDR {formatNumber(detail.totalPrice)}</td>
                                             </tr>
                                         )
                                     })

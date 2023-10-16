@@ -337,6 +337,7 @@ const createTransactions = async (req, res, next) => {
         quantity: startTransaction[i].quantity,
         totalPrice: totalPrice,
         productId: startTransaction[i].productId,
+        buyOneGetOne : startTransaction[i].cartList?.discountProducts?.length > 0 && startTransaction[i]?.cartList?.discountProducts[0]?.discount?.oneGetOne ? 1 : 0
       };
       await Transaction_Detail?.create(newTransactionDetail);
 

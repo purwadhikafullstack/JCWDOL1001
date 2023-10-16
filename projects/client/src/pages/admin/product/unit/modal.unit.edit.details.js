@@ -95,7 +95,7 @@ export default function ModalEditProductUnit({
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setConfirmation(false)
 

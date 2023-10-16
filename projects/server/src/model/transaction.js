@@ -22,6 +22,10 @@ const Transaction_List = db.sequelize.define("transaction_list", {
         type : db.Sequelize.INTEGER,
         allowNull : false
     },
+    discount : {
+        type : db.Sequelize.INTEGER,
+        allowNull : true
+    },
     subtotal : {
         type : db.Sequelize.INTEGER,
         allowNull : false
@@ -79,6 +83,11 @@ const Transaction_Detail = db.sequelize.define("transaction_detail", {
     productId : {
         type : db.Sequelize.STRING,
         allowNull : true
+    },
+    buyOneGetOne : {
+        type : db.Sequelize.INTEGER,
+        allowNull : false,
+        defaultValue: 0
     },
 },{
     timestamps:false

@@ -19,10 +19,6 @@ export default function ModalAddProductUnit({
     const qtyRef = useRef()
     const qtyPerUnitRef = useRef()
 
-    const [unitSelected, setSelectedUnit] = useState({
-        unitId : "",
-        unitName : ""
-    });
     const [confirmation, setConfirmation] = useState(false);
 
     const canAddDefaultUnit = productData.productUnits.filter(
@@ -44,6 +40,11 @@ export default function ModalAddProductUnit({
     }else {
         dataUnits = units.filter((unit)=> unit.isSecondary === 0)
     }
+    
+    const [unitSelected, setSelectedUnit] = useState({
+        unitId : dataUnits[0].unitId,
+        unitName : dataUnits[0].unitName
+    });
 
     const [isDefaultUnit, setIsDefaultUnit] = useState({
         id : canAddDefaultUnit ? 1 : 0,
@@ -125,7 +126,7 @@ export default function ModalAddProductUnit({
                 }]})
             }
 
-            if(unitRef?.current?.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) {
+            if((unitRef?.current?.value.toLowerCase()===defaultUnitName[0]?.name.toLowerCase()) && (unitRef?.current?.value !== undefined && defaultUnitName[0]?.name !== undefined)) {
                 throw({inner: [{
                     path : "unit",
                     message:"Nama satuan tidak boleh sama dengan satuan yang aktif"
@@ -144,7 +145,7 @@ export default function ModalAddProductUnit({
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setConfirmation(false)
 
@@ -160,7 +161,7 @@ export default function ModalAddProductUnit({
         return (
             <SuccessMessage
                 type="success"
-                message={`Berhasil menambahkan satuan ${unitSelected.unitName} ke ${productData.productName}!`}
+                message={`Berhasil menambahkan satuan ke ${productData.productName}!`}
                 handleCloseModal={handleCloseModal}
             />
         );
