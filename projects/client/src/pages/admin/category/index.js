@@ -14,9 +14,9 @@ export default function CategoryList(){
     const dispatch = useDispatch()
     const [newPage, setNewPage] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
-    const [categoryIndex, setCategoryIndex] = useState(null);
     const [fileImage, setFileImage] = useState(null);
     const [searchedCategory, setSearchedCategory] = useState(null)
+    const [sortCat, setSortCat] = useState(null);
     const [page, setPage] = useState(1);
     const [categoryDesc, setCategoryDesc] = useState(null);
     const categoryNameRef = useRef();
@@ -36,8 +36,8 @@ export default function CategoryList(){
     })
     
     useEffect(()=>{
-        dispatch(getCategory({page : page, searchedCategory : searchedCategory}));
-    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory])
+        dispatch(getCategory({page : page, searchedCategory : searchedCategory, sortCat : sortCat}));
+    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory, sortCat])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -136,11 +136,10 @@ export default function CategoryList(){
         }
     }
 
-    const handleButtonClick = (categoryId, categoryIndex, context, categoryDesc) => {
+    const handleButtonClick = (categoryId, context, categoryDesc) => {
         setFileImage(null);
         setNewPage(context);
         setCategoryId(categoryId);
-        setCategoryIndex(categoryIndex);
         setCategoryDesc(categoryDesc);
         setShowModal(true)
     }
@@ -159,6 +158,14 @@ export default function CategoryList(){
                             <HiMagnifyingGlass className="text-2xl text-primary" />
                         </button>
                     </form>
+                    <div className="mx-2 flex gap-2 items-center">
+                        <label className="ml-4">Sortir Kategori berdasarkan :</label>
+                        <select value={sortCat} onChange={(e)=>setSortCat(e.target.value)} className="border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5">
+                        <option value={""}></option>
+                        <option value={"ASC"}>A-Z</option>
+                        <option value={"DESC"}>Z-A</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -208,9 +215,9 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3 flex gap-2">
-                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className=""/>
-                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage",category.categoryDesc)} title={"Ubah Gambar Kategori"} className=""/>
-                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete",category.categoryDesc)} title={"Hapus"} className=""/>
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className=""/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, "updateImage",category.categoryDesc)} title={"Ubah Gambar Kategori"} className=""/>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, "delete",category.categoryDesc)} title={"Hapus"} className=""/>
                                 </td>
                             </motion.tr>))
                             :
