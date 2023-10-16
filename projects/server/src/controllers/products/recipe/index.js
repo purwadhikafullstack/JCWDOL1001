@@ -186,8 +186,7 @@ const getUser = async( req, res, next ) => {
 
       //================================EMAIL SECTION===================================
       let message = `
-      We have checked on our stocks of the custom medicine's ingredients based on 
-      your uploaded doctor prescription.
+      Kami telah memeriksa stok obat berdasarkan resep dokter yang Anda unggah.
       `
       let pathURL = ""
       const accessToken = helperToken.createToken({ 
@@ -196,14 +195,14 @@ const getUser = async( req, res, next ) => {
       });
       //kalau gak ready smua gmn
       if(filteredResult.length === 0){
-        message += `Bad news is... we couldn't proceed your order due to insufficient product stock.
-        Fear not! You could still purchase another product you need at our website.`
+        message += `Kabar buruknya adalah... kami tidak dapat memproses pesanan Anda karena stok produk tidak mencukupi.
+        Tidak perlu khawatir! Anda masih bisa membeli produk lain yang Anda butuhkan di situs web kami.`
         pathURL = REDIRECT_URL
       }
       //kalau ready semua gimana
       else if(filteredResult.length === data.length){
-        message += `And... good news! You can checkout any items included in the list. 
-        Just click the button below to confirm that you would like to proceed your purchase.`
+        message += `Dan... Kabar Baik! Anda dapat melakukan checkout untuk item-item yang ada dalam daftar.
+        Cukup klik tombol di bawah ini untuk mengonfirmasi bahwa Anda ingin melanjutkan pembelian Anda.`
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
       //kalau ready sebagian
@@ -215,7 +214,7 @@ const getUser = async( req, res, next ) => {
             itemList += filteredResult[i].name
           }else{
             if(i === filteredResult.length - 1){
-              itemList +=  `and ${filteredResult[i].name}`
+              itemList +=  `dan ${filteredResult[i].name}`
             }
             else{
               itemList +=  `${filteredResult[i].name}, `
@@ -223,10 +222,10 @@ const getUser = async( req, res, next ) => {
           }
           }
         console.log(message)
-        message += `Well... You could only checkout items that included in the following list.
-        item(s) : ${itemList}.
-        Choice is yours. But if you make up your mind to proceed,
-        Just click the button below to confirm that you would like to proceed your purchase`
+        message += `Nah... Anda hanya dapat melakukan checkout untuk item-item yang terdapat dalam daftar berikut.
+        Daftar Barang : ${itemList}.
+        Pilihannya ada di tangan Anda. Tetapi jika Anda telah memutuskan untuk melanjutkan,
+        Cukup klik tombol di bawah ini untuk mengonfirmasi bahwa Anda ingin melanjutkan pembelian Anda.`
         console.log(pathURL)
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }

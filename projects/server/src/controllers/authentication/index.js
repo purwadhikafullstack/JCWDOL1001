@@ -150,7 +150,7 @@ const register= async (req, res, next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
             console.log(mailOptions)
 
@@ -283,7 +283,7 @@ const resendOtp = async (req, res, next) => {
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            name : user?.user_profile?.name,
+            name : user?.userProfile?.name,
             UUID: user?.UUID, 
             email : email,
             roleId : user?.role,
@@ -293,13 +293,13 @@ const resendOtp = async (req, res, next) => {
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
 
-        const html = handlebars.compile(template)({ name: (user?.user_profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (user?.userProfile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
@@ -521,7 +521,7 @@ const forgotPass = async ( req,res,next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Forgot Password",
+            subject: "Lupa Password",
             html: html}
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;
