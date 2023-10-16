@@ -1,7 +1,7 @@
 import {
+  HiOutlineCalendarDays,
   HiOutlineCircleStack,
   HiOutlinePencilSquare,
-  HiOutlineRectangleStack,
   HiOutlineSquare3Stack3D,
   HiOutlineTrash,
 } from "react-icons/hi2";
@@ -28,9 +28,9 @@ export default function TableProducts({
         <tr>
           <th className="p-3">#</th>
           <th className="p-3">Nama Produk</th>
-          <th className="p-3">Harga</th>
-          <th className="p-3">Stok</th>
-          <th className="p-3">Unit</th>
+          <th className="p-3 hidden lg:table-cell">Harga</th>
+          <th className="p-3 hidden lg:table-cell">Stok</th>
+          <th className="p-3 hidden lg:table-cell">Unit</th>
           <th className="p-3">Actions</th>
         </tr>
       </thead>
@@ -63,25 +63,14 @@ export default function TableProducts({
                 className="text-gray-900 whitespace-nowrap p-3 font-medium"
               >
                 {index + 1 + ((current_page - 1) * 10)}
-                {/* {index + 1} */}
               </th>
               <td className="p-3">{product.productName}</td>
-              <td className="p-3">Rp. {formatNumber(product.productPrice)}</td>
-              <td className="p-3">{product?.productUnits[0]?.product_detail.quantity}</td>
-              <td className="p-3">{product?.productUnits[0]?.name}</td>
+              <td className="p-3 hidden lg:table-cell">Rp. {formatNumber(product.productPrice)}</td>
+              <td className="p-3 hidden lg:table-cell">{product?.productUnits[0]?.product_detail.quantity ? product?.productUnits[0]?.product_detail.quantity : "-"}</td>
+              <td className="p-3 hidden lg:table-cell">{product?.productUnits[0]?.name ? product?.productUnits[0]?.name : "-"}</td>
 
               <td className="p-3">
                 <div className="flex gap-3">
-                  <Button
-                    isSmall
-                    isPrimaryOutline
-                    onClick={() =>
-                      navigate(`/admin/products/history/${product?.productId}`,{state : {productId : product?.productId, productName : product?.productName}})
-                    }
-
-                    title="Riwayat Stok"
-                  />
-
                   <Button
                     isSmall
                     isPrimaryOutline
@@ -152,7 +141,19 @@ export default function TableProducts({
                           Ubah Satuan
                         </span>
                       </Button>
-                      
+
+                      <Button
+                        isBLock
+                        className="px-2 hover:bg-slate-200"
+                        onClick={() =>
+                          navigate(`/admin/products/history/${product?.productId}`, {state : {productId : product?.productId, productName : product?.productName}})
+                        }
+                      >
+                        <span className="flex items-center gap-2 py-2">
+                          <HiOutlineCalendarDays className="text-lg text-indigo-500 " />
+                          Riwayat Stok
+                        </span>
+                      </Button>
                     </div>
                   </div>
                 </div>

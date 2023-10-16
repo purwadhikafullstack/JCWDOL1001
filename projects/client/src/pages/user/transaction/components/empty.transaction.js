@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 export default function EmptyTransaction() {
   return (
     <div className="mt-12">

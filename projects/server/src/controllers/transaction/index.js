@@ -150,23 +150,6 @@ const getTransactions = async (req, res, next) => {
           include: {
             model: Product_List,
             as: "listedTransaction",
-            include : {
-              model: Discount_Product,
-              attributes: { exclude: ["discountProductId"] },
-              as: "discountProducts",
-              where:{isDeleted:0},
-              include: {
-                model: Discount,
-                where: { isDeleted: 0, 
-                  [Op.or] :[
-                    {discountExpired :{[Op.gte] : moment()}},
-                    {discountExpired :{[Op.is] : null}}
-                  ]
-                },
-                required: false,
-              },
-              required: false,
-            },
           },
         },
         {

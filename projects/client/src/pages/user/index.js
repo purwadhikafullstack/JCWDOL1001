@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
 import UserSidebar from "./component.sidebar";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Profile from "./profile";
 import Address from "./address";
 import Password from "./password";
@@ -8,8 +7,7 @@ import Transaction from "./transaction";
 import Email from "./email";
 import { useEffect, useState } from "react";
 import Button from "../../components/Button";
-import { HiArrowLeft, HiArrowLongLeft, HiXMark } from "react-icons/hi2";
-import Modal from "../../components/Modal";
+import { HiArrowLongLeft } from "react-icons/hi2";
 import ForumPage from "./forum";
 
 export default function UserPage({ user, ongoingTransactions }) {

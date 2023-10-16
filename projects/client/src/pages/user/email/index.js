@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useRef } from "react";
-import { changeEmail, changeEmailOtp } from "../../../store/slices/auth/slices";
+import { useState, useRef } from "react";
+import { changeEmail } from "../../../store/slices/auth/slices";
 import Input from "../../../components/Input/index.js"
 import Button from "../../../components/Button";
 

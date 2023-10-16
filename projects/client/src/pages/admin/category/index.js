@@ -5,7 +5,7 @@ import Button from "../../../components/Button/index.js";
 import Pagination from "../../../components/PaginationV2";
 import InputImage from "../../../components/InputImage";
 import Input from "../../../components/Input";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
 import { motion } from "framer-motion";
 import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../../store/slices/cat/slices.js";
 import Modal from "../../../components/Modal/index.js";
@@ -145,19 +145,39 @@ export default function CategoryList(){
 
     const handleCloseModal = () => setShowModal(false)
 
-    return(
-        <div className="container py-24 ml-[calc(5rem)] lg:px-8">
+    const handleSearch = (event) => {
+    setPage(1)
+    event.preventDefault();
+    setSearchedCategory(searchedCategoryRef?.current.value)
+    };
 
-            <div className="overflow-x-auto sm:rounded-lg">
-                <div className="flex flex-row justify-between">
-                    <h3 className="title w-1/2"> Kategori </h3>
-                    <form className="relative w-1/3">
-                        <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
-                        <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedCategory(searchedCategoryRef?.current.value)}>
-                            <HiMagnifyingGlass className="text-2xl text-primary" />
-                        </button>
-                    </form>
-                </div>
+    const clearSearch = () => {
+    setSearchedCategory(null)
+    setPage(1)
+    searchedCategoryRef.current.value = "";
+    }
+
+    return(
+        <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
+            <div className="flex flex-row justify-between">
+                <h3 className="title w-1/2"> Kategori </h3>
+                <form className="relative w-2/5" onSubmit={(e) => {
+                    handleSearch(e)
+                }}>
+                    <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
+                    <Button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
+                        <HiMagnifyingGlass className="text-2xl text-primary" />
+                    </Button>
+
+                    {searchedCategory && 
+                        <Button
+                            className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
+                            onClick={clearSearch}
+                        >
+                            <HiXMark className="text-2xl text-primary" />
+                        </Button>
+                        }
+                </form>
             </div>
 
             <Button isPrimary isButton onClick={()=>{
@@ -206,9 +226,9 @@ export default function CategoryList(){
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
                                 <td className="p-3 flex gap-2">
-                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className=""/>
-                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className=""/>
-                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className=""/>
+                                <Button isPrimary isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama"} className=""/>
+                                <Button isPrimaryOutline isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar"} className=""/>
+                                <Button isDanger isSmall onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className=""/>
                                 </td>
                             </motion.tr>))
                             :

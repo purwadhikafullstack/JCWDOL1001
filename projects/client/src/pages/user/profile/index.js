@@ -1,11 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import {
-  changeProfileData,
-  changeProfilePicture,
-  getProfile,
-  keepLogin,
-} from "../../../store/slices/auth/slices";
+import { changeProfileData, changeProfilePicture } from "../../../store/slices/auth/slices";
 import InputImage from "../../../components/InputImage";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";

@@ -74,12 +74,8 @@ export default function Products({ user }) {
 
   const handleSort = (sortBy, type) => {
     setSort({sortBy, type})
-  };
-
-  
-  useEffect(() => {
     setPage(1)
-  }, [filterType, activeFilter])
+  };
 
   useEffect(() => {
     dispatch(getCategory({ page : 1 }));

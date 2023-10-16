@@ -81,8 +81,13 @@ const getProducts = async (req, res, next) => {
     });
 
     const total =
-      id_cat || product_name ?
-        await Product_List?.count({
+        product_name && !id_cat ?
+          await Product_List?.count({
+            where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
+          })
+        : 
+        id_cat || product_name ?
+          await Product_List?.count({
             include: {
               model: Categories,
               as: "productCategories",
@@ -106,7 +111,6 @@ const getProducts = async (req, res, next) => {
             },
             where: { isDeleted: 0 } 
           })
-        // : await Product_List?.count({ where: { isDeleted: 0 } });
 
     const pages = Math.ceil(total / options.limit);
 

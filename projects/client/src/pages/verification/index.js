@@ -6,9 +6,7 @@ import Input from "../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { verify } from "../../store/slices/auth/slices";
 import { useLocation, useNavigate } from "react-router-dom";
-import { listCity, listProvince } from "../../store/slices/address/slices";
-import GetProvince from "./components/component.province";
-import GetCity from "./components/component.city";
+import { listCity } from "../../store/slices/address/slices";
 export default function Verification() {
     //pake uuid dari response register buat bikin trigger ke /landingpage
     const location = useLocation()

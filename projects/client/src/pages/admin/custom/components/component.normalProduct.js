@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import Input from "../../../../components/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../../../store/slices/product/slices";

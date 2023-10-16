@@ -4,13 +4,12 @@ import { createTransaction, getCheckoutProducts } from "../../../../store/slices
 import Item from "../../../../components/Item";
 import Button from "../../../../components/Button";
 import formatNumber from "../../../../utils/formatNumber";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LogoBca from "../../../../assets/logo-bca.png";
 import LogoMandiri from "../../../../assets/logo-mandiri.png";
 import ShippingAddress from "../../../../components/Shipping/component.address";
 import ShippingCost from "../../../../components/Shipping/component.shipping";
 import DiscountChecker from "../../../../components/Discount Checker";
-import moment from "moment"
 
 export default function CheckoutPage(){
 

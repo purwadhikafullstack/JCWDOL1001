@@ -128,6 +128,11 @@ export default function Transaction({
   }, [sortDate, searchedInvoice])
   
   useEffect(()=>{
+    setTimeout(() => {
+      const statusList = document.querySelector(".transaction-status");
+      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 100, behavior:"smooth" });
+    }, 50);
+
     if (startDateRef.current && endDateRef.current) {  
       startDateRef.current.value = "";
       endDateRef.current.value = "";
@@ -154,7 +159,7 @@ export default function Transaction({
   useEffect(() => {
     setTimeout(() => {
       const statusList = document.querySelector(".transaction-status");
-      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 180, behavior:"smooth" });
+      statusList.scrollTo({ left: activeTab === 1 ? 0 : (activeTab-1) * 125, behavior:"smooth" });
     }, 50);
   }, [activeTab]);
   
@@ -168,9 +173,7 @@ export default function Transaction({
     { tabId: 7, component: PesananDibatalkan },
   ]
 
-  const RenderTabContent = tabContent.find(content => content.tabId === activeTab)?.component
-  const statusDesc = transactionStatus?.find(status => status.statusId === activeTab)?.statusDesc
-  
+  const RenderTabContent = tabContent.find(content => content.tabId === activeTab)?.component  
 
   useEffect(()=>{
     setPage(1)
@@ -180,7 +183,7 @@ export default function Transaction({
     <>
       <div className="">
         <h3 className="title">Transaksi</h3>
-        <div className="mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
+        <div className="transaction-status mt-2 flex w-full gap-2 overflow-auto border-b border-primary/30 pb-2">
           {transactionStatus.map((tab) => {
             const ongoingStatus = ongoingTransactions?.transactions?.find(item => item.statusId === tab.statusId);
             return(
@@ -216,7 +219,8 @@ export default function Transaction({
                   <Input type="number" placeholder="Cari nomor invoice disini" ref={searchedInvoiceRef} isDisabled={transaction.length === 0}/>
                   <Button
                       className="absolute top-1/2 right-0 -translate-y-1/2 p-2" 
-                      type="submit" 
+                      type={transaction.length === 0 ? "button" : "submit"}
+                        isDisabled={transaction.length === 0}
                   >
                     <HiMagnifyingGlass className="text-2xl text-primary" />
                   </Button>
