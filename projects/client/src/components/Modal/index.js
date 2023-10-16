@@ -48,9 +48,9 @@ export default function Modal({
 
   fullWidth === true && modalBodyClassName.push("w-full h-full")
 
-  halfWidth === true && modalBodyClassName.push("lg:w-3/4 md:w-3/4 w-5/6 h-fit rounded-lg")
+  halfWidth === true && modalBodyClassName.push("lg:w-3/4 md:w-3/4 w-[95%] h-fit rounded-lg")
 
-  !fullWidth && !halfWidth && modalBodyClassName.push("md:w-[55%] lg:w-[40%] w-5/6 h-fit rounded-lg")
+  !fullWidth && !halfWidth && modalBodyClassName.push("md:w-[55%] lg:w-[40%] w-[95%] h-fit rounded-lg")
 
   if (showModal === true && fullWidth === false) {
     document.body.style.overflow = "hidden";

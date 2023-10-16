@@ -13,7 +13,7 @@ export const inputProductValidationSchema = Yup.object({
     .matches(/[a-zA-Z]/, "Deskripsi harus mengandung setidaknya satu huruf")
     .min(20, "Deskripsi minimal 20 karakter"),
   categoryId: Yup.array()
-    .min(1, "Pilih setidaknya satu kategori")
+    .min(1, "Pilih minimal satu kategori")
     .required("Kategori harus diisi"),
   productPicture: Yup.mixed().required('Pilih gambar'),
 });
@@ -31,7 +31,7 @@ export const updateProductValidationSchema = Yup.object({
     .matches(/[a-zA-Z]/, "Deskripsi harus mengandung setidaknya satu huruf")
     .min(20, "Deskripsi minimal 20 karakter"),
   categoryId: Yup.array()
-    .min(1, "Pilih setidaknya satu kategori")
+    .min(1, "Pilih minimal satu kategori")
     .required("Kategori harus diisi"),
   productPicture: Yup.mixed()
     .nullable()

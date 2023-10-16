@@ -1,7 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit"
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify';
-import { DiscountInfoValidationSchema } from "./validation";
 
 export const getUser = createAsyncThunk(
     "custom/getUser",

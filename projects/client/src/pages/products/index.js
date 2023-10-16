@@ -74,6 +74,7 @@ export default function Products({ user }) {
 
   const handleSort = (sortBy, type) => {
     setSort({sortBy, type})
+    setPage(1)
   };
 
   useEffect(() => {
@@ -110,7 +111,6 @@ export default function Products({ user }) {
         promo,
       })
     );
-
   }, [selectedCategory, search, sort, page, promo ]);
 
   useEffect(()=>{
@@ -178,9 +178,9 @@ export default function Products({ user }) {
           </div>
 
           <div className="col-span-1 lg:col-span-4">
-            <div className="flex justify-center items-center lg:justify-start gap-2">
+            <div className="flex justify-center items-center lg:justify-between gap-2">
               <form
-                className="relative w-5/6 lg:w-1/3"
+                className="relative w-full lg:w-1/3"
                 onSubmit={(e) => {
                   handleSearch(e);
                 }}
@@ -189,6 +189,7 @@ export default function Products({ user }) {
                   ref={searchRef}
                   type="text"
                   placeholder="Cari kebutuhanmu disini"
+                  className="pr-16"
                 />
                 <Button
                   className="absolute right-0 top-1/2 -translate-y-1/2 p-2"
@@ -205,24 +206,13 @@ export default function Products({ user }) {
                 </Button>
               }
               </form>
-            </div>
 
-
-            <div className="flex items-center justify-between mt-4">
-              <h3 className="title">
-                {searchRef.current?.value
-                  ? `Hasil Pencarian: ${searchRef.current?.value}`
-                  : selectedCategory
-                  ? selectedCategory.categoryDesc
-                  : promo ? "Promo" : "Semua Produk"}
-              </h3>
-
-              <div className="group relative w-1/2 md:w-1/3 lg:w-1/5">
+              <div className="group relative w-1/2 md:w-1/3 lg:w-1/5 self-stretch">
                 <Button
                   isButton
                   isBLock
                   isPrimaryOutline
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between h-full"
                 >
                   {filterType ?
                     <span className="capitalize">{filterType}</span>
@@ -235,6 +225,19 @@ export default function Products({ user }) {
                 <FilterDropdownMenu handleSort={handleSort} setFilterType={setFilterType} activeFilter={activeFilter} setActiveFilter={setActiveFilter}/>
                 
               </div>
+            </div>
+
+
+            <div className="flex items-center justify-between mt-4">
+              <h3 className="subtitle">
+                {searchRef.current?.value
+                  ? `Hasil Pencarian: ${searchRef.current?.value}`
+                  : selectedCategory
+                  ? selectedCategory.categoryDesc
+                  : promo ? "Promo" : "Semua Produk"}
+              </h3>
+
+            
             </div>
             <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {isGetProductsLoading ? (

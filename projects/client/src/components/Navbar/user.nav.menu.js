@@ -8,36 +8,29 @@ import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout, resendOtp } from "../../store/slices/auth/slices"
 import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
+import { totalProductCart } from "../../store/slices/cart/slices"
 
 
 export default function UserNavMenu({
   isLogin,
   user,
   handleShowModal,
-  ongoingTransactions
+  ongoingTransactions,
+  // total
 }) {
   const {total}= useSelector(state=>{
     return {
-      total : state?.cart?.total
+      total : state?.cart?.total,
     }
   })
 
   const navigate = useNavigate()
-
-  const { pathname } = useLocation()
 
   const dispatch = useDispatch()
 
   const [isMenuVisible, setIsMenuVisible] = useState(false)
 
   const isAccountVerified = user.status === 0 && isLogin
-
-  const [verify, setVerify] = useState(false)
-
-  const onClickVerified = ()=>{
-    dispatch(resendOtp({email : user.email}))
-    setVerify(true)
-  }
 
   const onClickKeluar = () => {
     dispatch(logout()).finally(() => {
@@ -159,6 +152,7 @@ export default function UserNavMenu({
                               <p className="text-sm font-normal text-slate-500">
                                 Profil & Pengaturan
                               </p>
+                              <p className="text-xs text-danger">Silahkan lakukan verifikasi</p>
                             </div>
                             <div className="ml-auto flex h-8 w-8 items-center justify-center rounded-full shadow-md">
                               <HiChevronRight className="text-dark" />
@@ -190,15 +184,6 @@ export default function UserNavMenu({
                             title="Keluar"
                             onClick={onClickKeluar}
                           />
-                          <Button
-                            isButton
-                            isPrimary
-                            isDisabled={verify}
-                            onClick={onClickVerified}
-                            className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
-                          >
-                            <span>Verify Account</span>
-                          </Button>
                         </div>
                       </div>
                     </motion.div>

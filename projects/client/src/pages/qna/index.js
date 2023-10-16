@@ -40,6 +40,12 @@ export default function QnAPage() {
     setShowModal({ show: true, context })
   }
 
+  const onChangeValue = (event, state) =>{
+    const newValue = event.target.value
+    if(newValue){
+      state(newValue)
+    }
+  } 
   const handleCloseModal = () => {
     setShowModal({ show: false, context: "" })
     setSelectedQuestion([])

@@ -6,12 +6,10 @@ import { useDispatch } from 'react-redux';
 import { logout, resendOtp } from '../../store/slices/auth/slices';
 import { toast } from 'react-toastify';
 
-export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions }) {
+export default function UserSidebar({ profile, user, setMobileContextActive, ongoingTransactions, verify, setVerify }) {
   const { context } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
-  const [verify, setVerify] = useState(false)
 
   const onClickVerified = ()=>{
     dispatch(resendOtp({email : user.email}))
@@ -101,15 +99,14 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
             <h3>{profile.name}</h3>
           </div>
 
-          <div className="border-b-2 py-4 flex gap-2">
+          <div className="border-b-2 py-4 flex flex-col gap-2">
             {user.status === 0 &&
               <Button
                 isButton
                 isPrimary
                 isBLock
                 onClick={onClickVerified}
-                title="Verify Account"
-                className="lg:hidden"
+                title={verify ? "Email Verifikasi Telah Dikirim" : "Verifikasi Akun"}
                 isDisabled={verify}
               />
             }

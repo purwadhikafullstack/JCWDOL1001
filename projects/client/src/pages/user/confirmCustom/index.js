@@ -24,24 +24,24 @@ export default function ConfirmCustom() {
     <div className="flex h-screen w-screen flex-col items-center justify-center">
       {role !== 2 && 
       <div>
-      <h3 className="title">Please login to your account</h3>
-      <p className="mb-2">We need to make sure that only our customers could confirm the order.</p>
+      <h3 className="title">Silahkan Login</h3>
+      <p className="mb-2">Kami ingin memastikan, hanya user yang bisa mmengkonfirmasi pesanan</p>
       </div>
       }
       { (role === 2 && !status) && 
       <div>
-      <h3 className="title">Please wait for a moment.</h3>
-      <p className="mb-2">We will verify and make your order now.</p>
+      <h3 className="title">Silahkan menunggu</h3>
+      <p className="mb-2">Kami akan melakukan verifikasi sebelum membuat pesanan kamu</p>
       </div>}
       {status &&
       <div>
-        <h3 className="title">Hurray!</h3>
-      <p className="mb-2">Your order has been created.</p>
+        <h3 className="title">Hore!</h3>
+      <p className="mb-2">Pesanan kamu telah dibuat</p>
       <Button
         isButton
         isPrimary
         isLink
-        title="Back"
+        title="Kembali"
         path="/"
       />
       </div>}

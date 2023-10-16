@@ -1,6 +1,6 @@
 const { Op } = require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
-const { Forum, User_Profile } = require("../../model/relation.js")
+const { Forum, User_Profile,User_Account } = require("../../model/relation.js")
 const moment = require ("moment")
 
 
@@ -234,7 +234,6 @@ const getUnansweredQuestions = async (req, res,next) => {
             where : {
                 [Op.and] :
                 [
-                    filter.userId,
                     {"isDeleted" : 0},
                     filter.question
                 ]

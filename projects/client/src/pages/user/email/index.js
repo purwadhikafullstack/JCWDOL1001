@@ -32,9 +32,6 @@ export default function Email() {
       dispatch(changeEmail(
         {userId : profile.userId, email : emailRef.current.value, otp : otpRef.current.value})).then(()=>{navigate("/");dispatch(forcedLogout())})
       setError("")
-      toast.success("Email telah berhasil dirubah! Silahkan Login kembali dengan Email yang baru.")
-      
-      //
     }catch(error){
       const errors = {}
       

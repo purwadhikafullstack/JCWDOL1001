@@ -125,6 +125,7 @@ const authSlice = createSlice({
             state = Object.assign(state, {
                 uuid : action.payload?.data?.UUID,
                 role : action.payload?.data?.role,
+                isLogin : true,
                 email : action.payload?.data?.email,
                 status : action.payload?.data?.status,
                 profile : action.payload?.profile,

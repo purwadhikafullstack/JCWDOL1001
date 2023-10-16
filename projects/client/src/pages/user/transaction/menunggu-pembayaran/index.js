@@ -11,7 +11,6 @@ import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
 import ModalDetailTransaction from "../components/modal.detail.transaction";
 import EmptyTransaction from "../components/empty.transaction";
 import SkeletonTransaction from "../components/skeleton";
-import TransactionCard from "../components/transaction.card";
 
 export default function MenungguPembayaran({
   transaction,

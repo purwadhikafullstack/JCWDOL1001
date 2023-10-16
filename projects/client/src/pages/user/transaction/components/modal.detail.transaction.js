@@ -11,7 +11,7 @@ export default function ModalDetailTransaction({
   console.log(selectedTransaction)
 
   return (
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto mt-2">
         <div className="left-container">
           {countdown &&
             <div className="mb-4 p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
@@ -67,33 +67,35 @@ export default function ModalDetailTransaction({
               </p>
             </div>
           </div>
-            <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
-              {transactionDetail?.map((product, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <img
-                    className="w-14 border"
-                    src={
-                      process.env.REACT_APP_CLOUDINARY_BASE_URL +
-                      product.listedTransaction.productPicture
-                    }
-                    alt={product.listedTransaction.productName}
-                  />
-                  <div className="w-full">
-                    <p>{product.listedTransaction.productName}</p>
-                    <div className="flex justify-between">
-                      <div className="flex gap-2">
-                        <p>Rp. {formatNumber(product.price)}</p>
-                        <span>x</span>
-                        <p>{product.quantity}</p>
-                      </div>
-                      <p className="font-semibold">Rp. {formatNumber(product.totalPrice)}</p>
+            <div
+            className={`mb-2 flex flex-col gap-2 divide-y-2 overflow-hidden`}
+          >
+            {transactionDetail?.map((product, index) => (
+              <div key={index} className="flex items-center gap-2 pt-2 text-sm">
+                <img
+                  className="w-14 border"
+                  src={
+                    process.env.REACT_APP_CLOUDINARY_BASE_URL +
+                    product.listedTransaction.productPicture
+                  }
+                  alt={product.listedTransaction.productName}
+                />
+                <div className="w-full">
+                  <p>{product.listedTransaction.productName}</p>
+                  <div className="flex justify-between">
+                    <div className="flex gap-2">
+                      <p>Rp. {formatNumber(product.price)}</p>
+                      <span>x</span>
+                      <p>{product.quantity}</p>
                     </div>
+                    <p className="font-semibold">
+                      Rp. {formatNumber(product.totalPrice)}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-2 border-t-2 pt-2">
+              </div>
+            ))}
+            <div className="flex flex-col gap-2 pt-2">
               <div className="flex justify-between">
                 <p className="text-sm">Total Belanja</p>
                 <p className="font-bold">
@@ -119,6 +121,7 @@ export default function ModalDetailTransaction({
                 </p>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

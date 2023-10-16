@@ -21,8 +21,6 @@ export default function ModalInputProduct({
   categoriesTotalPage,
   setCategoriesPage,
   productData,
-  // selectedCategories,
-  // setSelectedCategories,
   handleCloseModal,
   isSubmitProductLoading,
   categoriesCurrentPage
@@ -107,27 +105,27 @@ export default function ModalInputProduct({
 
     try {
       if (productData) {
+        if (!confirmAdd) {
         await updateProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
         });
 
         setError("");
         setConfirmAdd(true);
-
-        if (confirmAdd) {
+        } else {
           dispatch(updateProduct({ id: productData.productId, formData }));
         }
       }
 
       if (!productData) {
-        await inputProductValidationSchema.validate(inputProductData, {
+        if (!confirmAdd) {
+          await inputProductValidationSchema.validate(inputProductData, {
           abortEarly: false,
         });
 
         setError("");
         setConfirmAdd(true);
-
-        if (confirmAdd) {
+        } else {
           dispatch(createProduct(formData));
         }
       }
@@ -167,120 +165,124 @@ export default function ModalInputProduct({
   }
 
   return (
-    <div className="max-h-[75vh] overflow-auto px-1">
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <div className={`${confirmAdd ? "hidden" : null}`}>
-          <div className="">
-            {selectedCategories.length === 0 ? (
-              <h3>Pilih Kategori ...</h3>
-            ) : (
-              <>
-                <h3>Kategori</h3>
+    <div className="max-h-[80vh] overflow-auto px-1">
+      <form onSubmit={(e) => handleSubmit(e)} className="">
+        <div className={`${confirmAdd ? "hidden" : ""}`}>
+          <div className="grid md:grid-cols-2 md:gap-2">
+            <div className="">
+              <div className="">
+                {selectedCategories.length === 0 ? (
+                  <h3>Pilih Kategori ...</h3>
+                ) : (
+                  <>
+                    <h3>Kategori</h3>
 
-                <div
-                  className="mb-2 flex flex-wrap gap-2"
-                  onChange={() => setError({ ...error, categoryId: false })}
-                >
-                  {selectedCategories?.map((item) => {
-                    return (
-                      <Button
-                        isPrimaryOutline
-                        key={item?.categoryId}
-                        className="flex items-center rounded-md px-2 py-1 text-sm"
-                      >
-                        {item?.categoryDesc}
-                        <span
-                          className="ml-2 cursor-pointer"
-                          onClick={() => handleRemoveCategory(item.categoryId)}
-                        >
-                          <HiXMark className="text-lg" />
-                        </span>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
+                    <div
+                      className="mb-2 flex flex-wrap gap-2"
+                      onChange={() => setError({ ...error, categoryId: false })}
+                    >
+                      {selectedCategories?.map((item) => {
+                        return (
+                          <Button
+                            isPrimaryOutline
+                            key={item?.categoryId}
+                            className="flex items-center rounded-md px-2 py-1 text-sm"
+                          >
+                            {item?.categoryDesc}
+                            <span
+                              className="ml-2 cursor-pointer"
+                              onClick={() => handleRemoveCategory(item.categoryId)}
+                            >
+                              <HiXMark className="text-lg" />
+                            </span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
 
-            <Button
-              isButton
-              isPrimary
-              title="Pilih Kategori"
-              onClick={() => setShowCategoryModal(true)}
-            />
+                <Button
+                  isButton
+                  isPrimary
+                  title="Pilih Kategori"
+                  onClick={() => setShowCategoryModal(true)}
+                />
 
-            {error.categoryId && (
-              <div className="text-sm text-red-500 dark:text-red-400">
-                {error.categoryId}
+                {error.categoryId && (
+                  <div className="text-sm text-red-500 dark:text-red-400">
+                    {error.categoryId}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="mt-4 flex flex-col gap-y-4">
-            <div className="">
-              <Input
-                ref={productNameRef}
-                type="text"
-                label="Nama Produk"
-                placeholder="Contoh: Paracetamol 500 mg"
-                errorInput={error.productName}
-                onChange={() => setError({ ...error, productName: false })}
-              />
-              {error.productName && (
-                <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productName}
+              <div className="mt-4 flex flex-col gap-y-4">
+                <div className="">
+                  <Input
+                    ref={productNameRef}
+                    type="text"
+                    label="Nama Produk"
+                    placeholder="Contoh: Paracetamol 500 mg"
+                    errorInput={error.productName}
+                    onChange={() => setError({ ...error, productName: false })}
+                  />
+                  {error.productName && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.productName}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="">
-              <Input
-                ref={productPriceRef}
-                type="number"
-                label="Harga Produk"
-                placeholder="Contoh: 35000"
-                errorInput={error.productPrice}
-                onChange={() => setError({ ...error, productPrice: false })}
-              />
-              {error.productPrice && (
-                <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productPrice}
+                <div className="">
+                  <Input
+                    ref={productPriceRef}
+                    type="number"
+                    label="Harga Produk"
+                    placeholder="Contoh: 35000"
+                    errorInput={error.productPrice}
+                    onChange={() => setError({ ...error, productPrice: false })}
+                  />
+                  {error.productPrice && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.productPrice}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="">
-              <Input
-                ref={productDosageRef}
-                type="text"
-                label="Dosis"
-                placeholder="Contoh: 3 x 1 hari"
-                errorInput={error.productDosage}
-                onChange={() => setError({ ...error, productDosage: false })}
-              />
-              {error.productDosage && (
-                <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productDosage}
+                <div className="">
+                  <Input
+                    ref={productDosageRef}
+                    type="text"
+                    label="Dosis"
+                    placeholder="Contoh: 3 x 1 hari"
+                    errorInput={error.productDosage}
+                    onChange={() => setError({ ...error, productDosage: false })}
+                  />
+                  {error.productDosage && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.productDosage}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="">
-              <Input
-                ref={productDescriptionRef}
-                type="textarea"
-                label="Deskripsi Produk"
-                placeholder="Tulis Deskripsi Disini"
-                errorInput={error.productDescription}
-                onChange={() =>
-                  setError({ ...error, productDescription: false })
-                }
-              />
-              {error.productDescription && (
-                <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productDescription}
+                <div className="">
+                  <Input
+                    ref={productDescriptionRef}
+                    type="textarea"
+                    label="Deskripsi Produk"
+                    placeholder="Tulis Deskripsi Disini"
+                    errorInput={error.productDescription}
+                    onChange={() =>
+                      setError({ ...error, productDescription: false })
+                    }
+                  />
+                  {error.productDescription && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.productDescription}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
             <InputImage

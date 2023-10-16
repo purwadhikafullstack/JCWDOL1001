@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import {
     listCity,
-    cost,
     listProvince,
     getAddress,
     deleteAddress,

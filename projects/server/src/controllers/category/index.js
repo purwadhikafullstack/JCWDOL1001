@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 
 const getCategory = async (req, res, next) => {
     try{
-        const { page, limit, searchedCategory } = req.query;
+        const { page, limit, searchedCategory, sortCat } = req.query;
         const currentPage = page ? parseInt(page) : 1;
         const options = {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
@@ -13,8 +13,14 @@ const getCategory = async (req, res, next) => {
         }
         const filter = { searchedCategory };
         if(searchedCategory) filter.searchedCategory = {categoryDesc : {[Op.like]:`%${searchedCategory}%`}}
+
+        let sort = [];
+        if(sortCat) sort.push ([`categoryDesc`,sortCat])
+        
 		const category = await Categories?.findAll({...options, 
-            where : {[Op.and] : [filter.searchedCategory, {isDeleted : 0}]}});
+            where : {[Op.and] : [filter.searchedCategory, {isDeleted : 0}]},
+            order : sort
+        });
 
         const total = await Categories?.count();
         const pages = Math.ceil(total / options.limit);

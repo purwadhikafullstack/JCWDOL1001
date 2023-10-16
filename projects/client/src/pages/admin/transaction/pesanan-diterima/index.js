@@ -64,14 +64,6 @@ export default function PesananDiterima({
             handleCloseModal={handleCloseModal}
             handleShowModal={handleShowModal}
           />
-          <div className="mt-4 flex justify-end">
-            <Button
-              isButton
-              isPrimary
-              title={`Tutup`}
-              onClick={handleCloseModal}
-            />
-          </div>
         </>
       </Modal>
     </>
