@@ -12,7 +12,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { toast } from "react-toastify";
 import AssetCart from "../../../assets/asset-cart.png";
 
-export default function Cart() {
+export default function Cart({user}) {
   const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
 
     return{
