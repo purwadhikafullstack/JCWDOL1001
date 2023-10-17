@@ -95,7 +95,7 @@ export default function InputAddressPage({
     };
 
     try {
-      if (addressData) {
+      if (addressData && addressData?.length !== 0) {
         await InputAddressValidationSchema.validate(inputAddressData, {
           abortEarly: false,
         });

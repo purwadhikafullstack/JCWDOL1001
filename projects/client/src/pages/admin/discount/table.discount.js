@@ -2,12 +2,16 @@ import { HiOutlineTrash } from "react-icons/hi2"
 import Button from "../../../components/Button"
 import { motion } from "framer-motion"
 import formatNumber from "../../../utils/formatNumber"
-import {formatDate, formatDateValue} from "../../../utils/formatDate"
+import {formatDate} from "../../../utils/formatDate"
 
 export default function TableDiscount({
   discountList,
   handleShowModal,
+  currentPage,
+  limit
 }) {
+    const width = window.screen.width
+    const mobileWidth = 414
   return (
     <table className="text-gray-500 w-full text-left text-sm">
         <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
@@ -15,16 +19,17 @@ export default function TableDiscount({
                 <th className="p-3">No.</th>
                 <th className="p-3">Nama</th>
                 <th className="p-3">Kode</th>
-                <th className="p-3">Deskripsi</th>
-                <th className="p-3">Tanggal Berakhir</th>
-                <th className="p-3">Jumlah</th>
-                <th className="p-3">Beli Satu Gratis Satu</th>
-                <th className="p-3">Minimal Transaksi</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Deskripsi</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Tanggal Berakhir</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Jumlah</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Beli Satu Gratis Satu</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Minimal Transaksi</th>
                 <th className="p-3">Actions</th>
             </tr>
         </thead>
         <tbody>
-            {discountList?.map((list, index) => (
+            {discountList.length ===0 ? <h3>Data Tidak Ditemukan</h3>
+            : discountList?.map((list, index) => (
                 <motion.tr
                     initial={{
                         opacity: 0,
@@ -38,15 +43,15 @@ export default function TableDiscount({
                         scope="row"
                         className="text-gray-900 whitespace-nowrap p-3 font-medium"
                     >
-                        {index + 1}
+                        {index + 1 + ((currentPage - 1) * limit)}
                     </th>
                     <td className="p-3 break-all max-w-xs">{list.discountName}</td>
                     <td className="p-3">{list.discountCode}</td>
-                    <td className="p-3 break-all max-w-xs">{list.discountDesc}</td>
-                    <td className="p-3">{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
-                    <td className="p-3">{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
-                    <td className="p-3">{list.oneGetOne ? "Ya" : "Tidak" }</td>
-                    <td className="p-3">{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
+                    <td className={`p-3 break-all max-w-xs ${width <= mobileWidth && "hidden"}`}>{list.discountDesc}</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.oneGetOne ? "Ya" : "Tidak" }</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
                     <td className="p-3">
                         <div className="flex gap-3">
                             <Button

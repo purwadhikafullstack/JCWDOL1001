@@ -44,7 +44,7 @@ export default function LoginContext ({
 
             setError(errors)
 
-            toast.error("Check your input field!")
+            toast.error("Periksa kembali data yang Anda masukkan!")
 
             setIsToastVisible(true)
 

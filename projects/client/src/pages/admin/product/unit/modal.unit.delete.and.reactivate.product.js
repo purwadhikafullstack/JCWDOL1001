@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import Button from "../../../../components/Button";
-import SuccessMessage from "../../../../components/Message";
+import Message from "../../../../components/Message";
 import { deleteUnit, reactivateUnit } from "../../../../store/slices/product/unit/slices";
 
 export default function ModalDeleteAndReactiveUnit({
@@ -23,7 +23,7 @@ export default function ModalDeleteAndReactiveUnit({
 
   if (success) {
     return (
-      <SuccessMessage
+      <Message
         type="success"
         message={
           `${messageInput.split(" ")[0] === "aktifkan" 

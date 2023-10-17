@@ -53,6 +53,7 @@ function App() {
 	})
   
   const [loading, setLoading] = useState(true);
+  const [verify, setVerify] = useState(false);
 
   useEffect(() => {
     window.scrollTo({top:0, left:0});
@@ -133,8 +134,8 @@ function App() {
           {!user?.role || user?.role == 2 && (
             <>
               <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
-              <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions}/>} />
-              <Route path="/cart" element={<Cart />} />
+              <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions} verify={verify} setVerify={setVerify}/> } />
+              <Route path="/cart" element={<Cart user={user}/>} />
               <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>

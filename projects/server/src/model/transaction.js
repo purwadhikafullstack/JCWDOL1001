@@ -84,6 +84,11 @@ const Transaction_Detail = db.sequelize.define("transaction_detail", {
         type : db.Sequelize.STRING,
         allowNull : true
     },
+    buyOneGetOne : {
+        type : db.Sequelize.INTEGER,
+        allowNull : false,
+        defaultValue: 0
+    },
 },{
     timestamps:false
 })

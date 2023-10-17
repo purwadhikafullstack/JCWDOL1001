@@ -18,7 +18,7 @@ export default function ModalDeleteProduct({
     return (
       <SuccessMessage
         type="success"
-        message={`${selectedProduct.productName} deleted successfully`}
+        message={`Produk ${selectedProduct.productName} berhasil dihapus!`}
         handleCloseModal={handleCloseModal}
       />
     );

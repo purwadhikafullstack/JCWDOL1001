@@ -7,8 +7,8 @@ const router = express.Router()
 router.get("/", verifyUser, forum.getQuestions)
 router.get("/public", forum.getQuestionsForPublic)
 router.post("/", verifyUser, forum.postQuestion)
-router.patch("/:qnaId", verifyUser, forum.deleteQuestion)
 router.patch("/", verifyAdmin, forum.answerQuestion)
 router.get("/admin", verifyAdmin, forum.getUnansweredQuestions)
+router.patch("/:qnaId", verifyUser, forum.deleteQuestion)
 
 module.exports = router

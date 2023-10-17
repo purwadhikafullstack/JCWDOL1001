@@ -88,7 +88,7 @@ export default function QnAPage() {
       
       setError(errors)
       
-      toast.error("Check your input field!")
+      toast.error("Periksa kolom pengisian!")
 
       setIsToastVisible(true)
 
@@ -98,6 +98,9 @@ export default function QnAPage() {
     }
   }
   const [page, setPage] = useState(1);
+
+  const width = window.screen.width
+  const mobileWidth = 414
 
   useEffect(() => {
     dispatch(getPublicForum({page:page,filterQuestion:""}))
@@ -110,7 +113,7 @@ export default function QnAPage() {
 
   return (
     <div>
-      <div className="container pt-24 w-[50%]">
+      <div className={`container pt-24  ${width <= mobileWidth ? "w-fit" : "w-[50%]"} `}>
         <h3 className="title ">Tanya Apotech</h3>
         <h3 className="text-sm text-slate-400 mb-5 ">Pertanyaan yang ditampilkan hanya pertanyaan yang telah ada jawabannya</h3>
         <Button isSmall isPrimaryOutline isPrimary title="Ingin Bertanya" className="mb-5"
@@ -128,7 +131,7 @@ export default function QnAPage() {
               Hapus Pencarian
           </button>
         </div>
-        <div className="flex flex-col gap-5 pb-6 mt-10">
+        <div className="flex flex-col gap-5 pb-3 mt-10">
           {questionList.map((list) => {
             return (
               <Button className="flex w-full gap-4 rounded-lg px-3 py-3 shadow-lg hover:bg-slate-100 md:py-6"
@@ -150,8 +153,16 @@ export default function QnAPage() {
                     <p className="text-sm text-left text-dark md:text-base">
                       Oleh : {list.user_profile.name}
                     </p>
+                    <div className={`flex flex-col items-start grow  ${width <= mobileWidth ? "" : "hidden"}`}>
+                      <p className="text-sm text-dark md:text-base">
+                        {formatDateWithTime(list.createdAt)}
+                      </p>
+                      <p className="text-sm text-dark md:text-base">
+                        Dijawab : {formatDateWithTime(list.updatedAt)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col grow text-right">
+                  <div className={`flex grow flex-col text-right ${width <= mobileWidth &&"hidden"}`}>
                     <p className="text-sm text-dark md:text-base">
                       {formatDateWithTime(list.createdAt)}
                     </p>
@@ -164,7 +175,7 @@ export default function QnAPage() {
             )
           })}
         </div>
-        <div className="w-full flex items-center justify-center mb-5">
+        <div className="w-full flex items-center justify-center mb-10">
           <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
         </div>
         <Modal 
@@ -225,13 +236,13 @@ export default function QnAPage() {
                 </div>
               )}
               <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                  <Button title="Back" isButton isSecondary 
+                  <Button title="Kembali" isButton isSecondary 
                     onClick={() =>{
                       handleCloseModal() 
                       setError({ ...error, question: false })
                     }}
                   />
-                  <Button isButton isPrimary title="Confirm"
+                  <Button isButton isPrimary title="Tanyakan"
                     onClick={()=>{setConfirmation(true)}}
                   />
               </div>
@@ -243,12 +254,10 @@ export default function QnAPage() {
                   Apakah pertanyaan Anda sudah benar?
               </p>
               <div className="flex gap-2">
-                  <Button title="Cancel" isButton isSecondary 
+                  <Button title="Kembali" isButton isSecondary 
                     onClick={() => setConfirmation(false)}
                   />
-                  <Button onClick={handleOnSure} title="Sure" isDisabled={isToastVisible} isButton isPrimary >
-                    Sure
-                  </Button>
+                  <Button onClick={handleOnSure} title="Iya" isDisabled={isToastVisible} isButton isPrimary />
               </div>
             </div>
           )}

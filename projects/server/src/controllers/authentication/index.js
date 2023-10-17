@@ -25,10 +25,15 @@ const login = async (req, res, next) => {
         const userExists = await User_Account?.findOne(
             {
                 where: {email},
-                include : {
-                    model : User_Profile,
-                    as : "userProfile"
-                }
+                include : [
+                    {
+                        model : User_Profile,
+                        as : "userProfile"
+                    },
+                    {
+                        model : User_Address,
+                    },
+                ]
             }
         )
 

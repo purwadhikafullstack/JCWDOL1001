@@ -1,7 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit"
 import api from "../../utils/api.instance"
 import { toast } from 'react-toastify'
-import { PostQuestionValidationSchema } from "./validation"
 
 export const getForum = createAsyncThunk(
     "forum/getForum",
@@ -53,11 +52,13 @@ export const deleteQuestion = createAsyncThunk(
     "forum/delete",
     async(payload, {rejectWithValue}) => {
         try{
-
+            const response = {}
             const result = await api.patch("/forum/"+payload)
             toast.success(result?.data?.message)
             const { data } = await api.get("/forum/admin")
             return data
+            // if(window.location.pathname.split("/")[1]==="admin"){ response.data = await api.get("/forum/admin?")}
+            // return response.data.data
         }catch(error){
             toast.error(error.response.data.message)
             return rejectWithValue(error.response.data)

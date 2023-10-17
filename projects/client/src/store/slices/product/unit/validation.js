@@ -1,26 +1,26 @@
 import * as Yup from "yup";
 
 export const ProductUnitValidationSchema = Yup.object({
-  unitId: Yup.number("Unit is required")
-    .required("Unit is required"),
-  quantity: Yup.number("Qty must contain only numbers"),
+  unitId: Yup.number("Satuan dibutuhkan")
+    .required("Satuan dibutuhkan"),
+  quantity: Yup.number("Kuantitas harus berupa angka"),
 });
 
 export const DeleteProductUnitValidationSchema = Yup.object({
-  stockId: Yup.number("Unit ID is required")
-    .required("Unit ID is required")
+  stockId: Yup.number("Satuan dibutuhkan")
+    .required("Satuan dibutuhkan")
 });
 
 export const ReactivateProductUnitValidationSchema = Yup.object({
-  productId: Yup.number("Product ID is required")
-    .required("Product  is required"),
-  stockId: Yup.number("Stock ID is required")
-    .required("Stock is required"),
+  productId: Yup.number("ID Produk dibutuhkan")
+    .required("ID Produk dibutuhkan"),
+  stockId: Yup.number("Unit dibutuhkan")
+    .required("Unit dibutuhkan"),
 });
 
 export const MakeConvertionProductUnitValidationSchema = Yup.object({
-  productId: Yup.number("Product ID is required")
-    .required("Product  is required"),
-  times: Yup.number("How many times of convertion is required")
-    .required("How many times of convertion is required"),
+  productId: Yup.number("ID Produk dibutuhkan")
+    .required("ID Produk dibutuhkan"),
+  times: Yup.number("Konversi dibutuhkan")
+    .required("Konversi dibutuhkan"),
 });

@@ -6,20 +6,6 @@ export const getProducts = createAsyncThunk(
   "products/getProducts",
   async (payload, { rejectWithValue }) => {
     try {
-
-      // const {
-      //   page,
-      //   id_cat,
-      //   product_name,
-      //   sort_price,
-      //   sort_name,
-      //   limit
-      // } = payload;
-      // const PARAMETER = `page=${page}&id_cat=${id_cat}&sort_name=${sort_name}&sort_price=${sort_price}&product_name=${product_name}&limit=${limit}`;
-      
-      // const { data } = await api.get(`/products?` + encodeURI(PARAMETER));
-
-
       const { category_id, page, sort_name, sort_price, product_name, limit, promo} = payload;
       let query = "";
 
