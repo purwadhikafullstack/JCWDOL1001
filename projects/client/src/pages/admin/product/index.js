@@ -154,7 +154,7 @@ export default function AdminProducts({user}) {
   return (
     <>
       <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-        <div className="flex items-centerjustify-between border-b-2 pb-2">
+        <div className="flex items-center justify-between border-b-2 pb-2">
 
           <h3 className="title">Produk</h3>
 

@@ -72,7 +72,7 @@ async function cancelExpiredTransactions() {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.invoice}`,
           html: html
         }
 
@@ -489,7 +489,7 @@ const uploadPaymentProof = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Menunggu Konfirmasi ${transaction.dataValues?.createdAt}`,
+        subject: `Menunggu Konfirmasi ${transaction.dataValues?.invoice}`,
         html: html
       }
 
@@ -556,7 +556,7 @@ const confirmPayment = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pembayaran Diterima ${transaction.dataValues?.createdAt}`,
+        subject: `Pembayaran Diterima ${transaction.dataValues?.invoice}`,
         html: html
       }
 
@@ -620,7 +620,7 @@ const processOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Diproses ${transaction.dataValues?.createdAt}`,
+        subject: `Pesanan Diproses ${transaction.dataValues?.invoice}`,
         html: html
       }
 
@@ -684,7 +684,7 @@ const sendOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Dikirim ${transaction.dataValues?.createdAt}`,
+        subject: `Pesanan Dikirim ${transaction.dataValues?.invoice}`,
         html: html
       }
 
@@ -747,7 +747,7 @@ const receiveOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Diterima ${transaction.dataValues?.createdAt}`,
+        subject: `Pesanan Diterima ${transaction.dataValues?.invoice}`,
         html: html
       }
 
@@ -819,7 +819,7 @@ const rejectPayment = async (req, res, next) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pembayaran Ditolak ${transaction.dataValues?.createdAt}`,
+          subject: `Pembayaran Ditolak ${transaction.dataValues?.invoice}`,
           html: html
         }
 
@@ -895,12 +895,12 @@ const cancelTransaction = async (req, res, next) => {
       message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
     });
 
-    if (roleId === 2 && transaction.dataValues.statusId !== 1) {
-      throw ({
-        status: middlewareErrorHandling.BAD_REQUEST_STATUS,
-        message: "Transaction cannot be canceled."
-      })
-    }
+    // if (roleId === 2 && transaction.dataValues.statusId !== 1) {
+    //   throw ({
+    //     status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+    //     message: "Transaction cannot be canceled."
+    //   })
+    // }
 
     if ([1, 2, 3].includes(transaction.dataValues.statusId)) {
       await transaction.update({
@@ -943,7 +943,7 @@ const cancelTransaction = async (req, res, next) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.invoice}`,
           html: html 
         }
 

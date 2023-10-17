@@ -93,13 +93,20 @@ export default function ModalDetailTransaction({
                   alt={product.listedTransaction.productName}
                 />
                 <div className="w-full">
+                  <div className="flex justify-between">
+
                   <p>{product.listedTransaction.productName}</p>
+                  {product.buyOneGetOne &&
+                    <p className="text-danger font-semibold">Beli 1 Gratis 1</p>
+                  }
+                  </div>
                   <div className="flex justify-between">
                     <div className="flex gap-2">
                       <p>Rp. {formatNumber(product.price)}</p>
                       <span>x</span>
                       <p>{product.quantity}</p>
                     </div>
+                    
                     <p className="font-semibold">
                       Rp. {formatNumber(product.totalPrice)}
                     </p>
