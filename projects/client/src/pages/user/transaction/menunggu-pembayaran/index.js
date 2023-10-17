@@ -154,7 +154,7 @@ export default function MenungguPembayaran({
                 )}
               </div>
 
-              <div className="mt-2 flex items-center justify-between gap-2 border-t-2 pt-2">
+              <div className="mt-2 flex flex-col md:flex-row md:items-center justify-between gap-2 border-t-2 pt-2">
                 <div className="">
                   <p className="text-sm">Total Belanja</p>
                   <p className="font-bold">{formatNumber(item.total)}</p>
@@ -246,6 +246,7 @@ export default function MenungguPembayaran({
               handleShowModal={handleShowModal}
             />
             <div className="grid md:grid-cols-3 gap-2 mt-4">
+              <Button isButton isPrimaryOutline title="Kembali" onClick={() => handleCloseModal()} />
               <Button className={`row-start-2 md:row-start-1 md:col-start-2`} isButton isDangerOutline title={`Batalkan Pesanan`} onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}/>
               <Button className={`row-start-1 md:col-start-3`} isButton isPrimary title={`Bayar Sekarang`} onClick={() => handleShowModal("Pembayaran", selectedTransaction.transactionId)}/>
             </div>

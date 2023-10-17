@@ -40,7 +40,7 @@ export default function Navbar ({ user, isLogin, ongoingTransactions }) {
                     initial={{ translateY: -50, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     animate={{ translateY: 0, opacity: 1 }}
-                    className={`nav ${user.role === 1 ? "z-20" : "z-[999]"}`}
+                    className={`nav ${user?.role === 1 ? "z-20" : "z-[999]"}`}
                 >
                     <div className="navbar container flex justify-between">
                         <div className="lg:block">
@@ -80,20 +80,17 @@ export default function Navbar ({ user, isLogin, ongoingTransactions }) {
                             </div>
                             }
 
-                        {user.role === 1 &&
+                        {user?.role === 1 &&
                             <AdminNavMenu
-                                // isLogin={isLogin}
-                                // setIsLogin={setIsLogin}
                                 isSidebarActive={isSidebarActive}
                                 setIsSidebarActive={setIsSidebarActive}
                                 ongoingTransactions={ongoingTransactions}
                             />
                         }
 
-                        {(!user.role || user.role === 2) && (
+                        {(!user?.role || user?.role === 2) && (
                             <UserNavMenu
                                 isLogin={isLogin}
-                                // setIsLogin={setIsLogin}
                                 handleShowModal={handleShowModal}
                                 user={user}
                                 ongoingTransactions={ongoingTransactions}

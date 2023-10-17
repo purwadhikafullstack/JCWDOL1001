@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom"
 import Button from "../Button"
 import { HiDocumentText, HiMiniChatBubbleOvalLeftEllipsis, HiMiniSquares2X2 } from "react-icons/hi2"
-import { BiSolidDiscount } from "react-icons/bi"
 
 export default function UserNavMenuItems({ user, ongoingTransactions }) {
   const { pathname } = useLocation()
@@ -63,7 +62,7 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
             }
           </div>
         </div>
-        <span className={user.status === 0 && "text-danger"}>Saya</span>
+        <span className={user?.status === 0 && "text-danger"}>Saya</span>
       </Button>
     </div>
   );

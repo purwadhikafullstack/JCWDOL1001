@@ -12,7 +12,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
   const dispatch = useDispatch()
 
   const onClickVerified = ()=>{
-    dispatch(resendOtp({email : user.email}))
+    dispatch(resendOtp({email : user?.email}))
     setVerify(true)
   }
   
@@ -72,7 +72,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
   }
 
   const handleButtonUpload = () => {
-    user.status ===0 ?  handleUnverifiedUser()
+    user?.status ===0 ?  handleUnverifiedUser()
     : navigate("/upload-recipe")
   }
 
@@ -100,7 +100,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
           </div>
 
           <div className="border-b-2 py-4 flex flex-col gap-2">
-            {user.status === 0 &&
+            {user?.status === 0 &&
               <Button
                 isButton
                 isPrimary
