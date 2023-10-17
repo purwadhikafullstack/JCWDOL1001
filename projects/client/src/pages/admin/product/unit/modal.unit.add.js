@@ -205,7 +205,7 @@ export default function ModalAddProductUnit({
                     )}
 
                     { (canAddDefaultUnit && canAddSecondaryUnit && isDefaultUnit.name === "Ya") || (canAddDefaultUnit && !canAddSecondaryUnit) ?
-                        <div>
+                        <div className="w-fit">
                             <h3 className="pt-2">Jumlah Satuan : </h3>
                             <Input
                                 type="number"

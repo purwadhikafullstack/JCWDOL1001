@@ -64,7 +64,7 @@ export const createTransaction = createAsyncThunk(
     async (payload, {rejectWithValue}) => {
         try{
             await api.post(`/transaction/checkout`,payload);
-            toast.success("Checkout Successful. Don't forget to pay.")
+            toast.success("Transaksi Berhasil. Silahkan melakukan transaksi Anda dengan melakukan pembayaran.")
             return{}
         }catch(error){
             toast.error(error.response.data.message);

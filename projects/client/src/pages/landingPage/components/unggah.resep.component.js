@@ -25,8 +25,8 @@ export default function UnggahResep({user}) {
   }
   
   const handleButtonUpload = () => {
-    !user.uuid ? setShowModal({ show: true, context: "login" })
-    : user.status ===0 ?  handleUnverifiedUser()
+    !user?.uuid ? setShowModal({ show: true, context: "login" })
+    : user?.status ===0 ?  handleUnverifiedUser()
     : navigate("/upload-recipe")
   }
 

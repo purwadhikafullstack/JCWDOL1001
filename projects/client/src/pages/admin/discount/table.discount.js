@@ -16,7 +16,7 @@ export default function TableDiscount({
     <table className="text-gray-500 w-full text-left text-sm">
         <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
             <tr>
-                <th className="p-3">No.</th>
+                <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>No.</th>
                 <th className="p-3">Nama</th>
                 <th className="p-3">Kode</th>
                 <th className={`p-3 ${width <= mobileWidth && "hidden"}`}>Deskripsi</th>
@@ -41,13 +41,13 @@ export default function TableDiscount({
                 >
                     <th
                         scope="row"
-                        className="text-gray-900 whitespace-nowrap p-3 font-medium"
+                        className={`text-gray-900 whitespace-nowrap p-3 font-medium ${width <= mobileWidth && "hidden"}`}
                     >
                         {index + 1 + ((currentPage - 1) * limit)}
                     </th>
-                    <td className="p-3 break-all max-w-xs">{list.discountName}</td>
-                    <td className="p-3">{list.discountCode}</td>
-                    <td className={`p-3 break-all max-w-xs ${width <= mobileWidth && "hidden"}`}>{list.discountDesc}</td>
+                    <td className="p-3 break-before-all max-w-xs">{list?.discountName}</td>
+                    <td className="p-3 break-before-all max-w-xs">{list.discountCode ? list.discountCode.toUpperCase() :"-" }</td>
+                    <td className={`p-3 break-before-all max-w-xs ${width <= mobileWidth && "hidden"}`}>{list.discountDesc}</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.oneGetOne ? "Ya" : "Tidak" }</td>

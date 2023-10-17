@@ -49,7 +49,7 @@ const uploadRecipe = async (req, res, next) => {
 
     const admin = await User_Account.findOne({where : {role : 1}})
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnRecipe.html"), "utf8")
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "getAnRecipe.html"), "utf8")
     const html = handlebars.compile(template)({ 
       name: (isUserExist.userProfile.name), 
       link :(process.env.CLOUDINARY_BASE_URL + req.file.filename) 
