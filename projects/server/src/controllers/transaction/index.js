@@ -252,7 +252,6 @@ const getOngoingTransactions = async (req, res, next) =>{
 
 const createTransactions = async (req, res, next) => {
   try {
-    //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
     const { transport, totalPrice, addressId,discountId, discount } = req.body;
 
@@ -385,17 +384,12 @@ const createTransactions = async (req, res, next) => {
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
         if (error) throw error;
       })
-    //});
-
-    //await transaction.commit();
-
     res.status(200).json({
       type: "success",
       message: "Transaction created!",
       data: finishTransaction,
     });
   } catch (error) {
-    //await transaction.rollback();
     next(error);
   }
 };
