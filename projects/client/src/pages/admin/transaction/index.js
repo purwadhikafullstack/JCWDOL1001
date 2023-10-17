@@ -114,7 +114,6 @@ export default function Transaction({
     }));
 
     if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
-
   }, [page, sortDate, searchedInvoice]);
   
   useEffect(() => {

@@ -55,10 +55,10 @@ export const deleteQuestion = createAsyncThunk(
             const response = {}
             const result = await api.patch("/forum/"+payload)
             toast.success(result?.data?.message)
-            const { data } = await api.get("/forum/admin")
-            return data
-            // if(window.location.pathname.split("/")[1]==="admin"){ response.data = await api.get("/forum/admin?")}
-            // return response.data.data
+            // const { data } = await api.get("/forum/admin")
+            // return data
+            if(window.location.pathname.split("/")[1]==="admin"){ response.data = await api.get("/forum/admin?")}
+            return response.data.data
         }catch(error){
             toast.error(error.response.data.message)
             return rejectWithValue(error.response.data)
@@ -113,7 +113,6 @@ export const PostAnswer = createAsyncThunk(
             delete payload?.sortDate
             await api.patch("/forum/", payload)
             const { data } = await api.get(`/forum/admin?sortDate=${sortDate}&`)
-            toast.success(sortDate)
             return data
         }catch(error){
             toast.error(error.response.data.message)

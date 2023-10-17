@@ -1,5 +1,5 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
-const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
+const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, Discount_Product,Discount,
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
 const moment = require("moment")
 const {Op} = require("sequelize")
@@ -243,9 +243,9 @@ const getUser = async( req, res, next ) => {
               console.log("Email sent: " + info.response);
           })
           
-      await User_Account.update({
-        imgRecipe : null
-      },{where : {email}})
+      // await User_Account.update({
+      //   imgRecipe : null
+      // },{where : {email}})
 
       res.status(200).json({ 
         type : "success",
@@ -439,7 +439,8 @@ const getUser = async( req, res, next ) => {
         name : name, 
         productId : productId, 
         quantity : result.quantity,
-        price : result.price  })
+        price : result.price,
+      buyOneGetOne : result.buyOneGetOne })
     }
     
     if(type === 0){
@@ -485,7 +486,8 @@ const getUser = async( req, res, next ) => {
         name : result.name,
         productId : result.productId,
         quantity : result.quantity,
-        price : result.price
+        price : result.price,
+        buyOneGetOne : result.buyOneGetOne
       })
     }
   }
@@ -526,15 +528,16 @@ const getUser = async( req, res, next ) => {
           price : productResult[i].price,
           quantity : productResult[i].quantity,
           totalPrice : productResult[i].price * productResult[i].quantity,
-          productId : productResult[i].productId
+          productId : productResult[i].productId,
+          buyOneGetOne : productResult[i].buyOneGetOne
       })
     }
 
-    await User_Account.update({
-      addressIdRecipe : null,
-      createdRecipe : null,
-      shippingRecipe : null,
-    },{where :  {userId : user?.userId}})
+    // await User_Account.update({
+    //   addressIdRecipe : null,
+    //   createdRecipe : null,
+    //   shippingRecipe : null,
+    // },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
         type : "success", 
@@ -711,7 +714,9 @@ return {
   productId : productId, 
   quantity : +product?.productDescription,
   price : product?.productPrice,  
-subtotal : newSubtotal}
+subtotal : newSubtotal,
+buyOneGetOne : 0
+}
     
   }
 
@@ -729,26 +734,52 @@ async function typeZeroProduct(name,productId,quantity){
         model : Product_Detail,
         attributes : ["quantity"]
       },
+      {
+        model: Discount_Product,
+        attributes: { exclude: ["discountProductId"] },
+        as: "discountProducts",
+        where:{isDeleted:0},
+        include: {
+          model: Discount,
+          where: { isDeleted: 0, 
+            [Op.or] :[
+              {discountExpired :{[Op.gte] : moment()}},
+              {discountExpired :{[Op.is] : null}}
+            ]
+          },
+        },
+        // required: false,
+      },
     ]})
   //kurang quantity
+    //handling harga diskon
+    let price = 
+    (product?.discountProducts?.length !== 0 && product.discountProducts[0]?.discount?.oneGetOne === false ?
+          product?.discountProducts[0]?.endingPrice : product?.productPrice
+        )
+    let newQuantity = 
+    (product.discountProducts[0]?.discount?.oneGetOne === true ?
+      (quantity * 2) : quantity
+    )
   await Product_History.create({
     productId : productId,
     unit : product.productUnits[0]?.name,
     initialStock : product?.product_details[0].quantity,
     status : "Penjualan",
     type : "Pengurangan",
-    quantity : quantity,
-    results : product?.product_details[0].quantity - quantity
+    quantity : newQuantity,
+    results : product?.product_details[0].quantity - newQuantity
   })
 
   await Product_Detail.update(
-    {quantity : product?.product_details[0].quantity - quantity},{
+    {quantity : product?.product_details[0].quantity - newQuantity},{
     where : {
       productId : productId,
       isDefault: true
     }
   })
-  const newSubtotal = (product.productPrice * quantity)
+
+  const newSubtotal = (price * quantity)
   console.log("subtotal dari normal " ,newSubtotal)
 
   return{
@@ -756,7 +787,9 @@ async function typeZeroProduct(name,productId,quantity){
     productId : productId,
     quantity : quantity,
     price : product?.productPrice,
-    subtotal : newSubtotal
+    subtotal : newSubtotal,
+    buyOneGetOne : (product.discountProducts[0]?.discount?.oneGetOne === true ?
+      1 : 0)
   }
   }
 

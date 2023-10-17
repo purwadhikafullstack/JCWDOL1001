@@ -27,7 +27,9 @@ export const RegisterValidationSchema = Yup.object({
         .min(6,"Password minimal 6 karakter").oneOf([Yup.ref('password'), null], 
         'Konfirmasi password tidak sesuai'), 
     email : Yup.string().email("Email tidak sesuai").required("Email dibutuhkan"),
-    phone : Yup.string().matches(phoneRegExp, 'Nomor telepon tidak sesuai')
+    phone : Yup.string()
+        .required("Nomor telepon dibutuhkan")
+        .matches(phoneRegExp, 'Nomor telepon tidak sesuai')
         .min(11, "Nomor telepon minimal 11 karakter")
         .max(13, "Nomor telepon maksimal 13 karakter")
 })

@@ -11,10 +11,16 @@ function ListOfProduct({
     clickOption = (params)=>{}
 }){
     return product.map((item,index)=>{
+        let price = 
+        (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
+              item?.discountProducts[0]?.endingPrice : item?.productPrice
+            )
         return(
                 <div
                   key={index}
-                  onClick={()=>clickOption([item?.productId, item?.productName,item?.productPrice])}
+                
+                
+                  onClick={()=>clickOption([item?.productId, item?.productName,price])}
                   className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
                 >
                  <p> {item.productName}</p>
@@ -108,7 +114,7 @@ export default function NormalProductList({
                 <Input
                 value={selectProductRef ? selectProductRef[1] : ""}
                 type="text"
-                placeholder="Search..."
+                placeholder="Cari Produk..."
                 className="pr-16"
                 onChange={(event)=>{
                     setVisible(true)

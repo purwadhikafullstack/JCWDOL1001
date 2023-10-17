@@ -12,13 +12,13 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { toast } from "react-toastify";
 import AssetCart from "../../../assets/asset-cart.png";
 
-export default function Cart() {
+export default function Cart({user}) {
   const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
-      statusUser : state?.auth?.status
+      statusUser : state?.auth?.status,
     }
   })
   
@@ -458,13 +458,13 @@ export default function Cart() {
             <Button
               isBLock
               isButton
-              isPrimary={user.status !== 0}
-              isSecondary={user.status === 0}
+              isPrimary={user?.status !== 0}
+              isSecondary={user?.status === 0}
               title="Check Out"
-              isDisabled={selectedItems?.length === 0 || isToastVisible || user.status === 0}
+              isDisabled={selectedItems?.length === 0 || isToastVisible || user?.status === 0}
               onClick={checkOut}
             />
-            {user.status === 0 &&
+            {user?.status === 0 &&
               <p className="text-xs text-danger text-center mt-1">Silahkan lakukan <span className="underline cursor-pointer" onClick={() => navigate("/user/profile")}>verifikasi</span></p>
             }
           </div>

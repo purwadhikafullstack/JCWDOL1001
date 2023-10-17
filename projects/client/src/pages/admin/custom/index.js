@@ -426,13 +426,13 @@ const handleSubmitOrder = () =>{
                   {item.productName}
                 </p>
                 <p className="mb-2 text-sm font-semibold text-gray-700">
-                  Price : {item.productPrice}
+                  Harga per Produk : Rp{formatNumber(item.productPrice)}
                 </p>
                 <p className="mb-2 text-sm font-semibold text-gray-700">
-                  Quantity : {item.quantity}
+                  Jumlah Produk : {item.quantity}
                 </p>
                 <p className="mb-2 text-sm font-semibold text-primary">
-                  Ingredients :
+                  Bahan Obat Racik :
                 </p>
               </div>
               <div className={`mb-2 flex flex-col gap-1 overflow-hidden`}>
@@ -467,10 +467,10 @@ const handleSubmitOrder = () =>{
                   {item.productName}
                 </p>
                 <p className="mb-2 text-sm font-semibold text-gray-700">
-                  Price : {item.productPrice}
+                  Harga per Produk : Rp{formatNumber(item.productPrice)}
                 </p>
                 <p className="mb-2 text-sm font-semibold text-gray-700">
-                  Quantity : {item.quantity}
+                  Jumlah Produk : {item.quantity}
                 </p>
               </div>
             </div>
@@ -488,7 +488,7 @@ const handleSubmitOrder = () =>{
                   isBLock
                   className={"my-5"}
                   onClick={handleShowAllModal}
-                  title={`Add New Product`}
+                  title={`Tambah Produk`}
                 />
                 {listAllCustomProduct.length !== 0 &&
                 <Button
@@ -514,7 +514,7 @@ const handleSubmitOrder = () =>{
                     
                 </div>
                 <div className="font-bold text-sm mt-5">
-                  List produk :
+                 Daftar produk :
                 </div>
                 <div>
                   {listAllCustomProduct.map(item=>{
@@ -595,7 +595,7 @@ const handleSubmitOrder = () =>{
                     ref={ingredientQuantityRef}
                     type="number"
                     label="Jumlah Obat Racik"
-                    placeholder="e.g. 1"
+                    placeholder="Contoh : 1"
                     errorInput={error.IngredientQuantity}
                     onChange={() => setError({ ...error, ingredientQuantity: false })}
                   />
@@ -640,7 +640,7 @@ const handleSubmitOrder = () =>{
 
           {/* kanan */}
           <div className="w-full h-fit mt-8 md:mt-0 border p-2">
-            <h3 className="title">Summary</h3>
+            <h3 className="title">Rangkuman</h3>
             <div className="border-2  p-3 shadow-sm rounded-lg">
               <div className="font-bold">
                 Daftar Bahan Obat Racik
@@ -686,7 +686,7 @@ const handleSubmitOrder = () =>{
                 }}
                 type="text"
                 label="Nama Produk"
-                placeholder="e.g. Paracetamol 500 mg"
+                placeholder="Contoh : Paracetamol 500 mg"
                 errorInput={error.productName}
               />
               {error.productName && (
@@ -700,8 +700,8 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productPriceState}
                 type="number"
-                label="Harga Produk"
-                placeholder="e.g. 35000"
+                label="Harga Produk (Rp.)"
+                placeholder="Contoh : 35000"
                 onChange={event=>{onChangeValue(event,setProductPriceState)
                   setError({ ...error, productPrice: false })}
                 }
@@ -720,7 +720,7 @@ const handleSubmitOrder = () =>{
                 value={productDosageState}
                 type="text"
                 label="Dosis Produk"
-                placeholder="e.g. 3 x 1 hari"
+                placeholder="Contoh : 3 x 1 hari"
                 onChange={event=>{onChangeValue(event,setProductDosageState)
                   setError({ ...error, productDosage: false })
                 }}
@@ -738,7 +738,7 @@ const handleSubmitOrder = () =>{
                 value={productQuantityState}
                 type="number"
                 label="Jumlah Produk (pcs)"
-                placeholder="e.g. 3"
+                placeholder="Contoh : 3"
                 onChange={event=>{onChangeValue(event,setProductQuantityState)
                   setError({ ...error, productQuantity: false })}}
                 errorInput={error.productQuantity}
@@ -778,7 +778,7 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productQuantityState}
                 type="number"
-                label="Product Quantity"
+                label="Jumlah Produk"
                 placeholder="e.g. 3"
                 onChange={event=>{onChangeValue(event,setProductQuantityState)
                 setError({ ...error, normalProductPrice: false })}}

@@ -107,11 +107,11 @@ export default function RegisterContext ({
             {submit ? 
                 <div className="flex flex-col gap-10">
                     <span>
-                        We have sent OTP and verification link via email to {email}
+                        Kami telah mengirim OTP dan link verifikasi via email ke {email}
                     </span>
                     <div className="flex flex-col items-start justify-start">
                         <span className="text-gray-500 font-semibold text-sm">
-                        You need to wait for {refresh} s to resend the data.
+                        Kamu harus menunggu {refresh} detik untuk dapat mengirim ulang OTP.
                         </span>
                         
                         <Button
@@ -120,7 +120,7 @@ export default function RegisterContext ({
                             className="block rounded-lg bg-teal-500 py-3 min-w-[52px] disabled:opacity-40 text-white duration-200 hover:bg-slate-200 lg: lg:group-hover:w-full"
                             isLoading={resend}>
                             <div className="flex w-max items-center gap-6 px-3 ">
-                                <span>Resend OTP</span>
+                                <span>Kirim OTP</span>
                             </div>
                         </Button>
                         
