@@ -36,7 +36,8 @@ export default function NormalProductList({
     onNormalProductChange = (params)=>{},
     productId = "",
     productName,
-    productPrice
+    productPrice,
+    isSubmit
 
 }){
     const dispatch = useDispatch()
@@ -104,6 +105,13 @@ export default function NormalProductList({
     useEffect(()=>{
         setSelectProductRef([productId,productName,productPrice])
     },[productName])
+
+    useEffect(()=>{
+        console.log(isSubmit)
+        if(isSubmit){
+            resetValue()
+        }
+    },[isSubmit])
 
     return(
         <div className="flex flex-col w-full relative z-[999]">

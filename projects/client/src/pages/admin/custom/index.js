@@ -44,6 +44,7 @@ export default function CustomOrder({}) {
   const [ingredientName, setIngredientName] = useState(null)
   const ingredientQuantityRef = useRef(null)
   const [ingredientSubmit, setIngredientSubmit] = useState(false)
+  const [productSubmit, setProductSubmit] = useState(false)
   
   //useRef
   const [oldNameProduct, setOldNameProduct] = useState("")
@@ -160,8 +161,7 @@ export default function CustomOrder({}) {
     if(!titleState){
       if(option === 1){
         //await custom
-       
-
+      
         items.push({
           // productName : productNameRef.current.value,
           productName : productNameState,
@@ -223,6 +223,12 @@ export default function CustomOrder({}) {
     setListAllCustomProduct(items)
     setMedState(false)
     setShowModal(false);
+    setProductSubmit(true)
+
+    setTimeout(() => {
+      setProductSubmit(false)
+    }, 2000);
+    setError("");
 }
     catch(error){
       const errors = {};
@@ -393,11 +399,14 @@ const handleSubmitOrder = () =>{
         closeModal={!showImageModal}
         title={`Gambar Resep Dokter`}
         >
+          <div className="w-full flex flex-col items-center">
+
         <img
           src={process.env.REACT_APP_CLOUDINARY_BASE_URL + image}
           alt={"image"}
-          className="h-full w-full object-center duration-300"
+          className="h-fit w-fit object-center duration-300"
           />
+          </div>
           
       </Modal>
         </div>
@@ -594,7 +603,7 @@ const handleSubmitOrder = () =>{
                   <Input
                     ref={ingredientQuantityRef}
                     type="number"
-                    label="Jumlah Obat Racik"
+                    label="Jumlah Obat Racik :"
                     placeholder="Contoh : 1"
                     errorInput={error.IngredientQuantity}
                     onChange={() => setError({ ...error, ingredientQuantity: false })}
@@ -685,7 +694,7 @@ const handleSubmitOrder = () =>{
                   setError({ ...error, productName: false })
                 }}
                 type="text"
-                label="Nama Produk"
+                label="Nama Produk :"
                 placeholder="Contoh : Paracetamol 500 mg"
                 errorInput={error.productName}
               />
@@ -700,7 +709,7 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productPriceState}
                 type="number"
-                label="Harga Produk (Rp.)"
+                label="Harga Produk : (Rp.)"
                 placeholder="Contoh : 35000"
                 onChange={event=>{onChangeValue(event,setProductPriceState)
                   setError({ ...error, productPrice: false })}
@@ -719,7 +728,7 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productDosageState}
                 type="text"
-                label="Dosis Produk"
+                label="Dosis Produk :"
                 placeholder="Contoh : 3 x 1 hari"
                 onChange={event=>{onChangeValue(event,setProductDosageState)
                   setError({ ...error, productDosage: false })
@@ -737,7 +746,7 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productQuantityState}
                 type="number"
-                label="Jumlah Produk (pcs)"
+                label="Jumlah Produk : (pcs)"
                 placeholder="Contoh : 3"
                 onChange={event=>{onChangeValue(event,setProductQuantityState)
                   setError({ ...error, productQuantity: false })}}
@@ -767,6 +776,7 @@ const handleSubmitOrder = () =>{
         productId={productIdState}
         productName={normalProductState}
         productPrice={productPriceState}
+        isSubmit={productSubmit}
         />
                       {error.normalProductId && (
                     <div className="text-sm text-red-500 dark:text-red-400">
@@ -778,16 +788,16 @@ const handleSubmitOrder = () =>{
               <Input
                 value={productQuantityState}
                 type="number"
-                label="Jumlah Produk"
+                label="Jumlah Produk : "
                 placeholder="e.g. 3"
                 onChange={event=>{onChangeValue(event,setProductQuantityState)
-                setError({ ...error, normalProductPrice: false })}}
-                errorInput={error.normalProductPrice}
+                setError({ ...error, normalProductQuantity: false })}}
+                errorInput={error.normalProductQuantity}
                
               />
-              {error.normalProductPrice && (
+              {error.normalProductQuantity && (
                 <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.normalProductPrice}
+                  {error.normalProductQuantity}
                 </div>
               )}
       </div>
