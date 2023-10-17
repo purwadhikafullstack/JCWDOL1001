@@ -261,7 +261,6 @@ const getOngoingTransactions = async (req, res, next) =>{
 
 const createTransactions = async (req, res, next) => {
   try {
-    //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
     const { transport, totalPrice, addressId,discountId, discount } = req.body;
 
@@ -304,12 +303,14 @@ const createTransactions = async (req, res, next) => {
     const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
     let date = new Date().getTime()
 
+    let isDiscount = discount ? discount : 0
+
     const newTransactionList = {
       userId: userId,
-      total: +totalPrice + +transport + -discount,
+      total: +totalPrice + +transport + -isDiscount,
       transport: transport,
       subtotal: totalPrice,
-      discount: discount,
+      discount: isDiscount,
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
@@ -392,17 +393,12 @@ const createTransactions = async (req, res, next) => {
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
         if (error) throw error;
       })
-    //});
-
-    //await transaction.commit();
-
     res.status(200).json({
       type: "success",
       message: "Transaction created!",
       data: finishTransaction,
     });
   } catch (error) {
-    //await transaction.rollback();
     next(error);
   }
 };
