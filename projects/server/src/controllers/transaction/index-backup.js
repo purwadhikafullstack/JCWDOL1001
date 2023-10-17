@@ -81,16 +81,6 @@ async function cancelExpiredTransactions() {
         console.log("Email sent: " + info.response);
       })
     }
-    console.log(transactionsToCancel);
-
-    const transactionIds = transactionsToCancel.map((transaction) => transaction.dataValues?.transactionId);
-    const reverseList = await Transaction_Detail.findAll({
-      where: {
-        transactionId: { [Op.in]: transactionIds },
-      },
-    });
-
-    await cancelTransactionService(reverseList);
     
   } catch (error) {
     console.error("Error while canceling expired transactions:", error);
@@ -927,7 +917,27 @@ const cancelTransaction = async (req, res, next) => {
         transactionId : transactionId,
       }})
 
-      await cancelTransactionService(reverseList)
+      // //product check
+      for (const item of reverseList){
+        // reverseList.map(async (item) =>{ 
+          const {productId, quantity} = item
+          //seandainya di product resep, ada barangnya
+          const listRecipe = await Product_Recipe.findAll({where : 
+          {
+            productId : productId
+          }})
+          //produk satuan
+          if(listRecipe.length === 0){
+            await normalProductCancel(productId, quantity)
+          }
+        //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
+          if(listRecipe.length !== 0){
+          //  await Promise.all(
+          //   listRecipe.map(async (itemRecipe) =>{
+            await customProductCancel(listRecipe,quantity)
+            // }))
+          }
+        }
       // })
 
       const name = transaction.dataValues?.user_account.userProfile.name;
@@ -967,29 +977,6 @@ const cancelTransaction = async (req, res, next) => {
     next(error);
   }
 };
-
-async function cancelTransactionService(reverseList) {
-  for (const item of reverseList){
-        // reverseList.map(async (item) =>{ 
-          const {productId, quantity} = item
-          //seandainya di product resep, ada barangnya
-          const listRecipe = await Product_Recipe.findAll({where : 
-          {
-            productId : productId
-          }})
-          //produk satuan
-          if(listRecipe.length === 0){
-            await normalProductCancel(productId, quantity)
-          }
-        //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
-          if(listRecipe.length !== 0){
-          //  await Promise.all(
-          //   listRecipe.map(async (itemRecipe) =>{
-            await customProductCancel(listRecipe,quantity)
-            // }))
-          }
-        }
-}
 
 async function normalProductCancel(productId,quantity){
 

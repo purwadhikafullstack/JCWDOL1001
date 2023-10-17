@@ -73,7 +73,7 @@ export default function ProductDetail({user}) {
   const [showModal, setShowModal] = useState({ show:false, context:"" })
 
   const handleCart = (productId) => {
-    if (user.role && user.status === 1) {
+    if (user?.role && user?.status === 1) {
       try{
         dispatch(updateCart({productId: productId , quantity : String(qty)}))
         toast.success(`Produk berhasil ditambahkan ke keranjang!`);
@@ -85,11 +85,11 @@ export default function ProductDetail({user}) {
       }
     }
 
-    if(user.role && user.status === 0) {
+    if(user?.role && user?.status === 0) {
       toast.error("Akun belum terverifikasi")
     }
 
-    if (!user.role) {
+    if (!user?.role) {
       setShowModal({ show:true, context:"login" })
     }
   };

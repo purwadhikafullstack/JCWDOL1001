@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import UserNavMenuItems from "./user.nav.menu.items"
 import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
-import { logout, resendOtp } from "../../store/slices/auth/slices"
-import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
-import { totalProductCart } from "../../store/slices/cart/slices"
+import { logout } from "../../store/slices/auth/slices"
 
 
 export default function UserNavMenu({
@@ -16,7 +14,7 @@ export default function UserNavMenu({
   user,
   handleShowModal,
   ongoingTransactions,
-  // total
+
 }) {
   const {total}= useSelector(state=>{
     return {
@@ -30,7 +28,7 @@ export default function UserNavMenu({
 
   const [isMenuVisible, setIsMenuVisible] = useState(false)
 
-  const isAccountVerified = user.status === 0 && isLogin
+  const isAccountVerified = user?.status === 0 && isLogin
 
   const onClickKeluar = () => {
     dispatch(logout()).finally(() => {
@@ -148,11 +146,11 @@ export default function UserNavMenu({
                               }
                             </div>
                             <div className="">
-                              <h3>{user.profile.name}</h3>
+                              <h3>{user?.profile.name}</h3>
                               <p className="text-sm font-normal text-slate-500">
                                 Profil & Pengaturan
                               </p>
-                              {user.status === 0 &&
+                              {user?.status === 0 &&
                                 <p className="text-xs text-danger">Silahkan lakukan verifikasi</p>
                               }
                             </div>
