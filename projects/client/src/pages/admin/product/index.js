@@ -149,7 +149,7 @@ export default function AdminProducts({user}) {
     searchedProductRef.current.value = "";
   }
 
-  if (!user.role) return navigate("/", "replace");
+  if (!user?.role) return navigate("/", "replace");
 
   return (
     <>

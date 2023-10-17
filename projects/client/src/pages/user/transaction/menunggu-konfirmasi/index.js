@@ -4,14 +4,21 @@ import ModalDetailTransaction from "../components/modal.detail.transaction";
 import EmptyTransaction from "../components/empty.transaction";
 import SkeletonTransaction from "../components/skeleton";
 import TransactionCard from "../components/transaction.card";
+import Button from "../../../../components/Button";
+import ModalBatalkanPesanan from "./modal.batalkan.pesanan";
+import { resetSuccessTransaction } from "../../../../store/slices/transaction/slices";
+import { useDispatch } from "react-redux";
 
 export default function MenungguKonfirmasi({
   transaction,
-  isGetTransactionLoading, 
   totalPage,
   currentPage,
-  setPage
+  setPage,
+  setActiveTab,
+  isGetTransactionLoading,
+  isUpdateOngoingTransactionLoading 
 }) {
+  const dispatch = useDispatch()
   const [showModal, setShowModal] = useState({show: false, context: null});
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
@@ -32,10 +39,15 @@ export default function MenungguKonfirmasi({
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal({show: false, context:null});
-  };
+  const handleCloseModal = (tab) => {
+    setShowModal({ show: false, context: null });
+    dispatch(resetSuccessTransaction())
 
+    if (tab) {
+      setActiveTab(tab);
+    }
+  };
+  
   if (isGetTransactionLoading && !showModal.show) {
     return Array.from({length: 3}, (_, index) => (
       <SkeletonTransaction key={index}/>
@@ -63,14 +75,39 @@ export default function MenungguKonfirmasi({
         title={showModal.context}
         closeButtonText={true}
       >
-        {showModal.show &&
+        {showModal.context === "Detail Transaksi" &&
         <>
           <ModalDetailTransaction
             selectedTransaction={selectedTransaction}
             handleCloseModal={handleCloseModal}
             handleShowModal={handleShowModal}
           />
+          <div className="grid md:grid-cols-3 gap-2 mt-4">
+            <Button
+              isButton
+              isDangerOutline
+              title={`Batalkan Pesanan`}
+              className={`md:col-start-2 md:row-start-1`}
+              onClick={() => handleShowModal("Batalkan Pesanan", selectedTransaction.transactionId)}
+            />
+            <Button
+              isButton
+              isPrimary
+              title={`Kembali`}
+              className={`md:col-start-3 md:row-start-1`}
+              onClick={() => handleCloseModal()}
+            />
+          </div>
         </>
+        }
+
+        {showModal.context === "Batalkan Pesanan" && 
+          <ModalBatalkanPesanan 
+            selectedTransaction={selectedTransaction} 
+            isUpdateOngoingTransactionLoading={isUpdateOngoingTransactionLoading}
+            handleShowModal={handleShowModal}
+            handleCloseModal={handleCloseModal}
+          />
         }
       </Modal>
     </>

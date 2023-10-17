@@ -199,7 +199,7 @@ export default function Transaction({
 
         <div>
           <div className="flex flex-col justify-between border-b py-2 border-primary/30">
-            <div className="flex flex-col md:flex-row md:justify-between gap-2">
+            <div className="flex flex-col md:items-center md:flex-row md:justify-between gap-2">
               <>
                 <form className="relative w-full md:w-1/3" onSubmit={(e) => {
                     e.preventDefault()

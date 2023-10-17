@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
-import { HiXMark } from "react-icons/hi2";
+import { HiArrowLongLeft, HiXMark } from "react-icons/hi2";
 import LoginContext from "./context/login.context";
 import RegisterContext from "./context/register.context";
 import ForgotContext from "./context/forgot.password.context";
@@ -89,9 +89,25 @@ export default function Modal({
             className={["fixed inset-0 z-[999] m-auto overflow-hidden bg-slate-50 p-6 shadow-lg dark:bg-slate-800", modalBodyClassName].join(" ")}
           >
             <div className="flex items-center justify-between">
-              <h3 className="subtitle">
-                {titleModal ? titleModal : title}
-              </h3>
+              <div className="flex items-center gap-2">
+                {closeButtonText && 
+                  <span
+                  className="cursor-pointer"
+                    onClick={() => {
+                      closeModal();
+                      setTitle("");
+                      setLogin(false);
+                      setForgot(false)
+                      setRegist(false);
+                    }}
+                    >
+                    <HiArrowLongLeft className={`text-3xl text-primary`} />
+                  </span>
+                }
+                <h3 className="subtitle">
+                  {titleModal ? titleModal : title}
+                </h3>
+              </div>
               {showCloseButton && 
                 <span
                 className="cursor-pointer"
@@ -103,11 +119,7 @@ export default function Modal({
                     setRegist(false);
                   }}
                   >
-                    {closeButtonText ? 
-                      <Button isButton isPrimaryOutline >Kembali</Button> 
-                    :
-                      <HiXMark className="text-3xl" />
-                    }
+                  <HiXMark className={`text-3xl ${closeButtonText && "hidden"}`} />
                 </span>
               }
             </div>

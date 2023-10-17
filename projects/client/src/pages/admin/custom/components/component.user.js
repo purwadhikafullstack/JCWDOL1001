@@ -12,7 +12,7 @@ function ListOfUser({
     user = [],
     onUserChange=(params)=>{}
 }){
-    return user.map((item,index)=>{
+    return user?.map((item,index)=>{
         return(
             <tr 
             className="cursor-pointer text-center hover:bg-slate-100 
