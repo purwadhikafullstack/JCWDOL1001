@@ -1,13 +1,14 @@
 import Button from "../../Button"
 import Input from "../../Input"
 import { React, useEffect, useRef, useState} from "react"
-
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux"
-
 import { login,register, resendOtp } from "../../../store/slices/auth/slices"
+import { RegisterValidationSchema } from "../../../store/slices/auth/validation"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
+    onLogin = ()=>{},
 }){
 
     const {isRegister} = useSelector(state =>{
@@ -26,6 +27,8 @@ export default function RegisterContext ({
     const phoneRef = useRef()
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
+    const [error,setError] = useState("")
+    const [isToastVisible,setIsToastVisible] = useState(false)
     //resend otp logic
     useEffect(()=>{
         const timeoutID = setTimeout(() => {
@@ -46,15 +49,46 @@ export default function RegisterContext ({
         setResend(true)
     }
 
-    const onButtonRegist= (e) => {
+    const onButtonRegist= async(e) => {
+        try {
         e.preventDefault()
         setEmail(emailRef.current?.value)
-        const sendemail = emailRef.current?.value
-        const name = nameRef.current?.value
-        const phone = phoneRef.current?.value
-        const password = passwordRef.current?.value
-        const confirmPassword = confirmPasswordRef.current?.value
-       dispatch(register({ name : name, email : sendemail, phone : phone, password : password, confirmPassword : confirmPassword}))
+        const request = { 
+            name : nameRef.current?.value,
+            email : emailRef.current?.value, 
+            phone : phoneRef.current?.value, 
+            password : passwordRef.current?.value, 
+            confirmPassword : confirmPasswordRef.current?.value
+        }
+
+        // const sendemail = emailRef.current?.value
+        // const name = nameRef.current?.value
+        // const phone = phoneRef.current?.value
+        // const password = passwordRef.current?.value
+        // const confirmPassword = confirmPasswordRef.current?.value
+        await RegisterValidationSchema.validate(request, {
+            abortEarly: false,
+        });
+        setError("");
+        dispatch(register(request))
+
+      
+    } catch (error) {
+        const errors = {};
+
+        error.inner.forEach((innerError) => {
+          errors[innerError.path] = innerError.message;
+        });
+        setError(errors);
+  
+        toast.error("Periksa kembali kolom pengisian!");
+  
+        setIsToastVisible(true);
+  
+        setTimeout(() => {
+          setIsToastVisible(false);
+        }, 2000);
+    }
     }
 
     useEffect(()=>{
@@ -93,51 +127,99 @@ export default function RegisterContext ({
                     </div>
                 </div> :
                 <div>
-                <form className="mt-8 flex flex-col gap-8" onSubmit={(event)=>{onButtonRegist(event)}} >
+                        <span className="mr-2 text-slate-600">Sudah punya akun?</span>
+                        <Button
+                            title="Masuk"
+                            className="text-primary underline"
+                            onClick={() => {
+                                onLogin()
+                            }}
+                        />
+                      
+                
+                <form className="flex flex-col gap-8 mt-4" onSubmit={(event)=>{onButtonRegist(event)}} >
 
                     <div className="flex flex-col gap-3">
-                {/* <span className="mr-2 text-slate-600 text-sm">Mari bergabung dengan keluarga Apotech</span> */}
+                        <div className="flex gap-2">
+                        <div>
                         <Input
                             ref={nameRef}
                             required
                             type="text"
-                            label="Username"
-                            placeholder="e.g. helloworld"
-                
-                        />
-
+                            label="Nama Lengkap"
+                            placeholder="Bob Smith"
+                            onChange={() => setError({ ...error, name: false })}
+                            />
+                            {error.name && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.name}
+                            </div>)}
+                        </div>
+                                
+                        <div>
                         <Input
                             ref={phoneRef}
                             required
                             type="text"
-                            label="Phone Number"
-                            placeholder="e.g. 08123456123"
-                        />
+                            label="Nomor Telpon"
+                            placeholder="08xxxxxxxx"
+                            onChange={() => setError({ ...error, phone: false })}
+                            />
+                        {error.phone && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.phone}
+                            </div>)}
+                        </div>
+                        </div>
+
+                        <div>
                         <Input
                             ref={emailRef}
                             type="text"
                             label="Email"
-                            placeholder="e.g. example@email.com"
+                            placeholder="example@email.com"
+                            onChange={() => setError({ ...error, email: false })}
                         />
-
+                        {error.email && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.email}
+                            </div>)}
+                        </div>
+                        
+                        <div>
                         <Input
                             ref={passwordRef}
                             required
                             type="password"
                             label="Password"
-                            placeholder="min. 6 characters"
+                            placeholder="Min. 6 karakter"
+                            onChange={() => setError({ ...error, password: false })}
                         />
+                        {error.password && (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.password}
+                            </div>)}
+                        </div>
+
+                        <div>
                         <Input
                             ref={confirmPasswordRef}
                             required
                             type="password"
-                            label="Confirm Password"
-                            placeholder="min. 6 characters"
+                            label="Konfirmasi Password"
+                            placeholder="Min. 6 karakter"
+                            onChange={() => setError({ ...error, confirmPassword: false })}
                         />
+                        {error.confirmPassword&& (
+                            <div className="text-sm text-red-500 dark:text-red-400">
+                            {error.confirmPassword}
+                            </div>)}
+                        </div>
                     </div>
                     <Button
                         isButton
                         isPrimary
+                        isDisabled={isToastVisible}
                         type="submit"
                         title="Daftar"
                         className="mt-4 py-3"

@@ -14,6 +14,7 @@ const INITIAL_STATE = {
     success : false,
     totalPage: "",
     currentPage: "",
+    limit:"",
     isLoading : false,
     isDeleteLoading : false,
 }
@@ -33,12 +34,19 @@ const discountSlice = createSlice({
                 data : action.payload?.discount,
                 totalPage : action.payload?.totalPage,
                 currentPage : action.payload?.currentPage,
+                limit : action.payload?.limit,
                 success : false,
                 isLoading : false
             })
         },
         [getDiscount.rejected] : (state,action) => {
-            state.isLoading = false
+            state = Object.assign(state, {
+                data : [],
+                totalPage : 1,
+                currentPage : 1,
+                success : false,
+                isLoading : false
+            })
         },
         [deleteDiscount.pending] : (state, action) => {
             state.isDeleteLoading = true

@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CustomOrder from "./pages/admin/custom";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import LandingPage from "./pages/landingPage";
 import Cart from "./pages/user/cart";
 import Verification from "./pages/verification";
@@ -29,6 +28,10 @@ import QnAPage from "./pages/qna";
 import ResetPassword from "./pages/reset-password";
 import StockHistory from "./pages/admin/product/history";
 import QNA from "./pages/admin/qna";
+import TentangKami from "./pages/tentang-kami";
+import KebijakanPrivasi from "./pages/kebijakan-privasi";
+import SyaratKetentuan from "./pages/syarat-ketentuan";
+import { totalProductCart } from "./store/slices/cart/slices";
 
 function App() {
   const { pathname } = useLocation();
@@ -37,18 +40,20 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading } = useSelector(state => {
+  const { user, isLogin, ongoingTransactions, isUpdateOngoingTransactionLoading, isChangePictureLoading, isChangeProfileLoading, isChangeEmailLoading } = useSelector(state => {
 		return {
 			user : state?.auth,
       isLogin : state?.auth?.isLogin,
       ongoingTransactions : state?.transaction?.ongoingTransactions,
       isUpdateOngoingTransactionLoading : state?.transaction?.isUpdateOngoingTransactionLoading,
       isChangePictureLoading : state?.auth?.isChangePictureLoading,
-      isChangeProfileLoading : state?.auth?.isChangeProfileLoading
+      isChangeProfileLoading : state?.auth?.isChangeProfileLoading,
+      isChangeEmailLoading : state?.auth?.isChangeEmailLoading
 		}
 	})
   
   const [loading, setLoading] = useState(true);
+  const [verify, setVerify] = useState(false);
 
   useEffect(() => {
     window.scrollTo({top:0, left:0});
@@ -70,6 +75,7 @@ function App() {
   useEffect(()=>{
     if (isLogin) {
       dispatch(getOngoingTransactions())
+      dispatch(totalProductCart())
     }
   }, [isUpdateOngoingTransactionLoading, isLogin])
 
@@ -77,8 +83,13 @@ function App() {
     if (isLogin){
       dispatch(getProfile())
     }
-  }, [isChangePictureLoading, isChangeProfileLoading])
+  }, [isChangePictureLoading, isChangeProfileLoading, isChangeEmailLoading])
 
+  useEffect(()=>{
+    if (isLogin) {
+      dispatch(totalProductCart())
+    }
+  },[])
   if (loading) {
     return (
       <div className="grid place-content-center h-screen">
@@ -89,7 +100,7 @@ function App() {
 
   return (
     <div>
-      <Navbar user={user} isLogin={isLogin} ongoingTransactions={ongoingTransactions?.totalTransactions}/>
+      <Navbar user={user} isLogin={isLogin}  ongoingTransactions={ongoingTransactions?.totalTransactions}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/qna" element={<QnAPage />} />
@@ -123,8 +134,8 @@ function App() {
           {!user?.role || user?.role == 2 && (
             <>
               <Route path="/user/" element={<Navigate to={`/user/profile`}/>} />
-              <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions}/>} />
-              <Route path="/cart" element={<Cart />} />
+              <Route path="/user/:context" element={<UserPage user={user} ongoingTransactions={ongoingTransactions} verify={verify} setVerify={setVerify}/> } />
+              <Route path="/cart" element={<Cart user={user}/>} />
               <Route path="/upload-recipe/" element={<UploadRecipePage/>} />
               <Route path="/checkout" element={<CheckoutPage/>}/>
             </>
@@ -133,10 +144,12 @@ function App() {
           <Route path="/reset-password/*" element={<ResetPassword/>}/>
           <Route path="/confirm/*" element={<ConfirmCustom/>} />     
           <Route path="/verify/*" element={<Verification/>} />     
+          <Route path="/tentang-kami" element={<TentangKami/>} />     
+          <Route path="/kebijakan-privasi" element={<KebijakanPrivasi/>} />     
+          <Route path="/syarat-ketentuan" element={<SyaratKetentuan/>} />     
           <Route path="*" element={<NotFound />} />
         </Routes>
 
-      {/* <Footer /> */}
       <ToastContainer 
         position="top-center"
         autoClose={1000}

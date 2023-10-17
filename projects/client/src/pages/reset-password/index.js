@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Navigate, useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import Button from "../../components/Button/index.js"
-import { forgotPass, resetPass } from "../../store/slices/auth/slices.js"
+import { resetPass } from "../../store/slices/auth/slices.js"
 import { PasswordValidationSchema } from "../../store/slices/auth/validation.js"
 import { toast } from "react-toastify"
 import Input from "../../components/Input/index.js"
@@ -14,10 +14,15 @@ export default function ResetPassword({
     const confirmPasswordRef = useRef()
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    
+    const {resetStatus} = useSelector(state=>{
+        return{
+            resetStatus : state?.auth?.resetStatus
+        }
+    })
     const [submit,setSubmit] = useState(false)
     const [isToastVisible, setIsToastVisible] = useState(false)
     const [error, setError] = useState("")
+    
     const handleReset = async (e) =>{
         e.preventDefault()
         try{
@@ -32,7 +37,7 @@ export default function ResetPassword({
                 dispatch(resetPass({password : passwordRef.current?.value, token : token}))
                 setError("")
                 setSubmit(true)
-                navigate("/")
+                
             }
 
         }catch(error) {
@@ -53,7 +58,13 @@ export default function ResetPassword({
             }, 2000)
         }
     }
-
+    useEffect(()=>{
+        if(submit){
+            setTimeout(() => {
+                navigate("/")
+            }, 3000)
+        }
+    },[resetStatus])
 return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
         <span className="text-primary font-semibold text-xl">
@@ -72,7 +83,7 @@ return (
                         ref={passwordRef}
                         required
                         type="password"
-                        label="Password"
+                        label="Password : "
                         placeholder="..............."
                         errorInput={error.password}
                         onChange={() => setError({ ...error, password: false })}
@@ -89,7 +100,7 @@ return (
                         ref={confirmPasswordRef}
                         required
                         type="password"
-                        label="Confirm Password"
+                        label="Konfirmasi Password : "
                         placeholder="··············"
                         errorInput={error.confirmPassword}
                         onChange={() => setError({ ...error, confirmPassword: false })}

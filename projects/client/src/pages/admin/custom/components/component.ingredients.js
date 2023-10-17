@@ -37,8 +37,7 @@ function ListOfProduct({
 
 export default function IngredientList({
     onIngredientProductChange = (params)=>{},
-    onChange,
-    errorInput,
+    isSubmit,
     selected
 
 }){
@@ -48,6 +47,13 @@ export default function IngredientList({
            product : state?.products?.data
         }
     })
+    useEffect(()=>{
+        console.log(isSubmit)
+        if(isSubmit){
+            resetValue()
+        }
+    },[isSubmit])
+
     useEffect(()=>{
         dispatch(getProducts({
         category_id : "",
@@ -60,7 +66,7 @@ export default function IngredientList({
 },[])
     
     const [result,setResult] = useState(true)
-    const [selectProductRef,setSelectProductRef] = useState([])
+    const [selectProductRef,setSelectProductRef] = useState([0,""])
     const[visible,setVisible] = useState(false)
     const handleChangeValue = (e) =>{
         e.preventDefault();
@@ -82,7 +88,7 @@ export default function IngredientList({
           }))
     }
     const resetValue =()=>{
-        setSelectProductRef(["",""])
+        setSelectProductRef([0,""])
         setVisible(false)
     }
     const clickOption = (params) =>{

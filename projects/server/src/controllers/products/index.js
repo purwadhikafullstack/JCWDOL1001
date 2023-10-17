@@ -8,6 +8,7 @@ const {
   Product_History,
   Discount_Product,
   Discount,
+  Cart,
 } = require("../../model/relation.js");
 const { Op } = require("sequelize");
 const cloudinary = require("cloudinary");
@@ -36,7 +37,7 @@ const getProducts = async (req, res, next) => {
     const filter = { id_cat, product_name };
     if (id_cat) filter.id_cat = { categoryId: id_cat };
     if (product_name)
-      filter.product_name = { productName: { [Op.like]: `%${product_name}%` } };
+      filter.product_name = { productName: { [Op.like]: `%${trimString(product_name)}%` } };
 
     let sort = [];
     if (sort_price) sort.push([`productPrice`, sort_price]);
@@ -81,8 +82,13 @@ const getProducts = async (req, res, next) => {
     });
 
     const total =
-      id_cat || product_name ?
-        await Product_List?.count({
+        product_name && !id_cat ?
+          await Product_List?.count({
+            where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
+          })
+        : 
+        id_cat || product_name ?
+          await Product_List?.count({
             include: {
               model: Categories,
               as: "productCategories",
@@ -91,7 +97,7 @@ const getProducts = async (req, res, next) => {
             where: { [Op.and]: [filter.product_name, { isDeleted: 0 }] },
           })
         : promo ? 
-          await Discount_Product?.count()
+          await Discount_Product?.count({where:{isDeleted:0}})
         :
           await Product_List?.count({ 
             include:{
@@ -106,7 +112,6 @@ const getProducts = async (req, res, next) => {
             },
             where: { isDeleted: 0 } 
           })
-        // : await Product_List?.count({ where: { isDeleted: 0 } });
 
     const pages = Math.ceil(total / options.limit);
 
@@ -117,6 +122,55 @@ const getProducts = async (req, res, next) => {
       totalPage: pages,
       totalProducts: total,
       productLimit: options.limit,
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getProductDiscount = async (req, res, next) => {
+  try {
+    const options = {
+      offset:0,
+      limit: 10,
+    };
+    const products = await Product_List?.findAll({
+      ...options,
+      include: [
+        {
+          model: Categories,
+          attributes: ["categoryDesc", "categoryId"],
+          as: "productCategories",
+        },
+        {
+          model: Discount_Product,
+          attributes: { exclude: ["discountProductId"] },
+          as: "discountProducts",
+          where:{isDeleted:0},
+          include: {
+            model: Discount,
+            where: { isDeleted: 0, 
+              [Op.or] :[
+                {discountExpired :{[Op.gte] : moment()}},
+                {discountExpired :{[Op.is] : null}}
+              ]
+            },
+            required: true,
+          },
+          required: false,
+        },
+      ],
+      where:{ isDeleted: 0  },
+    });
+
+    if (!products) {
+      throw new Error(middlewareErrorHandling.PRODUCT_NOT_FOUND);
+    }
+    
+    res.status(200).json({
+      type: "success",
+      message: "Products fetched",
       data: products,
     });
   } catch (error) {
@@ -149,9 +203,10 @@ const getProductById = async (req, res, next) => {
           as: "discountProducts",
           include: {
             model: Discount,
-            where: { isDeleted: 0 },
             required: false,
           },
+          where: { isDeleted: 0 },
+          required:false
         },
       ],
       where: { productId: id },
@@ -371,6 +426,27 @@ const updateMainStock = async (req, res, next) => {
 
     await detail.update({ quantity: history?.results });
 
+    //get cart where productId = productId
+    //map aja, promise all, if quantity > result di history, brrti update cartnya
+    const itemInCart = await Cart.findAll({where : {
+      productId : productId
+    }})
+
+    await Promise.all(
+      itemInCart.map(async(item)=>{
+        if(item.quantity > detail?.quantity){
+          // console.log("user "+item.userId+" punya "+item.quantity)
+          await Cart.update({
+            quantity : (detail?.quantity)
+          },{
+            where : {
+              cartId : item?.dataValues?.cartId
+            }
+          })
+        }
+      })
+    )
+
     res
       .status(200)
       .json({
@@ -386,6 +462,7 @@ const updateMainStock = async (req, res, next) => {
 module.exports = {
   getProducts,
   getProductById,
+  getProductDiscount,
   createProduct,
   updateProduct,
   deleteProduct,

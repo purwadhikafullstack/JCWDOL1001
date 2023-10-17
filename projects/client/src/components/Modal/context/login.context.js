@@ -44,7 +44,7 @@ export default function LoginContext ({
 
             setError(errors)
 
-            toast.error("Check your input field!")
+            toast.error("Periksa kembali data yang Anda masukkan!")
 
             setIsToastVisible(true)
 
@@ -69,7 +69,7 @@ export default function LoginContext ({
                     onRegist()
                 }}
             />  
-            <form className="mt-8 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
+            <form className="mt-4 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
                 <div>
                     <Input
                         ref={emailRef}

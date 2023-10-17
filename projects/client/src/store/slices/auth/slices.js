@@ -51,7 +51,20 @@ export const logout = createAsyncThunk(
         try {
             localStorage.removeItem("token")
 
-            toast.success("Logout Sucess")
+            toast.success("Logout Success")
+        } catch (error) {
+            toast.error(error.response ? error.response.data : error)
+
+            return rejectWithValue(error.response ? error.response.data : error)
+        }
+    }
+)
+
+export const forcedLogout = createAsyncThunk(
+    "auth/forcedLogout",
+    async (payload, { rejectWithValue }) => {
+        try {
+            localStorage.removeItem("token")
         } catch (error) {
             toast.error(error.response ? error.response.data : error)
 
@@ -71,17 +84,17 @@ export const register = createAsyncThunk(
 
             const {data} = response
 
-            toast.success("register Success")
+            toast.success("Berhasil register")
 
             return data
 
             
         } catch (error) {
             if (error){
-                alert(error)
+                toast.error(error)
             }
             else{
-                alert(error.response?.data?.message)
+                toast.error(error.response?.data?.message)
             }
             return rejectWithValue(error.response?.data?.message)
         }
@@ -103,11 +116,11 @@ export const verify = createAsyncThunk(
 
             const {data} = response
             
-            toast.success("verify Succeed")
+            toast.success("Kamu telah terverifikasi. Selamat!")
             return data
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
@@ -126,7 +139,7 @@ export const resendOtp= createAsyncThunk(
             toast.success(data?.message)
             
         } catch (error) {
-            alert(error.response?.data?.message)
+            toast.error(error.response?.data?.message)
 
             return rejectWithValue(error.response?.data?.message)
         }
@@ -141,7 +154,7 @@ export const changePassword = createAsyncThunk (
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-password/${userId}`,payload)
-            toast.success("Password has been changed.")
+            toast.success("Password telah dirubah.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -155,7 +168,7 @@ export const changeProfilePicture = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch(`auth/change-picture/${payload.userId}`,payload.formData)
-            toast.success("Your profile picture has been updated.")
+            toast.success("Tampilan anda telah dirubah.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -169,7 +182,7 @@ export const changeEmailOtp = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.post(`auth/changeOtp/${payload.userId}`)
-            toast.success("We are sending you the OTP, please check your mail.")
+            toast.success("OTP telah dikirim ke Email Anda.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -184,9 +197,8 @@ export const changeEmail = createAsyncThunk (
         try{
             const userId = payload.userId;
             delete payload.userId;
-            console.log(payload);
             const response = await api.patch(`auth/change-email/${userId}`,payload)
-            toast.success("Email has been changed.")
+            toast.success("Email telah berhasil dirubah! Silahkan Login kembali dengan Email yang baru.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -216,12 +228,12 @@ export const forgotPass = createAsyncThunk(
      
     async (payload, { rejectWithValue }) => {
         try {
-            await ForgotPassValidationSchema.validate(payload)
+            // await ForgotPassValidationSchema.validate(payload)
             const response = await api.post("auth/forgot", payload)
 
             const {data} = response
 
-            toast.success(response?.data?.message)
+            toast.success("Form reset telah dikirim")
             
         } catch (error) {
             toast.error(error.response?.data?.message)
@@ -239,12 +251,12 @@ export const resetPass= createAsyncThunk(
             const {token} = payload
             console.log(token)
             delete payload.token
-            await PasswordValidationSchema.validate(payload)
+            // await PasswordValidationSchema.validate(payload)
             const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})
 
             const {data} = response
 
-            toast.success(response?.data?.message)
+            toast.success("Data Password telah diubah")
             
         } catch (error) {
             toast.error(error.response?.data?.message)

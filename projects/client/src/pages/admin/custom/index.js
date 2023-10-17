@@ -13,16 +13,19 @@ import { getProducts } from "../../../store/slices/product/slices";
 import { checkIngredient, getUser } from "../../../store/slices/custom/slices";
 import UserList from "./components/component.user";
 import NormalProductList from "./components/component.normalProduct";
+import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
+import { customValidationSchema, ingredientValidationSchema, normalValidationSchema } from "../../../store/slices/custom/validation";
+import { toast } from "react-toastify";
 
 export default function CustomOrder({}) {
   const dispatch = useDispatch();
-  const {dataUser, message,totalPage, currentPage} = useSelector((state) => {
+  const {dataUser} = useSelector((state) => {
     return {
       // dataProduct: state?.products?.data,
       dataUser : state?.custom?.dataUser,
       totalPage : state?.custom?.totalPage,
       currentPage : state?.custom?.currentPage,
-      message : state?.custom?.message
+      // message : state?.custom?.message
     };
   });
 
@@ -40,6 +43,7 @@ export default function CustomOrder({}) {
   const [name,setName] = useState(null)
   const [ingredientName, setIngredientName] = useState(null)
   const ingredientQuantityRef = useRef(null)
+  const [ingredientSubmit, setIngredientSubmit] = useState(false)
   
   //useRef
   const [oldNameProduct, setOldNameProduct] = useState("")
@@ -58,8 +62,7 @@ export default function CustomOrder({}) {
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] =useState(false)
   const [showConfirmModal, setShowConfirmModal] =useState(false)
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const selectedTransactionDetail = selectedTransaction?.transactionDetail;
+  const [isToastVisible, setIsToastVisible] = useState(false)
 
   const handleShowAllModal = () =>{
     setShowModal(true)
@@ -92,7 +95,6 @@ export default function CustomOrder({}) {
       );
 
       if(selectedProduct.type === 1) {
-      // setSelectedTransaction(transactionData);
       setListAllIngredient(selectedProduct?.ingredients)
       setProductNameState(selectedProduct?.productName)  
       setOldNameProduct(selectedProduct?.productName)
@@ -126,31 +128,62 @@ export default function CustomOrder({}) {
     setShowConfirmModal(false)
   };
 
-  const handleAddModal = () => {
+  const handleAddModal = async () => {
+    try{
     setTitleState(false)
     const items = listAllCustomProduct;
-    if(!titleState){
+    setError("")
+    //validation
     if(option === 1){
-      items.push({
-        // productName : productNameRef.current.value,
+      await customValidationSchema.validate({
+        ingredientList : listAllIngredient,
         productName : productNameState,
         productPrice : productPriceState,
         productDosage: productDosageState,
-        quantity : productQuantityState,
-        type : 1,
-        ingredients : listAllIngredient
+        productQuantity : productQuantityState,
+      },{
+        abortEarly : false
       })
     }
-    if(option === 0){
-      items.push({
-        // productName : productNameRef.current.value,
-        productId : productIdState,
-        productName : productNameState,
-        productPrice : productPriceState,
-        quantity : productQuantityState,
-        type : 0,
+    if( option === 0){
+      await normalValidationSchema.validate({
+        normalProductId : +productIdState,
+        normalProductName : productNameState,
+        normalProductPrice : productPriceState,
+        normalProductQuantity :productQuantityState
+      },{
+        abortEarly : false
       })
     }
+
+
+    if(!titleState){
+      if(option === 1){
+        //await custom
+       
+
+        items.push({
+          // productName : productNameRef.current.value,
+          productName : productNameState,
+          productPrice : productPriceState,
+          productDosage: productDosageState,
+          quantity : productQuantityState,
+          type : 1,
+          ingredients : listAllIngredient
+        })
+      }
+      if(option === 0){
+        //await normal
+       
+        items.push({
+          // productName : productNameRef.current.value,
+          productId : productIdState,
+          productName : productNameState,
+          productPrice : productPriceState,
+          quantity : productQuantityState,
+          type : 0,
+        })
+      }
   }
   else{
     const result = listAllCustomProduct
@@ -159,7 +192,8 @@ export default function CustomOrder({}) {
       for(let i =0; i < result.length ; i++){
         if(result[i].productName === oldNameProduct){
           if(option === 1){
-            console.log("ini dya ",result[i].productName)
+            //await custom
+            
             result[i].productName = productNameState 
             result[i].productPrice = productPriceState
             result[i].productDosage= productDosageState
@@ -167,7 +201,8 @@ export default function CustomOrder({}) {
             result[i].ingredients = listAllIngredient
           }
           if(option === 0){
-            console.log("ini dya ",result[i].productName)
+            //await normal
+            result[i].productId = productIdState
             result[i].productName = productNameState
             result[i].productPrice = productPriceState
             result[i].quantity = productQuantityState
@@ -188,6 +223,23 @@ export default function CustomOrder({}) {
     setListAllCustomProduct(items)
     setMedState(false)
     setShowModal(false);
+}
+    catch(error){
+      const errors = {};
+      
+        error.inner.forEach((innerError) => {
+          errors[innerError.path] = innerError.message;
+        });
+        setError(errors);
+  
+        toast.error("Periksa kembali kolom pengisian!");
+  
+        setIsToastVisible(true);
+  
+        setTimeout(() => {
+          setIsToastVisible(false);
+        }, 2000);
+      }
   };
 
   const onDeleteIngredient = (productId) =>{
@@ -199,9 +251,10 @@ export default function CustomOrder({}) {
   }}
 
   const onIngredientProductChange = (params) =>{
-    
+    console.log(params)
     params?.forEach((item,index)=>
     index === 0 ? setIngredientId(item):setIngredientName(item))
+    
     
 }
   const onNormalProductChange = (params) =>{
@@ -226,7 +279,7 @@ const onUserChange = (params) =>{
       setEmail(item)
     }
     if(index === 1){
-      setName(item)
+      setName(capitalizeEachWords(item))
     }
     if(index === 2){
       setImage(item)
@@ -236,15 +289,47 @@ const onUserChange = (params) =>{
   setUserState(true)
 }
 
-const submitIngredient = () =>{
-  const result = [...listAllIngredient
-  ,{
-    productId : ingredientId,
-    productName : ingredientName,
-    quantity : ingredientQuantityRef?.current?.value
-  }]
-  console.log(result)
-  setListAllIngredient(result)
+const submitIngredient = async () =>{
+  try{
+    await ingredientValidationSchema.validate({
+      ingredientId : ingredientId, 
+      ingredientQuantity : ingredientQuantityRef?.current?.value  
+    },{
+      abortEarly : false
+  })
+
+    const result = [...listAllIngredient
+    ,{
+      productId : +ingredientId,
+      productName : ingredientName,
+      quantity : ingredientQuantityRef?.current?.value
+    }]
+    console.log(result)
+    setListAllIngredient(result)
+    ingredientQuantityRef.current.value = null
+    setIngredientSubmit(true)
+
+    setTimeout(() => {
+      setIngredientSubmit(false)
+    }, 2000);
+    setError("");
+  }
+  catch(error){
+    const errors = {};
+    
+      error.inner.forEach((innerError) => {
+        errors[innerError.path] = innerError.message;
+      });
+      setError(errors);
+
+      toast.error("Periksa kembali kolom pengisian!");
+
+      setIsToastVisible(true);
+
+      setTimeout(() => {
+        setIsToastVisible(false);
+      }, 2000);
+    }
 }
 
 const handleSubmitOrder = () =>{
@@ -255,37 +340,11 @@ const handleSubmitOrder = () =>{
     data : listAllCustomProduct
   })).then((response)=>{
     if(response){
-      setUserState(true)
-
+      setUserState(false)
     }
   })
   //hapus semua data
 }
-  useEffect(() => {
-    dispatch(getProducts({
-      category_id : "",
-      product_name : "",
-      sort_name : "", 
-      sort_price : "", 
-      page : 1,
-      limit: 12
-    }));
-    dispatch(getUser({
-      page : 2,
-      search: "bob",
-      sortDate: "ASC"
-    }))
-  }, []);
-
-  useEffect(()=>{
-//handleGetUser yang uda disorting boleh juga
-//setiap getuser ada update, di state
-  dispatch(getUser({
-    page : 2,
-    search: "bob",
-    sortDate: "ASC"
-  }))
-  },[message])
 
   return (
     <>
@@ -317,7 +376,7 @@ const handleSubmitOrder = () =>{
         <div>
           <div className="mt-4 mb-2">
             <span className="font-semibold">
-            Preview Resep Dokter :
+            Pratinjau Resep Dokter :
             </span>
           </div>
         <div className="h-[300px] w-[300px] mb-8 object-center duration-300 pt-3" 
@@ -344,7 +403,7 @@ const handleSubmitOrder = () =>{
         </div>
         <div className="flex flex-col ">
             <span className="font-semibold">
-                List Produk : 
+                Daftar Produk : 
             </span>
             {listAllCustomProduct.length === 0 && 
             <span className="italic font-medium text-gray-600">
@@ -427,18 +486,20 @@ const handleSubmitOrder = () =>{
                   isButton
                   isPrimary
                   isBLock
-                  className={"mt-2"}
+                  className={"my-5"}
                   onClick={handleShowAllModal}
                   title={`Add New Product`}
                 />
+                {listAllCustomProduct.length !== 0 &&
                 <Button
                   isButton
                   // isPrimary
                   isBLock
-                  className={"mt-5 bg-green-500 text-white"}
+                  // isDisabled={listAllCustomProduct.length === 0 ? true : false }
+                  className={"mb-10 bg-green-500 text-white"}
                   onClick={()=>setShowConfirmModal(true)}
                   title={`Submit Order`}
-                />
+                />}
                 <Modal
                 showModal={showConfirmModal}
                 halfWidth={true}
@@ -487,7 +548,7 @@ const handleSubmitOrder = () =>{
         showModal={showModal}
         halfWidth={true}
         closeModal={()=>handleCloseModal()}
-        title={titleState ? `Edit Product Section` : `Add Product Section`}
+        title={titleState ? `Ubah Produk` : `Tambah Produk`}
       >
         {/* masukin option 2 pilihan, option dan setoptionm, tiga kondisi */}
         <span className="">
@@ -518,26 +579,31 @@ const handleSubmitOrder = () =>{
               <div className={`mb-2 flex flex-col gap-1`}>
                 {/* isi input, quantity */}
               <div className="">
-
+                <div onChange={() => setError({ ...error, ingredientId: false })}>
                 <IngredientList
                 onIngredientProductChange={onIngredientProductChange}
-
-                
+                isSubmit={ingredientSubmit}
                 />
+                </div>
+                {error.ingredientId && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.ingredientId}
+                    </div>
+                  )}
                 <div className="">
                   <Input
                     ref={ingredientQuantityRef}
                     type="number"
                     label="Jumlah Obat Racik"
                     placeholder="e.g. 1"
-                    // errorInput={error.IngredientQtyRef}
-                    // onChange={() => setError({ ...error, ingredientQtyRef: false })}
+                    errorInput={error.IngredientQuantity}
+                    onChange={() => setError({ ...error, ingredientQuantity: false })}
                   />
-                  {/* {error.ingredientQtyRef && (
+                  {error.ingredientQuantity && (
                     <div className="text-sm text-red-500 dark:text-red-400">
-                      {error.ingredientQtyRef}
+                      {error.ingredientQuantity}
                     </div>
-                  )} */}
+                  )}
                 </div>
 
               </div>
@@ -549,7 +615,8 @@ const handleSubmitOrder = () =>{
                   <Button
               isButton
               isPrimary
-              title={`Add Ingredient`}
+              title={`Tambahkan ke Daftar`}
+              isDisabled={isToastVisible}
               onClick={() => submitIngredient()}
               />
               </div>
@@ -576,9 +643,10 @@ const handleSubmitOrder = () =>{
             <h3 className="title">Summary</h3>
             <div className="border-2  p-3 shadow-sm rounded-lg">
               <div className="font-bold">
-                Ingredients
+                Daftar Bahan Obat Racik
               </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3" 
+            onChange={() => setError({ ...error, ingredientList: false })}>
               {
                 listAllIngredient.map(item =>{
                    return(
@@ -600,6 +668,11 @@ const handleSubmitOrder = () =>{
                    )
                 })
               }
+              {error.ingredientList && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.ingredientList}
+                    </div>
+                  )}
             </div>
             </div>
               {/* input 4 datanya */}
@@ -608,69 +681,73 @@ const handleSubmitOrder = () =>{
               <Input
                 // ref={productNameRef}
                 value={productNameState}
-                onChange={(event)=>onChangeValue(event,setProductNameState)}
+                onChange={(event)=>{onChangeValue(event,setProductNameState)
+                  setError({ ...error, productName: false })
+                }}
                 type="text"
-                label="Product Name"
+                label="Nama Produk"
                 placeholder="e.g. Paracetamol 500 mg"
-                // errorInput={error.productName}
-                // onChange={() => setError({ ...error, productName: false })}
+                errorInput={error.productName}
               />
-              {/* {error.productName && (
+              {error.productName && (
                 <div className="text-sm text-red-500 dark:text-red-400">
                   {error.productName}
                 </div>
-              )} */}
+              )}
             </div>
 
             <div className="">
               <Input
                 value={productPriceState}
                 type="number"
-                label="Product Price"
+                label="Harga Produk"
                 placeholder="e.g. 35000"
-                onChange={event=>onChangeValue(event,setProductPriceState)}
-                // errorInput={error.productPrice}
-                // onChange={() => setError({ ...error, productPrice: false })}
+                onChange={event=>{onChangeValue(event,setProductPriceState)
+                  setError({ ...error, productPrice: false })}
+                }
+                errorInput={error.productPrice}
+
               />
-              {/* {error.productPrice && (
+              {error.productPrice && (
                 <div className="text-sm text-red-500 dark:text-red-400">
                   {error.productPrice}
                 </div>
-              )} */}
+              )}
             </div>
 
             <div className="">
               <Input
                 value={productDosageState}
                 type="text"
-                label="Product Dosage"
+                label="Dosis Produk"
                 placeholder="e.g. 3 x 1 hari"
-                onChange={event=>{onChangeValue(event,setProductDosageState)}}
-                // errorInput={error.productDosage}
-                // onChange={() => setError({ ...error, productDosage: false })}
+                onChange={event=>{onChangeValue(event,setProductDosageState)
+                  setError({ ...error, productDosage: false })
+                }}
+                errorInput={error.productDosage}      
               />
-              {/* {error.productDosage && (
+              {error.productDosage && (
                 <div className="text-sm text-red-500 dark:text-red-400">
                   {error.productDosage}
                 </div>
-              )} */}
+              )}
             </div>
 
             <div className="">
               <Input
                 value={productQuantityState}
                 type="number"
-                label="Product Quantity"
+                label="Jumlah Produk (pcs)"
                 placeholder="e.g. 3"
-                onChange={event=>{onChangeValue(event,setProductQuantityState)}}
-                // errorInput={error.productPrice}
-                // onChange={() => setError({ ...error, productPrice: false })}
+                onChange={event=>{onChangeValue(event,setProductQuantityState)
+                  setError({ ...error, productQuantity: false })}}
+                errorInput={error.productQuantity}
               />
-              {/* {error.productPrice && (
+              {error.productQuantity && (
                 <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productPrice}
+                  {error.productQuantity}
                 </div>
-              )} */}
+              )}
             </div>
         
 
@@ -683,28 +760,36 @@ const handleSubmitOrder = () =>{
   option === 0 && 
   <div className="grid gap-2 max-h-[50vh] lg:max-h-screen overflow-y-auto">
     <div className="border p-4 shadow-md">
+      <div onChange={() => setError({ ...error, normalProductId: false })}>
       <NormalProductList
         // product={dataProduct}
         onNormalProductChange={onNormalProductChange}
         productId={productIdState}
         productName={normalProductState}
         productPrice={productPriceState}
-      />
+        />
+                      {error.normalProductId && (
+                    <div className="text-sm text-red-500 dark:text-red-400">
+                      {error.normalProductId}
+                    </div>
+                  )}
+        </div>
       <div className="">
               <Input
                 value={productQuantityState}
                 type="number"
                 label="Product Quantity"
                 placeholder="e.g. 3"
-                onChange={event=>{onChangeValue(event,setProductQuantityState)}}
-                // errorInput={error.productPrice}
-                // onChange={() => setError({ ...error, productPrice: false })}
+                onChange={event=>{onChangeValue(event,setProductQuantityState)
+                setError({ ...error, normalProductPrice: false })}}
+                errorInput={error.normalProductPrice}
+               
               />
-              {/* {error.productPrice && (
+              {error.normalProductPrice && (
                 <div className="text-sm text-red-500 dark:text-red-400">
-                  {error.productPrice}
+                  {error.normalProductPrice}
                 </div>
-              )} */}
+              )}
       </div>
     </div>
   </div>
@@ -721,6 +806,7 @@ const handleSubmitOrder = () =>{
               isButton
               isPrimary
               title={`Confirm`}
+              isDisabled={isToastVisible}
               onClick={() => handleAddModal()}
               />
           </div>

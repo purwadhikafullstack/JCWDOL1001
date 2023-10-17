@@ -14,13 +14,12 @@ import {
 import { getCategory } from "../../../store/slices/cat/slices";
 import ModalDetailsProduct from "./modal.details.product";
 import ModalDeleteProduct from "./modal.delete.product";
-import ModalInputCustomProduct from "../custom";
 
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
 
-import { getUnits, resetUnit } from "../../../store/slices/product/unit/slices";
+import { getUnits } from "../../../store/slices/product/unit/slices";
 import ModalDeleteAndReactiveUnit from "./unit/modal.unit.delete.and.reactivate.product";
 import ModalInputProductUnit from "./unit/modal.unit.edit.details";
 import ModalAddProductUnit from "./unit/modal.unit.add";
@@ -133,30 +132,53 @@ export default function AdminProducts({user}) {
     );
   }, [searchedProduct, options, page, isDeleteProductLoading, isSubmitProductLoading,isSubmitStockLoading,isLoading]);
 
+  const handleSearch = (event) => {
+    setPage(1)
+    event.preventDefault();
+    setSearchedProduct(searchedProductRef?.current.value)
+  };
+
   useEffect(() => {
     dispatch(getCategory({page : categoriesPage}));
     dispatch(getUnits())
   }, [categoriesPage])
 
+    const clearSearch = () => {
+    setSearchedProduct(null)
+    setPage(1)
+    searchedProductRef.current.value = "";
+  }
 
   if (!user.role) return navigate("/", "replace");
 
   return (
     <>
       <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-        <div className="mt-4 flex items-center justify-between border-b-2 pb-2">
+        <div className="flex items-center justify-between border-b-2 pb-2">
 
-          <h3 className=" text-2xl font-semibold w-1/2">Products</h3>
+          <h3 className="title">Produk</h3>
 
-          <form className="relative w-1/3">
+          <form className="relative w-1/2 lg:w-1/3" onSubmit={(e) => {
+            handleSearch(e)
+          }}>
             <Input type="text" placeholder="Cari Produk..." ref={searchedProductRef}/>
-            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedProduct(searchedProductRef?.current.value)}>
+            <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit"
+            >
               <HiMagnifyingGlass className="text-2xl text-primary" />
             </button>
+
+            {searchedProduct && 
+              <Button
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
+                onClick={clearSearch}
+              >
+                <HiXMark className="text-2xl text-primary" />
+              </Button>
+            }
           </form>
         </div>
         
-        <div className="mt-4 grid lg:grid-cols-2">
+        <div className="mt-4">
           <Button
             isButton
             isPrimary
@@ -164,40 +186,35 @@ export default function AdminProducts({user}) {
             title="Tambah Produk"
             onClick={() => handleShowModal({context:"Tambah Produk"})}
           />
-          <div className="flex flex-1"></div>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="searchcat" className="pr-2">Pilih Kategori</label>
-            <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              {
-                categories ?
-                  categories?.map((categories, index)=>(
-                    <option value={categories.categoryId}>{categories.categoryDesc}</option>
-                  ))
-                  :
-                  <></>
-              }
-            </select>
-          </div>
+          <div className="flex gap-4 lg:flex-row flex-col mt-2">
+              <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Pilih Kategori</option>
+                {
+                  categories ?
+                    categories?.map((categories, index)=>(
+                      <option value={categories.categoryId}>{categories.categoryDesc}</option>
+                    ))
+                    :
+                    <></>
+                }
+              </select>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortname" className="pr-2">Urutkan Nama</label>
-            <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              <option value="ASC">A - Z</option>
-              <option value="DESC">Z - A</option>
-            </select>
-          </div>
+              <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Urutkan Nama</option>
+                <option value="ASC">A - Z</option>
+                <option value="DESC">Z - A</option>
+              </select>
 
-          <div className="items-center px-2 border-l-2 border-solid border-black">
-            <label htmlFor="sortprice" className="pr-2">Urutkan Harga</label>
-            <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="border-2 border-double">
-              <option value=""></option>
-              <option value="ASC">Terendah - Tertinggi</option>
-              <option value="DESC">Tertinggi - Terendah</option>
+              <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
+                <option value="" disabled>Urutkan Harga</option>
+                <option value="ASC">Terendah - Tertinggi</option>
+                <option value="DESC">Tertinggi - Terendah</option>
+              </select>
 
-            </select>
+              <Button className="text-danger" onClick={()=>setOptions({sortName : "", sortPrice : "", categoryId : ""})}>
+                Reset Filter
+              </Button>
           </div>
         </div>
 
@@ -212,15 +229,17 @@ export default function AdminProducts({user}) {
             current_page={current_page}
           />
         </div>
+
         <div className="mt-4 flex items-center justify-center">
-          <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>
+          {total_page > 1 && <Pagination currentPage={current_page} totalPage={total_page} setPage={setPage}/>}
         </div>
+
       </div>
 
       <Modal
         showModal={showModal.show}
         closeModal={handleCloseModal}
-        halfWidth={showModal.context === "Detail Produk"}
+        halfWidth={["Detail Produk", "Tambah Produk", "Ubah Detail"].includes(showModal.context)}
         title={showModal.context}
         disableOutside
       >

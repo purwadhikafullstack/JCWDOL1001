@@ -20,7 +20,9 @@ const reportSlice = createSlice({
     name : "forum",
     initialState : INITIAL_STATE,
     reducers : {
-
+        resetSuccessForum: (state, action) => {
+            state.success = false;
+          },
     },
     extraReducers: {
         [getForum.pending] : (state, action) => {
@@ -100,7 +102,7 @@ const reportSlice = createSlice({
             state = Object.assign(state, {
                 isLoading :false,
                 success : true,
-                list : action.payload?.data,
+                // list : action.payload?.data,
                 totalPage : action.payload?.totalPage,
                 currentPage : action.payload?.currentPage,
             })

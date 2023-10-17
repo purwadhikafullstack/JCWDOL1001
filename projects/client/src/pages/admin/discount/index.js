@@ -13,30 +13,35 @@ import ModalDetailsDiscount from "./modal/modal.edit.js"
 import { getProducts } from "../../../store/slices/product/slices.js"
 
 export default function DiscountPage(){
-
-    const { discountList, totalPage, currentPage, success,isDeleteLoading, products } = useSelector((state) => {
+    
+    const { discountList, totalPage, currentPage, success,isDeleteLoading,limit, products } = useSelector((state) => {
         return {
             discountList : state?.discount?.data,
             totalPage : state?.discount?.totalPage,
             currentPage : state?.discount?.currentPage,
+            limit : state?.discount?.limit,
             success : state?.discount?.success,
             isDeleteLoading : state?.discount?.isDeleteLoading,
             products : state?.products?.data,
         }
     })
-
+    
     const dispatch = useDispatch()
-
+    
     const discountRef = useRef()
-
+    
     const [showModal, setShowModal] = useState({ show: false, context: "", name: "", id: "", isNew:false })
-
+    
     const [selectedId, setSelected] = useState()
+    
+    const [search,setSearch] = useState(false)
+    
+    const [page, setPage] = useState(1);
 
     const handleShowModal = ({context, name, id, isNew}) => {
         setShowModal({ show: true, context, name, id, isNew : isNew})
         
-        dispatch(getDiscount({page : currentPage,discountName : discountRef?.current.value}))
+        dispatch(getDiscount({page : currentPage,discountName : discountRef?.current.value,limit:""}))
         
         if(id){
             const selectedDiscount = discountList.find((discount)=> discount.discountId === id)
@@ -52,17 +57,18 @@ export default function DiscountPage(){
         document.body.style.overflow = "auto"
     };
 
-    const [page, setPage] = useState(1);
-
-    // useEffect(()=>{
-    //     dispatch(
-    //         getDiscount({page : currentPage,discountName : discountRef?.current.value})
-    //     )
-    // },[])
+    const clearSearch = () => {
+        discountRef.current.value = ""
+        dispatch( getDiscount({page : page}) )
+        setSearch(false)
+    }
+    
+    const width = window.screen.width
+    const mobileWidth = 414
 
     useEffect(() => {
         dispatch(
-            getDiscount({page : page,discountName : discountRef?.current.value})
+            getDiscount({page : page,discountName : discountRef?.current.value,limit:""})
         )
     }, [page])
 
@@ -71,7 +77,7 @@ export default function DiscountPage(){
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
                     <h3 className=" text-2xl font-semibold w-full border-b-2 mb-5 pb-2">
-                        Discount
+                        Daftar Diskon 
                     </h3>
                     <form className="relative w-fit flex gap-4">
                         <Button
@@ -85,23 +91,28 @@ export default function DiscountPage(){
                         />
                         <Input 
                             type="text" 
-                            placeholder="Cari" 
+                            placeholder="Cari Nama Diskon" 
                             className=""
                             ref={discountRef}
                         />
                         <Button 
-                            className="absolute top-1/2 right-0 -translate-y-1/2 p-2" 
-                            onClick={()=>dispatch(getDiscount({discountName : discountRef?.current.value}))}
+                            className={`absolute top-1/2 -translate-y-1/2 p-2 ${search ? " right-[153px]" : "right-0"}`}
+                            onClick={()=>{
+                                dispatch(getDiscount({discountName : discountRef?.current.value}))
+                                setSearch(true)
+                            }}
                         >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                         </Button>
+                    <Button title="Hapus pengaturan" onClick={clearSearch}  className={`flex flex-row items-center h-auto text-red-700 ${search ? "" : "hidden"}`} />
                     </form>
                 </div>
-                <TableDiscount discountList={discountList} handleShowModal={handleShowModal}/>
+                    <TableDiscount limit={limit} currentPage={currentPage} discountList={discountList} handleShowModal={handleShowModal}/>
                 <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
                     <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
                 <Modal
+                    fullWidth={width <= mobileWidth}
                     showModal={showModal.show}
                     closeModal={handleCloseModal}
                     title={showModal.context}

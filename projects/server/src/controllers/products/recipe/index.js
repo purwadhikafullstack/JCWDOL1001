@@ -1,7 +1,7 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
-  const moment = require("moment")
+const moment = require("moment")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -12,7 +12,6 @@ const {} = require("./validation.js")
 const {ValidationError} = require("yup");
 const { User_Account, User_Address, User_Profile } = require("../../../model/user.js");
 const Axios = require("axios");
-const moment = require("moment")
 
 const getUser = async( req, res, next ) => {
     try{
@@ -29,14 +28,16 @@ const getUser = async( req, res, next ) => {
     const currentPage = page ? parseInt(page) : 1;
 
     const options = {
-        offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,
-        limit : 10,
+        offset : currentPage > 1 ? parseInt(currentPage-1)*6 : 0,
+        limit : 6,
     }
 
     const filter = {}
     const sort =  [[`createdRecipe`, sortDate ? sortDate : "DESC"]]
 
-    if(search) filter.name= {[Op.like]: `%${search}%`}
+    // if(search) filter = {
+    //   name :{[Op.like]: `%${search}%`} 
+    // }
     console.log(filter)
     const userlist = await User_Account.findAll({...options,
         where : {
@@ -47,9 +48,9 @@ const getUser = async( req, res, next ) => {
         include : [{
           model : User_Profile,
           as : "userProfile",
-          where : 
-            filter?.name
-          
+          where : {
+            name :{[Op.like]: `%${search}%`} 
+          }
         }],
         order : sort
     })
@@ -61,10 +62,9 @@ const getUser = async( req, res, next ) => {
   },include : {
     model : User_Profile,
     as : "userProfile",
-    where : {[Op.and] :
-    [
-        filter
-    ]}
+    where : {
+      name :{[Op.like]: `%${search}%`} 
+    }
   },
     })
 
@@ -91,7 +91,8 @@ const getUser = async( req, res, next ) => {
         //validate email address
           //todo : validate
 
-        const result = await Promise.all(
+        const result = 
+        await Promise.all(
         data.map(async (item) =>{ 
         const {type} = item
         
@@ -177,15 +178,15 @@ const getUser = async( req, res, next ) => {
           return {name : result.productName, productId : productId, quantity : quantity, type : 0}
         }
       }
-      }))
+      })
+      )
 
       // -kirim email untuk respond user
       const filteredResult = result.filter(item => item)
 
       //================================EMAIL SECTION===================================
       let message = `
-      We have checked on our stocks of the custom medicine's ingredients based on 
-      your uploaded doctor prescription.
+      Kami telah memeriksa stok obat berdasarkan resep dokter yang Anda unggah.
       `
       let pathURL = ""
       const accessToken = helperToken.createToken({ 
@@ -194,14 +195,14 @@ const getUser = async( req, res, next ) => {
       });
       //kalau gak ready smua gmn
       if(filteredResult.length === 0){
-        message += `Bad news is... we couldn't proceed your order due to insufficient product stock.
-        Fear not! You could still purchase another product you need at our website.`
+        message += `Kabar buruknya adalah... kami tidak dapat memproses pesanan Anda karena stok produk tidak mencukupi.
+        Tidak perlu khawatir! Anda masih bisa membeli produk lain yang Anda butuhkan di situs web kami.`
         pathURL = REDIRECT_URL
       }
       //kalau ready semua gimana
       else if(filteredResult.length === data.length){
-        message += `And... good news! You can checkout any items included in the list. 
-        Just click the button below to confirm that you would like to proceed your purchase.`
+        message += `Dan... Kabar Baik! Anda dapat melakukan checkout untuk item-item yang ada dalam daftar.
+        Cukup klik tombol di bawah ini untuk mengonfirmasi bahwa Anda ingin melanjutkan pembelian Anda.`
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
       //kalau ready sebagian
@@ -213,7 +214,7 @@ const getUser = async( req, res, next ) => {
             itemList += filteredResult[i].name
           }else{
             if(i === filteredResult.length - 1){
-              itemList +=  `and ${filteredResult[i].name}`
+              itemList +=  `dan ${filteredResult[i].name}`
             }
             else{
               itemList +=  `${filteredResult[i].name}, `
@@ -221,10 +222,10 @@ const getUser = async( req, res, next ) => {
           }
           }
         console.log(message)
-        message += `Well... You could only checkout items that included in the following list.
-        item(s) : ${itemList}.
-        Choice is yours. But if you make up your mind to proceed,
-        Just click the button below to confirm that you would like to proceed your purchase`
+        message += `Nah... Anda hanya dapat melakukan checkout untuk item-item yang terdapat dalam daftar berikut.
+        Daftar Barang : ${itemList}.
+        Pilihannya ada di tangan Anda. Tetapi jika Anda telah memutuskan untuk melanjutkan,
+        Cukup klik tombol di bawah ini untuk mengonfirmasi bahwa Anda ingin melanjutkan pembelian Anda.`
         console.log(pathURL)
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
@@ -234,17 +235,21 @@ const getUser = async( req, res, next ) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: "Your uploaded prescription has been reviewed.",
+          subject: "Resep dokter kamu sudah diulas",
           html: html}
 
           helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
               // if (error) throw error;
               console.log("Email sent: " + info.response);
           })
-  
+          
+      await User_Account.update({
+        imgRecipe : null
+      },{where : {email}})
+
       res.status(200).json({ 
         type : "success",
-        message : "We have send the desired user",
+        message : "Permintaan konfirmasi telah diberikan ke user terkait",
         data : filteredResult
       })
       
@@ -265,13 +270,13 @@ const getUser = async( req, res, next ) => {
           email : email
         }
      })
-     await User_Account?.update({where:{
-      imgRecipe : null
-     }},{
-      where :{
-        email : email
-      }
-   })
+  //    await User_Account?.update({where:{
+  //     imgRecipe : null
+  //    }},{
+  //     where :{
+  //       email : email
+  //     }
+  //  })
 
      const address = await User_Address?.findOne({
       where : {
@@ -281,194 +286,210 @@ const getUser = async( req, res, next ) => {
      let subtotal = 0;
      if(!address) throw ({ status : 404, message : middlewareErrorHandling.ADDRESS_NOT_FOUND});
      //looping data per product
-     let productResult = await Promise.all(
-      data.map(async (item) =>{ 
+     let productResult = []
+    //  await Promise.all(
+    //   data.map(async (item) =>{ 
+      for(const item of data){
         const {productId, name,type} = item
 
       if(type === 1){
-        const product = await Product_List.findOne({
-          where :{
-            productId : productId,
-            productPicture : "review"
-          }
-        })
-        if(!product) throw ({ status : 404, 
-          message : middlewareErrorHandling.PRODUCT_ALREADY_CHECKEDOUT});
+      //   const arrayOne = []
+        
+      //   const product = await Product_List.findOne({
+      //     where :{
+      //       productId : productId,
+      //       productPicture : "review"
+      //     }
+      //   })
+      //   if(!product) throw ({ status : 404, 
+      //     message : middlewareErrorHandling.PRODUCT_ALREADY_CHECKEDOUT});
 
-        subtotal += (product.productPrice * +product.productDescription)
-        console.log("subtotal dari custom " ,subtotal)
-        await Product_List.update({ productPicture : "done"},{
-          where : {
-            productId : productId,
-          }
-        })
+      //   subtotal += (product.productPrice * +product.productDescription)
+      //   console.log("subtotal dari custom " ,subtotal)
+      //   await Product_List.update({ productPicture : "Public/Products/OBATRACIK"},{
+      //     where : {
+      //       productId : productId,
+      //     }
+      //   })
 
-        const ingredients = await Product_Recipe.findAll({
-          where : {
-            productId : productId
-          }
-        })
-      for ( let i = 0; i < ingredients.length; i++){
-      const recipeQty = ingredients[i]?.quantity
-      const ingredientProductId = ingredients[i]?.ingredientProductId
-      const mainUnit = await Product_Detail.findOne({
-        where : {
-          productId : ingredients[i]?.ingredientProductId,
-          isDefault : true
-        },
-        include :[ 
-          {
-            model : Product_Unit,
-          }
-        ]
-      })
+      //   const ingredients = await Product_Recipe.findAll({
+      //     where : {
+      //       productId : productId
+      //     }
+      //   })
+      // for ( let i = 0; i < ingredients.length; i++){
+      // const recipeQty = ingredients[i]?.quantity
+      // const ingredientProductId = ingredients[i]?.ingredientProductId
+      // const mainUnit = await Product_Detail.findOne({
+      //   where : {
+      //     productId : ingredients[i]?.ingredientProductId,
+      //     isDefault : true
+      //   },
+      //   include :[ 
+      //     {
+      //       model : Product_Unit,
+      //     }
+      //   ]
+      // })
 
-      const secUnit = await Product_Detail.findOne({
-        where : {
-          productId : ingredients[i]?.ingredientProductId,
-          isDefault : false
-        },
-        include :[
-        {
-          model : Product_Unit,
-        }]
-      })
+      // const secUnit = await Product_Detail.findOne({
+      //   where : {
+      //     productId : ingredients[i]?.ingredientProductId,
+      //     isDefault : false
+      //   },
+      //   include :[
+      //   {
+      //     model : Product_Unit,
+      //   }]
+      // })
 
-      // -if qty unit secondary < qty
+      // // -if qty unit secondary < qty
 
-      if(secUnit?.quantity < (+product?.productDescription * recipeQty)){
+      // if(secUnit?.quantity < (+product?.productDescription * recipeQty)){
 
-      const remainStock = (+product?.productDescription * recipeQty) - secUnit?.quantity
-      const checker = Math.ceil(remainStock / mainUnit?.convertion)
-      const remainSecStock = remainStock % mainUnit?.convertion
-      
-        if(mainUnit?.quantity >= checker){
+      // // const
+      // const remainStock = (+product?.productDescription * recipeQty) - secUnit?.quantity
+      // // 2 x 3 - 5 = 1
+      // //case 2 : 5 x 5 - 5 = 20 
 
-          //masukin product History
-           await Product_History.create({
-            productId : ingredientProductId,
-            unit : mainUnit.product_unit.name,
-            initialStock : mainUnit?.quantity,
-            status : "Unit Conversion",
-            type : "Pengurangan",
-            quantity : checker,
-            results : mainUnit?.quantity - checker
-          })
-          await Product_History.create({
-            productId : ingredientProductId,
-            unit : secUnit.product_unit.name,
-            initialStock : secUnit?.quantity,
-            status : "Unit Conversion",
-            type : "Penambahan",
-            quantity : remainStock,
-            results : secUnit?.quantity + remainStock
-          })
-          await Product_History.create({
-            productId : ingredientProductId,
-            unit : secUnit.product_unit.name,
-            initialStock : secUnit?.quantity + remainStock,
-            status : "Penjualan",
-            type : "Pengurangan",
-            quantity : +product?.productDescription * recipeQty,
-            results : remainSecStock
-          })
-          //update qtynya
-          await Product_Detail.update({
-            quantity : mainUnit?.quantity - checker
-          },{
-            where : {
-              productId : ingredientProductId,
-              isDefault : true
-            }
-          })
-          //(updateproductdetail secondsaryunit, qtybaru=  sisaqtysecondaryunit  save qty skrgnya!
-          await Product_Detail.update({
-            quantity : remainSecStock
-          },{
-            where : {
-              productId : ingredientProductId,
-              isDefault : false
-            }
-          })
-        }
+      // const checker = Math.ceil(remainStock / mainUnit?.convertion)
+      // // 1/10.ceil = 1
+      //   // 20/10.ceil = 2
+      // const remainSecStock = (mainUnit?.convertion * checker) - remainStock
+      // // 1%10 = 1 => 10 * 1 - 1 = 9
+      //   //case 2 : 10 * 2 - 20 = 0
 
-      }
-      // -if qty unit secondary <= qty
-      if(secUnit?.quantity >= (+product?.productDescription * recipeQty)){
-        // (updateproductdetail seoncadryunit, qtybaru = qtyskrg - qty save qty skrgnya! qtyskrg primary ambil dari productDetailmainunit
+      //   if(mainUnit?.quantity >= checker){
+
+      //     //masukin product History
+      //      await Product_History.create({
+      //       productId : ingredientProductId,
+      //       unit : mainUnit.product_unit.name,
+      //       initialStock : mainUnit?.quantity,
+      //       status : "Unit Conversion",
+      //       type : "Pengurangan",
+      //       quantity : checker,
+      //       results : mainUnit?.quantity - checker
+      //     })
+      //     await Product_History.create({
+      //       productId : ingredientProductId,
+      //       unit : secUnit.product_unit.name,
+      //       initialStock : secUnit?.quantity,
+      //       status : "Unit Conversion",
+      //       type : "Penambahan",
+      //       quantity : +mainUnit?.convertion * checker,
+      //       results : secUnit?.quantity + (+mainUnit?.convertion * checker)
+      //     })
+      //     await Product_History.create({
+      //       productId : ingredientProductId,
+      //       unit : secUnit.product_unit.name,
+      //       initialStock : secUnit?.quantity + (+mainUnit?.convertion * checker),
+      //       status : "Penjualan Obat Racik",
+      //       type : "Pengurangan",
+      //       quantity : +product?.productDescription * recipeQty,
+      //       results : remainSecStock
+      //     })
+      //     //update qtynya
+      //     await Product_Detail.update({
+      //       quantity : mainUnit?.quantity - checker
+      //     },{
+      //       where : {
+      //         productId : ingredientProductId,
+      //         isDefault : true
+      //       }
+      //     })
+      //     //(updateproductdetail secondsaryunit, qtybaru=  sisaqtysecondaryunit  save qty skrgnya!
+      //     await Product_Detail.update({
+      //       quantity : remainSecStock
+      //     },{
+      //       where : {
+      //         productId : ingredientProductId,
+      //         isDefault : false
+      //       }
+      //     })
+      //   }
+
+      // }
+      // // -if qty unit secondary <= qty
+      // if(secUnit?.quantity >= (+product?.productDescription * recipeQty)){
+      //   // (updateproductdetail seoncadryunit, qtybaru = qtyskrg - qty save qty skrgnya! qtyskrg primary ambil dari productDetailmainunit
    
-        await Product_History.create({
-          productId : ingredientProductId,
-          unit : secUnit.product_unit.name,
-          initialStock : secUnit?.quantity,
-          status : "Penjualan",
-          type : "Pengurangan",
-          quantity : +product?.productDescription * recipeQty,
-          results : secUnit?.quantity - (+product?.productDescription * recipeQty)
-
-
-        })
-        await Product_Detail.update({
-          quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
-        },{
-          where : {
-              productId : ingredientProductId,
-              isDefault : false
-          }
-        })
-      }
-      }
-
-      return {
+      //   await Product_History.create({
+      //     productId : ingredientProductId,
+      //     unit : secUnit.product_unit.name,
+      //     initialStock : secUnit?.quantity,
+      //     status : "Penjualan Obat Racik",
+      //     type : "Pengurangan",
+      //     quantity : +product?.productDescription * recipeQty,
+      //     results : secUnit?.quantity - (+product?.productDescription * recipeQty)
+      //   })
+      //   await Product_Detail.update({
+      //     quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
+      //   },{
+      //     where : {
+      //         productId : ingredientProductId,
+      //         isDefault : false
+      //     }
+      //   })
+      // }
+      // }
+      const result = await typeOneProduct(name,productId)
+      subtotal += result.subtotal
+      productResult.push({
         name : name, 
         productId : productId, 
-        quantity : +product?.productDescription,
-        price : product?.productPrice  }
+        quantity : result.quantity,
+        price : result.price  })
     }
     
     if(type === 0){
       const {quantity} = item
       //grab data produk
-      const product = await Product_List?.findOne({where : {
-        productId : productId
-      },
-        include : 
-        [
-          {
-            model : Product_Unit,
-            as : "productUnits"
-          },
-          {
-            model : Product_Detail,
-            attributes : ["quantity"]
-          },
-        ]})
-      //kurang quantity
-      await Product_History.create({
-        productId : productId,
-        unit : product.productUnits[0]?.name,
-        initialStock : product?.product_details[0].quantity,
-        status : "Penjualan",
-        type : "Pengurangan",
-        quantity : quantity,
-        results : product?.product_details[0].quantity - quantity
-      })
+      // const product = await Product_List?.findOne({where : {
+      //   productId : productId
+      // },
+      //   include : 
+      //   [
+      //     {
+      //       model : Product_Unit,
+      //       as : "productUnits"
+      //     },
+      //     {
+      //       model : Product_Detail,
+      //       attributes : ["quantity"]
+      //     },
+      //   ]})
+      // //kurang quantity
+      // await Product_History.create({
+      //   productId : productId,
+      //   unit : product.productUnits[0]?.name,
+      //   initialStock : product?.product_details[0].quantity,
+      //   status : "Penjualan",
+      //   type : "Pengurangan",
+      //   quantity : quantity,
+      //   results : product?.product_details[0].quantity - quantity
+      // })
 
-      await Product_Detail.update({quantity : product?.product_details[0].quantity - quantity},{
-        where : {
-          productId : productId
-        }
+      // await Product_Detail.update(
+      //   {quantity : product?.product_details[0].quantity - quantity},{
+      //   where : {
+      //     productId : productId,
+      //     isDefault: true
+      //   }
+      // })
+      // subtotal += (product.productPrice * quantity)
+      // console.log("subtotal dari normal " ,subtotal)
+      const result = await typeZeroProduct(name,productId,quantity)
+      subtotal += result.subtotal
+      productResult.push({
+        name : result.name,
+        productId : result.productId,
+        quantity : result.quantity,
+        price : result.price
       })
-      subtotal += (product.productPrice * quantity)
-      console.log("subtotal dari normal " ,subtotal)
-      return{
-        name : name,
-        productId : productId,
-        quantity : quantity,
-        price : product?.productPrice
-      }
     }
-    }))
+  }
+    // }))
    
     //bagian ongkir-----------------------------------------------------------
   //   const {data:{rajaongkir:{results}}} = await Axios.post(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL_COST,
@@ -481,6 +502,9 @@ const getUser = async( req, res, next ) => {
   //     }
   // )
   const transportCost = +user?.shippingRecipe?.split(",")[2]
+  const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
+  let date = new Date().getTime()
+
   console.log(transportCost, " ", subtotal)
       //buat transaction list
       const translist = {
@@ -488,12 +512,10 @@ const getUser = async( req, res, next ) => {
         subtotal,
         transport : transportCost,
         total : subtotal + transportCost,
-        expired : moment().add(24,"hours").format("YYYY-MM-DD hh:mm:ss"),
         invoice : `${user?.userId + new Date().getTime()}`,
         statusId : 1,
         addressId : address?.addressId,
-        expired : moment().add(1,"d").format("YYYY-MM-DD hh:mm:ss"),
-      invoice : moment().format("YYYY-MM-DD hh:mm:ss").toString()
+        expired : expiredTime,
       }
       const listResult = await Transaction_List.create(translist)
 
@@ -508,13 +530,16 @@ const getUser = async( req, res, next ) => {
       })
     }
 
-    // if (productResult.length > 0) {
-    //   await Transaction_Detail.bulkCreate(productResult);
-    // }
+    await User_Account.update({
+      addressIdRecipe : null,
+      createdRecipe : null,
+      shippingRecipe : null,
+    },{where :  {userId : user?.userId}})
 
       res.status(200).json({ 
-        type : "success",
-        message : `Order #${listResult?.transactionId} berhasil dibuat!`,
+        type : "success", 
+        // message : `Order #${listResult?.transactionId} berhasil dibuat!`,
+        message : `Orderan kamu berhasil dibuat!`,
         data : listResult
       })
   
@@ -537,6 +562,202 @@ const getUser = async( req, res, next ) => {
     } catch (error){
       next(error)
     }
+  }
+
+ async function typeOneProduct (name,productId){
+  const arrayOne = []
+        
+  const product = await Product_List.findOne({
+    where :{
+      productId : productId,
+      productPicture : "review"
+    }
+  })
+  if(!product) throw ({ status : 404, 
+    message : middlewareErrorHandling.PRODUCT_ALREADY_CHECKEDOUT});
+
+  const newSubtotal = (product.productPrice * +product.productDescription)
+  console.log("subtotal dari custom " ,newSubtotal)
+  await Product_List.update({ productPicture : "Public/Products/OBATRACIK"},{
+    where : {
+      productId : productId,
+    }
+  })
+
+  const ingredients = await Product_Recipe.findAll({
+    where : {
+      productId : productId
+    }
+  })
+for ( let i = 0; i < ingredients.length; i++){
+const recipeQty = ingredients[i]?.quantity
+const ingredientProductId = ingredients[i]?.ingredientProductId
+const mainUnit = await Product_Detail.findOne({
+  where : {
+    productId : ingredients[i]?.ingredientProductId,
+    isDefault : true
+  },
+  include :[ 
+    {
+      model : Product_Unit,
+    }
+  ]
+})
+
+const secUnit = await Product_Detail.findOne({
+  where : {
+    productId : ingredients[i]?.ingredientProductId,
+    isDefault : false
+  },
+  include :[
+  {
+    model : Product_Unit,
+  }]
+})
+
+// -if qty unit secondary < qty
+
+if(secUnit?.quantity < (+product?.productDescription * recipeQty)){
+
+// const
+const remainStock = (+product?.productDescription * recipeQty) - secUnit?.quantity
+// 2 x 3 - 5 = 1
+//case 2 : 5 x 5 - 5 = 20 
+
+const checker = Math.ceil(remainStock / mainUnit?.convertion)
+// 1/10.ceil = 1
+  // 20/10.ceil = 2
+const remainSecStock = (mainUnit?.convertion * checker) - remainStock
+// 1%10 = 1 => 10 * 1 - 1 = 9
+  //case 2 : 10 * 2 - 20 = 0
+
+  if(mainUnit?.quantity >= checker){
+
+    //masukin product History
+     await Product_History.create({
+      productId : ingredientProductId,
+      unit : mainUnit.product_unit.name,
+      initialStock : mainUnit?.quantity,
+      status : "Unit Conversion",
+      type : "Pengurangan",
+      quantity : checker,
+      results : mainUnit?.quantity - checker
+    })
+    await Product_History.create({
+      productId : ingredientProductId,
+      unit : secUnit.product_unit.name,
+      initialStock : secUnit?.quantity,
+      status : "Unit Conversion",
+      type : "Penambahan",
+      quantity : +mainUnit?.convertion * checker,
+      results : secUnit?.quantity + (+mainUnit?.convertion * checker)
+    })
+    await Product_History.create({
+      productId : ingredientProductId,
+      unit : secUnit.product_unit.name,
+      initialStock : secUnit?.quantity + (+mainUnit?.convertion * checker),
+      status : "Penjualan Obat Racik",
+      type : "Pengurangan",
+      quantity : +product?.productDescription * recipeQty,
+      results : remainSecStock
+    })
+    //update qtynya
+    await Product_Detail.update({
+      quantity : mainUnit?.quantity - checker
+    },{
+      where : {
+        productId : ingredientProductId,
+        isDefault : true
+      }
+    })
+    //(updateproductdetail secondsaryunit, qtybaru=  sisaqtysecondaryunit  save qty skrgnya!
+    await Product_Detail.update({
+      quantity : remainSecStock
+    },{
+      where : {
+        productId : ingredientProductId,
+        isDefault : false
+      }
+    })
+  }
+
+}
+// -if qty unit secondary <= qty
+if(secUnit?.quantity >= (+product?.productDescription * recipeQty)){
+  // (updateproductdetail seoncadryunit, qtybaru = qtyskrg - qty save qty skrgnya! qtyskrg primary ambil dari productDetailmainunit
+
+  await Product_History.create({
+    productId : ingredientProductId,
+    unit : secUnit.product_unit.name,
+    initialStock : secUnit?.quantity,
+    status : "Penjualan Obat Racik",
+    type : "Pengurangan",
+    quantity : +product?.productDescription * recipeQty,
+    results : secUnit?.quantity - (+product?.productDescription * recipeQty)
+  })
+  await Product_Detail.update({
+    quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
+  },{
+    where : {
+        productId : ingredientProductId,
+        isDefault : false
+    }
+  })
+}
+}
+
+return {
+  name : name, 
+  productId : productId, 
+  quantity : +product?.productDescription,
+  price : product?.productPrice,  
+subtotal : newSubtotal}
+    
+  }
+
+async function typeZeroProduct(name,productId,quantity){
+  const product = await Product_List?.findOne({where : {
+    productId : productId
+  },
+    include : 
+    [
+      {
+        model : Product_Unit,
+        as : "productUnits"
+      },
+      {
+        model : Product_Detail,
+        attributes : ["quantity"]
+      },
+    ]})
+  //kurang quantity
+  await Product_History.create({
+    productId : productId,
+    unit : product.productUnits[0]?.name,
+    initialStock : product?.product_details[0].quantity,
+    status : "Penjualan",
+    type : "Pengurangan",
+    quantity : quantity,
+    results : product?.product_details[0].quantity - quantity
+  })
+
+  await Product_Detail.update(
+    {quantity : product?.product_details[0].quantity - quantity},{
+    where : {
+      productId : productId,
+      isDefault: true
+    }
+  })
+  const newSubtotal = (product.productPrice * quantity)
+  console.log("subtotal dari normal " ,newSubtotal)
+
+  return{
+    name : name,
+    productId : productId,
+    quantity : quantity,
+    price : product?.productPrice,
+    subtotal : newSubtotal
+  }
   }
 
   module.exports = {

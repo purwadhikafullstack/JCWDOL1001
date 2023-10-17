@@ -100,10 +100,6 @@ const updateProductUnits = async( req, res, next ) => {
 
     await productUnitValidationSchema.validate(req.body)
 
-    // const isDefaultUnitExist = await Product_Detail.findOne({ where : { productId, isDefault:1 }})
-
-    // const lengthUnit = await Product_Detail.count({where:{productId}})
-
     const stockId = req.body.stockId
 
     delete req.body.stockId
@@ -116,21 +112,6 @@ const updateProductUnits = async( req, res, next ) => {
     })
 
     const productUnitName = req?.body?.unitName ? req?.body?.unitName : stock?.dataValues?.product_unit?.name
-
-    // if(
-    //     ( Number(isDefaultUnitExist?.dataValues?.isDefault) === Number(req.body.isDefault) ) && 
-    //     ( Number(isDefaultUnitExist?.dataValues?.stockId) !== Number(stockId) ) && lengthUnit>1
-    //   ) throw ({
-    //     status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-    //     message : middlewareErrorHandling.PRODUCT_ALREADY_HAS_DEFAULT_UNIT 
-    // })
-
-    // const isProductUnitAlreadyExist = await Product_Detail.findOne({ where : { productId, unitId : stockId }})
-
-    // if(isProductUnitAlreadyExist?.dataValues?.unitId === Number(stockId)) throw ({
-    //     status : middlewareErrorHandling.BAD_REQUEST_STATUS, 
-    //     message : middlewareErrorHandling.PRODUCT_UNIT_ALREADY_EXISTS 
-    // })
 
     const unitProductList = await Product_Unit.findOne({ where :{unitId : req.body.unitId}})
 
@@ -148,20 +129,62 @@ const updateProductUnits = async( req, res, next ) => {
     }
 
     req.body.productId = productId
-    
+
     await Product_Detail.update( req.body, {where : {stockId}} )
 
     const unitProduct =await Product_Detail.findOne({where:{stockId}})
 
-    await Product_History.create({
-      productId : req.body.productId,
-      unit : productUnitName,
-      initialStock : stock?.dataValues?.quantity,
-      status : "Perubahan",
-      type : "Update Unit",
-      quantity : req.body.quantity,
-      results : unitProduct?.dataValues?.quantity
-    })
+    if(
+      +req.body.unitId !== stock.dataValues.unitId &&
+      req.body.convertion !== stock.dataValues.convertion 
+    ){
+      // ganti unit
+      await Product_History.create({
+        productId : req.body.productId,
+        unit : stock?.dataValues?.product_unit?.name,
+        initialStock : req.body.quantity ,
+        status : `Perubahan ke ${unitProductList?.dataValues?.name}`,
+        type : "Update Unit",
+        quantity : 0,
+        results : req.body.quantity,
+      })
+
+      // ganti convertion
+      await Product_History.create({
+        productId : req.body.productId,
+        unit : unitProductList?.dataValues?.name,
+        initialStock : stock?.dataValues?.convertion ,
+        status : req.body.convertion > stock?.dataValues?.convertion ? "Penambahan":"Pengurangan",
+        type : "Update Konversi",
+        quantity : Math.abs(req.body.convertion - stock?.dataValues?.convertion),
+        results : req.body.convertion,
+      })
+    }else if(
+      +req.body.unitId !== stock.dataValues.unitId &&
+      req.body.convertion === stock.dataValues.convertion 
+    ){
+      // ganti unit
+      await Product_History.create({
+        productId : req.body.productId,
+        unit : stock?.dataValues?.product_unit?.name,
+        initialStock : req.body.quantity ,
+        status : `Perubahan ke ${unitProductList?.dataValues?.name}`,
+        type : "Update Unit",
+        quantity : 0,
+        results : req.body.quantity,
+      })
+    }else {
+      // ganti convertion
+      await Product_History.create({
+        productId : req.body.productId,
+        unit : unitProductList?.dataValues?.name,
+        initialStock : stock?.dataValues?.convertion ,
+        status : req.body.convertion > stock?.dataValues?.convertion ? "Penambahan":"Pengurangan",
+        type : "Update Konversi",
+        quantity : Math.abs(req.body.convertion - stock?.dataValues?.convertion),
+        results : req.body.convertion,
+      })
+    }
 
     res.status(200).json({ 
       type : "success",

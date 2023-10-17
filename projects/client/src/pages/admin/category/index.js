@@ -5,20 +5,24 @@ import Button from "../../../components/Button/index.js";
 import Pagination from "../../../components/PaginationV2";
 import InputImage from "../../../components/InputImage";
 import Input from "../../../components/Input";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
+import { motion } from "framer-motion";
 import {getCategory,addCategory,updateCategory,updateCategoryPicture,deleteCategory} from "../../../store/slices/cat/slices.js";
+import Modal from "../../../components/Modal/index.js";
 
 export default function CategoryList(){
     const dispatch = useDispatch()
     const [newPage, setNewPage] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
-    const [categoryIndex, setCategoryIndex] = useState(null);
     const [fileImage, setFileImage] = useState(null);
     const [searchedCategory, setSearchedCategory] = useState(null)
+    const [sortCat, setSortCat] = useState(null);
     const [page, setPage] = useState(1);
+    const [categoryDesc, setCategoryDesc] = useState(null);
     const categoryNameRef = useRef();
     const searchedCategoryRef = useRef();
     const formData = new FormData();
+    const [showModal, setShowModal] = useState(false)
     
     const {category, isAddLoading, isDeleteLoading, isUpdateLoading, currentPage, totalPage} = useSelector(state => {
         return {
@@ -32,8 +36,8 @@ export default function CategoryList(){
     })
     
     useEffect(()=>{
-        dispatch(getCategory({page : page, searchedCategory : searchedCategory}));
-    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory])
+        dispatch(getCategory({page : page, searchedCategory : searchedCategory, sortCat : sortCat}));
+    },[page, isAddLoading, isDeleteLoading, isUpdateLoading, searchedCategory, sortCat])
 
     const onButtonClick = (context) => {
         if(context === "add"){
@@ -64,105 +68,137 @@ export default function CategoryList(){
     const optionPage = () => {
         switch(newPage){
             case 'add' : 
-                return(<div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
-                    <div className="m-4">
-                    <h2 className="font-semibold text-green-900 text-2xl">Tambah Kategori</h2>
-                    <form className="space-y-4 md:space-y-6 font-medium text-xl">
+                return(
+                <div className="overflow-x-auto">
+                    <h3 className="title">Tambah Kategori</h3>
+                    <form className="mt-4">
                         <div>
-                            <Input type="text" placeholder="Tambah Kategori Baru" label="Tambah Kategori Baru" required ref={categoryNameRef}/>
+                            <Input type="text" placeholder="Nama Kategori" label="Nama Kategori" required ref={categoryNameRef}/>
                         </div>
-                        <div>
+                        <div className="mt-4">
                             <InputImage file={fileImage} setFile={setFileImage}/>
                         </div>
-                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Tambah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("add")}/>
+                        <div className="flex justify-center gap-2 mt-4">
+                        <Button isButton isDanger title="Kembali" className="" onClick={()=>{
+                            setShowModal(false)
+                            }}/>
+                        <Button isButton isPrimary type="submit" title="Tambah" className="" onClick={()=>onButtonClick("add")}/>
+                        </div>
                     </form>
-                    </div>
                 </div>)
             case 'delete' : return(
-                <div className="my-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
-                    <div className="m-4">
-                    <h2 className="font-semibold text-green-900 text-2xl">Hapus Kategori</h2>
-                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori nomor {categoryIndex} ?</h2>
-                    <form className="space-y-4 md:space-y-6 font-medium text-xl">
-                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Hapus!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("delete")}/>
-                    </form></div>
+                <div className="overflow-x-auto">
+                    <h3 className="title">Hapus Kategori</h3>
+                    <h2 className="my-4">Apa kamu yakin ingin menghapus kategori {categoryDesc} ?</h2>
+                    <form className="flex justify-center gap-2 mt-4">
+                        <Button isButton isDanger title="Kembali" className="" onClick={()=>{
+                            setShowModal(false)
+                            }}/>
+                        <Button isButton isPrimary type="submit" title="Hapus" className="" onClick={()=>onButtonClick("delete")}/>
+                    </form>
                 </div>
             )
             case 'update' :
                 return(
-                <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
-                    <div className="m-4">
-                    <h2 className="font-semibold text-green-900 text-2xl">Ubah Nama Kategori</h2>
-                    <form className="space-y-4 md:space-y-6 font-medium text-xl">
+                <div className="overflow-x-auto">
+                    <h3 className="title">Ubah Nama Kategori</h3>
+                    <form className="mt-4">
                         <div>
-                            <Input type="text" placeholder="Ubah Kategori" label={`Ubah Kategori nomor ${categoryIndex}`} required ref={categoryNameRef}/>
+                            <Input type="text" placeholder="Ubah Kategori" label={`Ubah nama kategori untuk ${categoryDesc}`} required ref={categoryNameRef}/>
                         </div>
-                        <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                        <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("update")}/>
+                        <div className="flex justify-center gap-2 mt-4">
+                        <Button isButton isDanger title="Kembali" className="" onClick={()=>{
+                            setShowModal(false)
+                            }}/>
+                        <Button isButton isPrimary type="submit" title="Ubah" className="" onClick={()=>onButtonClick("update")}/>
+                        </div>
                     </form>
-                    </div>                    
                 </div>
             )
             case 'updateImage' :
                 return(
-                    <div className="m-4 overflow-x-auto shadow-md sm:rounded-lg py-8">
-                        <div className="m-4">
-                        <h2 className="font-semibold text-green-900 text-2xl">Ubah Gambar Kategori</h2>
-                        <h4 className="my-4">Ubah gambar kategori nomor {categoryIndex} </h4>
-                        <form className="space-y-4 md:space-y-6 font-medium text-xl">
+                    <div className="overflow-x-auto">
+                        <h3 className="title">Ubah Gambar Kategori {categoryDesc}</h3>
+                        <form className="mt-4">
                             <div>
                                 <InputImage file={fileImage} setFile={setFileImage}/>
-                                <Button isButton isDanger type="submit" title="Kembali!" className="mt-4 py-3 mx-2" onClick={()=>setNewPage(null)}/>
-                                <Button isButton isPrimary type="submit" title="Ubah!" className="mt-4 py-3 mx-2" onClick={()=>onButtonClick("updateImage")}/>
+                                <div className="flex justify-center gap-2 mt-4">
+                                <Button isButton isDanger title="Kembali" className="" onClick={()=>{
+                                    setShowModal(false)
+                                    }}/>
+                                <Button isButton isPrimary type="submit" title="Ubah" className="" onClick={()=>onButtonClick("updateImage")}/>
+                                </div>
                             </div>
                         </form>
-                        </div>
                     </div>
                 )
             default : return null;
         }
     }
 
-    const handleButtonClick = (categoryId, categoryIndex, context) => {
+    const handleButtonClick = (categoryId, context, categoryDesc) => {
         setFileImage(null);
         setNewPage(context);
         setCategoryId(categoryId);
-        setCategoryIndex(categoryIndex);
+        setCategoryDesc(categoryDesc);
+        setShowModal(true)
+    }
+
+    const handleCloseModal = () => setShowModal(false)
+
+    const handleSearch = (event) => {
+    setPage(1)
+    event.preventDefault();
+    setSearchedCategory(searchedCategoryRef?.current.value)
+    };
+
+    const clearSearch = () => {
+    setSearchedCategory(null)
+    setPage(1)
+    searchedCategoryRef.current.value = "";
     }
 
     return(
-        <div className="container py-24 ml-[calc(5rem)]">
-            <div>
-                {optionPage()}
+        <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
+            <div className="flex flex-row justify-between">
+                <h3 className="title w-1/2"> Kategori </h3>
+                <form className="relative w-2/5" onSubmit={(e) => {
+                    handleSearch(e)
+                }}>
+                    <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
+                    <Button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="submit">
+                        <HiMagnifyingGlass className="text-2xl text-primary" />
+                    </Button>
+                    {searchedCategory && 
+                        <Button
+                            className="absolute right-8 top-1/2 -translate-y-1/2 p-2"
+                            onClick={clearSearch}
+                        >
+                            <HiXMark className="text-2xl text-primary" />
+                        </Button>
+                        }
+                </form>
             </div>
-            <div className="overflow-x-auto sm:rounded-lg my-8">
-                <div className="flex flex-row">
-                    <h1 className="text-2xl font-semibold w-1/2"> Kategori </h1>
-                    <Button isPrimary isButton onClick={()=>setNewPage('add')} title={"Tambah Kategori Baru"} className="mx-3"/>
-                    <form className="relative w-1/3">
-                        <Input type="text" placeholder="Cari Kategori..." ref={searchedCategoryRef}/>
-                        <button className="absolute top-1/2 right-0 -translate-y-1/2 p-2" type="button" onClick={()=>setSearchedCategory(searchedCategoryRef?.current.value)}>
-                            <HiMagnifyingGlass className="text-2xl text-primary" />
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+            <Button isPrimary isButton onClick={()=>{
+                setNewPage('add')
+                setShowModal(true)
+            }} title={"Tambah Kategori Baru"} className=""/>
+
+            <div className="relative overflow-x-auto mt-2">
                 <table className="text-gray-500 w-full text-left text-sm">
                     <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
                         <tr>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="p-3">
                                 No.
                             </th>
-                            <th scope="col" className="px-6 py-3 text-center">
+                            <th scope="col" className="p-3">
                                 Nama Kategori
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="p-3">
                                 Gambar Kategori
                             </th>
-                            <th scope="col" className="px-6 py-3 text-center">
+                            <th scope="col" className="p-3 text-center">
                                 Action
                             </th>
                         </tr>
@@ -170,7 +206,16 @@ export default function CategoryList(){
                     <tbody>
                         {
                             category ?
-                            category?.map((category, index)=>(<tr className="text-gray-900 whitespace-nowrap p-3 font-medium">
+                            category?.map((category, index)=>(
+                            <motion.tr  
+                                initial={{
+                                    opacity: 0,
+                                }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.1, delay: index * 0.05 }}
+                                key={index}
+                                className="odd:bg-slate-200/70 even:bg-slate-100"
+                                >
                                 <th scope="row" className="p-3" key={index}>
                                     {index+1}
                                 </th>
@@ -180,23 +225,30 @@ export default function CategoryList(){
                                 <td className="p-3">
                                     <img className="w-10 h-10" src={process.env.REACT_APP_CLOUDINARY_BASE_URL+ category.categoryPicture} />
                                 </td>
-                                <td className="p-3">
-                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "update")} title={"Ubah Nama Kategori"} className="m-3"/>
-                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "updateImage")} title={"Ubah Gambar Kategori"} className="m-3"/>
-                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, index+1, "delete")} title={"Hapus"} className="m-3"/>
+                                <td className="p-3 flex gap-2">
+
+                                <Button isPrimary isButton onClick={()=>handleButtonClick(category.categoryId, "update", category.categoryDesc)} title={"Ubah Nama Kategori"} className=""/>
+                                <Button isPrimaryOutline isButton onClick={()=>handleButtonClick(category.categoryId, "updateImage",category.categoryDesc)} title={"Ubah Gambar Kategori"} className=""/>
+                                <Button isDanger isButton onClick={()=>handleButtonClick(category.categoryId, "delete",category.categoryDesc)} title={"Hapus"} className=""/>
                                 </td>
-                            </tr>))
+                            </motion.tr>))
                             :
                             <tr>
                             </tr>
                         }
                     </tbody>
                 </table>
-                <div className="mt-4 flex items-center justify-center text-center text-green-900 text-lg">
-                    <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
-                </div>
+                    {totalPage > 1 && <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>}
             </div>
             
+            <Modal
+                showModal={showModal}
+                closeModal={handleCloseModal}
+            >
+                {optionPage()}
+            </Modal>
         </div>
+
+
     )
 }

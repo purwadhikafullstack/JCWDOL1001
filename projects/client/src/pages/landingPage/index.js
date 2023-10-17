@@ -7,17 +7,18 @@ import Produk from "./components/product.component"
 import UnggahResep from "./components/unggah.resep.component"
 import Categories from "./components/category.component";
 import {getCategory,} from "../../store/slices/cat/slices.js";
-import { getProducts } from "../../store/slices/product/slices";
+import { getProductDiscount, getProducts } from "../../store/slices/product/slices";
 import { getCart, totalProductCart } from "../../store/slices/cart/slices";
-import Products from "../products";
+import Footer from "../../components/Footer";
 
 export default function LandingPage() {
-  const { user, role, categories, products  } = useSelector(state => {
+  const { user, role, categories, products, discountProducts  } = useSelector(state => {
 		return {
 			user : state?.auth,
 			role : state?.auth?.role,
 			categories : state?.cat?.category,
 			products : state?.products?.data,
+			discountProducts : state?.products?.dataDiscount,
 		}
 	})
 
@@ -33,19 +34,19 @@ export default function LandingPage() {
   useEffect(()=>{
     dispatch(getCategory({page : 1}))
     dispatch(
-        getProducts({
-          page: 1,
-          id_cat: "",
-          product_name: "",
-          sort_price: "",
-          sort_name: "",
-          limit:15,
-        })
-      )
+      getProducts({
+        page: 1,
+        id_cat: "",
+        product_name: "",
+        sort_price: "",
+        sort_name: "",
+      })
+    )
+    dispatch(getProductDiscount())  
     dispatch(getCart())
     dispatch(totalProductCart())
   },[])
-
+  
   return (
     <div>
       <div className="container pt-24">
@@ -55,23 +56,13 @@ export default function LandingPage() {
           <Categories categories={categories} />
         </div>
 
-        <div className="mt-10">
-          <div className="flex items-center justify-between">
-            <h3 className="title text-2xl">Promo Buy One Get One</h3>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <Produk products={products} context={"bogo"}/>
-          </div>
-        </div>
-
         <div className="mt-4">
           <div className="flex items-center justify-between">
-            <h3 className="title text-2xl">Produk Diskon</h3>
+            <h3 className="title text-2xl">Produk Promo</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <Produk products={products} context="produkDiskon"/>
+            <Produk products={discountProducts} context="produkPromo"/>
           </div>
         </div>
 
@@ -95,6 +86,8 @@ export default function LandingPage() {
           <Guarantee />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

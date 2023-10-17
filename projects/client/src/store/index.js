@@ -29,6 +29,7 @@ const store = configureStore({
         report: reportReducer,
         forum: forumReducer,
     },
+    // devTools: false
 })
 
 export default store

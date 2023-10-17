@@ -9,13 +9,15 @@ import ShippingAddress from "../../components/Shipping/component.address.js"
 import ShippingCost from "../../components/Shipping/component.shipping.js"
 import { UploadRecipeValidationSchema } from "../../store/slices/upload-recipe/validation.js"
 import { toast } from "react-toastify"
+import { getAddress } from "../../store/slices/address/slices.js"
 
 export default function UploadRecipePage(){
 
-    const {isLoading,address} = useSelector(state => {
+    const {isLoading,address,userStatus} = useSelector(state => {
 		return {
 			isLoading : state?.uploadRecipe?.isLoading,
-            address : state?.auth?.address,
+            address : state?.address?.data,
+            userStatus : state?.auth?.status,
 		}
 	})
 
@@ -39,11 +41,14 @@ export default function UploadRecipePage(){
     })
 
     const [showModal, setShowModal] = useState({ show: false, context: "" })
+
+    const width = window.screen.width
+    const mobileWidth = 414
     
     const formData = new FormData()
 
     const handleShowModal = () => {
-        setShowModal({ show: true, context:"Confirmation" })
+        setShowModal({ show: true, context:"Konfirmasi" })
         document.body.style.overflow = "hidden"
     }
 
@@ -69,7 +74,7 @@ export default function UploadRecipePage(){
             formData.append("file",file)
             formData.append("address",JSON.stringify(selectedAddress))
             formData.append("courier",JSON.stringify(selectedCourier))
-            dispatch(uploadRecipe(formData))
+            dispatch(uploadRecipe(formData)).finally(()=>navigate("/","replace"))
             handleCloseModal()
 
         }catch(error){
@@ -81,7 +86,7 @@ export default function UploadRecipePage(){
             
             setError(errors)
             
-            toast.error("Check your input field!")
+            toast.error("Periksa kolom pengisian!")
 
             setIsToastVisible(true)
 
@@ -89,14 +94,22 @@ export default function UploadRecipePage(){
                 setIsToastVisible(false)
             }, 2000)
         }
-    }
-
+    }    
     useEffect(() => {
-        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
+        dispatch(getAddress({page:1}))
+        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
+        if(userStatus===0){
+            navigate("/","replace")
+            toast.error("Akun belum terverifikasi")
+        } 
     },[])
 
+    useEffect(() => {
+        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
+    },[address])
+
     return(
-        <div className="container max-w-3xl pt-24">
+        <div className={`container max-w-3xl pt-24  ${width <= mobileWidth && "pb-24"}`}>
             <div className="flex flex-col gap-5">
                 <h3 className="title">Jasa Pengiriman</h3>
                 <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
@@ -162,7 +175,7 @@ export default function UploadRecipePage(){
                     <Button
                         title="Ya"
                         isButton
-                        isDanger
+                        isPrimary
                         isDisabled={isToastVisible}
                         onClick={onClickYes}
                     />

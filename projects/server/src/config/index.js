@@ -37,7 +37,6 @@ const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET
 const REDIRECT_URL = process.env.REDIRECT_URL 
 const REDIRECT_BACKEND_URL = process.env.REDIRECT_BACKEND_URL
 
-
 module.exports = {
     db_config,
     JWT_SECRET_KEY,

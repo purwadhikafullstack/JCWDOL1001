@@ -8,24 +8,23 @@ import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout, resendOtp } from "../../store/slices/auth/slices"
 import { HiMiniChatBubbleOvalLeftEllipsis } from "react-icons/hi2"
+import { totalProductCart } from "../../store/slices/cart/slices"
 
 
 export default function UserNavMenu({
   isLogin,
-  setIsLogin,
   user,
   handleShowModal,
-  ongoingTransactions
+  ongoingTransactions,
+  // total
 }) {
   const {total}= useSelector(state=>{
     return {
-      total : state?.cart?.total
+      total : state?.cart?.total,
     }
   })
 
   const navigate = useNavigate()
-
-  const { pathname } = useLocation()
 
   const dispatch = useDispatch()
 
@@ -33,21 +32,16 @@ export default function UserNavMenu({
 
   const isAccountVerified = user.status === 0 && isLogin
 
-  const [verify, setVerify] = useState(false)
-
-  const onClickVerified = ()=>{
-    dispatch(resendOtp({email : user.email}))
-    setVerify(true)
-  }
-
   const onClickKeluar = () => {
     dispatch(logout()).finally(() => {
-      setIsLogin(false)
-      setIsMenuVisible(false)
-      navigate("/");
+      navigate("/")
     });
     
   }
+
+  useEffect(()=>{
+    setIsMenuVisible(false)
+  }, [user])
 
   return (
     <div className={`nav-menu-wrapper justify-end `} >
@@ -98,11 +92,18 @@ export default function UserNavMenu({
               onMouseLeave={() => setIsMenuVisible(false)}
               >
               <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
-                <img
-                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
+                {user?.profile?.profilePicture ?
+                  <img
+                    src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                :
+                  <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-xl">
+                    {user?.profile.name.charAt(0)}
+                  </div>
+                }
+
                 {ongoingTransactions > 0 &&
                   <span className="absolute w-4 h-4 flex justify-center items-center rounded-full bg-danger -right-2 top-0 text-white group-hover:right-1 text-[12px]">
                     {ongoingTransactions}
@@ -134,17 +135,24 @@ export default function UserNavMenu({
                         <div className="" onClick={() => navigate("/user/profile")}>
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
                             <div className="h-12 w-12 overflow-hidden rounded-full">
-                              <img
-                                src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
+                              {user?.profile?.profilePicture ?
+                                <img
+                                  src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                />
+                              :
+                                <div className="flex justify-center items-center bg-primary w-full h-full text-white font-semibold text-xl">
+                                  {user?.profile.name.charAt(0)}
+                                </div>
+                              }
                             </div>
                             <div className="">
                               <h3>{user.profile.name}</h3>
                               <p className="text-sm font-normal text-slate-500">
                                 Profil & Pengaturan
                               </p>
+                              <p className="text-xs text-danger">Silahkan lakukan verifikasi</p>
                             </div>
                             <div className="ml-auto flex h-8 w-8 items-center justify-center rounded-full shadow-md">
                               <HiChevronRight className="text-dark" />
@@ -176,15 +184,6 @@ export default function UserNavMenu({
                             title="Keluar"
                             onClick={onClickKeluar}
                           />
-                          <Button
-                            isButton
-                            isPrimary
-                            isDisabled={verify}
-                            onClick={onClickVerified}
-                            className={`${ isAccountVerified && !verify? "text-primary w-auto" : " hidden"}`}
-                          >
-                            <span>Verify Account</span>
-                          </Button>
                         </div>
                       </div>
                     </motion.div>

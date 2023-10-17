@@ -13,6 +13,7 @@ const fs = require("fs")
 const handlebars = require("handlebars")
 const cloudinary = require("cloudinary");
 const { LINK_EXPIRED_STATUS, LINK_EXPIRED } = require("../../middleware/error.handler.js")
+const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 
 
 const login = async (req, res, next) => {
@@ -24,10 +25,15 @@ const login = async (req, res, next) => {
         const userExists = await User_Account?.findOne(
             {
                 where: {email},
-                include : {
-                    model : User_Profile,
-                    as : "userProfile"
-                }
+                include : [
+                    {
+                        model : User_Profile,
+                        as : "userProfile"
+                    },
+                    {
+                        model : User_Address,
+                    },
+                ]
             }
         )
 
@@ -127,7 +133,7 @@ const register= async (req, res, next) => {
         });
         await User_Profile?.create({
             userId : userAcc?.dataValues?.userId,
-            name : name,
+            name : capitalizeEachWords(trimString(name)),
             phone : phone
         });
 
@@ -149,7 +155,7 @@ const register= async (req, res, next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
             console.log(mailOptions)
 
@@ -162,7 +168,7 @@ const register= async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have sent OTP and redirect link to your email address",
+            message: "Kami telah mengirim OTP dan tautan verifikasi ke alamat email Anda",
             // userAcc
         });
         
@@ -186,7 +192,7 @@ const verify = async (req, res, next) => {
         // @create transaction
         const transaction = await db.sequelize.transaction(async()=>{   
         //@ grab input
-        const { otp, gender,address, birthdate,province, city,postalCode,district} = req.body;  
+        const { otp, gender,birthdate} = req.body;  
         delete req.body.otp
         //@ get user from uuid
         const users = await User_Account?.findOne({ where : { UUID : req.user.UUID }});
@@ -218,14 +224,14 @@ const verify = async (req, res, next) => {
             {where : { 
             userId : users?.dataValues?.userId
         }});
-        await User_Address.create({
-            address , 
-            province, 
-            city, 
-            district, 
-            postalCode,
-            userId : users?.dataValues?.userId
-        });
+        // await User_Address.create({
+        //     address , 
+        //     province, 
+        //     city, 
+        //     district, 
+        //     postalCode,
+        //     userId : users?.dataValues?.userId
+        // });
                         
         // oper data ke backend + message
         //@ get user from uuid
@@ -244,12 +250,13 @@ const verify = async (req, res, next) => {
             UUID: result?.dataValues?.UUID, 
             email : result?.dataValues?.email,
             roleId : result?.dataValues?.role,
+            userId : users?.dataValues?.userId
         });
        
         // @return response
         res
         .header("Authorization", `Bearer ${accessToken}`)
-        .status(200).json({ message : "Account verified successfully",  data : result, profile : profile})
+        .status(200).json({ message : "Selamat! Akun kamu telah terverifikasi",  data : result, profile : profile})
     }); 
     } catch (error) {
         next(error)
@@ -281,7 +288,7 @@ const resendOtp = async (req, res, next) => {
 
         // @generate access token
         const accessToken = helperToken.createToken({ 
-            name : user?.user_profile?.name,
+            name : user?.userProfile?.name,
             UUID: user?.UUID, 
             email : email,
             roleId : user?.role,
@@ -291,13 +298,13 @@ const resendOtp = async (req, res, next) => {
         //@ send otp to email for verification
         const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
 
-        const html = handlebars.compile(template)({ name: (user?.user_profile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
+        const html = handlebars.compile(template)({ name: (user?.userProfile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
 
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Verify Account",
+            subject: "Verifikasi Akun",
             html: html}
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
@@ -309,7 +316,7 @@ const resendOtp = async (req, res, next) => {
         res
             .status(200)
             .json({
-            message: "We have resent OTP to your email address",
+            message: "Kami telah mengirim ulang OTP ke alamat email Anda",
             // userAcc
         });
     }); 
@@ -423,7 +430,7 @@ const changeEmail = async (req, res, next) => {
         const{userId} = req.params;
         const{email, otp} = req.body;
         
-        await validation.UpdateEmailValidationSchema.validate(req.body);
+        await validation.UpdateEmailValidationSchema.validate({email});
 
         const users = await User_Account.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
@@ -440,7 +447,7 @@ const changeEmail = async (req, res, next) => {
         if (isExpired) throw ({ status : middlewareErrorHandling.LINK_EXPIRED_STATUS,
              message : middlewareErrorHandling.LINK_EXPIRED });
 
-        const userUpdated = await User_Account?.update({email : email},{where : {userId : userId}});
+        const userUpdated = await User_Account?.update({email : email, otp : null, expiredOtp : null},{where : {userId : userId}});
         res.status(200).json({message : "Email changed!"});
 
         
@@ -452,13 +459,21 @@ const changeEmail = async (req, res, next) => {
 const changeProfileData = async (req, res, next) => {
     try{
         const {userId} = req.params;
+        const { name, phone, gender, birthdate } = req.body
 
-        await validation.UpdateProfileValidationSchema.validate(req.body);
+        const profileData = {
+            name: capitalizeEachWords(trimString(name)),
+            phone,
+            gender,
+            birthdate
+        }
+
+        await validation.UpdateProfileValidationSchema.validate(profileData);
 
         const users = await User_Profile.findOne({where : {userId : userId}});
         if(!users) throw ({status : 400, message : middlewareErrorHandling.USER_DOES_NOT_EXISTS});
 
-        const profileAdded = User_Profile.update(req.body,{where : {userId : userId}});
+        users.update(profileData,{where : {userId : userId}});
         res.status(200).json({message : "Data changed!"});
     }catch(error){
         next(error)
@@ -511,7 +526,7 @@ const forgotPass = async ( req,res,next) => {
         const mailOptions = {
             from: `Apotech Team Support <${GMAIL}>`,
             to: email,
-            subject: "Forgot Password",
+            subject: "Lupa Password",
             html: html}
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;
@@ -521,7 +536,7 @@ const forgotPass = async ( req,res,next) => {
            res
                .status(200)
                .json({
-               message: "We have sent verification email for reset password",
+               message: "Kami telah mengirimkan email verifikasi untuk reset password",
            });
         });
 
@@ -557,7 +572,7 @@ const reset = async(req,res,next) =>{
         res
         .status(200)
         .json({
-        message: "Success! Your new password is ready to use. Go back to login page",
+        message: "Berhasil! Password baru kamu siap digunakan. Silahkan kembali ke halaman login",
     });
     } catch(error){
         next(error)
