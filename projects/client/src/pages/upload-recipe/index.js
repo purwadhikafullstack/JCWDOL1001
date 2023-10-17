@@ -126,7 +126,7 @@ export default function UploadRecipePage(){
                 )}
             </div>
             <div className="flex flex-col gap-5 mt-5">
-                <h3 className="title">Upload Resep</h3>
+                <h3 className="title">Unggah Resep</h3>
                 <span className="title text-md text-slate-500">Foto tidak boleh lebih dari 1Mb.</span>
             </div>
             <InputImage
