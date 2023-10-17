@@ -192,7 +192,7 @@ const answerQuestion = async (req, res, next) => {
         })
         //send only once
         if(qna.dataValues?.answer === null){
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnAnswer.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "getAnAnswer.html"), "utf8");
         const html = handlebars.compile(template)({name : profile?.dataValues?.name ,answer: answer, question : qna.dataValues?.question})
     
         const mailOptions = {

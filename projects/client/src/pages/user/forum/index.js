@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { HiMagnifyingGlass } from "react-icons/hi2"
 import Input from "../../../components/Input/index.js"
-import { PostQuestion, deleteQuestion, getForum } from "../../../store/slices/forum/slices"
+import { PostQuestion, getForum } from "../../../store/slices/forum/slices"
 import Button from "../../../components/Button"
-import Modal from "../../../components/Modal"
-import Message from "../../../components/Message"
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
 import { PostQuestionValidationSchema } from "../../../store/slices/forum/validation.js"
 import { toast } from "react-toastify"
 import QuestionsTable from "./component.questions.js"
+import ModalCondition from "./component.modal.js"
 
 function ForumPage () {
     const dispatch = useDispatch()
@@ -37,7 +36,7 @@ function ForumPage () {
 
     const [filter,setFilter] = useState(false)
 
-    const [sortingDate,setSortingDate] = useState("")
+    const [sortingDate,setSortingDate] = useState("DESC")
 
     const onButtonSortDate = (type="")=>{
         setSortingDate(type)
@@ -64,7 +63,7 @@ function ForumPage () {
     }
 
     const clearFilter = () => {
-        setSortingDate("")
+        setSortingDate("DESC")
         dispatch(getForum({sortDate :""}))
         questionRef.current.value = ""
         setFilter(false)
@@ -129,7 +128,7 @@ function ForumPage () {
                     }}
                 />
                 <div className={`relative flex ${width <= mobileWidth ? "flex-col w-[50%]" : "flex-row items-center mx-5"} my-5  h-auto gap-5`}>
-                    <Input type="text" placeholder="Search" 
+                    <Input type="text" placeholder="Cari Pertanyaan" 
                         ref={questionRef}
                     />
                     <Button 
@@ -161,82 +160,23 @@ function ForumPage () {
                         Hapus Pengaturan
                     </button>
                 </div>
-                <QuestionsTable handleShowModal={handleShowModal} setSelectedQuestion={setSelectedQuestion} questionList={questionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} />
+                <QuestionsTable selectedQuestion={selectedQuestion} showModal={showModal} handleCloseModal={handleCloseModal} handleShowModal={handleShowModal} setSelectedQuestion={setSelectedQuestion} questionList={questionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} />
             </div>
-            <Modal fullWidth
-                showModal={showModal.show}
-                closeModal={handleCloseModal}
-                title={showModal.context}
-            >
-                {(showModal.context === "Memberikan Pertanyaan" && !success) && (
-                    <div className="flex max-h-[75vh] flex-col overflow-auto px-2">
-                        <p className="mt-2">Nama Pengguna : </p>
-                        <p className="mt-2">{profile.name} </p>
-                        <p className="mt-2">Masukan Pertanyaan Anda : </p>
-                        <Input ref={inputQuestionRef} type="textarea" 
-                            errorInput={error.question }
-                            onChange={() => setError({ ...error, question: false })}
-                        />
-                        {error.question && (
-                            <div className="text-sm text-red-500 dark:text-red-400">
-                                {error.question}
-                            </div>
-                        )}
-                        <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                            <Button title="Kembali" isButton isSecondary 
-                                onClick={() =>{
-                                    handleCloseModal()
-                                    setError({ ...error, question: false })
-                                }}
-                            />
-                            <Button isButton isPrimary title="Tanyakan"
-                                onClick={()=>{setConfirmation(true)}}
-                            />
-                        </div>
-                    </div>
-                )}
-                {(showModal.context === "Hapus Pertanyaan" && !success) && (
-                    <>
-                        <p className="modal-text">
-                            Anda yakin akan menghapus pertanyaan ini " {selectedQuestion.question} " ?
-                        </p>
-                        <div className="mt-4 flex justify-end gap-2">
-                            {!isLoading && (
-                                <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
-                            )}
-                            <Button title="Iya" isButton isDanger 
-                                isLoading={isLoading}
-                                onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
-                            />
-                        </div>
-                    </>
-                )}
-                {(confirmation && !success) && (
-                    <div className="pt-10">
-                        <p className="modal-text">
-                            Apakah pertanyaan Anda sudah benar?
-                        </p>
-                        <div className="flex gap-2">
-                            <Button title="Batal"  isButton  isSecondary 
-                                onClick={() => setConfirmation(false)}
-                            />
-                            <Button title="Iya" isButton isPrimary isDisabled={isToastVisible}
-                                onClick={handleOnSure}
-                            />
-                        </div>
-                    </div>
-                )}
-                {success && (
-                    <Message
-                        type="success"
-                        message={
-                            `Pertanyaan ${showModal.context === "Hapus Pertanyaan" 
-                            ? `" ${selectedQuestion.question} " berhasil dihapus` 
-                            : `" ${inputQuestionRef?.current?.value} " berhasil ditanyakan`}`}
-                        handleCloseModal={() =>handleCloseModal()}
-                    />
-                )}
-            </Modal>
+            <ModalCondition
+                showModal={showModal}
+                handleCloseModal={handleCloseModal}
+                profile={profile}
+                setError={setError}
+                inputQuestionRef={inputQuestionRef}
+                error={error}
+                confirmation={confirmation}
+                setConfirmation={setConfirmation}
+                selectedQuestion={selectedQuestion}
+                isLoading={isLoading}
+                success={success}
+                handleOnSure={handleOnSure}
+                isToastVisible={isToastVisible}
+            />
         </div>
     )
 }

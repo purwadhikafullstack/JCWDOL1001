@@ -63,7 +63,7 @@ async function cancelExpiredTransactions() {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : "Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena telah melewati batas waktu pembayaran",
@@ -295,12 +295,14 @@ const createTransactions = async (req, res, next) => {
     const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
     let date = new Date().getTime()
 
+    let isDiscount = discount ? discount : 0
+
     const newTransactionList = {
       userId: userId,
-      total: +totalPrice + +transport + -discount,
+      total: +totalPrice + +transport + -isDiscount,
       transport: transport,
       subtotal: totalPrice,
-      discount: discount,
+      discount: isDiscount,
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
@@ -367,7 +369,7 @@ const createTransactions = async (req, res, next) => {
       where : { userId : userId }
     })
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "transactionSuccessful.html"), "utf8");
     const html = handlebars.compile(template)({ 
       order: (newTransaction.transactionId),
       invoice : (newTransactionList.invoice)
@@ -471,7 +473,7 @@ const uploadPaymentProof = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "upload-payment-proof.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "upload-payment-proof.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name: (name), 
       link :(REDIRECT_URL + `/products`) 
@@ -537,7 +539,7 @@ const confirmPayment = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pembayaran Diterima"),
@@ -601,7 +603,7 @@ const processOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Diproses"),
@@ -665,7 +667,7 @@ const sendOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Dikirim"),
@@ -729,7 +731,7 @@ const receiveOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "receive-order.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "receive-order.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name : (name), 
       link : (REDIRECT_URL + `/products`) 
@@ -861,7 +863,7 @@ const cancelTransaction = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : (information),
@@ -933,7 +935,7 @@ const rejectPayment = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "reject-payment.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "reject-payment.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         // bankName : (bankName),

@@ -72,11 +72,11 @@ function ReportPage () {
 
     const onButtonFilter = async () => {
         try {
+            if((startDateRef?.current?.value && !endDateRef?.current?.value) || (!startDateRef?.current?.value && endDateRef?.current?.value)) throw({message:"Tanggal belum lengkap"})
             startDateRef?.current?.value && endDateRef?.current?.value && await filterDateReportValidationSchema.validate({
                 startFrom : startDateRef?.current?.value,
                 endFrom : endDateRef?.current?.value
             })
-
             dispatch(getReport({
                 statusId : 6,
                 startFrom : startDateRef.current.value,
@@ -156,7 +156,7 @@ function ReportPage () {
                 <div className={`flex ${width <= mobileWidth ? "flex-col w-fit" : "items-center align-middle"} gap-5 px-3 mb-5`}>
                     <a className="flex normal-case text-[20pt]">  Laporan </a>
                         <Input type="text" placeholder="Cari Pengguna" ref={nameRef}/>
-                        <Button className={`absolute ${width <= mobileWidth ? "top-[23%] right-[45%]" : "top-[15%] left-[21%]"} -translate-y-1/2`}
+                        <Button className={`absolute ${filter && width <= mobileWidth ?"top-[19.5%] right-[45%]" : width <= mobileWidth ? "top-[21.8%] right-[45%]" : "top-[17.5%] left-[21%]"} -translate-y-1/2`}
                             onClick={()=>{
                                 onButtonSearchName()
                                 setFilter(true)}}
@@ -165,15 +165,15 @@ function ReportPage () {
                         </Button>
                     <Button title="Hapus pengaturan" onClick={clearFilter}  className={` ${width <= mobileWidth && "hidden"} flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
                 </div>
-                <div className={`flex  ${width <= mobileWidth ? "flex-col items-start" :"items-center"}`}>
-                    
+                <div className={`flex  ${width <= mobileWidth ? "flex-col items-start gap-2" :"items-center"}`}>
                     <span className="mx-4 text-gray-500">dari</span>
                     <div className="relative ">
-                        <input ref={startDateRef} name="start" type="date" className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg ${width <= mobileWidth ? "ml-5" :""}  block w-full pl-10 p-2.5`}/>
+                        <input ref={startDateRef} name="start" type="date" 
+                        className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${startDateRef.current?.value ? "border-primary" : "border-slate-300"} ${width <= mobileWidth ? "ml-5" :""}  `}/>
                     </div>
                     <span className="mx-4 text-gray-500">sampai</span>
                     <div className="relative">
-                        <input ref={endDateRef} name="end" type="date" className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg ${width <= mobileWidth ? "ml-5" :""}  block w-full pl-10 p-2.5`}/>
+                        <input ref={endDateRef} name="end" type="date" className={`border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5 ${endDateRef.current?.value ? "border-primary" : "border-slate-300"} ${width <= mobileWidth ? "ml-5" :""}`}/>
                     </div>
                     <div className="flex mx-5 my-5 items-center h-auto gap-5">
                         Urutkan :
@@ -194,8 +194,8 @@ function ReportPage () {
                 </div>
             </div>
             <TransactionList width={width} mobileWidth={mobileWidth} transactionList={transactionList} currentPage={currentPage} totalPage={totalPage} setPage={setPage} handleShowModal={handleShowModal} handleCloseModal={handleCloseModal} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction} showModal={showModal} />              
-            <Button title="Lihat Grafik" isSmall={true} isButton isPrimary onClick={()=>{setGraph(true)}} className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center mt-5`} />
-            <Button title="Sembunyikan Grafik" isButton isSecondary onClick={()=>{setGraph(false)}} className={`${!graph ? "hidden" : ""} flex items-center`} />
+            <Button title="Lihat Grafik" isSmall={true} isButton isPrimary onClick={()=>{setGraph(true)}} className={`${graph || transactionList.length == 0  ? "hidden" : ""} flex items-center mt-8`} />
+            <Button title="Sembunyikan Grafik" isButton isSecondary onClick={()=>{setGraph(false)}} className={`${!graph ? "hidden" : ""} flex items-center mt-8`} />
             <div className={`${graph ? "" : "hidden"}`}>
                 <Line options={options} data={data} />
             </div>
