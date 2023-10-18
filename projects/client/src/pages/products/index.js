@@ -91,7 +91,7 @@ export default function Products({ user }) {
   }
 
   useEffect(() => {
-    dispatch(getCategory({ page : 1 }));
+    dispatch(getCategory({ page : 1, limit: 20 }));
 
     if(location.state?.categorySelected){
       setSelectedCategory(location.state?.categorySelected)
@@ -102,6 +102,10 @@ export default function Products({ user }) {
           limit : 12
         })
       )
+    }
+
+    if (location.state?.promo) {
+      setAllProducts(true)
     }
     dispatch(totalProductCart())
   }, []);
@@ -140,7 +144,7 @@ export default function Products({ user }) {
         <div className="col-span-1 grid grid-cols-1 gap-4 lg:grid-cols-5">
           <div className="col-span-1 h-fit w-full border-b pb-4 lg:block lg:rounded-lg lg:border lg:p-6 lg:shadow-lg ">
             <h3 className="title">Kategori</h3>
-            <div className="categories-wrapper mt-4 flex flex-nowrap gap-8 overflow-auto lg:flex-col lg:items-start lg:justify-start lg:gap-4">
+            <div className="categories-wrapper mt-4 flex flex-nowrap gap-8 overflow-auto lg:flex-col lg:items-start lg:justify-start lg:gap-4 lg:max-h-[80vh] lg:overflow-auto">
 
               <Button
                 isLink

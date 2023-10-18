@@ -182,12 +182,6 @@ export default function Cart({ user }) {
         limit: 1000,
       })
     )
-
-    if(!statusUser){
-
-      navigate("/")
-
-    }
   },[])
 
   useEffect(()=>{
