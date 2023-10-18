@@ -119,9 +119,9 @@ function ForumPage () {
     return (
         <div>
             <div className="pb-10">
-                <a className="flex items-center normal-case text-[20pt] pb-3">
+                <h3 className="title mb-4">
                     Daftar Pertanyaan
-                </a>
+                </h3>
                 <Button isSmall isPrimaryOutline isPrimary title="Ingin Bertanya"
                     onClick={() =>{
                         handleShowModal({context : "Memberikan Pertanyaan"})

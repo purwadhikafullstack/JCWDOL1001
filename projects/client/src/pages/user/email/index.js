@@ -57,32 +57,35 @@ export default function Email() {
   
 
   return (
-        <div className="col-span-3 h-screen">
-          <div className=" border-collapse border-b-2 border-solid border-black">
-            <h1 className=" font-extrabold text-3xl text-center">Bagian Email :</h1>           
+        <div className="h-screen">
+          <div className="">
+            <h3 className="title">Email</h3>           
           </div>
-          <div className="m-4">
+          <div className="mt-4 flex flex-row">
             <h1>Email Anda : {email} 
             {changeEmailPage && 
-            <button className=" text-green-700 mx-6" onClick={()=>setChangeEmailPage(false)}>Batal</button> 
-            }{
-                !changeEmailPage && <button className=" text-green-700 mx-6" onClick={()=>setChangeEmailPage(true)}>Ubah</button>
+            <Button isSmall isDanger className="ml-4" onClick={()=>setChangeEmailPage(false)}>Batal</Button> 
+            }
+            {
+            !changeEmailPage && <Button isSmall isPrimary className="ml-4" onClick={()=>setChangeEmailPage(true)}>Ubah</Button>
             }
             </h1>
           </div>
           <div>
             {changeEmailPage && 
             <div>
-                <form className="space-y-4 md:space-y-6 font-medium text-xl m-6" onSubmit={(event)=>handleReset(event)}>
-                    <div className="flex flex-row">
-                        <Input ref={emailRef} required type="text" label="Email Baru Anda" placeholder="example1@example.com"></Input>
-                        <Button isPrimary isButton type={"button"} title="Ambil OTP" className="mt-6 mx-6 p-4" onClick={()=>dispatch(changeEmailOtp({userId : profile.userId}))}/> 
+                <form className="space-y-4 font-medium mt-4 w-full md:w-1/2" onSubmit={(event)=>handleReset(event)}>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="col-span-2">
+                        <Input ref={emailRef} required type="email" label="Email Baru Anda" placeholder="example1@example.com"></Input>
+                      </div>
+                        <Button isPrimary isButton type={"button"} className="self-end" title="Kirim OTP" onClick={()=>dispatch(changeEmailOtp({userId : profile.userId}))}/> 
                     </div>
-                    <div className="flex flex-row">
+                    <div className="w-full">
                         <Input ref={otpRef} required type="text" label="Masukkan OTP Anda" placeholder="......"/>
                     </div>
                     
-                    <Button isPrimary isButton isDisabled={isToastVisible} type={isToastVisible ? "button" : "submit"} title="Ubah Email" className="m-6 p-4"/>
+                    <Button isPrimary isButton isDisabled={isToastVisible} type={isToastVisible ? "button" : "submit"} title="Ubah Email" className="mt-4"/>
                 </form>
             </div>}
           </div>

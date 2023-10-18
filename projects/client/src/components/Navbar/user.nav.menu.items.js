@@ -41,7 +41,7 @@ export default function UserNavMenuItems({ user, ongoingTransactions }) {
       >
         <div className={`profile-img-wrapper`}>
           <div
-            className={`nav-profile-img aspect-square w-7 cursor-pointer self-center overflow-hidden rounded-full bg-primary md:mb-0 `}
+            className={`nav-profile-img aspect-square w-7 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 border`}
           >
             {user?.profile?.profilePicture ?
               <img

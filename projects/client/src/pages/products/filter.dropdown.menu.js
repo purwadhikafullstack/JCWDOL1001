@@ -1,9 +1,9 @@
 import React from 'react'
 import { HiOutlineTrash } from 'react-icons/hi2';
 
-export default function FilterDropdownMenu({ handleSort, setFilterType, activeFilter, setActiveFilter }) {
+export default function FilterDropdownMenu({ handleSort, setFilterType, activeFilter, setActiveFilter, isDropdownActive }) {
   return (
-    <div className="absolute z-50 w-full invisible group-hover:visible">
+    <div className={`absolute z-50 w-full ${isDropdownActive ? "visible" : "invisible"}`}>
       <div className="mt-1 h-fit rounded-lg border border-primary bg-slate-100 p-2 shadow-md">
         <div
           className="flex cursor-pointer gap-2 rounded-md p-1 hover:border hover:border-primary"

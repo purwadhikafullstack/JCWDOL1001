@@ -160,7 +160,7 @@ export default function CategoryList(){
 
     return(
         <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-            <div className="flex flex-row justify-between">
+            <div className="flex items-center justify-between border-b-2 pb-2 mb-4">
                 <h3 className="title w-1/2"> Kategori </h3>
                 <form className="relative w-2/5" onSubmit={(e) => {
                     handleSearch(e)
