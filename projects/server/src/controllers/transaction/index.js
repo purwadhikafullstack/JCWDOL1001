@@ -271,7 +271,9 @@ const createTransactions = async (req, res, next) => {
           as: "product_detail",
           include : {
             model: Discount_Product,
-            as: "productDiscount"
+            as: "productDiscount",
+            where:{ isDeleted:0 },
+            required: false,
           },
         },
         {
@@ -330,11 +332,12 @@ const createTransactions = async (req, res, next) => {
     }
     
     for (let i = 0; i < startTransaction.length; i++) {
+      console.log(startTransaction);
       let price = 0;
       let totalPrice = 0;
       if(startTransaction[i].product_detail.productDiscount[0]?.endingPrice){
-        price = startTransaction[i].product_detail.productDiscount[0].endingPrice;
-        totalPrice = startTransaction[i].product_detail.productDiscount[0].endingPrice * startTransaction[i].quantity;
+        price = startTransaction[i].product_detail.productDiscount[0]?.endingPrice;
+        totalPrice = startTransaction[i].product_detail.productDiscount[0]?.endingPrice * startTransaction[i].quantity;
       }
       else{
         price = startTransaction[i].cartList.productPrice

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import UserNavMenuItems from "./user.nav.menu.items"
 import Button from "../Button"
@@ -22,11 +22,14 @@ export default function UserNavMenu({
     }
   })
 
+  const { pathname } = useLocation()
+
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
   const [isMenuVisible, setIsMenuVisible] = useState(false)
+  const [currentPath, setCurrentPath] = useState(null)
 
   const isAccountVerified = user?.status === 0 && isLogin
 
@@ -36,6 +39,18 @@ export default function UserNavMenu({
     });
     
   }
+
+  const toProfile = () =>{
+    const path = currentPath.split("/")
+
+    if (path.includes("user")) return;
+
+    navigate("user/profile")
+  }
+
+  useEffect(()=>{
+    setCurrentPath(pathname)
+  },[pathname])
 
   useEffect(()=>{
     setIsMenuVisible(false)
@@ -89,7 +104,7 @@ export default function UserNavMenu({
               onMouseOver={() => setIsMenuVisible(true)}
               onMouseLeave={() => setIsMenuVisible(false)}
               >
-              <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block" >
+              <div className="nav-profile-img hidden aspect-square w-8 cursor-pointer self-center overflow-hidden rounded-full md:mb-0 lg:block border" >
                 {user?.profile?.profilePicture ?
                   <img
                     src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}
@@ -130,9 +145,9 @@ export default function UserNavMenu({
                       className="absolute right-0 top-full pt-2"
                     >
                       <div className="rounded-lg border bg-slate-100 px-6 py-4 shadow-lg">
-                        <div className="" onClick={() => navigate("/user/profile")}>
+                        <div className="" onClick={() => toProfile()}>
                           <div className="flex w-72 cursor-pointer items-center gap-2 border-b-2 pb-4">
-                            <div className="h-12 w-12 overflow-hidden rounded-full">
+                            <div className="h-12 w-12 overflow-hidden rounded-full border">
                               {user?.profile?.profilePicture ?
                                 <img
                                   src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture}

@@ -87,7 +87,7 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
   return (
     <div className="lg:col-span-1 border rounded-lg p-4 shadow-md w-full h-fit">
           <div className="flex items-center gap-4 border-b-2 pb-4">
-            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center border  ">
               {user?.profile?.profilePicture ?
               <img src={process.env.REACT_APP_CLOUDINARY_BASE_URL + user?.profile?.profilePicture} alt="" /> 
               :

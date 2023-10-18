@@ -76,7 +76,7 @@ export default function DiscountPage(){
         <>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
                 <div className="mt-4 flex flex-col items-left justify-left pb-2">
-                    <h3 className=" text-2xl font-semibold w-full border-b-2 mb-5 pb-2">
+                    <h3 className="title w-full border-b-2 mb-5 pb-2">
                         Daftar Diskon 
                     </h3>
                     <form className="relative w-fit flex gap-4">
