@@ -3,21 +3,19 @@ import Input from "../../Input"
 import { React, useEffect, useRef, useState} from "react"
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux"
-import { login,register, resendOtp } from "../../../store/slices/auth/slices"
+import { login,register, resendOtp,resetRegister } from "../../../store/slices/auth/slices"
 import { RegisterValidationSchema } from "../../../store/slices/auth/validation"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
     onLogin = ()=>{},
+    isRegister
 }){
 
-    const {isRegister} = useSelector(state =>{
-        return {
-            isRegister : state?.auth?.isRegister
-        }
-    })
+
 
     const [submit , setSubmit] = useState(false);
+    // const [handler, setHandler] = useState(false)
     const [resend,setResend] = useState(true);
     const dispatch = useDispatch()
     const [email,setEmail] = useState(false);
@@ -34,6 +32,7 @@ export default function RegisterContext ({
         const timeoutID = setTimeout(() => {
             if (submit && resend && refresh > 0){
                 setRefresh(refresh - 1)
+
             }
         }, 1000)
 
@@ -51,6 +50,7 @@ export default function RegisterContext ({
 
     const onButtonRegist= async(e) => {
         try {
+        console.log("nilai isRegist : ",isRegister)
         e.preventDefault()
         setEmail(emailRef.current?.value)
         const request = { 
@@ -61,16 +61,12 @@ export default function RegisterContext ({
             confirmPassword : confirmPasswordRef.current?.value
         }
 
-        // const sendemail = emailRef.current?.value
-        // const name = nameRef.current?.value
-        // const phone = phoneRef.current?.value
-        // const password = passwordRef.current?.value
-        // const confirmPassword = confirmPasswordRef.current?.value
         await RegisterValidationSchema.validate(request, {
             abortEarly: false,
         });
-        setError("");
+        dispatch(resetRegister())
         dispatch(register(request))
+        setError("");
 
       
     } catch (error) {
@@ -91,15 +87,21 @@ export default function RegisterContext ({
     }
     }
 
+    console.log("nilai handler setiap click : ",isRegister)
     useEffect(()=>{
-        if(isRegister && email){
-            onDoneRegist()
-            setSubmit(true)
+        if(isRegister && email){ 
+                setSubmit(true)
+                onDoneRegist()
         }
         if(!email){
             setSubmit(false)
         }
     },[email,isRegister])
+
+    // useEffect(()=>{
+    //     // dispatch(resetRegister())
+    //     console.log("nilai handler di useeffect : ",isRegister)
+    // },[])
 
 
     return (

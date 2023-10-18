@@ -121,7 +121,7 @@ const register= async (req, res, next) => {
 
         // @check if user already exists via email address
         const userExists = await User_Account?.findOne({ where: { email } });
-        if (userExists) throw ({ status : 400, message : USER_ALREADY_EXISTS });
+        if (userExists) throw ({ status : 400, message : middlewareErrorHandling.USER_ALREADY_EXISTS });
         // @create user account and user profile -> encypt password
         const otpToken =  helperOTP.generateOtp()
         const hashedPassword = helperEncryption.hashPassword(password);
@@ -149,7 +149,7 @@ const register= async (req, res, next) => {
         });
 
         //@ send otp to email for verification
-        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "verify.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
         const html = handlebars.compile(template)({ name: (name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {

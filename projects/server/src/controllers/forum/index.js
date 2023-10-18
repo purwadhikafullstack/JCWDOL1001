@@ -13,7 +13,7 @@ const getQuestions = async (req, res, next) => {
     try {
         const { page, sortDate, filterQuestion } = req.query;
     
-        const currentPage = page ? parseInt(page) : 1;
+        const currentPage = page ? parseInt(page) : 1; 
 
         const options = {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,

@@ -66,7 +66,7 @@ export default function LoginContext ({
                 className="text-primary underline"
                 onClick={() => {
                     onLogin()
-                    onRegist()
+                    onRegist()                   
                 }}
             />  
             <form className="mt-4 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>

@@ -90,12 +90,12 @@ export const register = createAsyncThunk(
 
             
         } catch (error) {
-            if (error){
-                toast.error(error)
-            }
-            else{
+            // if (error){
+            //     toast.error(error)
+            // }
+            // else{
                 toast.error(error.response?.data?.message)
-            }
+            // }
             return rejectWithValue(error.response?.data?.message)
         }
     }
@@ -278,3 +278,7 @@ export const getProfile = createAsyncThunk(
         }
     }
 )
+
+export const resetRegister = () => ({
+    type: "auth/user/resetRegister",
+});

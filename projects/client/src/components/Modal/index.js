@@ -6,6 +6,8 @@ import LoginContext from "./context/login.context";
 import RegisterContext from "./context/register.context";
 import ForgotContext from "./context/forgot.password.context";
 import Button from "../Button";
+import { resetRegister } from "../../store/slices/auth/slices";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Modal({
   showModal,
@@ -24,7 +26,12 @@ export default function Modal({
   const [doneregist,setDoneRegist] = useState(false)
   const [forgot, setForgot] = useState(false);
   const [titleModal, setTitle] = useState("");
-
+  const dispatch = useDispatch()
+  const {isRegister} = useSelector(state =>{
+    return {
+        isRegister : state?.auth?.isRegister
+    }
+})
   useEffect(() => {
     const handleEscapeKey = (e) => {
       if (e.key === "Escape") {
@@ -32,6 +39,8 @@ export default function Modal({
         setTitle("");
       }
     };
+    console.log(isRegister)
+    dispatch(resetRegister())
 
     context === "login" ? setLogin(true) :  setRegist(true); 
 
@@ -39,8 +48,9 @@ export default function Modal({
 
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
+    
     };
-
+    
     
   }, [closeModal, showModal]);
 
@@ -75,6 +85,7 @@ export default function Modal({
                   setLogin(false);
                   setRegist(false);
                   setForgot(false)
+                  dispatch(resetRegister())
                 }
               }}
               className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
@@ -99,6 +110,7 @@ export default function Modal({
                       setLogin(false);
                       setForgot(false)
                       setRegist(false);
+                      dispatch(resetRegister())
                     }}
                     >
                     <HiArrowLongLeft className={`text-3xl text-primary`} />
@@ -117,6 +129,7 @@ export default function Modal({
                     setLogin(false);
                     setForgot(false)
                     setRegist(false);
+                    dispatch(resetRegister())
                   }}
                   >
                   <HiXMark className={`text-3xl ${closeButtonText && "hidden"}`} />
@@ -151,9 +164,11 @@ export default function Modal({
                   <RegisterContext
                   onDoneRegist={()=>{
                     setTitle("Next Step")
-                    setLogin(false);
                     setRegist(true);
+                    setLogin(false);
+
                   }} 
+                  isRegister={isRegister}
                   onLogin={
                     ()=>{
                       setRegist(false)

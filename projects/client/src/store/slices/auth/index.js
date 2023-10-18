@@ -47,7 +47,9 @@ const authSlice = createSlice({
     name : "auth",
     initialState : INITIAL_STATE,
     reducers : {
-
+        resetRegister: (state, action) => {
+            state.isRegister = false;
+        },
     },
     extraReducers : {
         [login.pending] : (state, action) => {
@@ -117,6 +119,7 @@ const authSlice = createSlice({
         },
         [register.rejected] : (state, action) => {
             state.isRegisterLoading = false
+            // state.isRegister = false
         }, 
         [verify.pending] : (state, action) => {
             state.isVerifyLoading = true

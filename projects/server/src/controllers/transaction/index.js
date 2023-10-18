@@ -62,7 +62,7 @@ async function cancelExpiredTransactions() {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : "Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena telah melewati batas waktu pembayaran",
