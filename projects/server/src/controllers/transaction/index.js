@@ -271,7 +271,9 @@ const createTransactions = async (req, res, next) => {
           as: "product_detail",
           include : {
             model: Discount_Product,
-            as: "productDiscount"
+            as: "productDiscount",
+            where : {isDeleted : 0},
+            required : false
           },
         },
         {

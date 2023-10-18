@@ -45,21 +45,21 @@ export default function CategoryList(){
             const appendData = JSON.stringify(data)
             formData.append('file',fileImage)
             formData.append('data',appendData)
-            dispatch(addCategory(formData))
+            dispatch(addCategory(formData)).then(()=>setShowModal(false))
             setNewPage(null)
             setFileImage(null)
         }
         else if(context === "delete"){
-            dispatch(deleteCategory({categoryId : categoryId}));
+            dispatch(deleteCategory({categoryId : categoryId})).then(()=>setShowModal(false));
             setNewPage(null)
         }
         else if(context === "update"){
-            dispatch(updateCategory({categoryId : categoryId, categoryDesc : categoryNameRef.current.value}))
+            dispatch(updateCategory({categoryId : categoryId, categoryDesc : categoryNameRef.current.value})).then(()=>setShowModal(false));
             setNewPage(null)
         }
         else{
             formData.append('file',fileImage)
-            dispatch(updateCategoryPicture({formData, categoryId}))
+            dispatch(updateCategoryPicture({formData, categoryId})).then(()=>setShowModal(false));
             setNewPage(null)
             setFileImage(null)
         }
@@ -132,7 +132,7 @@ export default function CategoryList(){
                         </form>
                     </div>
                 )
-            default : return null;
+            default : return <h1 className="title items-center"> Mohon tunggu sebentar. </h1>
         }
     }
 

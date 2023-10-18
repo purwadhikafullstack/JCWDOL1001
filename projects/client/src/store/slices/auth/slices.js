@@ -278,3 +278,7 @@ export const getProfile = createAsyncThunk(
         }
     }
 )
+
+export const changePasswordSuccess = () => ({
+    type: "address/changePasswordSuccess",
+});
