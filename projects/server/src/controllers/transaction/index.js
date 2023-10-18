@@ -967,7 +967,7 @@ const cancelTransaction = async (req, res, next) => {
 async function cancelTransactionService(reverseList) {
   for (const item of reverseList){
         // reverseList.map(async (item) =>{ 
-          const {productId, quantity} = item
+          const {productId, quantity,buyOneGetOne} = item
           //seandainya di product resep, ada barangnya
           const listRecipe = await Product_Recipe.findAll({where : 
           {
@@ -975,7 +975,7 @@ async function cancelTransactionService(reverseList) {
           }})
           //produk satuan
           if(listRecipe.length === 0){
-            await normalProductCancel(productId, quantity)
+            await normalProductCancel(productId, quantity,buyOneGetOne)
           }
         //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
           if(listRecipe.length !== 0){
@@ -987,7 +987,7 @@ async function cancelTransactionService(reverseList) {
         }
 }
 
-async function normalProductCancel(productId,quantity){
+async function normalProductCancel(productId,quantity,buyOneGetOne){
 
   const defaultUnit = await Product_Detail.findOne({
     where : {
@@ -1007,13 +1007,13 @@ async function normalProductCancel(productId,quantity){
     initialStock : defaultUnit.dataValues?.quantity,
     status : "Pembatalan Transaksi",
     type : "Penambahan",
-    quantity : quantity,
-    results : +defaultUnit.dataValues?.quantity + quantity
+    quantity : (buyOneGetOne ? quantity * 2 : quantity),
+    results : +defaultUnit.dataValues?.quantity + (buyOneGetOne ? quantity * 2 : quantity)
   })
   //update qtynya
 
   await Product_Detail.update({
-    quantity : +defaultUnit?.dataValues?.quantity + quantity
+    quantity : +defaultUnit?.dataValues?.quantity + (buyOneGetOne ? quantity * 2 : quantity)
   },{
     where : {
       productId : productId,

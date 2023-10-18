@@ -1,6 +1,11 @@
 const { Op } = require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
+const {helperTransporter} = require("../../helper/index.js")
 const { Forum, User_Profile,User_Account } = require("../../model/relation.js")
+const {GMAIL} = require("../../config/index.js")
+const fs = require("fs")
+const path = require("path")
+const handlebars = require("handlebars")
 const moment = require ("moment")
 
 

@@ -78,7 +78,7 @@ export default function UserList({
                 Resep dokter dari customer mana yang hendak diproses?
             </span>
             <div className="relative mx-5 my-5 items-center h-auto gap-5 flex flex-row justify-between">
-                    <Input type="text" placeholder="Search" 
+                    <Input type="text" placeholder="Cari nama user..." 
                         ref={answerRef}
                     />
                     <Button 

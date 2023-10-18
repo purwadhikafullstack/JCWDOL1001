@@ -139,42 +139,12 @@ function QNA () {
 
 useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-
-        // setUnansweredList([])
-        // setAnsweredList([])
-        // const answerlist = []
-        // const unanswerlist = []
-        // questionList.map(item=>{
-        //     if(item.answer){
-        //         answerlist.push(item)
-        //     }
-        //     else{
-        //         unanswerlist.push(item)
-        //     }
-        // })
-        // setAnsweredList(answerlist)
-        // setUnansweredList(unanswerlist)
-    
+   
 },[])
 
     useEffect(() => {
         dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-        // if(questionList){
-        //     setUnansweredList([])
-        //     setAnsweredList([])
-        //     const answerlist = []
-        //     const unanswerlist = []
-        //     questionList.map(item=>{
-        //         if(item.answer){
-        //             answerlist.push(item)
-        //         }
-        //         else{
-        //             unanswerlist.push(item)
-        //         }
-        //     })
-        //     setAnsweredList(answerlist)
-        //     setUnansweredList(unanswerlist)
-        // }
+
     }, [sortDate])
     
     return (
@@ -372,13 +342,13 @@ useEffect( ()=>{
                             Apakah jawaban Anda sudah benar?
                         </p>
                         <div className="flex gap-2">
-                            <Button title="Cancel"  isButton  isSecondary 
+                            <Button title="Kembali"  isButton  isSecondary 
                                 onClick={() => setConfirmation(false)}
                             />
-                            <Button title="Sure" isButton isPrimary isDisabled={isToastVisible}
+                            <Button title="Ya" isButton isPrimary isDisabled={isToastVisible}
                                 onClick={()=>{handleOnSure(selectedQuestion.qnaId)}}
                             >
-                                Sure
+                                Ya
                             </Button>
                         </div>
                     </div>
