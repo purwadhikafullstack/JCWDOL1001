@@ -322,7 +322,7 @@ const updateProduct = async (req, res, next) => {
       categoryId: body.categoryId || product.categoryId,
     };
 
-    console.log(productData);
+    // console.log(productData);
 
     await updateProductValidationSchema.validate(productData);
 

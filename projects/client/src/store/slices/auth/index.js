@@ -47,6 +47,9 @@ const authSlice = createSlice({
     name : "auth",
     initialState : INITIAL_STATE,
     reducers : {
+        resetRegister: (state, action) => {
+            state.isRegister = false;
+        },
         changePasswordSuccess : (state, action) => {
             state.passwordChangeStatus = null;
         },
@@ -111,6 +114,7 @@ const authSlice = createSlice({
         },  
         [register.pending] : (state, action) => {
             state.isRegisterLoading = true
+                        // state.isRegister = false
         },
         [register.fulfilled] : (state, action) => {
             state.isRegisterLoading = false
@@ -119,6 +123,7 @@ const authSlice = createSlice({
         },
         [register.rejected] : (state, action) => {
             state.isRegisterLoading = false
+            // state.isRegister = false
         }, 
         [verify.pending] : (state, action) => {
             state.isVerifyLoading = true

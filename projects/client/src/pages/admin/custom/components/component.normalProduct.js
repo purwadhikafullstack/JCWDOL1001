@@ -6,7 +6,6 @@ import {FaDeleteLeft} from "react-icons/fa6"
 
 function ListOfProduct({
     product = [],
-
     onNormalProductChange = (params)=>{},
     clickOption = (params)=>{}
 }){
@@ -15,15 +14,16 @@ function ListOfProduct({
         (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
               item?.discountProducts[0]?.endingPrice : item?.productPrice
             )
+            let name = (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
+                item.productName : (item.productName + " (Promo Buy 1 Get 1)")
+              )
         return(
                 <div
                   key={index}
-                
-                
-                  onClick={()=>clickOption([item?.productId, item?.productName,price])}
+                  onClick={()=>clickOption([item?.productId, name,price])}
                   className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
                 >
-                 <p> {item.productName}</p>
+                 <p> {name}</p>
                 </div>
             
         )
@@ -107,7 +107,7 @@ export default function NormalProductList({
     },[productName])
 
     useEffect(()=>{
-        console.log(isSubmit)
+        // console.log(isSubmit)
         if(isSubmit){
             resetValue()
         }

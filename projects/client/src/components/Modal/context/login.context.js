@@ -7,10 +7,11 @@ import { LoginValidationSchema } from "../../../store/slices/auth/validation"
 import { toast } from "react-toastify"
 
 export default function LoginContext ({
-    onLogin = ()=>{},
     onRegist = ()=>{},
     onForgot = ()=>{},
     onClose = ()=>{},
+    setTitle,
+    onSupress
 })
 {
     const dispatch = useDispatch()
@@ -33,7 +34,7 @@ export default function LoginContext ({
                 abortEarly: false,
             })
             setError("")
-            dispatch(login(output))
+            dispatch(login(output)).then(()=>setTitle(""))
 
         }catch(error) {
             const errors = {}
@@ -65,8 +66,8 @@ export default function LoginContext ({
                 title="Daftar"
                 className="text-primary underline"
                 onClick={() => {
-                    onLogin()
                     onRegist()
+                    onSupress()                   
                 }}
             />  
             <form className="mt-4 flex flex-col gap-4" onSubmit={(e)=>handleLogin(e)}>
@@ -105,7 +106,6 @@ export default function LoginContext ({
                         title="Lupa password?"
                         className="w-fit text-sm text-primary hover:underline"
                         onClick={() => {
-                            onLogin()
                             onRegist()
                             onForgot()
                         }}
