@@ -37,13 +37,13 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
 
     useEffect(()=>{
         setDiscount(listDiscount[0])
-    },[setDiscount])
-
+    },[listDiscount])
+    
     return (
         <div className="flex flex-col gap-3 items-start">
             <div className="flex gap-4">
                 {selectedDiscount
-                    ? <Input type="button" value={input ? input : selectedDiscount?.discountCode ? selectedDiscount?.discountCode : selectedDiscount?.discountName} />
+                    ? <Input type="button" value={selectedDiscount?.discountCode ? selectedDiscount?.discountCode :input} />
                     : <Input ref={inputRef} type="text" placeholder="Cari kode" />
                 }
                 <Button isButton isPrimaryOutline
@@ -53,11 +53,11 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
                         dispatch(checkerDiscount({"code" : inputRef?.current?.value, "nominal":subTotal}))
                     }}
                 > Cari </Button>
-                <button className={`flex flex-row items-center h-auto text-red-700 ${selectedDiscount ? "" : "hidden"}`}
+                <Button className={`flex flex-row items-center h-auto text-red-700 ${selectedDiscount ? "" : "hidden"}`}
                     onClick={clearFilter} 
                 >
                     Hapus Kode
-                </button>
+                </Button>
             </div>
             <Button className="text-primary underline " title="Lihat semua voucher"
                 onClick={() =>{

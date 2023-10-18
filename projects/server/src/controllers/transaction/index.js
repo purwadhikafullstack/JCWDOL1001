@@ -62,7 +62,7 @@ async function cancelExpiredTransactions() {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : "Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena telah melewati batas waktu pembayaran",
@@ -272,8 +272,8 @@ const createTransactions = async (req, res, next) => {
           include : {
             model: Discount_Product,
             as: "productDiscount",
-            where:{ isDeleted:0 },
-            required: false,
+            where : {isDeleted : 0},
+            required : false
           },
         },
         {
@@ -380,7 +380,7 @@ const createTransactions = async (req, res, next) => {
       where : { userId : userId }
     })
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "transactionSuccessful.html"), "utf8");
     const html = handlebars.compile(template)({ 
       order: (newTransaction.transactionId),
       invoice : (newTransactionList.invoice)
@@ -479,7 +479,7 @@ const uploadPaymentProof = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "upload-payment-proof.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "upload-payment-proof.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name: (name), 
       link :(REDIRECT_URL + `/products`) 
@@ -545,7 +545,7 @@ const confirmPayment = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pembayaran Diterima"),
@@ -609,7 +609,7 @@ const processOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Diproses"),
@@ -673,7 +673,7 @@ const sendOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Dikirim"),
@@ -737,7 +737,7 @@ const receiveOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "templates", "receive-order.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "receive-order.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name : (name), 
       link : (REDIRECT_URL + `/products`) 
@@ -805,7 +805,7 @@ const rejectPayment = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "reject-payment.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "reject-payment.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         // bankName : (bankName),
@@ -932,7 +932,7 @@ const cancelTransaction = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : (information),
@@ -970,7 +970,7 @@ const cancelTransaction = async (req, res, next) => {
 async function cancelTransactionService(reverseList) {
   for (const item of reverseList){
         // reverseList.map(async (item) =>{ 
-          const {productId, quantity} = item
+          const {productId, quantity,buyOneGetOne} = item
           //seandainya di product resep, ada barangnya
           const listRecipe = await Product_Recipe.findAll({where : 
           {
@@ -978,7 +978,7 @@ async function cancelTransactionService(reverseList) {
           }})
           //produk satuan
           if(listRecipe.length === 0){
-            await normalProductCancel(productId, quantity)
+            await normalProductCancel(productId, quantity,buyOneGetOne)
           }
         //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
           if(listRecipe.length !== 0){
@@ -990,7 +990,7 @@ async function cancelTransactionService(reverseList) {
         }
 }
 
-async function normalProductCancel(productId,quantity){
+async function normalProductCancel(productId,quantity,buyOneGetOne){
 
   const defaultUnit = await Product_Detail.findOne({
     where : {
@@ -1010,13 +1010,13 @@ async function normalProductCancel(productId,quantity){
     initialStock : defaultUnit.dataValues?.quantity,
     status : "Pembatalan Transaksi",
     type : "Penambahan",
-    quantity : quantity,
-    results : +defaultUnit.dataValues?.quantity + quantity
+    quantity : (buyOneGetOne ? quantity * 2 : quantity),
+    results : +defaultUnit.dataValues?.quantity + (buyOneGetOne ? quantity * 2 : quantity)
   })
   //update qtynya
 
   await Product_Detail.update({
-    quantity : +defaultUnit?.dataValues?.quantity + quantity
+    quantity : +defaultUnit?.dataValues?.quantity + (buyOneGetOne ? quantity * 2 : quantity)
   },{
     where : {
       productId : productId,

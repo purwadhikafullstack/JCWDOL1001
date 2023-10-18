@@ -29,7 +29,7 @@ export default function Produk({ products, context }) {
             />
           ))
         :
-        products.filter((product)=>product.discountProducts.length === 0 ).slice(0,6).map((product) => (
+        products?.filter((product)=>product.discountProducts.length === 0 ).slice(0,6).map((product) => (
           <Card
             key={product.productId}
             productId={product.productId}

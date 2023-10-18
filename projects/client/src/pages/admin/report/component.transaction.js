@@ -24,8 +24,8 @@ export default function TransactionList({
                 <table class="w-full max-text-sm text-center text-gray-500 " >
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
-                            <th scope="col" className="px-6 py-3 ">Invoice</th>
-                            <th scope="col" className={`px-6 py-3 ${width <= mobileWidth && "hidden"}`}>Tanggal</th>
+                            <th scope="col" className={`px-6 py-3 ${width <= mobileWidth && "hidden"}`}>Invoice</th>
+                            <th scope="col" className="px-6 py-3 ">Tanggal</th>
                             <th scope="col" className="px-6 py-3 ">Pengguna</th>
                             <th scope="col" className={`px-6 py-3 ${width <= mobileWidth && "hidden"}`}>Potongan</th>
                             <th scope="col" className={`px-6 py-3`}>Total</th>
@@ -49,9 +49,9 @@ export default function TransactionList({
                                                 :"-"  
                                             }
                                             </td>
-                                        <td className={`p-3 ${width <= mobileWidth && "text-sm"}`}>IDR {formatNumber(list.subtotal)}</td>
+                                        <td className={`p-3 ${width <= mobileWidth && "text-sm"}`}>Rp. {formatNumber(list.subtotal)}</td>
                                         <td >
-                                            <Button isSmall={width <= mobileWidth} isButton={width > mobileWidth} isPrimary title={`${width <= mobileWidth ? "Detail" : "Lihat Detail"}`}
+                                            <Button isSmall={width <= mobileWidth} isButton={width > mobileWidth} isPrimaryOutline title={`${width <= mobileWidth ? "Detail" : "Lihat Detail"}`}
                                                 onClick={()=>{
                                                     setSelectedTransaction(list)
                                                     handleShowModal({context : "Detail Transaksi" })
@@ -75,50 +75,49 @@ export default function TransactionList({
             >
                 {showModal.context === "Detail Transaksi" && (
                     <>
-                        <a className="text-lg underline underline-offset-4">Detail Produk</a>
-                        <table class="w-full max-text-sm text-left text-gray-500 mb-5">
-                            <thead class="text-sm text-center text-gray-700 uppercase bg-gray-50 ">
-                                <tr>
-                                    <th scope="col" className="p-3 text-left">Nama Produk</th>
-                                    <th scope="col" className="p-3 ">Kuantitas</th>
-                                    <th scope="col" className={`p-3 ${width <= mobileWidth && "hidden"}`}>@</th>
-                                    <th scope="col" className="p-3 text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {selectedTransaction.transactionDetail.length ===0 ? <a>Data Tidak Ditemukan</a>
-                                    : selectedTransaction.transactionDetail.map((detail)=>{
-                                        return (
-                                            <tr  className="items-center text-left">
-                                                <td className="p-3 ">{detail.listedTransaction.productName}</td>
-                                                <td className="p-3 text-center ">{detail.quantity}</td>
-                                                <td className={`p-3 text-right ${width <= mobileWidth && "hidden"}`}>{formatNumber(detail.price)}</td>
-                                                <td className={`p-3  ${width <= mobileWidth ? "text-center":"text-right"}`}>IDR {formatNumber(detail.totalPrice)}</td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <a className="text-lg underline underline-offset-4">Detail Diskon</a>
-                        <table class="w-full max-text-sm text-left text-gray-500">
-                            <thead class="text-sm  text-gray-700 uppercase bg-gray-50 ">
-                                <tr>
-                                    <th className="p-3">Nama Diskon</th>
-                                    <th className="p-3">Jumlah</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {!selectedTransaction.discount_transaction ? <a>Data Tidak Ditemukan</a>
-                                    : 
-                                        <tr  className="items-center text-left">
-                                            <td className="p-3">{selectedTransaction.discount_transaction.discount.discountName}</td>
-                                            <td className="p-3">{selectedTransaction.discount_transaction.discount.isPercentage ? `${selectedTransaction.discount_transaction.discount.discountAmount}%` : `Rp ${formatNumber(selectedTransaction.discount_transaction.discount.discountAmount)}` }</td>
-                                        </tr>
-                                    
-                                }
-                            </tbody>
-                        </table>
+                        <div className="rounded-md border p-4 shadow-md my-3"> Detail Produk
+                            {selectedTransaction.transactionDetail.length ===0 ? <a>Data Tidak Ditemukan</a>
+                                : selectedTransaction.transactionDetail.map((detail,index)=>{
+                                    return (
+                                        <div className={`mb-2 flex flex-col gap-2 divide-y-2 p-0.5 overflow-hidden`} >
+                                            <div key={index} className="flex items-center gap-2 pt-2 text-sm">
+                                                <div className="w-full">
+                                                <p>{detail.listedTransaction.productName}</p>
+                                                <div className="flex justify-between">
+                                                    <div className="flex gap-2">
+                                                    <p>Rp. {formatNumber(detail.price)}</p>
+                                                    <span>x</span>
+                                                    <p>{detail.quantity}</p>
+                                                    </div>
+                                                    <p className="font-semibold">
+                                                    Rp. {formatNumber(detail.totalPrice)}
+                                                    </p>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                            <div className="pt-5">Diskon</div>
+                            {!selectedTransaction.discount_transaction ? <p className="p-1.5 text-sm">Tidak Menggunakan Diskon</p>
+                                : 
+                                    <div className={`mb-2 flex flex-col gap-2 divide-y-2 p-0.5 overflow-hidden`} >
+                                        <div className="flex  justify-between items-center gap-2 pt-2 text-sm ">
+                                                <p className="break-before-all max-w-xs">{selectedTransaction.discount_transaction.discount.discountName}</p>
+                                                <p className="font-semibold">
+                                                {   
+                                                    selectedTransaction.discount_transaction.discount.oneGetOne ?
+                                                    "" :
+                                                    selectedTransaction.discount_transaction.discount.isPercentage ? 
+                                                    `${selectedTransaction.discount_transaction.discount.discountAmount}%` : 
+                                                    `Rp. ${formatNumber(selectedTransaction.discount_transaction.discount.discountAmount)}` 
+                                                }
+                                                </p>
+                                        </div>
+                                    </div>
+                            }
+                        </div>
                     </>
                 )}
             </Modal>

@@ -100,7 +100,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 "oneGetOne" : +isOneGetOne.id,
                 "minimalTransaction" : minimum =="" ? null : minimum,
                 "discountName" : name,
-                "discountCode" : code =="" ? null : code,
+                "discountCode" : code =="" ? null : code.toUpperCase(),
             }
 
             output.products = selectedProducts.map(({productId, detailProduct, productPrice}) => { return { productId, productPrice : detailProduct?.productPrice ? detailProduct?.productPrice : productPrice}})
@@ -140,11 +140,11 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
         setSelectedProducts(selectedId?.productDiscount ? selectedId?.productDiscount:[]);
     }, [])
 
-    if (success) {  
+    if (success) { 
         return ( 
             <SuccessMessage 
                 type="success" 
-                message={`${selectedId ? "Berhasil mengubah diskon" : "Berhasil menambahkan diskon baru!"}`} 
+                message={`${selectedId.length === 0  ? "Berhasil menambahkan diskon baru!" : "Berhasil mengubah diskon"}`} 
                 handleCloseModal={handleCloseModal} 
             /> 
         ) 

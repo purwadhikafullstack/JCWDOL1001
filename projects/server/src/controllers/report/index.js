@@ -8,12 +8,12 @@ const getReport = async (req, res, next) => {
 
     const transaction =  await db.sequelize.query(
         `SELECT 
-          SUM(total) as total, 
+          SUM(subtotal) as total, 
           DATE_Format(updatedAt,'%Y-%m-%d') as tanggal
         FROM apotek.transaction_lists
         ${statusId ? `WHERE statusId LIKE '${statusId}'` : ""}
         GROUP BY tanggal
-        ${startFrom ? `HAVING tanggal BETWEEN '${startFrom}' AND '${endFrom}'` : ""}
+        ${startFrom  ? `HAVING tanggal BETWEEN '${startFrom}' AND '${endFrom}'` : ""}
         ORDER BY tanggal ASC;`, 
         { type: QueryTypes.SELECT }
     )

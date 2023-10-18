@@ -14,12 +14,11 @@ import AssetCart from "../../../assets/asset-cart.png";
 
 export default function Cart({ user }) {
   const {cart,products,isUpdateLoading,statusUser} = useSelector(state=>{
-
     return{
       cart : state?.cart?.cart,
       products : state?.products.data,
       isUpdateLoading : state?.cart?.isUpdateLoading,
-      statusUser : state?.auth?.status
+      statusUser : state?.auth?.status,
     }
   })
   

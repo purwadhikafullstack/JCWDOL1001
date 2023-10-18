@@ -14,13 +14,14 @@ export function formatDateValue(date) {
 
 export function formatTime(date) {
     const dateObj = new Date(date)
-    const time = dateObj.getHours() + ':' + dateObj.getMinutes()
+    // const time = dateObj.getHours() + ':' + dateObj.getMinutes()
+    const time = `${ dateObj.getHours() < 10 ? `0${ dateObj.getHours()}` : dateObj.getHours()}` + ':' + `${dateObj.getMinutes() < 10 ? `0${dateObj.getMinutes()}` : dateObj.getMinutes()}`
     return `${time}`
 }
 
 export function formatDateWithTime(date) {
     const dateObj = new Date(date)
     const options = { month: "long", day: "numeric", year: "numeric" }
-    const time = dateObj.getHours() + ':' + dateObj.getMinutes()
+    const time = `${ dateObj.getHours() < 10 ? `0${ dateObj.getHours()}` : dateObj.getHours()}` + ':' + `${dateObj.getMinutes() < 10 ? `0${dateObj.getMinutes()}` : dateObj.getMinutes()}`
     return `${dateObj.toLocaleString("id-ID", options)} ${time}`
 }

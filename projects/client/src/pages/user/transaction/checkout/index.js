@@ -10,23 +10,24 @@ import LogoMandiri from "../../../../assets/logo-mandiri.png";
 import ShippingAddress from "../../../../components/Shipping/component.address";
 import ShippingCost from "../../../../components/Shipping/component.shipping";
 import DiscountChecker from "../../../../components/Discount Checker";
+import { toast } from "react-toastify";
 
 export default function CheckoutPage(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0; let discount = 0;
-    const {cart,address,listDiscount} = useSelector((state)=>{
+    const {cart,address} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
             address : state?.auth?.address,
-            listDiscount: state?.discount?.listDiscount,
         }
     })
 
     const [selectedAddress, setSelectedAddress] = useState([])
     const [selectedShipping, setShipping] = useState([])
     const [selectedDiscount, setDiscount] = useState(null)
+
     useEffect(()=>{
         dispatch(getCheckoutProducts())
         setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
@@ -49,8 +50,13 @@ export default function CheckoutPage(){
                     </div>
                 )
         }
+    
+    const width = window.screen.width
+    const mobileWidth = 414
 
     const checkOut = () => {
+        if(selectedShipping.length == 0) return toast.error("Jasa pengiriman belum dipilih")
+
         if(selectedDiscount?.isPercentage){
             discount = selectedDiscount?.discountAmount/100 *subTotal
         }else{
@@ -78,9 +84,9 @@ export default function CheckoutPage(){
                         <Button isButton isWarning title="Kembali ke Cart" onClick={()=>navigate("/cart")}/>
                         <h3 className="title w-full border-b-2 mb-5 pb-2">Checkout</h3>
                     </div>
-                    <div className="mb-10">
+                    <div className="mb-10 flex flex-col">
                         <h3 className="subtitle w-full border-b-2 mb-5 pb-2">Pengiriman</h3>
-                        <div className="flex gap-20 items-center">
+                        <div className={`flex pl-2 ${width <= mobileWidth ? "flex-col gap-5" : "flex-row gap-20" }`}>
                             <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
                             <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
                         </div>
@@ -112,8 +118,7 @@ export default function CheckoutPage(){
                     </div>                    
                     <div className="flex flex-col gap-2 my-10">
                         <h3 className="subtitle w-full border-b-2 mb-5 pb-2">Kode Kupon</h3>
-                        <DiscountChecker setDiscount={setDiscount} subTotal={subTotal} selectedDiscount={selectedDiscount}
-                        />
+                        <DiscountChecker setDiscount={setDiscount} subTotal={subTotal} selectedDiscount={selectedDiscount} />
                     </div>
                     <div className="border rounded-lg p-4 font-semibold">
                         <h1>Sub Total : Rp. {formatNumber(subTotal)}</h1>

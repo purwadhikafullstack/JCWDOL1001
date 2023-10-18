@@ -53,9 +53,11 @@ export default function ShippingCost({
             cost : event.target.selectedOptions[0].value
         })
     }
+    const width = window.screen.width
+    const mobileWidth = 414
     
     return (
-        <div className={`flex ${window.screen.width <= 500 ? "flex-col gap-2" : "flex-row gap-8"}  ${selectedAddress?.length === 0 &&"hidden"}`}>
+        <div className={`flex ${width <= mobileWidth ? "flex-col gap-2" : "flex-row gap-8"}  ${selectedAddress?.length === 0 &&"hidden"}`}>
             <div className="flex flex-col">
                 <a>Pilih pengiriman : </a>
                 <div className="flex max-w-lg gap-3 items-center">
