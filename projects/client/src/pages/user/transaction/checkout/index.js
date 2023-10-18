@@ -11,27 +11,36 @@ import ShippingAddress from "../../../../components/Shipping/component.address";
 import ShippingCost from "../../../../components/Shipping/component.shipping";
 import DiscountChecker from "../../../../components/Discount Checker";
 import { toast } from "react-toastify";
+import { getAddress, resetSuccessAddress } from "../../../../store/slices/address/slices";
 
 export default function CheckoutPage(){
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let subTotal = 0; let discount = 0;
-    const {cart,address} = useSelector((state)=>{
+    const {cart,address,currentPage,totalPage} = useSelector((state)=>{
         return {
             cart : state?.transaction?.cart,
-            address : state?.auth?.address,
+            address : state?.address?.data,
+            currentPage : state?.address?.currentPage,
+            totalPage : state?.address?.totalPage
         }
     })
 
     const [selectedAddress, setSelectedAddress] = useState([])
     const [selectedShipping, setShipping] = useState([])
     const [selectedDiscount, setDiscount] = useState(null)
+    const [page, setPage] = useState(1)
 
     useEffect(()=>{
         dispatch(getCheckoutProducts())
-        setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1}))
+        dispatch(resetSuccessAddress())
+        dispatch(getAddress({page : page})).then((response)=>setSelectedAddress(response.payload.data.data?.find((address)=>{return address?.isPrimary === 1})))
     },[])
+
+   useEffect(()=>{
+    dispatch(getAddress({page : page}))
+   },[page])
 
     const PaymentMethod = () => {
                 return(
@@ -87,7 +96,7 @@ export default function CheckoutPage(){
                     <div className="mb-10 flex flex-col">
                         <h3 className="subtitle w-full border-b-2 mb-5 pb-2">Pengiriman</h3>
                         <div className={`flex pl-2 ${width <= mobileWidth ? "flex-col gap-5" : "flex-row gap-20" }`}>
-                            <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
+                            <ShippingAddress setPage={setPage} totalPage={totalPage} currentPage={currentPage} listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
                             <ShippingCost selectedAddress={selectedAddress} setShipping={setShipping} />
                         </div>
                     </div>

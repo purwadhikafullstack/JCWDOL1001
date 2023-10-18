@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, deleteQuestion, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
@@ -176,7 +176,6 @@ useEffect( ()=>{
         //     setUnansweredList(unanswerlist)
         // }
     }, [sortDate])
-
     
     return (
         <div>
@@ -362,7 +361,7 @@ useEffect( ()=>{
                             )}
                             <Button title="Yes" isButton isDanger 
                                 isLoading={isLoading}
-                                // onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
+                                onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
                         </div>
                     </>
