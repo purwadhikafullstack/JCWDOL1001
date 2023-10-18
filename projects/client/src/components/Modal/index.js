@@ -27,14 +27,18 @@ export default function Modal({
   const [forgot, setForgot] = useState(false);
   const [titleModal, setTitle] = useState("");
   const dispatch = useDispatch()
-  const {isRegister} = useSelector(state =>{
+  const {isRegister,isLogin} = useSelector(state =>{
     return {
-        isRegister : state?.auth?.isRegister
+        isRegister : state?.auth?.isRegister,
+        isLogin : state?.auth?.isLogin
     }
 })
   useEffect(()=>{
+    setLogin(false);
+    setForgot(false)
+    setRegist(false);
 
-  },[])
+  },[isLogin])
 
   useEffect(() => {
     const handleEscapeKey = (e) => {
@@ -43,10 +47,14 @@ export default function Modal({
         setTitle("");
       }
     };
+
+    context === "login" ? setLogin(true) :  setRegist(true); 
+    // if(context === "register"){
+    //   setRegist(true); 
+    // }
     console.log("login",login)
     console.log("register",regist)
     console.log("context",context)
-    context === "login" ? setLogin(true) :  setRegist(true); 
 
     document.addEventListener("keydown", handleEscapeKey);
 
