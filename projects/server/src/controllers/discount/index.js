@@ -292,11 +292,34 @@ const deleteDiscount = async (req, res, next) =>{
 
 const checkDiscount = async (req, res, next) =>{
     try{
-        const { code, nominal } = req.query
+        const { page, limit, code, nominal } = req.query
+
+        const options = {
+            offset: page > 1 ? parseInt(page - 1) * (limit ? +limit : 1) : 0,
+            limit : limit ? +limit : 1,
+        }
+
         const filter = { code }
         if(code) filter.code = {discountCode: {[Op.like]: `${code}`}}
 
         const isDiscountExist = await Discount.findAll({ 
+            ...options,
+            include : {
+                model : Discount_Product,
+                attributes : ["productId"],
+                as : "productDiscount",
+            },
+            where : {
+                [Op.and]: [
+                    { isDeleted : 0 },
+                    { oneGetOne : 0 },
+                    { discountCode : {[Op.not]: null} },
+                    filter.code
+                ]
+            },
+        })
+
+        const totalDiscount = await Discount.findAll({ 
             include : {
                 model : Discount_Product,
                 attributes : ["productId"],
@@ -331,15 +354,25 @@ const checkDiscount = async (req, res, next) =>{
         const discount = isDiscountExist.filter((discount)=>{
             return (discount.discountExpired == null || moment() <= moment(discount.discountExpired)) && nominal >= discount.minimalTransaction
         })
+
+        const discountTotal = totalDiscount.filter((discount)=>{
+            return (discount.discountExpired == null || moment() <= moment(discount.discountExpired)) && nominal >= discount.minimalTransaction
+        })
         
         if(!isDiscountExist || isDiscountExist.length === 0) throw({
             status : middlewareErrorHandling.NOT_FOUND_STATUS,
             message : middlewareErrorHandling.DISCOUNT_NOT_FOUND
         })
+        const total = discountTotal.length
+
+        const pages = Math.ceil(total / options.limit)
 
         res.status(200).json({
 			type : "success",
 			message : "Data berhasil dimuat",
+            currentPage : page ? page : 1,
+            totalPage : total,
+            limit:options.limit,
             data : discount
 		})
 

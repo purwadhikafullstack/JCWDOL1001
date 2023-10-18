@@ -43,8 +43,9 @@ const VerifyValidationSchema = Yup.object({
 })
 
 const UpdatePasswordValidationSchema = Yup.object({
-    oldPassword : Yup.string().required("Old password is required"),
-    newPassword : Yup.string().required("New password is required")
+    oldPassword : Yup.string().required("Password lama dibutuhkan"),
+    newPassword : Yup.string().required("Password baru dibutuhkan").matches(passwordRegExp,
+        "Password tidak sesuai format")
 })
 
 const UpdateProfileValidationSchema = Yup.object({

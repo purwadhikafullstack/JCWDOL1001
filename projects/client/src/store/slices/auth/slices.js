@@ -281,4 +281,8 @@ export const getProfile = createAsyncThunk(
 
 export const resetRegister = () => ({
     type: "auth/resetRegister",
+})
+
+export const changePasswordSuccess = () => ({
+    type: "address/changePasswordSuccess",
 });

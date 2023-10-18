@@ -173,7 +173,7 @@ export default function MenungguPembayaran({
                       <Button
                       isButton
                       isPrimaryOutline
-                      title="Lihat Detail Transaksi"
+                      title="Lihat Detail"
                       onClick={() =>
                         handleShowModal(
                           "Detail Transaksi",

@@ -34,6 +34,7 @@ const VOUCHER_NEED_AMOUNT = "Jumlah potongan dibutuhkan";
 const DISCOUNT_IS_EXPIRED = "Diskon sudah kedaluwarsa";
 const NOT_MEET_MINIMUM_TRANSACTION = "Tidak memenuhi transaksi minimum";
 const NOT_NEED_CODE = "Produk diskon tidak dapat memiliki kode diskon";
+const USER_ALREADY_EXISTS = "Pengguna sudah terdaftar"
 
 const NO_STOCK = "Stok tidak mencukupi untuk produk yang diinginkan";
 const PRODUCT_ALREADY_CHECKEDOUT = "Pesanan yang diinginkan sudah diperiksa";

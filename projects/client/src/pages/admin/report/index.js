@@ -153,16 +153,18 @@ function ReportPage () {
     return (
         <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
             <div className="relative flex flex-col pb-15">
-                <div className={`flex ${width <= mobileWidth ? "flex-col w-fit" : "items-center align-middle"} gap-5 px-3 mb-5`}>
-                    <a className="flex normal-case text-[20pt]">  Laporan </a>
+                <div className={`flex items-center gap-5 w-full border-b-2 mb-5 pb-2`}>
+                    <h3 className="title inline">Laporan </h3>
+                    <div className="relative">
                         <Input type="text" placeholder="Cari Pengguna" ref={nameRef}/>
-                        <Button className={`absolute ${filter && width <= mobileWidth ?"top-[19.5%] right-[45%]" : width <= mobileWidth ? "top-[21.8%] right-[45%]" : "top-[17.5%] left-[21%]"} -translate-y-1/2`}
+                        <Button className={`absolute top-1/2 right-0 -translate-y-1/2 p-2`}
                             onClick={()=>{
                                 onButtonSearchName()
                                 setFilter(true)}}
                         >
                             <HiMagnifyingGlass className="text-2xl text-primary" />
                         </Button>
+                    </div>
                     <Button title="Hapus pengaturan" onClick={clearFilter}  className={` ${width <= mobileWidth && "hidden"} flex flex-row items-center h-auto text-red-700 ${filter ? "" : "hidden"}`} />
                 </div>
                 <div className={`flex  ${width <= mobileWidth ? "flex-col items-start gap-2" :"items-center"}`}>
