@@ -75,7 +75,7 @@ export default function Email() {
             <div>
                 <form className="space-y-4 md:space-y-6 font-medium text-xl m-6" onSubmit={(event)=>handleReset(event)}>
                     <div className="flex flex-row">
-                        <Input ref={emailRef} required type="email" label="Email Baru Anda" placeholder="example1@example.com"></Input>
+                        <Input ref={emailRef} required type="text" label="Email Baru Anda" placeholder="example1@example.com"></Input>
                         <Button isPrimary isButton type={"button"} title="Ambil OTP" className="mt-6 mx-6 p-4" onClick={()=>dispatch(changeEmailOtp({userId : profile.userId}))}/> 
                     </div>
                     <div className="flex flex-row">

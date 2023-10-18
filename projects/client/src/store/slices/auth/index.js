@@ -47,7 +47,9 @@ const authSlice = createSlice({
     name : "auth",
     initialState : INITIAL_STATE,
     reducers : {
-
+        changePasswordSuccess : (state, action) => {
+            state.passwordChangeStatus = null;
+        },
     },
     extraReducers : {
         [login.pending] : (state, action) => {
@@ -136,7 +138,10 @@ const authSlice = createSlice({
             state.isVerifyLoading = false
         },
         [changePassword.pending] : (state, action) => {
-            state.isChangePasswordLoading = true
+            state = Object.assign(state, {
+                isChangePasswordLoading : true,
+                passwordChangeStatus : null
+            })
         },
         [changePassword.rejected] : (state, action) => {
             state = Object.assign(state, {
