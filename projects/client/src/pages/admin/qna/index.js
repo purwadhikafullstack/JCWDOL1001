@@ -106,7 +106,7 @@ function QNA () {
             })
             
 
-            console.log(output)
+            // console.log(output)
             dispatch(PostAnswer(output)).then(()=>
             dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")}))))
             setConfirmation(false)

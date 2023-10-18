@@ -108,7 +108,7 @@ export const verify = createAsyncThunk(
             const {token} = payload
            
             delete payload.token
-            console.log(payload)
+            // console.log(payload)
             await VerifyValidationSchema.validate(payload)
             const response = await api.post("auth/verify", payload, {headers : {"Authorization": `Bearer ${token}`}})
             const newToken = response.headers.authorization.split(" ")[1]
@@ -249,7 +249,7 @@ export const resetPass= createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
             const {token} = payload
-            console.log(token)
+            // console.log(token)
             delete payload.token
             // await PasswordValidationSchema.validate(payload)
             const response = await api.post("auth/reset", payload, {headers : {"Authorization": `Bearer ${token}`}})

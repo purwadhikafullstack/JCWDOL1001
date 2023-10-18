@@ -796,7 +796,7 @@ const rejectPayment = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "reject-payment.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "reject-payment.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         // bankName : (bankName),
@@ -943,7 +943,7 @@ const cancelTransaction = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : (information),
@@ -1054,7 +1054,7 @@ async function customIngredientCancel(itemRecipe, quantity) {
       //stock obat racik : 1 quantity untuk obat raciknya
       //ingredient : 2 , convertion 2
       //sec ingredient > convertion
-      console.log("nilainya ",totalIngredientQuantity)
+      // console.log("nilainya ",totalIngredientQuantity)
       //seandainya totalIngredientQuantity < main unit convertion?
 
 

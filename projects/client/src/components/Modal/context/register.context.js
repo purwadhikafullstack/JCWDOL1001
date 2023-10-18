@@ -46,7 +46,6 @@ export default function RegisterContext ({
 
     const onButtonRegist= async(e) => {
         try {
-        console.log("nilai isRegist : ",isRegister)
         e.preventDefault()
         setEmail(emailRef.current?.value)
         const request = { 
@@ -91,12 +90,6 @@ export default function RegisterContext ({
             setSubmit(false)
         }
     },[email,isRegister])
-
-    useEffect(()=>{
-        // dispatch(resetRegister())
-        console.log("nilai handler di useeffect : ",isRegister)
-    },[])
-
 
     return (
         <div>

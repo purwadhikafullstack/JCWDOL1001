@@ -107,7 +107,7 @@ export default function NormalProductList({
     },[productName])
 
     useEffect(()=>{
-        console.log(isSubmit)
+        // console.log(isSubmit)
         if(isSubmit){
             resetValue()
         }

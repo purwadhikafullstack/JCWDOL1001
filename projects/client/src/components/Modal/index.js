@@ -52,12 +52,6 @@ export default function Modal({
     if(supress){
       context === "login" ? setLogin(true) :  setRegist(true); 
     }
-    // if(context === "register"){
-    //   setRegist(true); 
-    // }
-    console.log("login",login)
-    console.log("register",regist)
-    console.log("context",context)
 
     document.addEventListener("keydown", handleEscapeKey);
 
