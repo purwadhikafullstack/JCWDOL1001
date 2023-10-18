@@ -149,7 +149,7 @@ export default function RegisterContext ({
                         <Input
                             ref={phoneRef}
                             required
-                            type="text"
+                            type="number"
                             label="Nomor Telpon"
                             placeholder="08xxxxxxxx"
                             onChange={() => setError({ ...error, phone: false })}
