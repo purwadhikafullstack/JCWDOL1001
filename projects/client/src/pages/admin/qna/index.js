@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
@@ -139,42 +139,12 @@ function QNA () {
 
 useEffect( ()=>{
     dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-
-        // setUnansweredList([])
-        // setAnsweredList([])
-        // const answerlist = []
-        // const unanswerlist = []
-        // questionList.map(item=>{
-        //     if(item.answer){
-        //         answerlist.push(item)
-        //     }
-        //     else{
-        //         unanswerlist.push(item)
-        //     }
-        // })
-        // setAnsweredList(answerlist)
-        // setUnansweredList(unanswerlist)
-    
+   
 },[])
 
     useEffect(() => {
         dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
-        // if(questionList){
-        //     setUnansweredList([])
-        //     setAnsweredList([])
-        //     const answerlist = []
-        //     const unanswerlist = []
-        //     questionList.map(item=>{
-        //         if(item.answer){
-        //             answerlist.push(item)
-        //         }
-        //         else{
-        //             unanswerlist.push(item)
-        //         }
-        //     })
-        //     setAnsweredList(answerlist)
-        //     setUnansweredList(unanswerlist)
-        // }
+
     }, [sortDate])
 
     
@@ -362,7 +332,7 @@ useEffect( ()=>{
                             )}
                             <Button title="Yes" isButton isDanger 
                                 isLoading={isLoading}
-                                // onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
+                                onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
                         </div>
                     </>
@@ -373,13 +343,13 @@ useEffect( ()=>{
                             Apakah jawaban Anda sudah benar?
                         </p>
                         <div className="flex gap-2">
-                            <Button title="Cancel"  isButton  isSecondary 
+                            <Button title="Kembali"  isButton  isSecondary 
                                 onClick={() => setConfirmation(false)}
                             />
-                            <Button title="Sure" isButton isPrimary isDisabled={isToastVisible}
+                            <Button title="Ya" isButton isPrimary isDisabled={isToastVisible}
                                 onClick={()=>{handleOnSure(selectedQuestion.qnaId)}}
                             >
-                                Sure
+                                Ya
                             </Button>
                         </div>
                     </div>

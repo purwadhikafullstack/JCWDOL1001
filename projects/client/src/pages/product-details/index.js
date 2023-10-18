@@ -28,6 +28,7 @@ export default function ProductDetail({user}) {
   })
   const [qty, setQty] = useState(1);
   const [stock, setStock] = useState(3);
+  const [isOneGetOne,setIsOneGetOne] = useState(false)
 
   useEffect(()=>{
 
@@ -39,11 +40,14 @@ export default function ProductDetail({user}) {
       }
       dispatch(totalProductCart())
     }
-
+    
   },[cart])
 
   const handleQty = (type) => {
     if (type === "add") {
+      if(isOneGetOne && (qty+1)*2 > stock ) throw(
+        toast.error("Kuantitas melebihi stok")
+      )
       setQty(qty + 1);
     }
 
@@ -54,7 +58,9 @@ export default function ProductDetail({user}) {
 
   const handleQtyInput = (event) => {
     const newQty = event.target.value;
-
+    if(isOneGetOne && (newQty)*2 > stock ) throw(
+      toast.error("Kuantitas melebihi stok")
+    )
     if (newQty === "" || (+newQty > 0 && +newQty <= stock)) {
       setQty(newQty === "" ? "" : +newQty);
     } else if (+newQty > 0 && +newQty >= stock) {
@@ -100,6 +106,7 @@ export default function ProductDetail({user}) {
   
   useEffect(()=>{
     dispatch(getProductById(id)).then((response) => {
+      setIsOneGetOne(response.payload.data.discountProducts[0]?.discount?.oneGetOne)
       setStock(response.payload.data.productUnits.length > 0 ? 
         response.payload.data.productUnits[0].product_detail.quantity : 0)
     }

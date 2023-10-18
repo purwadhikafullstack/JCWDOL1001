@@ -1,5 +1,5 @@
 const {middlewareErrorHandling} = require("../../../middleware/index.js");
-const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, 
+const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, Discount_Product,Discount,
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
 const moment = require("moment")
 const {Op} = require("sequelize")
@@ -88,8 +88,6 @@ const getUser = async( req, res, next ) => {
     try{
         // AddCustomProduct
         const {data,email} = req.body
-        //validate email address
-          //todo : validate
 
         const result = 
         await Promise.all(
@@ -110,16 +108,7 @@ const getUser = async( req, res, next ) => {
           productDescription : String(quantity)
         }
         )
-        // await Product_Detail.create({
-        //   productId: product?.productId,
-        //   unitId : 0,
-        //   quantity : quantity,
-        //   convertion : 0,
-        //   isDefault : 1,
-        //   isDeleted : 1
-        // })
 
-        // looping boleh [{productId,qty},...]
         let availability = false;
         for ( let i = 0; i < ingredients.length; i++){
           const recipe = await Product_Recipe.create({
@@ -165,12 +154,33 @@ const getUser = async( req, res, next ) => {
         let availability = false
         const result = await Product_List.findOne({where:{
           productId : productId
-        },include: {
+        },include: [{
             model : Product_Detail,
             attributes : ["quantity"]
-        }})
+        },
+        {
+          model: Discount_Product,
+          attributes: { exclude: ["discountProductId"] },
+          as: "discountProducts",
+          where:{isDeleted:0},
+          include: {
+            model: Discount,
+            where: { isDeleted: 0, 
+              [Op.or] :[
+                {discountExpired :{[Op.gte] : moment()}},
+                {discountExpired :{[Op.is] : null}}
+              ]
+            },
+          },
+          // required: false,
+        },]})
+        //check if product categorized as buy 1 get 1
+        let newQuantity = 
+        (result.discountProducts[0]?.discount?.oneGetOne === true ?
+          (quantity * 2) : quantity
+        )
         console.log(result)
-        if(quantity <= result?.product_details[0]?.quantity){
+        if(newQuantity <= result?.product_details[0]?.quantity){
           availability = true
         }
         if(availability){
@@ -230,7 +240,7 @@ const getUser = async( req, res, next ) => {
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
 
-      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "customProductConfirmation.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "customProductConfirmation.html"), "utf8");
       const html = handlebars.compile(template)({ message: (message), link :(pathURL) })
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
@@ -270,13 +280,6 @@ const getUser = async( req, res, next ) => {
           email : email
         }
      })
-  //    await User_Account?.update({where:{
-  //     imgRecipe : null
-  //    }},{
-  //     where :{
-  //       email : email
-  //     }
-  //  })
 
      const address = await User_Address?.findOne({
       where : {
@@ -287,220 +290,35 @@ const getUser = async( req, res, next ) => {
      if(!address) throw ({ status : 404, message : middlewareErrorHandling.ADDRESS_NOT_FOUND});
      //looping data per product
      let productResult = []
-    //  await Promise.all(
-    //   data.map(async (item) =>{ 
+
       for(const item of data){
         const {productId, name,type} = item
 
       if(type === 1){
-      //   const arrayOne = []
-        
-      //   const product = await Product_List.findOne({
-      //     where :{
-      //       productId : productId,
-      //       productPicture : "review"
-      //     }
-      //   })
-      //   if(!product) throw ({ status : 404, 
-      //     message : middlewareErrorHandling.PRODUCT_ALREADY_CHECKEDOUT});
-
-      //   subtotal += (product.productPrice * +product.productDescription)
-      //   console.log("subtotal dari custom " ,subtotal)
-      //   await Product_List.update({ productPicture : "Public/Products/OBATRACIK"},{
-      //     where : {
-      //       productId : productId,
-      //     }
-      //   })
-
-      //   const ingredients = await Product_Recipe.findAll({
-      //     where : {
-      //       productId : productId
-      //     }
-      //   })
-      // for ( let i = 0; i < ingredients.length; i++){
-      // const recipeQty = ingredients[i]?.quantity
-      // const ingredientProductId = ingredients[i]?.ingredientProductId
-      // const mainUnit = await Product_Detail.findOne({
-      //   where : {
-      //     productId : ingredients[i]?.ingredientProductId,
-      //     isDefault : true
-      //   },
-      //   include :[ 
-      //     {
-      //       model : Product_Unit,
-      //     }
-      //   ]
-      // })
-
-      // const secUnit = await Product_Detail.findOne({
-      //   where : {
-      //     productId : ingredients[i]?.ingredientProductId,
-      //     isDefault : false
-      //   },
-      //   include :[
-      //   {
-      //     model : Product_Unit,
-      //   }]
-      // })
-
-      // // -if qty unit secondary < qty
-
-      // if(secUnit?.quantity < (+product?.productDescription * recipeQty)){
-
-      // // const
-      // const remainStock = (+product?.productDescription * recipeQty) - secUnit?.quantity
-      // // 2 x 3 - 5 = 1
-      // //case 2 : 5 x 5 - 5 = 20 
-
-      // const checker = Math.ceil(remainStock / mainUnit?.convertion)
-      // // 1/10.ceil = 1
-      //   // 20/10.ceil = 2
-      // const remainSecStock = (mainUnit?.convertion * checker) - remainStock
-      // // 1%10 = 1 => 10 * 1 - 1 = 9
-      //   //case 2 : 10 * 2 - 20 = 0
-
-      //   if(mainUnit?.quantity >= checker){
-
-      //     //masukin product History
-      //      await Product_History.create({
-      //       productId : ingredientProductId,
-      //       unit : mainUnit.product_unit.name,
-      //       initialStock : mainUnit?.quantity,
-      //       status : "Unit Conversion",
-      //       type : "Pengurangan",
-      //       quantity : checker,
-      //       results : mainUnit?.quantity - checker
-      //     })
-      //     await Product_History.create({
-      //       productId : ingredientProductId,
-      //       unit : secUnit.product_unit.name,
-      //       initialStock : secUnit?.quantity,
-      //       status : "Unit Conversion",
-      //       type : "Penambahan",
-      //       quantity : +mainUnit?.convertion * checker,
-      //       results : secUnit?.quantity + (+mainUnit?.convertion * checker)
-      //     })
-      //     await Product_History.create({
-      //       productId : ingredientProductId,
-      //       unit : secUnit.product_unit.name,
-      //       initialStock : secUnit?.quantity + (+mainUnit?.convertion * checker),
-      //       status : "Penjualan Obat Racik",
-      //       type : "Pengurangan",
-      //       quantity : +product?.productDescription * recipeQty,
-      //       results : remainSecStock
-      //     })
-      //     //update qtynya
-      //     await Product_Detail.update({
-      //       quantity : mainUnit?.quantity - checker
-      //     },{
-      //       where : {
-      //         productId : ingredientProductId,
-      //         isDefault : true
-      //       }
-      //     })
-      //     //(updateproductdetail secondsaryunit, qtybaru=  sisaqtysecondaryunit  save qty skrgnya!
-      //     await Product_Detail.update({
-      //       quantity : remainSecStock
-      //     },{
-      //       where : {
-      //         productId : ingredientProductId,
-      //         isDefault : false
-      //       }
-      //     })
-      //   }
-
-      // }
-      // // -if qty unit secondary <= qty
-      // if(secUnit?.quantity >= (+product?.productDescription * recipeQty)){
-      //   // (updateproductdetail seoncadryunit, qtybaru = qtyskrg - qty save qty skrgnya! qtyskrg primary ambil dari productDetailmainunit
-   
-      //   await Product_History.create({
-      //     productId : ingredientProductId,
-      //     unit : secUnit.product_unit.name,
-      //     initialStock : secUnit?.quantity,
-      //     status : "Penjualan Obat Racik",
-      //     type : "Pengurangan",
-      //     quantity : +product?.productDescription * recipeQty,
-      //     results : secUnit?.quantity - (+product?.productDescription * recipeQty)
-      //   })
-      //   await Product_Detail.update({
-      //     quantity : secUnit?.quantity - (+product?.productDescription * recipeQty)
-      //   },{
-      //     where : {
-      //         productId : ingredientProductId,
-      //         isDefault : false
-      //     }
-      //   })
-      // }
-      // }
       const result = await typeOneProduct(name,productId)
       subtotal += result.subtotal
       productResult.push({
         name : name, 
         productId : productId, 
         quantity : result.quantity,
-        price : result.price  })
+        price : result.price,
+      buyOneGetOne : result.buyOneGetOne })
     }
     
     if(type === 0){
       const {quantity} = item
-      //grab data produk
-      // const product = await Product_List?.findOne({where : {
-      //   productId : productId
-      // },
-      //   include : 
-      //   [
-      //     {
-      //       model : Product_Unit,
-      //       as : "productUnits"
-      //     },
-      //     {
-      //       model : Product_Detail,
-      //       attributes : ["quantity"]
-      //     },
-      //   ]})
-      // //kurang quantity
-      // await Product_History.create({
-      //   productId : productId,
-      //   unit : product.productUnits[0]?.name,
-      //   initialStock : product?.product_details[0].quantity,
-      //   status : "Penjualan",
-      //   type : "Pengurangan",
-      //   quantity : quantity,
-      //   results : product?.product_details[0].quantity - quantity
-      // })
-
-      // await Product_Detail.update(
-      //   {quantity : product?.product_details[0].quantity - quantity},{
-      //   where : {
-      //     productId : productId,
-      //     isDefault: true
-      //   }
-      // })
-      // subtotal += (product.productPrice * quantity)
-      // console.log("subtotal dari normal " ,subtotal)
       const result = await typeZeroProduct(name,productId,quantity)
       subtotal += result.subtotal
       productResult.push({
         name : result.name,
         productId : result.productId,
         quantity : result.quantity,
-        price : result.price
+        price : result.price,
+        buyOneGetOne : result.buyOneGetOne
       })
     }
   }
-    // }))
-   
-    //bagian ongkir-----------------------------------------------------------
-  //   const {data:{rajaongkir:{results}}} = await Axios.post(process.env.REACT_APP_RAJAONGKIR_API_BASE_URL_COST,
-  //     { 
-  //         key : process.env.REACT_APP_RAJAONGKIR_API_KEY, 
-  //         origin: 151, 
-  //         destination: address?.postalCode, 
-  //         weight: 1000, 
-  //         courier: "pos"
-  //     }
-  // )
+
   const transportCost = +user?.shippingRecipe?.split(",")[2]
   const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
   let date = new Date().getTime()
@@ -526,7 +344,8 @@ const getUser = async( req, res, next ) => {
           price : productResult[i].price,
           quantity : productResult[i].quantity,
           totalPrice : productResult[i].price * productResult[i].quantity,
-          productId : productResult[i].productId
+          productId : productResult[i].productId,
+          buyOneGetOne : productResult[i].buyOneGetOne
       })
     }
 
@@ -711,7 +530,9 @@ return {
   productId : productId, 
   quantity : +product?.productDescription,
   price : product?.productPrice,  
-subtotal : newSubtotal}
+subtotal : newSubtotal,
+buyOneGetOne : 0
+}
     
   }
 
@@ -729,34 +550,62 @@ async function typeZeroProduct(name,productId,quantity){
         model : Product_Detail,
         attributes : ["quantity"]
       },
+      {
+        model: Discount_Product,
+        attributes: { exclude: ["discountProductId"] },
+        as: "discountProducts",
+        where:{isDeleted:0},
+        include: {
+          model: Discount,
+          where: { isDeleted: 0, 
+            [Op.or] :[
+              {discountExpired :{[Op.gte] : moment()}},
+              {discountExpired :{[Op.is] : null}}
+            ]
+          },
+        },
+        // required: false,
+      },
     ]})
   //kurang quantity
+    //handling harga diskon
+    let price = 
+    (product?.discountProducts?.length !== 0 && product.discountProducts[0]?.discount?.oneGetOne === false ?
+          product?.discountProducts[0]?.endingPrice : product?.productPrice
+        )
+    let newQuantity = 
+    (product.discountProducts[0]?.discount?.oneGetOne === true ?
+      (quantity * 2) : quantity
+    )
   await Product_History.create({
     productId : productId,
     unit : product.productUnits[0]?.name,
     initialStock : product?.product_details[0].quantity,
     status : "Penjualan",
     type : "Pengurangan",
-    quantity : quantity,
-    results : product?.product_details[0].quantity - quantity
+    quantity : newQuantity,
+    results : product?.product_details[0].quantity - newQuantity
   })
 
   await Product_Detail.update(
-    {quantity : product?.product_details[0].quantity - quantity},{
+    {quantity : product?.product_details[0].quantity - newQuantity},{
     where : {
       productId : productId,
       isDefault: true
     }
   })
-  const newSubtotal = (product.productPrice * quantity)
+
+  const newSubtotal = (price * quantity)
   console.log("subtotal dari normal " ,newSubtotal)
 
   return{
     name : name,
     productId : productId,
     quantity : quantity,
-    price : product?.productPrice,
-    subtotal : newSubtotal
+    price : price,
+    subtotal : newSubtotal,
+    buyOneGetOne : (product.discountProducts[0]?.discount?.oneGetOne === true ?
+      1 : 0)
   }
   }
 
