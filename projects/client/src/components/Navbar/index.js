@@ -23,6 +23,9 @@ export default function Navbar ({ user, isLogin, ongoingTransactions }) {
         setShowModal({ show: false, context: "" })
     }
 
+
+    
+
     useEffect(()=>{
         if (isSidebarActive) {
             document.body.style.overflow = "hidden"
@@ -105,8 +108,8 @@ export default function Navbar ({ user, isLogin, ongoingTransactions }) {
                         context={showModal.context}
                         title={
                             showModal.context === "login"
-                                ? "Login"
-                                : "Register"
+                                ? "Gabung"
+                                : "Registrasi"
                         }
                     />
                 </motion.div>

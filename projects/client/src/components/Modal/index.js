@@ -25,6 +25,7 @@ export default function Modal({
   const [regist, setRegist] = useState(false);
   const [doneregist,setDoneRegist] = useState(false)
   const [forgot, setForgot] = useState(false);
+  const [supress, setSupress] = useState(true);
   const [titleModal, setTitle] = useState("");
   const dispatch = useDispatch()
   const {isRegister,isLogin} = useSelector(state =>{
@@ -45,10 +46,12 @@ export default function Modal({
       if (e.key === "Escape") {
         closeModal();
         setTitle("");
+        setSupress(true)
       }
     };
-
-    context === "login" ? setLogin(true) :  setRegist(true); 
+    if(supress){
+      context === "login" ? setLogin(true) :  setRegist(true); 
+    }
     // if(context === "register"){
     //   setRegist(true); 
     // }
@@ -97,7 +100,7 @@ export default function Modal({
                   setLogin(false);
                   setRegist(false);
                   setForgot(false)
-                  // dispatch(resetRegister())
+                  setSupress(true)
                 }
               }}
               className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
@@ -122,7 +125,7 @@ export default function Modal({
                       setLogin(false);
                       setForgot(false)
                       setRegist(false);
-                      // dispatch(resetRegister())
+                      setSupress(true)
                     }}
                     >
                     <HiArrowLongLeft className={`text-3xl text-primary`} />
@@ -141,7 +144,7 @@ export default function Modal({
                     setLogin(false);
                     setForgot(false)
                     setRegist(false);
-                    // dispatch(resetRegister())
+                    setSupress(true)
                   }}
                   >
                   <HiXMark className={`text-3xl ${closeButtonText && "hidden"}`} />
@@ -157,25 +160,29 @@ export default function Modal({
                 : 
                 login ? (
                   <LoginContext
+                    setTitle={setTitle}
                     onLogin={() => {
                       setLogin(false);
                     }}
                     onRegist={() => {
                       setRegist(true);
                       setLogin(false);
-                      setTitle("Register");
+                      setTitle("Registrasi");
+                    }}
+                    onSupress={()=>{
+                      setSupress(false)
                     }}
                     onForgot={() => {
                       setForgot(true);
                       setRegist(false);
-                      setTitle("Forgot Password");
+                      setTitle("Lupa Password");
                     }}
                     onClose ={() => closeModal()}
                   />
                 ) : regist ? 
                   <RegisterContext
                   onDoneRegist={()=>{
-                    setTitle("Next Step")
+                    setTitle("Langkah Selanjutnya")
                     setRegist(true);
                     setLogin(false);
 
@@ -185,7 +192,7 @@ export default function Modal({
                     ()=>{
                       setRegist(false)
                       setLogin(true)
-                      setTitle("Login");
+                      setTitle("Gabung");
 
                     }
                   }

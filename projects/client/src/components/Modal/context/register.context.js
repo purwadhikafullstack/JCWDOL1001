@@ -29,11 +29,10 @@ export default function RegisterContext ({
         const timeoutID = setTimeout(() => {
             if (submit && resend && refresh > 0){
                 setRefresh(refresh - 1)
-
             }
         }, 1000)
 
-        if ( submit && resend && refresh === 0){
+        if (submit && resend && refresh === 0){
             setResend(false)
         }
         return () => clearTimeout(timeoutID)
@@ -93,10 +92,10 @@ export default function RegisterContext ({
         }
     },[email,isRegister])
 
-    // useEffect(()=>{
-    //     // dispatch(resetRegister())
-    //     console.log("nilai handler di useeffect : ",isRegister)
-    // },[])
+    useEffect(()=>{
+        // dispatch(resetRegister())
+        console.log("nilai handler di useeffect : ",isRegister)
+    },[])
 
 
     return (

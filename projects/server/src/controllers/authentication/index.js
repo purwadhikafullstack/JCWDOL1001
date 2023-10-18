@@ -149,7 +149,7 @@ const register= async (req, res, next) => {
         });
 
         //@ send otp to email for verification
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "verify.html"), "utf8");
         const html = handlebars.compile(template)({ name: (name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {
