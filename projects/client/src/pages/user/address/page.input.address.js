@@ -78,7 +78,6 @@ export default function InputAddressPage({
   }, [addressData]);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
 
     window.scrollTo({
       top: 0,
@@ -290,7 +289,6 @@ export default function InputAddressPage({
               isLoading={isSubmitAddressLoading}
               isDisabled={isToastVisible}
               title={addressData && addressData?.length !== 0 ? "Ubah Alamat" : "Tambah Alamat"}
-              // type={isToastVisible ? "button" : "submit"}
               type="button"
               onClick={()=>handleSubmit()}
             />
@@ -331,7 +329,6 @@ export default function InputAddressPage({
               isPrimary
               title={addressData && addressData?.length !== 0 ? "Ya, ubah" : "Ya, tambahkan alamat"}
               className="mt-4"
-              // type="submit"
               type="button"
               onClick={()=>handleSubmit()}
               isLoading={isSubmitAddressLoading}
