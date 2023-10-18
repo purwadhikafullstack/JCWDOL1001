@@ -280,5 +280,5 @@ export const getProfile = createAsyncThunk(
 )
 
 export const resetRegister = () => ({
-    type: "auth/user/resetRegister",
+    type: "auth/resetRegister",
 });

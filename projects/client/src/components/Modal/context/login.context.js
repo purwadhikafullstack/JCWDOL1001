@@ -34,7 +34,9 @@ export default function LoginContext ({
             })
             setError("")
             dispatch(login(output))
-
+            onLogin()
+            onRegist()
+            
         }catch(error) {
             const errors = {}
 

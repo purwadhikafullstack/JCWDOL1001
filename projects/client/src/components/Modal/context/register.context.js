@@ -12,10 +12,7 @@ export default function RegisterContext ({
     isRegister
 }){
 
-
-
     const [submit , setSubmit] = useState(false);
-    // const [handler, setHandler] = useState(false)
     const [resend,setResend] = useState(true);
     const dispatch = useDispatch()
     const [email,setEmail] = useState(false);
@@ -64,8 +61,7 @@ export default function RegisterContext ({
         await RegisterValidationSchema.validate(request, {
             abortEarly: false,
         });
-        dispatch(resetRegister())
-        dispatch(register(request))
+        dispatch(register(request)).then(()=>dispatch(resetRegister()))
         setError("");
 
       
@@ -87,7 +83,6 @@ export default function RegisterContext ({
     }
     }
 
-    console.log("nilai handler setiap click : ",isRegister)
     useEffect(()=>{
         if(isRegister && email){ 
                 setSubmit(true)

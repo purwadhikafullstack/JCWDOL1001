@@ -111,6 +111,7 @@ const authSlice = createSlice({
         },  
         [register.pending] : (state, action) => {
             state.isRegisterLoading = true
+                        // state.isRegister = false
         },
         [register.fulfilled] : (state, action) => {
             state.isRegisterLoading = false

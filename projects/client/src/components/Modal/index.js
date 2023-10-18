@@ -32,6 +32,10 @@ export default function Modal({
         isRegister : state?.auth?.isRegister
     }
 })
+  useEffect(()=>{
+
+  },[])
+
   useEffect(() => {
     const handleEscapeKey = (e) => {
       if (e.key === "Escape") {
@@ -39,9 +43,9 @@ export default function Modal({
         setTitle("");
       }
     };
-    console.log(isRegister)
-    dispatch(resetRegister())
-
+    console.log("login",login)
+    console.log("register",regist)
+    console.log("context",context)
     context === "login" ? setLogin(true) :  setRegist(true); 
 
     document.addEventListener("keydown", handleEscapeKey);
@@ -50,7 +54,7 @@ export default function Modal({
       document.removeEventListener("keydown", handleEscapeKey);
     
     };
-    
+
     
   }, [closeModal, showModal]);
 
@@ -85,7 +89,7 @@ export default function Modal({
                   setLogin(false);
                   setRegist(false);
                   setForgot(false)
-                  dispatch(resetRegister())
+                  // dispatch(resetRegister())
                 }
               }}
               className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm dark:bg-slate-600/60"
@@ -110,7 +114,7 @@ export default function Modal({
                       setLogin(false);
                       setForgot(false)
                       setRegist(false);
-                      dispatch(resetRegister())
+                      // dispatch(resetRegister())
                     }}
                     >
                     <HiArrowLongLeft className={`text-3xl text-primary`} />
@@ -129,7 +133,7 @@ export default function Modal({
                     setLogin(false);
                     setForgot(false)
                     setRegist(false);
-                    dispatch(resetRegister())
+                    // dispatch(resetRegister())
                   }}
                   >
                   <HiXMark className={`text-3xl ${closeButtonText && "hidden"}`} />
