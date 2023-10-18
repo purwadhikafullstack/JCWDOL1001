@@ -1,6 +1,11 @@
 const { Op } = require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
+const {helperTransporter} = require("../../helper/index.js")
 const { Forum, User_Profile,User_Account } = require("../../model/relation.js")
+const {GMAIL} = require("../../config/index.js")
+const fs = require("fs")
+const path = require("path")
+const handlebars = require("handlebars")
 const moment = require ("moment")
 
 
@@ -192,7 +197,7 @@ const answerQuestion = async (req, res, next) => {
         })
         //send only once
         if(qna.dataValues?.answer === null){
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "getAnAnswer.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "getAnAnswer.html"), "utf8");
         const html = handlebars.compile(template)({name : profile?.dataValues?.name ,answer: answer, question : qna.dataValues?.question})
     
         const mailOptions = {

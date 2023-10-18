@@ -4,6 +4,7 @@ import ModalDetailTransaction from "../components/modal.detail.transaction";
 import EmptyTransaction from "../components/empty.transaction";
 import SkeletonTransaction from "../components/skeleton";
 import TransactionCard from "../components/transaction.card";
+import Button from "../../../../components/Button";
 
 export default function PesananDibatalkan({ 
     transaction,
@@ -69,6 +70,15 @@ export default function PesananDibatalkan({
         {showModal.show &&
         <>
           <ModalDetailTransaction handleCloseModal={handleCloseModal} selectedTransaction={selectedTransaction}/>
+          <div className="grid md:grid-cols-3 gap-2 mt-4">
+            <Button
+              isButton
+              isPrimary
+              title={`Kembali`}
+              className={`md:col-start-3 md:row-start-1`}
+              onClick={() => handleCloseModal()}
+            />
+          </div>
         </>
         }
       </Modal>

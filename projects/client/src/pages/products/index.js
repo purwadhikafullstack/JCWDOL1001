@@ -178,7 +178,7 @@ export default function Products({ user }) {
           </div>
 
           <div className="col-span-1 lg:col-span-4">
-            <div className="flex justify-center items-center lg:justify-between gap-2">
+            <div className="flex justify-center items-center flex-col md:flex-row md:justify-between gap-2">
               <form
                 className="relative w-full lg:w-1/3"
                 onSubmit={(e) => {
@@ -207,7 +207,7 @@ export default function Products({ user }) {
               }
               </form>
 
-              <div className="group relative w-1/2 md:w-1/3 lg:w-1/5 self-stretch">
+              <div className="group relative md:w-1/3 lg:w-1/5 self-stretch">
                 <Button
                   isButton
                   isBLock

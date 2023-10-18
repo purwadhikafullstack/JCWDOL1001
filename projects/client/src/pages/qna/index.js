@@ -119,7 +119,7 @@ export default function QnAPage() {
         <Button isSmall isPrimaryOutline isPrimary title="Ingin Bertanya" className="mb-5"
           onClick={handlePertanyaan} />
         <div className="flex gap-4">
-          <Input ref={questionRef} type="text" placeholder="Search" />
+          <Input ref={questionRef} type="text" placeholder="Cari Pertanyaan" />
           <Button isButton isPrimaryOutline
             onClick={()=>{
               dispatch(getPublicForum({filterQuestion : questionRef?.current.value}))
@@ -145,15 +145,15 @@ export default function QnAPage() {
                     src={process.env.REACT_APP_CLOUDINARY_BASE_URL + list.user_profile.profilePicture}
                   />
                 </div>
-                <div className="flex w-full">
-                  <div className="flex flex-col">
-                    <p className="text-sm text-left font-bold text-dark md:text-base">
+                <div className="flex w-full ">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-left break-before-all max-w-md font-bold text-dark md:text-base">
                       " {list.question} "
                     </p>
                     <p className="text-sm text-left text-dark md:text-base">
                       Oleh : {list.user_profile.name}
                     </p>
-                    <div className={`flex flex-col items-start grow  ${width <= mobileWidth ? "" : "hidden"}`}>
+                    <div className={`flex flex-col gap-2 items-start grow  ${width <= mobileWidth ? "" : "hidden"}`}>
                       <p className="text-sm text-dark md:text-base">
                         {formatDateWithTime(list.createdAt)}
                       </p>
@@ -162,7 +162,7 @@ export default function QnAPage() {
                       </p>
                     </div>
                   </div>
-                  <div className={`flex grow flex-col text-right ${width <= mobileWidth &&"hidden"}`}>
+                  <div className={`flex grow flex-col gap-2 text-right ${width <= mobileWidth &&"hidden"}`}>
                     <p className="text-sm text-dark md:text-base">
                       {formatDateWithTime(list.createdAt)}
                     </p>
@@ -215,7 +215,7 @@ export default function QnAPage() {
                 <p className="text-sm  text-dark md:text-base">
                   {formatTime(selectedQuestion.updatedAt)}
                 </p>
-                <p className="text-sm pt-5 break-all font-bold text-dark md:text-base">
+                <p className="text-sm pt-5 break-before-all font-bold text-dark md:text-base">
                   " {selectedQuestion.answer} "
                 </p>
               </div>

@@ -14,6 +14,7 @@ import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
 import { HiMagnifyingGlass, HiMinus, HiXMark } from "react-icons/hi2";
 import Input from "../../../components/Input";
+import { totalProductCart } from "../../../store/slices/cart/slices";
 
 export default function Transaction({
   ongoingTransactions
@@ -116,10 +117,11 @@ export default function Transaction({
     }));
 
     if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
-
+    
   }, [page, sortDate, searchedInvoice]);
   
   useEffect(() => {
+    dispatch(totalProductCart())
     dispatch(getTransactionStatus());
   }, []);
   
@@ -209,7 +211,7 @@ export default function Transaction({
 
         <div>
           <div className="flex flex-col justify-between border-b py-2 border-primary/30">
-            <div className="flex flex-col md:flex-row md:justify-between gap-2">
+            <div className="flex flex-col md:items-center md:flex-row md:justify-between gap-2">
               <>
                 <form className="relative w-full md:w-1/3" onSubmit={(e) => {
                     e.preventDefault()

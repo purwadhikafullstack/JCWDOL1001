@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 function ListOfUser({
     user = [],selected
 }){
-    return user.map((item,index)=>{
+    return user?.map((item,index)=>{
         return(
             <option value={[item?.email, item?.userProfile.name, item?.imgRecipe]}
             selected={item?.userProfile.name === selected }
