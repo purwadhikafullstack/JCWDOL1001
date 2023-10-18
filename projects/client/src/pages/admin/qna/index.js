@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, deleteQuestion, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
@@ -146,7 +146,6 @@ useEffect( ()=>{
         dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")})))
 
     }, [sortDate])
-
     
     return (
         <div>

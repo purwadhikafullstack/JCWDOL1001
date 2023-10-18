@@ -57,7 +57,7 @@ export default function Address({
   };
 
   useEffect(() => {
-    dispatch(getAddress(page));
+    dispatch(getAddress({page}));
 
     setShowHandlePageContext({ show: false, action: "" });
   }, [isSubmitAddressLoading, page]);
