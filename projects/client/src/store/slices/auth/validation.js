@@ -41,30 +41,31 @@ export const VerifyValidationSchema = Yup.object({
         const validDate = new Date();
         const valid = validDate.getFullYear() - dob.getFullYear() >= 12;
         return !valid ? ctx.createError() : valid; 
-      }).transform(parseDateString).required("Birthdate is required") ,
+      }).transform(parseDateString).required("Tanggal lahir dibutuhkan") ,
 })
 
 export const changePasswordValidationSchema = Yup.object({
     oldPassword : Yup.string().required("Password Lama harus diisi!")
         .min(6,"Password harus minimal 6 karakter"),
     newPassword : Yup.string().required("Password Baru harus diisi!")
-        .min(6,"Password harus minimal 6 karakter"),
+        .min(6,"Password harus minimal 6 karakter").matches(passwordRegExp,
+            "Password tidak sesuai format"),
     rePassword : Yup.string().required("Konfirmasi ini harus diisi!")
         .min(6,"Password harus minimal 6 karakter").oneOf([Yup.ref('newPassword'), null], 
         'Harus sama dengan password baru anda!'), 
 })
 
 export const changeEmailValidationSchema = Yup.object({
-    email : Yup.string().email("Invalid email").required("Email is required"),
+    email : Yup.string().email("Email harus valid").required("Email harus dibutuhkan"),
 })
 
 export const changeProfileValidationSchema = Yup.object({
-    name : Yup.string().required("Name is required"),
-    gender : Yup.string().required("Gender is required"),
-    birthdate : Yup.date().transform(parseDateString).required("Birthdate is required") ,
-    phone : Yup.string().matches(phoneRegExp, 'Phone number is not valid')
-        .min(11, "Phone number must at least 11 characters")
-        .max(13, "Phone number must less than 14 characters")
+    name : Yup.string().required("Nama dibutuhkan"),
+    gender : Yup.string().required("Jenis Kelamin dibutuhkan"),
+    birthdate : Yup.date().transform(parseDateString).required("Tanggal Lahir harus ada.") ,
+    phone : Yup.string().matches(phoneRegExp, 'No telepon harus valid')
+        .min(11, "Nomor telepon minimal 11 karakter")
+        .max(13, "Nomor telepon maksimal 13 karakter")
 })
 
 export const ForgotPassValidationSchema = Yup.object({
