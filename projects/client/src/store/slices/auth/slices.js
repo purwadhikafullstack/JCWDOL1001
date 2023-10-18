@@ -51,7 +51,7 @@ export const logout = createAsyncThunk(
         try {
             localStorage.removeItem("token")
 
-            toast.success("Logout Success")
+            toast.success("Berhasil keluar")
         } catch (error) {
             toast.error(error.response ? error.response.data : error)
 

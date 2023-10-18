@@ -62,7 +62,7 @@ const login = async (req, res, next) => {
             .status(200)
             .json({ 
                 type : "success",
-                message : `Welcome ${userExists.dataValues.email}`,
+                message : `Selamat datang ${userExists.dataValues.userProfile.name}`,
                 user : userExists 
             })
 
@@ -149,7 +149,7 @@ const register= async (req, res, next) => {
         });
 
         //@ send otp to email for verification
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "verify.html"), "utf8");
         const html = handlebars.compile(template)({ name: (name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
         const mailOptions = {
@@ -296,7 +296,7 @@ const resendOtp = async (req, res, next) => {
 
 
         //@ send otp to email for verification
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "verify.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "verify.html"), "utf8");
 
         const html = handlebars.compile(template)({ name: (user?.userProfile?.name), otp : (otpToken), link :(REDIRECT_URL + `/verify/reg-${accessToken}`) })
 
@@ -407,7 +407,7 @@ const changeEmailOtp = async (req, res, next) => {
             roleId : user?.role,
         });
 
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "emailverify.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "emailverify.html"), "utf8");
         const html = handlebars.compile(template)({otp : (otpToken)})
     
         const mailOptions = {
@@ -520,7 +520,7 @@ const forgotPass = async ( req,res,next) => {
         }); 
 
         //@send verification email
-        const template = fs.readFileSync(path.join(process.cwd(), "templates", "forgotPass.html"), "utf8");
+        const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "forgotPass.html"), "utf8");
         const html = handlebars.compile(template)({link :(REDIRECT_URL + `/reset-password/reset-${accessToken}`) })
         
         const mailOptions = {

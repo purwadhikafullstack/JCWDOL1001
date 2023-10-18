@@ -8,10 +8,9 @@ export default function ModalDetailTransaction({
 }) {
   const transactionDetail = selectedTransaction?.transactionDetail;
   const shippingAddress = selectedTransaction?.user_address;
-  console.log(selectedTransaction)
 
   return (
-      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[60vh] pr-1 lg:max-h-[65vh] overflow-y-auto mt-2">
+      <div className="grid gap-2 lg:gap-8 lg:grid-cols-2 max-h-[80vh] pr-1 lg:max-h-[90vh] overflow-y-auto mt-2">
         <div className="left-container">
           {countdown &&
             <div className="mb-4 p-2 border flex justify-center border-warning rounded-lg font-semibold text-xl w-1/2">
@@ -81,7 +80,12 @@ export default function ModalDetailTransaction({
                   alt={product.listedTransaction.productName}
                 />
                 <div className="w-full">
-                  <p>{product.listedTransaction.productName}</p>
+                  <div className="flex justify-between">
+                    <p>{product.listedTransaction.productName}</p>
+                    {product.buyOneGetOne &&
+                      <p className="text-danger font-semibold">Beli 1 Gratis 1</p>
+                    }
+                  </div>
                   <div className="flex justify-between">
                     <div className="flex gap-2">
                       <p>Rp. {formatNumber(product.price)}</p>

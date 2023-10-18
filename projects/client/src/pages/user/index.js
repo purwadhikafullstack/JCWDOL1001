@@ -13,7 +13,7 @@ import ForumPage from "./forum";
 export default function UserPage({ user, ongoingTransactions, verify, setVerify }) {
   const { context } = useParams();
 
-  const profile = user.profile;
+  const profile = user?.profile;
 
   const [mobileContextActive, setMobileContextActive] = useState(false);
   const [showHandlePageContext, setShowHandlePageContext] = useState({

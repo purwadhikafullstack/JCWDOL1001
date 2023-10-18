@@ -140,7 +140,7 @@ export default function ModalEditProductUnit({
                         <select 
                             value={unitSelected?.unitName} 
                             onChange={handleChangeUnit}
-                            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg block w-fit p-2.5 ${error.unit ? `border-red-600` : `border-gray-300`}`}
+                            className={`bg-gray-50 border text-gray-900 text-sm rounded-lg w-full block p-2.5 ${error.unit ? `border-red-600` : `border-gray-300`}`}
                         >
                             <option value="default" disabled >Pilih satuan </option>
                             {dataUnits.map((unit) => (

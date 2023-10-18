@@ -62,7 +62,7 @@ async function cancelExpiredTransactions() {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : "Mohon maaf, transaksi kamu tidak dapat dilanjutkan oleh Team Apotech karena telah melewati batas waktu pembayaran",
@@ -72,7 +72,7 @@ async function cancelExpiredTransactions() {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pesanan Dibatalkan ${transaction.dataValues?.invoice}`,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
           html: html
         }
 
@@ -81,16 +81,6 @@ async function cancelExpiredTransactions() {
         console.log("Email sent: " + info.response);
       })
     }
-    console.log(transactionsToCancel);
-
-    const transactionIds = transactionsToCancel.map((transaction) => transaction.dataValues?.transactionId);
-    const reverseList = await Transaction_Detail.findAll({
-      where: {
-        transactionId: { [Op.in]: transactionIds },
-      },
-    });
-
-    await cancelTransactionService(reverseList);
     
   } catch (error) {
     console.error("Error while canceling expired transactions:", error);
@@ -261,6 +251,7 @@ const getOngoingTransactions = async (req, res, next) =>{
 
 const createTransactions = async (req, res, next) => {
   try {
+    //const transaction = await db.sequelize.transaction(async()=>{
     const { userId } = req.user;
     const { transport, totalPrice, addressId,discountId, discount } = req.body;
 
@@ -303,14 +294,12 @@ const createTransactions = async (req, res, next) => {
     const expiredTime = moment().add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
     let date = new Date().getTime()
 
-    let isDiscount = discount ? discount : 0
-
     const newTransactionList = {
       userId: userId,
-      total: +totalPrice + +transport + -isDiscount,
+      total: +totalPrice + +transport + -discount,
       transport: transport,
       subtotal: totalPrice,
-      discount: isDiscount,
+      discount: discount,
       statusId: 1,
       addressId : addressId,
       expired : expiredTime,
@@ -377,7 +366,7 @@ const createTransactions = async (req, res, next) => {
       where : { userId : userId }
     })
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "transactionSuccessful.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "transactionSuccessful.html"), "utf8");
     const html = handlebars.compile(template)({ 
       order: (newTransaction.transactionId),
       invoice : (newTransactionList.invoice)
@@ -393,12 +382,17 @@ const createTransactions = async (req, res, next) => {
       helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
         if (error) throw error;
       })
+    //});
+
+    //await transaction.commit();
+
     res.status(200).json({
       type: "success",
       message: "Transaction created!",
       data: finishTransaction,
     });
   } catch (error) {
+    //await transaction.rollback();
     next(error);
   }
 };
@@ -476,7 +470,7 @@ const uploadPaymentProof = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "upload-payment-proof.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "upload-payment-proof.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name: (name), 
       link :(REDIRECT_URL + `/products`) 
@@ -485,7 +479,7 @@ const uploadPaymentProof = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Menunggu Konfirmasi ${transaction.dataValues?.invoice}`,
+        subject: `Menunggu Konfirmasi ${transaction.dataValues?.createdAt}`,
         html: html
       }
 
@@ -542,7 +536,7 @@ const confirmPayment = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pembayaran Diterima"),
@@ -552,7 +546,7 @@ const confirmPayment = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pembayaran Diterima ${transaction.dataValues?.invoice}`,
+        subject: `Pembayaran Diterima ${transaction.dataValues?.createdAt}`,
         html: html
       }
 
@@ -606,7 +600,7 @@ const processOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Diproses"),
@@ -616,7 +610,7 @@ const processOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Diproses ${transaction.dataValues?.invoice}`,
+        subject: `Pesanan Diproses ${transaction.dataValues?.createdAt}`,
         html: html
       }
 
@@ -670,7 +664,7 @@ const sendOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "ongoing-2-5.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "ongoing-2-5.html"), "utf8");
     const html = handlebars.compile(template)({
       name: (name), 
       title: ("Pesanan Dikirim"),
@@ -680,7 +674,7 @@ const sendOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Dikirim ${transaction.dataValues?.invoice}`,
+        subject: `Pesanan Dikirim ${transaction.dataValues?.createdAt}`,
         html: html
       }
 
@@ -734,7 +728,7 @@ const receiveOrder = async (req, res, next) => {
     const name = transaction.dataValues?.user_account.userProfile.name;
     const email = transaction.dataValues?.user_account.email;
 
-    const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "receive-order.html"), "utf8");
+    const template = fs.readFileSync(path.join(process.cwd(), "templates", "receive-order.html"), "utf8");
     const html = handlebars.compile(template)({ 
       name : (name), 
       link : (REDIRECT_URL + `/products`) 
@@ -743,7 +737,7 @@ const receiveOrder = async (req, res, next) => {
     const mailOptions = {
         from: `Apotech Team Support <${GMAIL}>`,
         to: email,
-        subject: `Pesanan Diterima ${transaction.dataValues?.invoice}`,
+        subject: `Pesanan Diterima ${transaction.dataValues?.createdAt}`,
         html: html
       }
 
@@ -802,7 +796,7 @@ const rejectPayment = async (req, res, next) => {
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "reject-payment.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "reject-payment.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         // bankName : (bankName),
@@ -815,7 +809,7 @@ const rejectPayment = async (req, res, next) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pembayaran Ditolak ${transaction.dataValues?.invoice}`,
+          subject: `Pembayaran Ditolak ${transaction.dataValues?.createdAt}`,
           html: html
         }
 
@@ -891,12 +885,12 @@ const cancelTransaction = async (req, res, next) => {
       message: middlewareErrorHandling.TRANSACTION_NOT_FOUND
     });
 
-    // if (roleId === 2 && transaction.dataValues.statusId !== 1) {
-    //   throw ({
-    //     status: middlewareErrorHandling.BAD_REQUEST_STATUS,
-    //     message: "Transaction cannot be canceled."
-    //   })
-    // }
+    if (roleId === 2 && transaction.dataValues.statusId !== 1) {
+      throw ({
+        status: middlewareErrorHandling.BAD_REQUEST_STATUS,
+        message: "Transaction cannot be canceled."
+      })
+    }
 
     if ([1, 2, 3].includes(transaction.dataValues.statusId)) {
       await transaction.update({
@@ -923,13 +917,33 @@ const cancelTransaction = async (req, res, next) => {
         transactionId : transactionId,
       }})
 
-      await cancelTransactionService(reverseList)
+      // //product check
+      for (const item of reverseList){
+        // reverseList.map(async (item) =>{ 
+          const {productId, quantity} = item
+          //seandainya di product resep, ada barangnya
+          const listRecipe = await Product_Recipe.findAll({where : 
+          {
+            productId : productId
+          }})
+          //produk satuan
+          if(listRecipe.length === 0){
+            await normalProductCancel(productId, quantity)
+          }
+        //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
+          if(listRecipe.length !== 0){
+          //  await Promise.all(
+          //   listRecipe.map(async (itemRecipe) =>{
+            await customProductCancel(listRecipe,quantity)
+            // }))
+          }
+        }
       // })
 
       const name = transaction.dataValues?.user_account.userProfile.name;
       const email = transaction.dataValues?.user_account.email;
 
-      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "cancel-transaction.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "templates", "cancel-transaction.html"), "utf8");
       const html = handlebars.compile(template)({ 
         name : (name),
         information : (information),
@@ -939,7 +953,7 @@ const cancelTransaction = async (req, res, next) => {
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
           to: email,
-          subject: `Pesanan Dibatalkan ${transaction.dataValues?.invoice}`,
+          subject: `Pesanan Dibatalkan ${transaction.dataValues?.createdAt}`,
           html: html 
         }
 
@@ -963,29 +977,6 @@ const cancelTransaction = async (req, res, next) => {
     next(error);
   }
 };
-
-async function cancelTransactionService(reverseList) {
-  for (const item of reverseList){
-        // reverseList.map(async (item) =>{ 
-          const {productId, quantity} = item
-          //seandainya di product resep, ada barangnya
-          const listRecipe = await Product_Recipe.findAll({where : 
-          {
-            productId : productId
-          }})
-          //produk satuan
-          if(listRecipe.length === 0){
-            await normalProductCancel(productId, quantity)
-          }
-        //stock yang berubah hanya komposisi. obat racik = kumpulan produk sec unit
-          if(listRecipe.length !== 0){
-          //  await Promise.all(
-          //   listRecipe.map(async (itemRecipe) =>{
-            await customProductCancel(listRecipe,quantity)
-            // }))
-          }
-        }
-}
 
 async function normalProductCancel(productId,quantity){
 
