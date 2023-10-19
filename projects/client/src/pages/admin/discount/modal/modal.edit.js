@@ -68,6 +68,17 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     message:"Produk diskon tidak perlu kode"
                 }]}) 
             }
+            //(amount dan produk) atau buy one get one tidak perlu kode
+            if((minimum !=="") && 
+                ( ( (amount !=="" || amount !=0 ) ) ||  (isOneGetOne.id == 1 ) )
+                 &&
+                selectedProducts.length > 0
+            ){
+                throw({inner : [{
+                    path : "minimalTransaction",
+                    message:"Produk diskon tidak perlu minimal transaksi"
+                }]}) 
+            }
             // code harus ada amount atau minimal transaksi 
             if((code ==="" ) && 
                 (((amount !=="" || amount !=0 ) ) ||
@@ -91,11 +102,10 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     message:"Potongan diperlukan"
                 }]}) 
             }
-
             output.data = {
                 "discountDesc" : desc,
                 "isPercentage" : +isPercentage.id,
-                "discountAmount" : amount,
+                "discountAmount" : amount ==="" ? 0 : amount,
                 "discountExpired" : expiredRef?.current?.value ? expiredRef?.current?.value : selectedId?.discountExpired,
                 "oneGetOne" : +isOneGetOne.id,
                 "minimalTransaction" : minimum =="" ? null : minimum,
@@ -112,6 +122,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
+                console.log(output)
                 dispatch(updateDiscount({discountId : selectedId?.discountId,output}))
             }
         }catch(error){
@@ -144,7 +155,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
         return ( 
             <SuccessMessage 
                 type="success" 
-                message={`${selectedId.length === 0  ? "Berhasil menambahkan diskon baru!" : "Berhasil mengubah diskon"}`} 
+                message={`${selectedId?.length === 0  ? "Berhasil menambahkan diskon baru!" : "Berhasil mengubah diskon"}`} 
                 handleCloseModal={handleCloseModal} 
             /> 
         ) 
@@ -215,36 +226,40 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     <div>
                         <input
                             type="radio"
-                            id="1"
+                            id="persenYes"
                             name="isPercentage"
                             value="Ya"
                             checked = {isPercentage?.name === "Ya" ? true : false}
-                            onChange={()=>{setIsPercentage({id:"1",name:"Ya"});setIsOneGetOne({id:"0",name:"Tidak"})}}
+                            onChange={()=>{
+                                setIsPercentage({id:"1",name:"Ya"})
+                                setIsOneGetOne({id:"0",name:"Tidak"})
+                                amount > 100 && setAmount(100)
+                            }}
                         />
-                        <label for="1" className="mr-4">Ya</label>
+                        <label for="persenYes" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
-                            id="0" 
+                            id="persenNo" 
                             name="isPercentage" 
                             value="Tidak" 
                             checked = {isPercentage?.name === "Tidak" ? true : false}
                             onChange={()=>{setIsPercentage({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">Tidak</label>
+                        <label for="persenNo">Tidak</label>
                     </div>
                 </fieldset>
                 <h4 className="title font-bold mt-4">Beli Satu Gratis Satu : </h4>
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {selectedId?.oneGetOne ? "Ya" : "Tidak" }</h1>
-                <fieldset className={`${onEdit ? "pt-3 z-50" : "hidden"}`} id="oneGetOne">
+                <fieldset className={`${onEdit ? "pt-3" : "hidden"}`} id="oneGetOne">
                     <div>
                         <input
                             type="radio"
-                            id="1"
+                            id="getOneYes"
                             name="isOneGetOne"
                             value="Ya"
                             checked = {isOneGetOne?.name === "Ya" ? true : false}
                             onChange={() => {
-                                setAmount("")
+                                setAmount(0)
                                 setMinimum("")
                                 setCode("")
                                 setError({ ...error, discountAmount: false, minimalTransaction:false })
@@ -253,16 +268,16 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                             }}
                             
                         />
-                        <label for="1" className="mr-4">Ya</label>
+                        <label for="getOneYes" className="mr-4">Ya</label>
                         <input 
                             type="radio" 
-                            id="0" 
+                            id="getOneNo" 
                             name="isOneGetOne" 
                             value="Tidak" 
                             checked = {isOneGetOne?.name === "Tidak" ? true : false}
                             onChange={()=>{setIsOneGetOne({id:"0",name:"Tidak"})}}
                         />
-                        <label for="0">Tidak</label>
+                        <label for="getOneNo">Tidak</label>
                     </div>
                 </fieldset>
             </div>
@@ -301,6 +316,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                     onChange={(e) => {
                         setError({ ...error, discountAmount: false })
                         setAmount(e.target.value)
+                        isPercentage?.id == 1 && e.target.value > 100 && setAmount(100)
                     }}
                 />
                 {error.discountAmount && (
@@ -328,7 +344,7 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
                 <h1 className={`${onEdit ? "hidden" : "title" }`}>| {!selectedId?.minimalTransaction ? "-" : `Rp. ${formatNumber(selectedId?.minimalTransaction)}` }</h1>
             </div>
         </div>       
-        <ProductList title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>
+        <ProductList selectedId={selectedId} title={title} dataDiscount={selectedId} onEdit={onEdit} selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setError={setError} error={error}/>
     </div>
   )
 }
