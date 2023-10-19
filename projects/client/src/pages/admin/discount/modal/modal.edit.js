@@ -122,7 +122,6 @@ export default function ModalDetailsDiscount({selectedId, handleCloseModal, hand
             if(!selectedId || selectedId.length ==0){
                 dispatch(createDiscount(output))
             }else {
-                console.log(output)
                 dispatch(updateDiscount({discountId : selectedId?.discountId,output}))
             }
         }catch(error){
