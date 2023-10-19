@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import {useState, useRef } from "react";
-import { changePassword} from "../../../store/slices/auth/slices";
+import { changePassword, changePasswordSuccess} from "../../../store/slices/auth/slices";
 import Input from "../../../components/Input";
 import { changePasswordValidationSchema } from "../../../store/slices/auth/validation";
 import Button from "../../../components/Button";
@@ -64,16 +64,20 @@ export default function Password() {
     }
   }
   
-  if(passwordChangeStatus === "success"){
+  const clearField = () => {
     oldPasswordRef.current.value = null;
     newPasswordRef.current.value = null;
     rePasswordRef.current.value = null;
   }
+  if(passwordChangeStatus === "success"){
+    clearField();
+    dispatch(changePasswordSuccess())
+  }
 
   return (
         <div className="col-span-3 h-screen border-double rounded-xl">
-          <div className=" border-collapse border-b-2 border-solid border-black">
-            <h1 className=" font-extrabold text-3xl text-center">This is the Password section</h1>           
+          <div className="">
+            <h3 className="title">Password</h3>           
           </div>
           <div>
             <form className="flex flex-col p-4" onSubmit={(event) => handleReset(event)}>

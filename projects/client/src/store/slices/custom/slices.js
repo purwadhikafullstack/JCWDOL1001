@@ -16,7 +16,7 @@ export const getUser = createAsyncThunk(
             if(sortDate) PARAMETER += `&sortDate=${sortDate}&search`
 
             if(search) PARAMETER += `=${search}`
-            console.log(PARAMETER)
+            // console.log(PARAMETER)
             const { data } = await api.get("products/recipe/user"+PARAMETER)
             // toast.success(data?.message)
             return data

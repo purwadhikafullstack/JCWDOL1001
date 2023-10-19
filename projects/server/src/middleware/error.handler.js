@@ -2,6 +2,7 @@ const SOMETHING_WENT_WRONG = "Terjadi kesalahan";
 const EMAIL_NOT_FOUND = "Email tidak ditemukan";
 const EMAIL_HAS_BEEN_USED = "Email sudah digunakan sebelumnya.";
 const USER_NOT_FOUND = "Pengguna tidak ditemukan";
+const USER_ALREADY_EXISTS = "Pengguna telah terdaftar";
 const INCORRECT_PASSWORD = "Kata sandi salah";
 const BAD_REQUEST = "Permintaan tidak valid";
 const LINK_EXPIRED = "Sudah tidak valid. Kode OTP Anda telah kedaluwarsa. Silakan minta kode OTP baru di halaman sebelumnya.";
@@ -118,5 +119,6 @@ module.exports = {
     PRODUCT_ALREADY_HAVE_DISCOUNT,
     DISCOUNT_IS_EXPIRED,
     NOT_MEET_MINIMUM_TRANSACTION,
-    NOT_NEED_CODE
+    NOT_NEED_CODE,
+    USER_ALREADY_EXISTS
 }

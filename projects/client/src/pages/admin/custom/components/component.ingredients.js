@@ -48,7 +48,7 @@ export default function IngredientList({
         }
     })
     useEffect(()=>{
-        console.log(isSubmit)
+        // console.log(isSubmit)
         if(isSubmit){
             resetValue()
         }
@@ -119,7 +119,7 @@ export default function IngredientList({
                 <Input
                 value={selectProductRef ? selectProductRef[1] : ""}
                 type="text"
-                placeholder="Search..."
+                placeholder="Cari Produk..."
                 className="pr-16"
                 onChange={(event)=>{
                     setVisible(true)

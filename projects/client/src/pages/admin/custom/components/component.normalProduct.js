@@ -6,18 +6,24 @@ import {FaDeleteLeft} from "react-icons/fa6"
 
 function ListOfProduct({
     product = [],
-
     onNormalProductChange = (params)=>{},
     clickOption = (params)=>{}
 }){
     return product.map((item,index)=>{
+        let price = 
+        (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
+              item?.discountProducts[0]?.endingPrice : item?.productPrice
+            )
+            let name = (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
+                item.productName : (item.productName + " (Promo Buy 1 Get 1)")
+              )
         return(
                 <div
                   key={index}
-                  onClick={()=>clickOption([item?.productId, item?.productName,item?.productPrice])}
+                  onClick={()=>clickOption([item?.productId, name,price])}
                   className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
                 >
-                 <p> {item.productName}</p>
+                 <p> {name}</p>
                 </div>
             
         )
@@ -30,7 +36,8 @@ export default function NormalProductList({
     onNormalProductChange = (params)=>{},
     productId = "",
     productName,
-    productPrice
+    productPrice,
+    isSubmit
 
 }){
     const dispatch = useDispatch()
@@ -99,6 +106,13 @@ export default function NormalProductList({
         setSelectProductRef([productId,productName,productPrice])
     },[productName])
 
+    useEffect(()=>{
+        // console.log(isSubmit)
+        if(isSubmit){
+            resetValue()
+        }
+    },[isSubmit])
+
     return(
         <div className="flex flex-col w-full relative z-[999]">
             <span>
@@ -108,7 +122,7 @@ export default function NormalProductList({
                 <Input
                 value={selectProductRef ? selectProductRef[1] : ""}
                 type="text"
-                placeholder="Search..."
+                placeholder="Cari Produk..."
                 className="pr-16"
                 onChange={(event)=>{
                     setVisible(true)

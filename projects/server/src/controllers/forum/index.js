@@ -1,6 +1,11 @@
 const { Op } = require("sequelize")
 const { middlewareErrorHandling } = require("../../middleware/index.js")
+const {helperTransporter} = require("../../helper/index.js")
 const { Forum, User_Profile,User_Account } = require("../../model/relation.js")
+const {GMAIL} = require("../../config/index.js")
+const fs = require("fs")
+const path = require("path")
+const handlebars = require("handlebars")
 const moment = require ("moment")
 
 
@@ -8,7 +13,7 @@ const getQuestions = async (req, res, next) => {
     try {
         const { page, sortDate, filterQuestion } = req.query;
     
-        const currentPage = page ? parseInt(page) : 1;
+        const currentPage = page ? parseInt(page) : 1; 
 
         const options = {
             offset : currentPage > 1 ? parseInt(currentPage-1)*10 : 0,

@@ -14,6 +14,7 @@ import PesananDiterima from "./pesanan-diterima";
 import { setDateValidationSchema } from "../../../store/slices/transaction/validation";
 import { HiMagnifyingGlass, HiMinus, HiXMark } from "react-icons/hi2";
 import Input from "../../../components/Input";
+import { totalProductCart } from "../../../store/slices/cart/slices";
 
 export default function Transaction({
   ongoingTransactions
@@ -67,8 +68,8 @@ export default function Transaction({
   
         setPage(1)
 
-        console.log("Start", startDateRef.current?.value);
-        console.log("End", endDateRef.current?.value);
+        // console.log("Start", startDateRef.current?.value);
+        // console.log("End", endDateRef.current?.value);
   
       }
     } catch (error) {
@@ -116,10 +117,11 @@ export default function Transaction({
     }));
 
     if(!searchedInvoice && searchedInvoiceRef?.current) searchedInvoiceRef.current.value = "";
-
+    
   }, [page, sortDate, searchedInvoice]);
   
   useEffect(() => {
+    dispatch(totalProductCart())
     dispatch(getTransactionStatus());
   }, []);
   

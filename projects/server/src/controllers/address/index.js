@@ -11,9 +11,9 @@ const { capitalizeEachWords, trimString } = require("../../utils/index.js");
 const getAddress = async (req, res, next) =>{
     try {
         const userId = req.user.userId
-        const { page } = req.query;
+        const { page, name } = req.query;
 
-        const limit = 10;
+        const limit = 2;
         
         const options = {
             offset: page > 1 ? (page - 1) * limit : 0,
@@ -21,7 +21,7 @@ const getAddress = async (req, res, next) =>{
         }
         
         const addresses = await User_Address.findAll({
-            where: { userId, isDeleted : 0 }, 
+            where: { userId, isDeleted : 0 , contactName :{[Op.like] : `%${name === undefined ?"" : name}%`}}, 
             order:[["isPrimary" , "DESC"]],
             ...options
         })
@@ -31,7 +31,7 @@ const getAddress = async (req, res, next) =>{
             message: middlewareErrorHandling.ADDRESS_NOT_FOUND
         })
 
-        const totalAddress = await User_Address.count()
+        const totalAddress = await User_Address.count({where:{userId :userId, contactName :{[Op.like] : `%${name === undefined ?"" : name}%`}}})
         const totalPage = Math.ceil(totalAddress / limit)
 
         res.status(200).json({ 

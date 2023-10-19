@@ -45,6 +45,7 @@ export default function Products({ user }) {
   const [promo, setPromo] = useState(false)
   const [filterType, setFilterType] = useState(null)
   const [activeFilter, setActiveFilter] = useState(null);
+  const [isDropdownActive, setIsDropdownActive] = useState(false)
 
   const handleSearch = (event) => {
     setPage(1)
@@ -77,6 +78,18 @@ export default function Products({ user }) {
     setPage(1)
   };
 
+  
+  const setAllProducts = (isPromo) =>{
+    setSelectedCategory(null);
+    setSearch(null)
+    setPage(1)
+    setPromo(isPromo)
+    setSort(false)
+    setFilterType(null)
+    setActiveFilter(null)
+    searchRef.current.value = ""
+  }
+
   useEffect(() => {
     dispatch(getCategory({ page : 1 }));
 
@@ -97,7 +110,6 @@ export default function Products({ user }) {
     window.scroll({
       top: 0,
       left: 0,
-      behavior: "smooth",
     });
 
     dispatch(
@@ -111,6 +123,8 @@ export default function Products({ user }) {
         promo,
       })
     );
+
+    setIsDropdownActive(false)
   }, [selectedCategory, search, sort, page, promo ]);
 
   useEffect(()=>{
@@ -118,6 +132,7 @@ export default function Products({ user }) {
     setFilterType(null)
     setActiveFilter(null)
   }, [selectedCategory])
+
   
   return (
     <>
@@ -130,13 +145,7 @@ export default function Products({ user }) {
               <Button
                 isLink
                 className={`product-category ${!selectedCategory && !promo && "active"}`}
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setSearch(null)
-                  setPage(1)
-                  setPromo(false)
-                  searchRef.current.value = ""
-                }}
+                onClick={() => setAllProducts(false)}
               >
                 Semua Produk
               </Button>
@@ -144,13 +153,7 @@ export default function Products({ user }) {
               <Button
                 isLink
                 className={`product-category ${promo && "active"}`}
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setSearch(null)
-                  setPage(1)
-                  setPromo(true)
-                  searchRef.current.value = ""
-                }}
+                onClick={() => setAllProducts(true)}
               >
                 Promo
               </Button>
@@ -207,7 +210,7 @@ export default function Products({ user }) {
               }
               </form>
 
-              <div className="group relative md:w-1/3 lg:w-1/5 self-stretch">
+              <div className="relative md:w-1/3 lg:w-1/5 self-stretch" onClick={() => setIsDropdownActive(!isDropdownActive)} onMouseLeave={() => setIsDropdownActive(false)}>
                 <Button
                   isButton
                   isBLock
@@ -222,7 +225,13 @@ export default function Products({ user }) {
                   <HiOutlineFunnel className="text-lg" />
                 </Button>
 
-                <FilterDropdownMenu handleSort={handleSort} setFilterType={setFilterType} activeFilter={activeFilter} setActiveFilter={setActiveFilter}/>
+                <FilterDropdownMenu 
+                  handleSort={handleSort} 
+                  setFilterType={setFilterType} 
+                  activeFilter={activeFilter} 
+                  setActiveFilter={setActiveFilter}
+                  isDropdownActive={isDropdownActive}
+                  />
                 
               </div>
             </div>

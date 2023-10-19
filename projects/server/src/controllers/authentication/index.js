@@ -121,7 +121,7 @@ const register= async (req, res, next) => {
 
         // @check if user already exists via email address
         const userExists = await User_Account?.findOne({ where: { email } });
-        if (userExists) throw ({ status : 400, message : USER_ALREADY_EXISTS });
+        if (userExists) throw ({ status : 400, message : middlewareErrorHandling.USER_ALREADY_EXISTS });
         // @create user account and user profile -> encypt password
         const otpToken =  helperOTP.generateOtp()
         const hashedPassword = helperEncryption.hashPassword(password);
@@ -157,7 +157,7 @@ const register= async (req, res, next) => {
             to: email,
             subject: "Verifikasi Akun",
             html: html}
-            console.log(mailOptions)
+            // console.log(mailOptions)
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;

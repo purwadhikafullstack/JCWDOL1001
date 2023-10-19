@@ -78,7 +78,6 @@ export default function InputAddressPage({
   }, [addressData]);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
 
     window.scrollTo({
       top: 0,
@@ -93,7 +92,6 @@ export default function InputAddressPage({
       contactPhone: contactPhoneRef.current?.value,
       contactName: contactNameRef.current?.value,
     };
-
     try {
       if (addressData && addressData?.length !== 0) {
         await InputAddressValidationSchema.validate(inputAddressData, {
@@ -145,7 +143,7 @@ export default function InputAddressPage({
 
   
   return (
-    <form className="px-1 pb-24 lg:pb-8" onSubmit={handleSubmit}>
+    <form className="px-1 pb-24 lg:pb-8" >
       <>
         <div className={`${confirmAdd ? "hidden" : null}`}>
           <div className="mb-4">
@@ -290,8 +288,9 @@ export default function InputAddressPage({
               isBLock
               isLoading={isSubmitAddressLoading}
               isDisabled={isToastVisible}
-              title={addressData && addressData.length !== 0 ? "Ubah Alamat" : "Tambah Alamat"}
-              type={isToastVisible ? "button" : "submit"}
+              title={addressData && addressData?.length !== 0 ? "Ubah Alamat" : "Tambah Alamat"}
+              type="button"
+              onClick={()=>handleSubmit()}
             />
           </div>
         </div>
@@ -303,7 +302,7 @@ export default function InputAddressPage({
               : "mt-[10%] flex flex-col items-center justify-center"
           }`}
         >
-          {addressData && addressData.length !== 0 ? (
+          {addressData && addressData?.length !== 0 ? (
             <p className="text-center">
               Apa kamu yakin ingin mengubah alamat ini?
             </p>
@@ -318,7 +317,7 @@ export default function InputAddressPage({
               <Button
                 isButton
                 isPrimaryOutline
-                title={addressData && addressData.length !== 0 ? "Gak" : "Cek lagi"}
+                title={addressData && addressData?.length !== 0 ? "Gak" : "Cek lagi"}
                 className="mt-4"
                 type="button"
                 onClick={() => setConfirmAdd(false)}
@@ -328,9 +327,10 @@ export default function InputAddressPage({
             <Button
               isButton
               isPrimary
-              title={addressData && addressData.length !== 0 ? "Ya, ubah" : "Ya, tambahkan alamat"}
+              title={addressData && addressData?.length !== 0 ? "Ya, ubah" : "Ya, tambahkan alamat"}
               className="mt-4"
-              type="submit"
+              type="button"
+              onClick={()=>handleSubmit()}
               isLoading={isSubmitAddressLoading}
             />
           </div>

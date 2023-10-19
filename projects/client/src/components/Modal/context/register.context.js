@@ -3,19 +3,14 @@ import Input from "../../Input"
 import { React, useEffect, useRef, useState} from "react"
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux"
-import { login,register, resendOtp } from "../../../store/slices/auth/slices"
+import { login,register, resendOtp,resetRegister } from "../../../store/slices/auth/slices"
 import { RegisterValidationSchema } from "../../../store/slices/auth/validation"
 
 export default function RegisterContext ({
     onDoneRegist = ()=>{},
     onLogin = ()=>{},
+    isRegister
 }){
-
-    const {isRegister} = useSelector(state =>{
-        return {
-            isRegister : state?.auth?.isRegister
-        }
-    })
 
     const [submit , setSubmit] = useState(false);
     const [resend,setResend] = useState(true);
@@ -37,7 +32,7 @@ export default function RegisterContext ({
             }
         }, 1000)
 
-        if ( submit && resend && refresh === 0){
+        if (submit && resend && refresh === 0){
             setResend(false)
         }
         return () => clearTimeout(timeoutID)
@@ -61,16 +56,11 @@ export default function RegisterContext ({
             confirmPassword : confirmPasswordRef.current?.value
         }
 
-        // const sendemail = emailRef.current?.value
-        // const name = nameRef.current?.value
-        // const phone = phoneRef.current?.value
-        // const password = passwordRef.current?.value
-        // const confirmPassword = confirmPasswordRef.current?.value
         await RegisterValidationSchema.validate(request, {
             abortEarly: false,
         });
+        dispatch(register(request)).then(()=>dispatch(resetRegister()))
         setError("");
-        dispatch(register(request))
 
       
     } catch (error) {
@@ -92,26 +82,25 @@ export default function RegisterContext ({
     }
 
     useEffect(()=>{
-        if(isRegister && email){
-            onDoneRegist()
-            setSubmit(true)
+        if(isRegister && email){ 
+                setSubmit(true)
+                onDoneRegist()
         }
         if(!email){
             setSubmit(false)
         }
     },[email,isRegister])
 
-
     return (
         <div>
             {submit ? 
                 <div className="flex flex-col gap-10">
                     <span>
-                        We have sent OTP and verification link via email to {email}
+                        Kami telah mengirim OTP dan link verifikasi via email ke {email}
                     </span>
                     <div className="flex flex-col items-start justify-start">
                         <span className="text-gray-500 font-semibold text-sm">
-                        You need to wait for {refresh} s to resend the data.
+                        Kamu harus menunggu {refresh} detik untuk dapat mengirim ulang OTP.
                         </span>
                         
                         <Button
@@ -120,7 +109,7 @@ export default function RegisterContext ({
                             className="block rounded-lg bg-teal-500 py-3 min-w-[52px] disabled:opacity-40 text-white duration-200 hover:bg-slate-200 lg: lg:group-hover:w-full"
                             isLoading={resend}>
                             <div className="flex w-max items-center gap-6 px-3 ">
-                                <span>Resend OTP</span>
+                                <span>Kirim OTP</span>
                             </div>
                         </Button>
                         
@@ -160,7 +149,7 @@ export default function RegisterContext ({
                         <Input
                             ref={phoneRef}
                             required
-                            type="text"
+                            type="number"
                             label="Nomor Telpon"
                             placeholder="08xxxxxxxx"
                             onChange={() => setError({ ...error, phone: false })}

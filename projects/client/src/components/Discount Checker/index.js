@@ -5,11 +5,14 @@ import { useDispatch, useSelector } from "react-redux"
 import Input from "../Input"
 import { checkerDiscount, getDiscount } from "../../store/slices/discount/slices"
 import formatNumber from "../../utils/formatNumber"
+import Pagination from "../PaginationV2"
 
 export default function DiscountChecker({setDiscount,selectedDiscount,subTotal}) {
-    const { listDiscount } = useSelector((state) => {
+    const { listDiscount, currentPage, totalPage } = useSelector((state) => {
       return {
         listDiscount: state?.discount?.listDiscount,
+        currentPage: state?.discount?.currentPage,
+        totalPage: state?.discount?.totalPage,
       }
     })
 
@@ -17,6 +20,7 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
 
     const inputRef = useRef()
     const [input,setInput] = useState("")
+    const [page,setPage] = useState("")
 
     const clearFilter = () => {
         setInput("")
@@ -38,6 +42,10 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
     useEffect(()=>{
         setDiscount(listDiscount[0])
     },[listDiscount])
+
+    useEffect(()=>{
+        dispatch(checkerDiscount({page:page,nominal : subTotal}))
+    },[page])
     
     return (
         <div className="flex flex-col gap-3 items-start">
@@ -61,7 +69,7 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
             </div>
             <Button className="text-primary underline " title="Lihat semua voucher"
                 onClick={() =>{
-                    dispatch(checkerDiscount({nominal : subTotal}))
+                    dispatch(checkerDiscount({page:1,nominal : subTotal}))
                     handleShowModal({context : "Lihat semua voucher"})
                 }}
             />
@@ -98,6 +106,11 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
                             </Button>                        
                         )
                         )}
+                        <Pagination
+                            currentPage={currentPage}
+                            setPage={setPage}
+                            totalPage={totalPage}
+                        />
                     </>
                 )}
             </Modal>

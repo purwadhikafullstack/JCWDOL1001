@@ -96,7 +96,7 @@ export default function ModalDetailTransaction({
                   <div className="flex justify-between">
 
                   <p>{product.listedTransaction.productName}</p>
-                  {product.buyOneGetOne &&
+                  {product.buyOneGetOne === 1 &&
                     <p className="text-danger font-semibold">Beli 1 Gratis 1</p>
                   }
                   </div>

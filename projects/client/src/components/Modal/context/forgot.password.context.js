@@ -43,7 +43,7 @@ export default function ForgotContext ({
 
             setError(errors)
 
-            toast.error("Check your input field!")
+            toast.error("Periksa kembali kolom pengisian!")
 
             setIsToastVisible(true)
 

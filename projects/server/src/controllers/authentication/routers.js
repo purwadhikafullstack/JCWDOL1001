@@ -19,6 +19,6 @@ router.patch("/change-profile/:userId",verifyUser,AuthControllers.changeProfileD
 router.patch("/change-picture/:userId",verifyUser, uploader.single("file"), AuthControllers.changeProfilePicture)
 router.post("/changeOtp/:userId",verifyUser,AuthControllers.changeEmailOtp)
 router.post("/forgot",AuthControllers.forgotPass)
-router.post("/reset",verifyUser,AuthControllers.reset)
+router.post("/reset",verifyUser,AuthControllers.reset) 
 
 module.exports = router
