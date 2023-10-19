@@ -161,7 +161,7 @@ export default function Cart({ user }) {
           (cartItem) => cartItem?.productId !== productId
         ))
         // selectedItems = a
-        console.log(selectedItems)
+        // console.log(selectedItems)
         setTrigger(!trigger)
   };
 
@@ -185,7 +185,7 @@ export default function Cart({ user }) {
   },[])
 
   useEffect(()=>{
-    console.log("select",selectedQuantity)
+    // console.log("select",selectedQuantity)
   },[selectedQuantity])
 
   

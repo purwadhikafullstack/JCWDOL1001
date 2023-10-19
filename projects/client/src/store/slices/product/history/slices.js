@@ -38,7 +38,7 @@ export const productDetailHistory = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const data = await api.get(`/products/stock/${payload.productId}`);
-            console.log(data);
+            // console.log(data);
             return data;
         }catch(error){
             return rejectWithValue(error.response.data.message);
