@@ -76,8 +76,8 @@ export default function Password() {
 
   return (
         <div className="col-span-3 h-screen border-double rounded-xl">
-          <div className=" border-collapse border-b-2 border-solid border-black">
-            <h1 className=" font-extrabold text-3xl text-center">This is the Password section</h1>           
+          <div className="">
+            <h3 className="title">Password</h3>           
           </div>
           <div>
             <form className="flex flex-col p-4" onSubmit={(event) => handleReset(event)}>

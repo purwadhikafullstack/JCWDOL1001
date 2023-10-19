@@ -157,7 +157,7 @@ const register= async (req, res, next) => {
             to: email,
             subject: "Verifikasi Akun",
             html: html}
-            console.log(mailOptions)
+            // console.log(mailOptions)
 
             helperTransporter.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) throw error;

@@ -81,7 +81,7 @@ async function cancelExpiredTransactions() {
         console.log("Email sent: " + info.response);
       })
     }
-    console.log(transactionsToCancel);
+    // console.log(transactionsToCancel);
 
     const transactionIds = transactionsToCancel.map((transaction) => transaction.dataValues?.transactionId);
     const reverseList = await Transaction_Detail.findAll({
@@ -332,11 +332,12 @@ const createTransactions = async (req, res, next) => {
     }
     
     for (let i = 0; i < startTransaction.length; i++) {
+      // console.log(startTransaction);
       let price = 0;
       let totalPrice = 0;
       if(startTransaction[i].product_detail.productDiscount[0]?.endingPrice){
-        price = startTransaction[i].product_detail.productDiscount[0].endingPrice;
-        totalPrice = startTransaction[i].product_detail.productDiscount[0].endingPrice * startTransaction[i].quantity;
+        price = startTransaction[i].product_detail.productDiscount[0]?.endingPrice;
+        totalPrice = startTransaction[i].product_detail.productDiscount[0]?.endingPrice * startTransaction[i].quantity;
       }
       else{
         price = startTransaction[i].cartList.productPrice
@@ -1065,7 +1066,7 @@ async function customIngredientCancel(itemRecipe, quantity) {
       //stock obat racik : 1 quantity untuk obat raciknya
       //ingredient : 2 , convertion 2
       //sec ingredient > convertion
-      console.log("nilainya ",totalIngredientQuantity)
+      // console.log("nilainya ",totalIngredientQuantity)
       //seandainya totalIngredientQuantity < main unit convertion?
 
 
@@ -1076,7 +1077,7 @@ async function customIngredientCancel(itemRecipe, quantity) {
       if(totalIngredientQuantity + secUnit.dataValues?.quantity >= mainUnit?.dataValues?.convertion){
       //update both unit
       const currentSecUnitQuantity = totalIngredientQuantity + secUnit.dataValues?.quantity - mainUnit?.dataValues?.convertion
-      console.log("initial stock di obat racik "+mainUnit.dataValues?.quantity)
+      // console.log("initial stock di obat racik "+mainUnit.dataValues?.quantity)
       await Product_History.create({
         productId : itemRecipe?.dataValues?.ingredientProductId,
         unit : mainUnit.dataValues?.product_unit.name,
@@ -1117,7 +1118,7 @@ async function customIngredientCancel(itemRecipe, quantity) {
       //kalau kurang brrti gaterjadi konversi
       if(totalIngredientQuantity + secUnit.dataValues?.quantity < mainUnit?.dataValues?.convertion){
       //update only sec unit
-      console.log("konversinya "+mainUnit?.dataValues?.convertion)
+      // console.log("konversinya "+mainUnit?.dataValues?.convertion)
       await Product_History.create({
         productId : itemRecipe?.dataValues?.ingredientProductId,
         unit : secUnit.dataValues?.product_unit.name,
@@ -1146,8 +1147,8 @@ async function customIngredientCancel(itemRecipe, quantity) {
         // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
         const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.dataValues?.quantity) / mainUnit?.dataValues?.convertion)
         const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.dataValues?.quantity) % mainUnit?.dataValues?.convertion
-        console.log("main unit qty : ",mainUnit.dataValues?.quantity)
-        console.log("sec unit qty",secUnit.dataValues?.quantity)
+        // console.log("main unit qty : ",mainUnit.dataValues?.quantity)
+        // console.log("sec unit qty",secUnit.dataValues?.quantity)
         await Product_History.create({
           productId : itemRecipe?.dataValues?.ingredientProductId,
           unit : mainUnit.dataValues?.product_unit.name,
@@ -1185,7 +1186,7 @@ async function customIngredientCancel(itemRecipe, quantity) {
         })
       } 
 
-      console.log("role selesai")
+      // console.log("role selesai")
 }
 
 

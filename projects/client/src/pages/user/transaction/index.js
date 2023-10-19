@@ -68,8 +68,8 @@ export default function Transaction({
   
         setPage(1)
 
-        console.log("Start", startDateRef.current?.value);
-        console.log("End", endDateRef.current?.value);
+        // console.log("Start", startDateRef.current?.value);
+        // console.log("End", endDateRef.current?.value);
   
       }
     } catch (error) {

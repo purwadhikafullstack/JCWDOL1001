@@ -48,7 +48,7 @@ export default function IngredientList({
         }
     })
     useEffect(()=>{
-        console.log(isSubmit)
+        // console.log(isSubmit)
         if(isSubmit){
             resetValue()
         }

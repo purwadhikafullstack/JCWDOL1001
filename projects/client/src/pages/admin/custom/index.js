@@ -187,8 +187,8 @@ export default function CustomOrder({}) {
   }
   else{
     const result = listAllCustomProduct
-    console.log(productNameState)
-    console.log(oldNameProduct)
+    // console.log(productNameState)
+    // console.log(oldNameProduct)
       for(let i =0; i < result.length ; i++){
         if(result[i].productName === oldNameProduct){
           if(option === 1){
@@ -210,7 +210,7 @@ export default function CustomOrder({}) {
       }
     }
     
-    console.log("result = ",result)
+    // console.log("result = ",result)
       setListAllCustomProduct(result)
   }
     setProductNameState("")
@@ -219,7 +219,7 @@ export default function CustomOrder({}) {
     setProductDosageState("")
     setProductQuantityState("")
     setOption(2)
-    console.log(items)
+    // console.log(items)
     setListAllCustomProduct(items)
     setMedState(false)
     setShowModal(false);
@@ -257,7 +257,7 @@ export default function CustomOrder({}) {
   }}
 
   const onIngredientProductChange = (params) =>{
-    console.log(params)
+    // console.log(params)
     params?.forEach((item,index)=>
     index === 0 ? setIngredientId(item):setIngredientName(item))
     
@@ -310,7 +310,7 @@ const submitIngredient = async () =>{
       productName : ingredientName,
       quantity : ingredientQuantityRef?.current?.value
     }]
-    console.log(result)
+    // console.log(result)
     setListAllIngredient(result)
     ingredientQuantityRef.current.value = null
     setIngredientSubmit(true)

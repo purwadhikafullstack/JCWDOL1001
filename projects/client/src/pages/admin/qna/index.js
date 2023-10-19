@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, deleteQuestion, getForum,getUnanswered,resetSuccessForum} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
@@ -106,7 +106,7 @@ function QNA () {
             })
             
 
-            console.log(output)
+            // console.log(output)
             dispatch(PostAnswer(output)).then(()=>
             dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")}))))
             setConfirmation(false)
@@ -150,9 +150,9 @@ useEffect( ()=>{
     return (
         <div>
             <div className="container py-24 lg:ml-[calc(5rem)] lg:px-8">
-                <a className="flex items-center normal-case text-[20pt] pb-3">
+                <h3 className="title w-full border-b-2 mb-5 pb-2">
                     Daftar Pertanyaan
-                </a>
+                </h3>
                 <div className="my-5 items-center h-auto gap-3 flex flex-row justify-between w-full">
                     <div className="relative w-1/2 lg:w-1/3">
                     <form onSubmit={(event)=>{onSearch(event,questionRef.current.value)}}>
