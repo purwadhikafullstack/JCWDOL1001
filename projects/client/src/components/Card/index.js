@@ -61,14 +61,6 @@ export default function Card({ productId, productName, productPrice, productPict
         </>
       ))}
         </p>
-      {/* <Button
-        isButton
-        isPrimaryOutline
-        isBLock
-        title="Keranjang"
-        className="font-semibold"
-        onClick={onClick}
-      /> */}
     </div>
   );
 }

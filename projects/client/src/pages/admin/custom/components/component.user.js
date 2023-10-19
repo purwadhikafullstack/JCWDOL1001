@@ -31,7 +31,6 @@ function ListOfUser({
 
 
 export default function UserList({
-    // user = [],
     onUserChange = (params)=>{},
 }){
     const{user,totalPage,currentPage} = useSelector(state=>{
