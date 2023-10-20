@@ -49,7 +49,7 @@ export default function TableDiscount({
                     <td className="p-3 break-before-all max-w-xs">{list.discountCode ? list.discountCode.toUpperCase() :"-" }</td>
                     <td className={`p-3 break-before-all max-w-xs ${width <= mobileWidth && "hidden"}`}>{list.discountDesc}</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.discountExpired ? formatDate(list.discountExpired) : "-"}</td>
-                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.isPercentage ? `${list.discountAmount}%` : `Rp ${formatNumber(list.discountAmount)}` }</td>
+                    <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.isPercentage ? `${list.discountAmount}%` : list.discountAmount ===0 ? "-" : `Rp ${formatNumber(list.discountAmount)}` }</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.oneGetOne ? "Ya" : "Tidak" }</td>
                     <td className={`p-3 ${width <= mobileWidth && "hidden"}`}>{list.minimalTransaction ? `Rp. ${formatNumber(list.minimalTransaction)}` : "-"}</td>
                     <td className="p-3">
