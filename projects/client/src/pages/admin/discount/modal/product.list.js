@@ -9,6 +9,7 @@ import Input from "../../../../components/Input"
 
 
 export default function ProductList({
+    selectedId,
     dataDiscount,
     onEdit,
     selectedProducts,
@@ -46,7 +47,7 @@ export default function ProductList({
     const handleRemoveProduct = (productId) => {
         setSelectedProducts(selectedProducts.filter((item) => item?.productId !== productId));
     }
-
+    
     const [page, setPage] = useState(1);
     const searchNameRef = useRef();
     
@@ -119,17 +120,20 @@ export default function ProductList({
                     >
                         <div className="flex items-center relative justify-between">
                             <h3 className="title">Pilih Produk</h3>
-                            <Input 
-                                type="text" 
-                                placeholder="Cari"
-                                ref={searchNameRef}
-                            />
-                            <Button 
-                                className="absolute top-1/2 left-[68%] -translate-y-1/2 p-2" 
-                                onClick={onButtonSearch}
-                            >
-                            <HiMagnifyingGlass className="text-2xl text-primary" />
-                            </Button>
+                            <div className="relative">
+                                <Input 
+                                    type="text" 
+                                    placeholder="Cari"
+                                    ref={searchNameRef}
+                                />
+                                <Button 
+                                    className="absolute top-1/2 left-[80%] -translate-y-1/2 p-2" 
+                                    onClick={onButtonSearch}
+                                >
+                                    <HiMagnifyingGlass className="text-2xl text-primary" />
+                                </Button>
+                            </div>
+                            
                             <span
                                 className="cursor-pointer"
                                 onClick={() => setShowAllProduct(false)}
@@ -140,14 +144,12 @@ export default function ProductList({
                         <div className={title === "Tambah Baru" ? "text-gray-500 mt-2" :""}>{title === "Detail Diskon"  ? "" : "Product yang tidak tersedia sudah memiliki potongan"}</div>
 
                     <div className="my-4 max-h-[55vh] divide-y-2 text- overflow-auto">
-                        {products.filter((product)=>{return title === "Detail Diskon" ? product : product.discountProducts.length === 0 }).map((product) => (
-                        <div
-                            key={product.productId}
-                            className="group mr-2 flex justify-between"
-                        >
+                        {products.map((product) => {
+                            const productIdSelected = selectedId?.productDiscount.map((item)=> item?.productId)
+                        return( <div key={product.productId} className="group mr-2 flex justify-between" >
                             <label
                                 htmlFor={product.productId}
-                                className="w-full cursor-pointer py-2 duration-300 group-hover:ml-3"
+                                className={`w-full py-2 duration-300  ${product?.discountProducts?.length > 0 && !(productIdSelected?.includes(product?.productId)) ? "text-slate-400" :"cursor-pointer group-hover:ml-3"} `}
                             >
                                 {product.productName}
                             </label>
@@ -157,11 +159,15 @@ export default function ProductList({
                                 name={product.productDescription}
                                 value={product.productName}
                                 onChange={handleSelectProducts}
+                                disabled={
+                                    product?.discountProducts?.length > 0 
+                                    && !(productIdSelected?.includes(product?.productId) )
+                                }
                                 checked={selectedProducts?.some(item => +item?.productId === +product?.productId)}
                                 className="cursor-pointer"
                             />
-                        </div>
-                        ))}
+                        </div> )
+                        })}
                         <div className="flex justify-center pt-4">
                             <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                         </div>
