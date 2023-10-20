@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
+import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare,HiXMark } from "react-icons/hi2"
 import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
 import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
@@ -47,10 +47,6 @@ function QNA () {
 
     const [sortingDate,setSortingDate] = useState("")
 
-    const onButtonSortDate = (type="")=>{
-        setSortingDate(type)
-        setFilter(true)
-    }
 
     const handleShowModal = ({context,}) => {
         setShowModal({ show: true, context })
@@ -75,14 +71,12 @@ function QNA () {
 
     const onButtonFilter = () => {
         // dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
-        setFilter(true)
     }
 
     const clearFilter = () => {
-        setSortingDate("")
-        dispatch(getForum({sortDate :""}))
         questionRef.current.value = ""
-        setFilter(false)
+        const sort = sortDate ? "DESC" : "ASC"
+        dispatch(getUnanswered({ sortDate : sort}))
     }
 
     const [error, setError] = useState("")
@@ -92,7 +86,6 @@ function QNA () {
         e.preventDefault()
         const sort = sortDate ? "DESC" : "ASC"
         dispatch(getUnanswered({filterQuestion : question, sortDate : sort}))
-        setFilter(true)
     }
 
     const handleOnSure = async (qnaId) => {
@@ -158,18 +151,30 @@ useEffect( ()=>{
                     <form onSubmit={(event)=>{onSearch(event,questionRef.current.value)}}>
                     <Input type="text" placeholder="Cari pertanyaan..." 
                         ref={questionRef}
-                        />                
+                        /> 
+                    <div className="hidden sm:inline w-1/2 lg:w-1/3">  
+                        {questionRef?.current?.value !== "" &&
                     <Button 
-                        className="absolute top-1/2 right-5 lg:right-10 -translate-y-1/2 p-2" 
+                        className="absolute top-1/2 right-10 -translate-y-1/2 p-2" 
+                        type="button"
+                        onClick={clearFilter}
+                        >
+                        <HiXMark className="text-2xl text-primary" />
+                    </Button>          
+                        }
+                        
+                    <Button 
+                        className="absolute top-1/2 right-2 -translate-y-1/2 p-2" 
                         type="submit"
                             >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
+                    </div>
                     </form>
                     </div>
 
                 <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal Dari : </span>
+                  <span className="text-xs sm:text-sm font-semibold">Urutkan Tanggal Dari : </span>
                   <Button 
                     isButton
                     isPrimary
@@ -183,8 +188,8 @@ useEffect( ()=>{
                 </div>
                 </div>
                 <div>
-                    <table className="text-gray-500 w-full text-left text-sm border shadow-md">
-                        <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
+                    <table className="text-gray-500 w-full text-left sm:text-sm text-xs border shadow-md">
+                        <thead className="text-gray-700 bg-slate-100 sm:text-sm text-xs uppercase">
                             <tr>
                                 <th className="p-3">Tanggal</th>
                                 <th className="p-3">Pengguna</th>
@@ -206,7 +211,7 @@ useEffect( ()=>{
                                        ...jawaban diperlukan
                                         </th> 
                                       
-                                        <td className="p-3 ">
+                                        <td className="p-3 gap-2 flex flex-col items-center justify center md:flex-row">
                                             <Button isSmall isDanger
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
@@ -224,7 +229,7 @@ useEffect( ()=>{
                                                     setSelectedQuestion(list)
                                                     setInputAnswer("")
                                                 }}
-                                                className="ml-2 bg-primary"
+                                                className="bg-primary"
                                             >
                                                 <HiOutlinePencilSquare className="text-lg" />
                                             </Button>
@@ -246,7 +251,7 @@ useEffect( ()=>{
                                         {list.answer}
                                         </th> 
                                         
-                                        <td className="p-3 ">
+                                        <td className="p-3 gap-2 flex flex-col items-center justify-center md:flex-row">
                                             <Button isSmall isDanger
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
@@ -264,7 +269,7 @@ useEffect( ()=>{
                                                     setSelectedQuestion(list)
                                                     setInputAnswer(list.answer)
                                                 }}
-                                                className="ml-2 bg-primary"
+                                                className=" bg-primary"
                                             >
                                                 <HiOutlinePencilSquare className="text-lg" />
                                             </Button>

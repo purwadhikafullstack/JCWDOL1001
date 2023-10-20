@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import Pagination from "../../../../components/PaginationV2"
 import { useDispatch, useSelector } from "react-redux"
 import { getUser } from "../../../../store/slices/custom/slices"
-import { HiMagnifyingGlass } from "react-icons/hi2"
+import { HiMagnifyingGlass,HiXMark } from "react-icons/hi2"
 import Input from "../../../../components/Input"
 import Button from "../../../../components/Button"
 import { formatDate } from "../../../../utils/formatDate"
@@ -54,6 +54,42 @@ export default function UserList({
     }))
     },[])
 
+    const clearFilter = () => {
+        answerRef.current.value = ""
+        if(sortDate){
+            dispatch(getUser({
+                search : null,
+                sortDate : "DESC",
+                page: page
+            }))
+        }
+        if(!sortDate){
+            dispatch(getUser({
+                search : null,
+                sortDate : "ASC",
+                page: page
+            }))
+        }
+    }
+
+    const onUserSearch = (event)=>{
+        event.preventDefault()
+        if(sortDate){
+            dispatch(getUser({
+                search : answerRef?.current?.value,
+                sortDate : "DESC",
+                page: page
+            }))
+        }
+        if(!sortDate){
+            dispatch(getUser({
+                search : answerRef?.current?.value,
+                sortDate : "ASC",
+                page: page
+            }))
+        }
+    }
+
     useEffect(()=>{
         if(sortDate){
             dispatch(getUser({
@@ -78,34 +114,31 @@ export default function UserList({
                 Resep dokter dari customer mana yang hendak diproses?
             </span>
             <div className="relative mx-5 my-5 items-center h-auto gap-5 flex flex-row justify-between">
+                <form onSubmit={(event)=>{onUserSearch(event)}}>
+
+
                     <Input type="text" placeholder="Cari nama user..." 
                         ref={answerRef}
                     />
                     <Button 
-                        className="absolute top-1/2 left-40 -translate-y-1/2 p-2" 
-                        onClick={()=>{
-                            if(sortDate){
-                                dispatch(getUser({
-                                    search : answerRef?.current?.value,
-                                    sortDate : "DESC",
-                                    page: page
-                                }))
-                            }
-                            if(!sortDate){
-                                dispatch(getUser({
-                                    search : answerRef?.current?.value,
-                                    sortDate : "ASC",
-                                    page: page
-                                }))
-                            }
-                            
-                        }}
+                        className="absolute top-1/2 left-[144px] sm:left-[168px] -translate-y-1/2 p-2" 
+                        type="submit"
                     >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
-
+                    {
+                        answerRef?.current?.value !== "" &&
+                    <Button 
+                    className="absolute top-1/2 left-[114px] sm:left-[138px] -translate-y-1/2 p-2" 
+                    type="button"
+                    onClick={clearFilter}
+                    >
+                        <HiXMark className="text-2xl text-primary" />
+                    </Button>  
+                }
+                    </form>
                 <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal Dari : </span>
+                  <span className="text-xs sm:text-sm font-semibold">Urutkan Tanggal Dari : </span>
                   <Button 
                     isButton
                     isPrimary
