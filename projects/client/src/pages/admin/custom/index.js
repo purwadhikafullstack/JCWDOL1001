@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList } from "../../../store/slices/transaction/slices";
-import { formatDate } from "../../../utils/formatDate";
 import formatNumber from "../../../utils/formatNumber";
 import Button from "../../../components/Button";
 import Modal from "../../../components/Modal";
@@ -9,8 +7,7 @@ import IngredientList from "./components/component.ingredients";
 import { BsTrashFill,BsImage } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import Input from "../../../components/Input";
-import { getProducts } from "../../../store/slices/product/slices";
-import { checkIngredient, getUser } from "../../../store/slices/custom/slices";
+import { checkIngredient } from "../../../store/slices/custom/slices";
 import UserList from "./components/component.user";
 import NormalProductList from "./components/component.normalProduct";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
