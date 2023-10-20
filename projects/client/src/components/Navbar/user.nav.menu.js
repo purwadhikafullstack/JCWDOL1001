@@ -7,6 +7,7 @@ import Button from "../Button"
 import { FaCartShopping } from "react-icons/fa6"
 import { HiChevronRight } from "react-icons/hi2"
 import { logout } from "../../store/slices/auth/slices"
+import { toast } from "react-toastify";
 
 
 export default function UserNavMenu({
@@ -88,7 +89,13 @@ export default function UserNavMenu({
         isLogin ? 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="relative flex gap-4">
-              <Button isLink path="/cart" className={""} >
+              <Button onClick={() => {
+                if (user?.status === 0) {
+                  toast.error("Akun belum terverifikasi")
+                } else {
+                  navigate("/cart")
+                }
+              }} className={""} >
                 <FaCartShopping className="fill-primary text-2xl" />
                 {total > 0 &&
                   <span className={`absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-danger text-[10px] text-white`}>
