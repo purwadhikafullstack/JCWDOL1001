@@ -273,7 +273,7 @@ const getUser = async( req, res, next ) => {
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "customProductConfirmation.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "customProductConfirmation.html"), "utf8");
       const html = handlebars.compile(template)({ message: (message), link :(pathURL) })
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
