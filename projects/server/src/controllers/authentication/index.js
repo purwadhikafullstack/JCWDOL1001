@@ -342,7 +342,7 @@ const changePassword = async (req, res, next) => {
         });
 
         const hashedPassword = helperEncryption.hashPassword(newPassword);
-        const isPasswordSame = helperEncryption.comparePassword(hashedPassword, oldPassword)
+        const isPasswordSame = helperEncryption.comparePassword(newPassword, users?.dataValues?.password)
         if(isPasswordSame) throw ({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.PASSWORD_SAME
