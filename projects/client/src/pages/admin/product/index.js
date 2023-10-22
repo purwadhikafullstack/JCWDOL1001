@@ -189,7 +189,7 @@ export default function AdminProducts({user}) {
 
           <div className="flex gap-4 lg:flex-row flex-col mt-2">
               <select id="searchcat" name="categoryId" value={options.categoryId} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
-                <option value="">Pilih Kategori</option>
+                <option value="" disabled>Pilih Kategori</option>
                 {
                   categories ?
                     categories?.map((categories, index)=>(
@@ -201,13 +201,13 @@ export default function AdminProducts({user}) {
               </select>
 
               <select id="sortname" name="sortName" value={options.sortName} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
-                <option value="">Urutkan Nama</option>
+                <option value="" disabled>Urutkan Nama</option>
                 <option value="ASC">A - Z</option>
                 <option value="DESC">Z - A</option>
               </select>
 
               <select id="sortprice" name="sortPrice" value={options.sortPrice} onChange={handleOptionChange} className="p-2 rounded-lg border border-slate-300 bg-slate-50">
-                <option value="">Urutkan Harga</option>
+                <option value="" disabled>Urutkan Harga</option>
                 <option value="ASC">Terendah - Tertinggi</option>
                 <option value="DESC">Tertinggi - Terendah</option>
               </select>

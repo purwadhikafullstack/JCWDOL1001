@@ -40,8 +40,8 @@ const getProducts = async (req, res, next) => {
       filter.product_name = { productName: { [Op.like]: `%${trimString(product_name)}%` } };
 
     let sort = [];
-    if (sort_name) sort.push([`productName`, sort_name]);
     if (sort_price) sort.push([`productPrice`, sort_price]);
+    if (sort_name) sort.push([`productName`, sort_name]);
 
     const products = await Product_List?.findAll({
       ...options,
