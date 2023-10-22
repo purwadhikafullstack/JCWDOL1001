@@ -109,9 +109,8 @@ export default function UserList({
 
     return(
         <div className="flex flex-col w-full items-center justify-center">
-        {
-            user.length > 0 ? 
-            <>
+
+       
             <span className="font-semibold mb-6">
                 Resep dokter dari customer mana yang hendak diproses?
             </span>
@@ -152,6 +151,8 @@ export default function UserList({
                     />
                 </div>
                 </div>
+                {
+            user.length > 0 ?      <>
             <table className="text-gray-500 w-1/3 text-left text-sm">
                 <thead className="text-white bg-primary text-sm uppercase text-center"
                 >
