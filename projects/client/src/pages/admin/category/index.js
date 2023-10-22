@@ -176,7 +176,7 @@ export default function CategoryList(){
                         >
                             <HiXMark className="text-2xl text-primary" />
                         </Button>
-                        }
+                    }
                 </form>
             </div>
 
@@ -184,7 +184,15 @@ export default function CategoryList(){
                 setNewPage('add')
                 setShowModal(true)
             }} title={"Tambah Kategori Baru"} className=""/>
-
+            <div className="flex gap-2 items-center">
+                <label className="ml-4">Sortir Kategori berdasarkan :</label>
+                    <select value={sortCat} onChange={(e)=>setSortCat(e.target.value)} className="border outline-primary bg-slate-50 text-sm rounded-lg block p-1.5">
+                        <option value={""}></option>
+                        <option value={"ASC"}>A-Z</option>
+                        <option value={"DESC"}>Z-A</option>
+                    </select>
+            </div>
+            
             <div className="relative overflow-x-auto mt-2">
                 <table className="text-gray-500 w-full text-left text-sm">
                     <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
