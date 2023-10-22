@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare,HiXMark } from "react-icons/hi2"
-import { RiQuestionAnswerLine } from "react-icons/ri"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
 import Modal from "../../../components/Modal/index.js"
 import Message from "../../../components/Message/index.js"
-import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
-import { AnswerValidationSchema, PostQuestionValidationSchema } from "../../../store/slices/forum/validation.js"
+import { AnswerValidationSchema} from "../../../store/slices/forum/validation.js"
 import { toast } from "react-toastify"
 
 function QNA () {
@@ -28,8 +26,6 @@ function QNA () {
     })
     
     const [inputAnswer,setInputAnswer] = useState("")
-    const [unansweredList, setUnansweredList] = useState([])
-    const [answeredList, setAnsweredList] = useState([])
 
     const questionRef = useRef()
 
@@ -43,11 +39,6 @@ function QNA () {
 
     const [confirmation, setConfirmation] = useState(false);
 
-    const [filter,setFilter] = useState(false)
-
-    const [sortingDate,setSortingDate] = useState("")
-
-
     const handleShowModal = ({context,}) => {
         setShowModal({ show: true, context })
     }
@@ -55,22 +46,13 @@ function QNA () {
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
         setSelectedQuestion([])
-        // dispatch(getForum({sortDate :""}))
         dispatch(resetSuccessForum())
         document.body.style.overflow = "auto"
     }
 
-    
-    const onChangePagination = (type) => {
-        dispatch(
-            getForum({ 
-                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-            })
-        )
-    }
 
     const onButtonFilter = () => {
-        // dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
+        dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
     }
 
     const clearFilter = () => {
@@ -98,7 +80,6 @@ function QNA () {
                 abortEarly:false
             })
             
-
             // console.log(output)
             dispatch(PostAnswer(output)).then(()=>
             dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")}))))
@@ -282,12 +263,6 @@ useEffect( ()=>{
                     </table>
                 </div>
                 <div className="w-full flex items-center justify-center pt-8">
-                    {/* <Pagination 
-                        onChangePagination={onChangePagination}
-                        disabledPrev={Number(currentPage) === 1}
-                        disabledNext={currentPage >= totalPage}
-                        currentPage={currentPage}
-                    /> */}
                      <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
             </div>
