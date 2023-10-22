@@ -34,7 +34,7 @@ export const addCategory = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.post("/category",payload)
-            toast.success("Category Added")
+            toast.success("Kategori berhasil ditambahkan.")
             return{}
         }catch(error){
             toast.error(error.response.data.message)
@@ -48,7 +48,7 @@ export const deleteCategory = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch("/category/delete-category",payload)
-            toast.success("Category deleted")
+            toast.success("Kategori berhasil dihapus")
             return{}
         }catch(error){
             toast.error(error.response.data.message)
@@ -63,7 +63,7 @@ export const updateCategory = createAsyncThunk(
         try{
             await CategoryValidationSchema.validate(payload)
             const response = await api.patch("/category",payload)
-            toast.success("Category updated")
+            toast.success("Kategori berhasil diubah")
             return{}
         }catch(error){
             toast.error(error.response.data.message)
@@ -77,7 +77,7 @@ export const updateCategoryPicture = createAsyncThunk(
     async(payload, {rejectWithValue}) => {
         try{
             const response = await api.patch(`/category/category-picture/${payload.categoryId}`,payload.formData)
-            toast.success("Category Image updated")
+            toast.success("Gambar kategori berhasil diubah.")
             return{}
         }catch(error){
             toast.error(error.response.data.message)
