@@ -83,7 +83,7 @@ export const    checkerDiscount = createAsyncThunk(
     "discount/checkerDiscount",
     async(payload, {rejectWithValue}) => {
         try{
-            const { code, nominal } = payload
+            const {page, code, nominal } = payload
             
             let PARAMETER = "?"
             
@@ -92,6 +92,9 @@ export const    checkerDiscount = createAsyncThunk(
             }
             if(nominal){
                 PARAMETER +=`nominal=${nominal}&`
+            }
+            if(page){
+                PARAMETER +=`page=${page}&`
             }
 
             const { data } = await api.post("/discount/check" + encodeURI(PARAMETER))
