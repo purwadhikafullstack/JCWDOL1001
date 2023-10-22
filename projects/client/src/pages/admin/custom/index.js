@@ -205,8 +205,7 @@ export default function CustomOrder({}) {
   }
   else{
     const result = listAllCustomProduct
-    // console.log(productNameState)
-    // console.log(oldNameProduct)
+
       for(let i =0; i < result.length ; i++){
         if(result[i].productName === oldNameProduct){
           if(option === 1){
@@ -228,7 +227,7 @@ export default function CustomOrder({}) {
       }
     }
     
-    // console.log("result = ",result)
+
       setListAllCustomProduct(result)
   }
     setProductNameState("")
@@ -237,7 +236,7 @@ export default function CustomOrder({}) {
     setProductDosageState("")
     setProductQuantityState("")
     setOption(2)
-    // console.log(items)
+
     setListAllCustomProduct(items)
     setMedState(false)
     setShowModal(false);
@@ -275,7 +274,6 @@ export default function CustomOrder({}) {
   }}
 
   const onIngredientProductChange = (params) =>{
-    // console.log(params)
     params?.forEach((item,index)=>
     index === 0 ? setIngredientId(item):setIngredientName(item))
     
@@ -316,11 +314,11 @@ const onUserChange = (params) =>{
 const submitIngredient = async () =>{
   try{
     setError("");
-    console.log("jalan")
+
     const selected = listAllIngredient?.find(
       (item)=> item.productId === +ingredientId
       );
-      console.log(selected)
+  
     if(selected){
       toast.error("Bahan obat racik sudah ada dalam daftar")
         setIsToastVisible(true);
@@ -343,7 +341,7 @@ const submitIngredient = async () =>{
       productName : ingredientName,
       quantity : ingredientQuantityRef?.current?.value
     }]
-    // console.log(result)
+
     setListAllIngredient(result)
     ingredientQuantityRef.current.value = null
     setIngredientSubmit(true)
