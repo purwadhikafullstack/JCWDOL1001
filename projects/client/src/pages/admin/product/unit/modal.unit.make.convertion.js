@@ -36,7 +36,7 @@ export default function ModalMakeConvertion({
     
     const onChangeTimes = (e)=>{
         e.preventDefault()
-        e.target.value > Math.floor(qtyUnit/convertion) ? setTimesValue(Math.floor(qtyUnit/convertion)) : e.target.value <= 0 ? setTimesValue(1) : setTimesValue(e.target.value)
+        e.target.value > qtyUnit ? setTimesValue(qtyUnit) : e.target.value <= 0 ? setTimesValue(1) : setTimesValue(e.target.value)
     }
 
   return (
