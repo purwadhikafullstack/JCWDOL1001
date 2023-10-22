@@ -40,7 +40,6 @@ export default function UserList({
             user : state?.custom?.dataUser
         }
     })
-    console.log(totalPage)
     const [page,setPage] = useState(1)
     const [sortDate,setSortDate] = useState(false)
     const dispatch = useDispatch()
