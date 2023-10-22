@@ -288,13 +288,13 @@ useEffect( ()=>{
                             </div>
                         )}
                         <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                            <Button title="Back" isButton isSecondary 
+                            <Button title="Kembali" isButton isSecondary 
                                 onClick={() =>{
                                     handleCloseModal()
                                     setError({ ...error, answer: false })
                                 }}
                             />
-                            <Button isButton isPrimary title="Confirm"
+                            <Button isButton isPrimary title="Jawab"
                                 onClick={()=>{setConfirmation(true)}}
                             />
                         </div>
@@ -307,9 +307,9 @@ useEffect( ()=>{
                         </p>
                         <div className="mt-4 flex justify-end gap-2">
                             {!isLoading && (
-                                <Button title="No" isButton isSecondary onClick={handleCloseModal} />
+                                <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
                             )}
-                            <Button title="Yes" isButton isDanger 
+                            <Button title="Iya" isButton isDanger 
                                 isLoading={isLoading}
                                 onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />
