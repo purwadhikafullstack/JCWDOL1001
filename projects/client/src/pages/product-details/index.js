@@ -231,7 +231,7 @@ export default function ProductDetail({user}) {
               </h3>
             </div>
 
-            <Button isBLock isButton isPrimary isDisabled={!product?.productUnits[0]?.product_detail.quantity} title="Masukkan Keranjang" onClick={()=>handleCart(product.productId)}/>
+            <Button isBLock isButton isPrimary isDisabled={!product?.productUnits[0]?.product_detail.quantity} title="Masukkan Keranjang" onClick={()=>handleCart(product?.productId)}/>
           </div>
         </div>
 
@@ -247,8 +247,7 @@ export default function ProductDetail({user}) {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {products
-              .map((product) => (
+            {products?.filter(item => item.productId !== product?.productId).map((product) => (
                 <Card
                   key={product.productId}
                   productId={product.productId}
