@@ -342,6 +342,11 @@ const changePassword = async (req, res, next) => {
         });
 
         const hashedPassword = helperEncryption.hashPassword(newPassword);
+        const isPasswordSame = helperEncryption.comparePassword(hashedPassword, oldPassword)
+        if(isPasswordSame) throw ({
+            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
+            message : middlewareErrorHandling.PASSWORD_SAME
+        })
 
         const userUpdated = await User_Account?.update({password : hashedPassword},{where : {userId : userId}})
         delete userUpdated?.dataValues?.password;
