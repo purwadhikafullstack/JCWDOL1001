@@ -215,7 +215,7 @@ const inputStockChange = (e) => {
               isButton
               isBLock
               isSecondary
-              title="Cancel"
+              title="Kembali"
               onClick={handleCloseModal}
             />
             <button
@@ -249,7 +249,7 @@ const inputStockChange = (e) => {
                 <Button
                   isButton
                   isPrimaryOutline
-                  title="Back"
+                  title="Kembali"
                   className="mt-4"
                   type="button"
                   onClick={() => setConfirmAdd(false)}
@@ -267,7 +267,7 @@ const inputStockChange = (e) => {
                 hover:bg-teal-700"
                 type="submit"
               >
-                Sure
+                Ya
               </button>
             </div>
           </div>

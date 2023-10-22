@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare } from "react-icons/hi2"
-import { RiQuestionAnswerLine } from "react-icons/ri"
+import { HiOutlineTrash,HiMagnifyingGlass,HiOutlinePencilSquare,HiXMark } from "react-icons/hi2"
 import Input from "../../../components/Input/index.js"
-import {PostAnswer, getForum,getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
+import {PostAnswer, getUnanswered,resetSuccessForum,deleteQuestion} from "../../../store/slices/forum/slices.js"
 import {formatDate} from "../../../utils/formatDate.js" 
 import Button from "../../../components/Button/index.js"
 import Pagination from "../../../components/PaginationV2"
 import Modal from "../../../components/Modal/index.js"
 import Message from "../../../components/Message/index.js"
-import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa"
-import { AnswerValidationSchema, PostQuestionValidationSchema } from "../../../store/slices/forum/validation.js"
+import { AnswerValidationSchema} from "../../../store/slices/forum/validation.js"
 import { toast } from "react-toastify"
 
 function QNA () {
@@ -28,8 +26,6 @@ function QNA () {
     })
     
     const [inputAnswer,setInputAnswer] = useState("")
-    const [unansweredList, setUnansweredList] = useState([])
-    const [answeredList, setAnsweredList] = useState([])
 
     const questionRef = useRef()
 
@@ -43,15 +39,6 @@ function QNA () {
 
     const [confirmation, setConfirmation] = useState(false);
 
-    const [filter,setFilter] = useState(false)
-
-    const [sortingDate,setSortingDate] = useState("")
-
-    const onButtonSortDate = (type="")=>{
-        setSortingDate(type)
-        setFilter(true)
-    }
-
     const handleShowModal = ({context,}) => {
         setShowModal({ show: true, context })
     }
@@ -59,30 +46,19 @@ function QNA () {
     const handleCloseModal = () => {
         setShowModal({ show: false, context: "" })
         setSelectedQuestion([])
-        // dispatch(getForum({sortDate :""}))
         dispatch(resetSuccessForum())
         document.body.style.overflow = "auto"
     }
 
-    
-    const onChangePagination = (type) => {
-        dispatch(
-            getForum({ 
-                page : type === "prev" ? Number(currentPage) - 1 : Number(currentPage) + 1, 
-            })
-        )
-    }
 
     const onButtonFilter = () => {
-        // dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
-        setFilter(true)
+        dispatch(getUnanswered({sortDate : (sortDate ? "DESC" : "ASC")}))
     }
 
     const clearFilter = () => {
-        setSortingDate("")
-        dispatch(getForum({sortDate :""}))
         questionRef.current.value = ""
-        setFilter(false)
+        const sort = sortDate ? "DESC" : "ASC"
+        dispatch(getUnanswered({ sortDate : sort}))
     }
 
     const [error, setError] = useState("")
@@ -92,7 +68,6 @@ function QNA () {
         e.preventDefault()
         const sort = sortDate ? "DESC" : "ASC"
         dispatch(getUnanswered({filterQuestion : question, sortDate : sort}))
-        setFilter(true)
     }
 
     const handleOnSure = async (qnaId) => {
@@ -105,7 +80,6 @@ function QNA () {
                 abortEarly:false
             })
             
-
             // console.log(output)
             dispatch(PostAnswer(output)).then(()=>
             dispatch(getUnanswered(({sortDate : (sortDate ? "DESC" : "ASC")}))))
@@ -158,18 +132,30 @@ useEffect( ()=>{
                     <form onSubmit={(event)=>{onSearch(event,questionRef.current.value)}}>
                     <Input type="text" placeholder="Cari pertanyaan..." 
                         ref={questionRef}
-                        />                
+                        /> 
+                    <div className="hidden sm:inline w-1/2 lg:w-1/3">  
+                        {questionRef?.current?.value !== "" &&
                     <Button 
-                        className="absolute top-1/2 right-5 lg:right-10 -translate-y-1/2 p-2" 
+                        className="absolute top-1/2 right-10 -translate-y-1/2 p-2" 
+                        type="button"
+                        onClick={clearFilter}
+                        >
+                        <HiXMark className="text-2xl text-primary" />
+                    </Button>          
+                        }
+                        
+                    <Button 
+                        className="absolute top-1/2 right-2 -translate-y-1/2 p-2" 
                         type="submit"
                             >
                         <HiMagnifyingGlass className="text-2xl text-primary" />
                     </Button>
+                    </div>
                     </form>
                     </div>
 
                 <div className="flex gap-2 items-center">
-                  <span className="text-sm font-semibold">Urutkan Tanggal Dari : </span>
+                  <span className="text-xs sm:text-sm font-semibold">Urutkan Tanggal Dari : </span>
                   <Button 
                     isButton
                     isPrimary
@@ -183,8 +169,8 @@ useEffect( ()=>{
                 </div>
                 </div>
                 <div>
-                    <table className="text-gray-500 w-full text-left text-sm border shadow-md">
-                        <thead className="text-gray-700 bg-slate-100 text-sm uppercase">
+                    <table className="text-gray-500 w-full text-left sm:text-sm text-xs border shadow-md">
+                        <thead className="text-gray-700 bg-slate-100 sm:text-sm text-xs uppercase">
                             <tr>
                                 <th className="p-3">Tanggal</th>
                                 <th className="p-3">Pengguna</th>
@@ -206,7 +192,7 @@ useEffect( ()=>{
                                        ...jawaban diperlukan
                                         </th> 
                                       
-                                        <td className="p-3 ">
+                                        <td className="p-3 gap-2 flex flex-col items-center justify center md:flex-row">
                                             <Button isSmall isDanger
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
@@ -224,7 +210,7 @@ useEffect( ()=>{
                                                     setSelectedQuestion(list)
                                                     setInputAnswer("")
                                                 }}
-                                                className="ml-2 bg-primary"
+                                                className="bg-primary"
                                             >
                                                 <HiOutlinePencilSquare className="text-lg" />
                                             </Button>
@@ -246,7 +232,7 @@ useEffect( ()=>{
                                         {list.answer}
                                         </th> 
                                         
-                                        <td className="p-3 ">
+                                        <td className="p-3 gap-2 flex flex-col items-center justify-center md:flex-row">
                                             <Button isSmall isDanger
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
@@ -264,7 +250,7 @@ useEffect( ()=>{
                                                     setSelectedQuestion(list)
                                                     setInputAnswer(list.answer)
                                                 }}
-                                                className="ml-2 bg-primary"
+                                                className=" bg-primary"
                                             >
                                                 <HiOutlinePencilSquare className="text-lg" />
                                             </Button>
@@ -277,12 +263,6 @@ useEffect( ()=>{
                     </table>
                 </div>
                 <div className="w-full flex items-center justify-center pt-8">
-                    {/* <Pagination 
-                        onChangePagination={onChangePagination}
-                        disabledPrev={Number(currentPage) === 1}
-                        disabledNext={currentPage >= totalPage}
-                        currentPage={currentPage}
-                    /> */}
                      <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
                 </div>
             </div>
@@ -308,13 +288,13 @@ useEffect( ()=>{
                             </div>
                         )}
                         <div className={`${confirmation ? "hidden" : "mt-4 flex gap-2"}`}>
-                            <Button title="Back" isButton isSecondary 
+                            <Button title="Kembali" isButton isSecondary 
                                 onClick={() =>{
                                     handleCloseModal()
                                     setError({ ...error, answer: false })
                                 }}
                             />
-                            <Button isButton isPrimary title="Confirm"
+                            <Button isButton isPrimary title="Jawab"
                                 onClick={()=>{setConfirmation(true)}}
                             />
                         </div>
@@ -327,9 +307,9 @@ useEffect( ()=>{
                         </p>
                         <div className="mt-4 flex justify-end gap-2">
                             {!isLoading && (
-                                <Button title="No" isButton isSecondary onClick={handleCloseModal} />
+                                <Button title="Tidak" isButton isSecondary onClick={handleCloseModal} />
                             )}
-                            <Button title="Yes" isButton isDanger 
+                            <Button title="Iya" isButton isDanger 
                                 isLoading={isLoading}
                                 onClick={() => dispatch(deleteQuestion(selectedQuestion.qnaId))}
                             />

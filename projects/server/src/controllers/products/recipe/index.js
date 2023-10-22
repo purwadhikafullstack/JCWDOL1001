@@ -2,6 +2,9 @@ const {middlewareErrorHandling} = require("../../../middleware/index.js");
 const {Product_Recipe, Product_List, Product_Unit, Product_Detail, Product_History, Discount_Product,Discount,
   Transaction_List, Transaction_Detail} = require("../../../model/relation.js")
 const moment = require("moment")
+const {ingredientValidationSchema,
+  customValidationSchema,
+  normalValidationSchema} = require("./validation.js")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
@@ -38,7 +41,7 @@ const getUser = async( req, res, next ) => {
     // if(search) filter = {
     //   name :{[Op.like]: `%${search}%`} 
     // }
-    console.log(filter)
+    // console.log(filter)
     const userlist = await User_Account.findAll({...options,
         where : {
             role : 2,
@@ -84,10 +87,23 @@ const getUser = async( req, res, next ) => {
     }
   }
 
+  function checkUniqueProductNames(products) {
+  const seenNames = new Set();
+  for (const product of products) {
+    if (seenNames.has(product?.productName)) {
+      throw ({ status : 404, 
+        message : middlewareErrorHandling.PRODUCT_ALREADY_EXISTS});
+    }
+    seenNames.add(product?.productName);
+  }
+  return true; // All names are unique
+}
+
   const checkIngredientStock = async( req, res, next ) => {
     try{
         // AddCustomProduct
         const {data,email} = req.body
+        checkUniqueProductNames(data)
 
         const result = 
         await Promise.all(
@@ -97,8 +113,14 @@ const getUser = async( req, res, next ) => {
         if(type){
         const {ingredients, productName,
         productPrice, productDosage, quantity} = item
-                    //validation for data
-          // TODO: validate
+          //validation for data
+           await customValidationSchema.validate({
+            productName: productName,
+            productDosage : productPrice,
+            productQuantity : quantity,
+            productPrice : productPrice
+           })
+        
         const product = await Product_List.create({
           productName,
           isDeleted : 1,
@@ -111,6 +133,11 @@ const getUser = async( req, res, next ) => {
 
         let availability = false;
         for ( let i = 0; i < ingredients.length; i++){
+          await ingredientValidationSchema.validate({
+            ingredientId : ingredients[i]?.productId,
+            ingredientQuantity : ingredients[i]?.quantity,
+          })
+
           const recipe = await Product_Recipe.create({
             productId : product?.productId,
             quantity : ingredients[i]?.quantity,
@@ -137,12 +164,17 @@ const getUser = async( req, res, next ) => {
             if(mainUnit?.quantity >= checker){
               availability = true;            
             }
+            else{
+              availability = false;
+              break
+            };
             
           }
           // -if qty unit secondary <= qty
           if(secUnit?.quantity >= (quantity * recipe?.quantity)){
             availability = true;
           }
+          
         }
         if(availability){
           return {name : productName, productId : product?.productId, quantity : quantity, type : 1}
@@ -151,6 +183,7 @@ const getUser = async( req, res, next ) => {
       //buat product biasa
       if(type === 0){
         const {productId, quantity} = item
+        await normalValidationSchema.validate({productId : productId, productQuantity : quantity})
         let availability = false
         const result = await Product_List.findOne({where:{
           productId : productId
@@ -172,7 +205,7 @@ const getUser = async( req, res, next ) => {
               ]
             },
           },
-          // required: false,
+          required: false,
         },]})
         //check if product categorized as buy 1 get 1
         let newQuantity = 
@@ -240,7 +273,7 @@ const getUser = async( req, res, next ) => {
         pathURL =  REDIRECT_URL + `/confirm/order-${accessToken}`
       }
 
-      const template = fs.readFileSync(path.join(process.cwd(), "templates", "customProductConfirmation.html"), "utf8");
+      const template = fs.readFileSync(path.join(process.cwd(), "projects/server/templates", "customProductConfirmation.html"), "utf8");
       const html = handlebars.compile(template)({ message: (message), link :(pathURL) })
       const mailOptions = {
           from: `Apotech Team Support <${GMAIL}>`,
@@ -564,7 +597,7 @@ async function typeZeroProduct(name,productId,quantity){
             ]
           },
         },
-        // required: false,
+        required: false,
       },
     ]})
   //kurang quantity

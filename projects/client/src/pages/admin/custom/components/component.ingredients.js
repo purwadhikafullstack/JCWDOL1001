@@ -19,7 +19,6 @@ function ListOfProduct({
                 >
                  <p> {item.productName}</p>
                 </div>
-            
         )
     })
 }
