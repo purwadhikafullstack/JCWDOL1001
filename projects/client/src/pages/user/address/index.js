@@ -77,7 +77,7 @@ export default function Address({
   useEffect(() => {
     dispatch(getAddress({
       page,
-      name : search
+      address : search
     }));
 
     setShowHandlePageContext({ show: false, action: "" });
@@ -107,7 +107,7 @@ export default function Address({
           <Input
             ref={searchRef}
             type="text"
-            placeholder="Cari nama penerima"
+            placeholder="Cari alamat"
             className="pr-16"
           />
           <Button
