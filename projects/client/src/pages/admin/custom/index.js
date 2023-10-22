@@ -153,18 +153,6 @@ export default function CustomOrder({}) {
       })
     }
     if( option === 0){
-    //check Product Duplicate
-      const selectedProduct = listAllCustomProduct.find(
-      (item) => item.productName === productNameState
-      );
-      if(selectedProduct){
-        toast.error("Produk sudah ada dalam daftar")
-        setIsToastVisible(true);
-  
-        return setTimeout(() => {
-          setIsToastVisible(false);
-        }, 2000);
-      }
 
       await normalValidationSchema.validate({
         normalProductId : +productIdState,
@@ -192,7 +180,18 @@ export default function CustomOrder({}) {
         })
       }
       if(option === 0){
-        //await normal
+            //check Product Duplicate
+      const selectedProduct = listAllCustomProduct.find(
+        (item) => item.productName === productNameState
+        );
+        if(selectedProduct){
+          toast.error("Produk sudah ada dalam daftar")
+          setIsToastVisible(true);
+    
+          return setTimeout(() => {
+            setIsToastVisible(false);
+          }, 2000);
+        }
        
         items.push({
           // productName : productNameRef.current.value,
