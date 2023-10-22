@@ -202,7 +202,7 @@ export default function Cart({ user }) {
       
         setError(errors)
       
-        toast.error("Check your input field!")
+        toast.error("Periksa kembali kolom pengisian!")
 
         setIsToastVisible(true)
 

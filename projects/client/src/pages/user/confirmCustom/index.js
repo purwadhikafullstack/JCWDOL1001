@@ -3,6 +3,7 @@ import Button from "../../../components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { setOrder } from "../../../store/slices/custom/slices";
+import { getOngoingTransactions } from "../../../store/slices/transaction/slices";
 
 export default function ConfirmCustom() {
   const dispatch = useDispatch()
@@ -19,6 +20,10 @@ export default function ConfirmCustom() {
       dispatch(setOrder(token))
     }
   },[])
+
+  useEffect(()=>{
+    dispatch(getOngoingTransactions())
+  },[status])
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">

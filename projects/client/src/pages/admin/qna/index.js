@@ -193,7 +193,7 @@ useEffect( ()=>{
                                         </th> 
                                       
                                         <td className="p-3 gap-2 flex flex-col items-center justify center md:flex-row">
-                                            <Button isSmall isDanger
+                                            <Button isSmall isDanger 
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
                                                     setSelectedQuestion(list)
@@ -233,7 +233,7 @@ useEffect( ()=>{
                                         </th> 
                                         
                                         <td className="p-3 gap-2 flex flex-col items-center justify-center md:flex-row">
-                                            <Button isSmall isDanger
+                                            <Button isSmall isDisabled
                                                 onClick={() =>{
                                                     handleShowModal({context : "Hapus Pertanyaan"})
                                                     setSelectedQuestion(list)
