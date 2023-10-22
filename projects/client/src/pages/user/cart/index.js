@@ -182,12 +182,6 @@ export default function Cart({ user }) {
         limit: 1000,
       })
     )
-
-    if(!statusUser){
-
-      navigate("/")
-
-    }
   },[])
 
   useEffect(()=>{
@@ -329,7 +323,7 @@ export default function Cart({ user }) {
                 </div>
           
                 <div className="h-full w-full lg:ml-auto lg:w-2/5 flex flex-col lg:border-l-2 lg:pl-14">
-                <h3 className="text-gray-600 text-sm">Stock : {cart.find((cartItem) => cartItem?.productId === item?.productId)
+                <h3 className="text-gray-600 text-sm">Produk Tersedia : {cart.find((cartItem) => cartItem?.productId === item?.productId)
                         ?.cartList?.product_details[0]?.quantity}
                   </h3>
                   <div className="flex flex-row h-full justify-center gap-2">

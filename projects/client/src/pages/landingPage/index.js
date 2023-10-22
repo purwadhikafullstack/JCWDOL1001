@@ -59,6 +59,12 @@ export default function LandingPage() {
         <div className="mt-4">
           <div className="flex items-center justify-between">
             <h3 className="title text-2xl">Produk Promo</h3>
+            <Button
+              onClick={() => navigate("/products", { state : { promo : true }})}
+              className="font-semibold text-primary"
+            >
+              Lihat Semua
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -72,9 +78,10 @@ export default function LandingPage() {
             <Button
               isLink
               path="/products"
-              title="Lihat Semua"
-              className="see-all"
-            />
+              className="font-semibold text-primary"
+            >
+              Lihat Semua
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">

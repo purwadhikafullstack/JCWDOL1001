@@ -48,7 +48,6 @@ export default function NormalProductList({
             className= {`w-full rounded-lg border bg-inherit px-2 py-2 outline-none 
             ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
             ref={selectProductRef} onChange={()=>{
-                // onChange()
                 onNormalProductChange(selectProductRef?.current?.value)}}
             onClick={() => setIsDropdownOpen(true)}
             >

@@ -115,8 +115,7 @@ export default function TableProducts({
                       <Button
                         isBLock
                         className="px-2 hover:bg-slate-200"
-                        onClick={() =>{
-                          // const context = product.product_details.length === 0 ?  "Ubah Satuan" : "Ubah Stok"                
+                        onClick={() =>{               
                           handleShowModal({
                             context : "Ubah Stok" , 
                             productId : product.productId

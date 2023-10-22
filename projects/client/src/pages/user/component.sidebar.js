@@ -103,7 +103,8 @@ export default function UserSidebar({ profile, user, setMobileContextActive, ong
             {user?.status === 0 &&
               <Button
                 isButton
-                isPrimary
+                isPrimary={verify}
+                isDanger={!verify}
                 isBLock
                 onClick={onClickVerified}
                 title={verify ? "Email Verifikasi Telah Dikirim" : "Verifikasi Akun"}
