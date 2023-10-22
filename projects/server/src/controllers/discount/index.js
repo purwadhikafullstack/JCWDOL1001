@@ -70,7 +70,7 @@ const createDiscount = async (req, res, next) => {
             message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
         })
 
-        if((discountAmount === "" || discountAmount == "0" ) && (minimalTransaction === "" || minimalTransaction =="0")) throw({
+        if((discountAmount === "" || discountAmount == "0" ) && (minimalTransaction === "" || minimalTransaction =="0") && oneGetOne === 0) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
         })
@@ -92,11 +92,6 @@ const createDiscount = async (req, res, next) => {
         if(discountCode && listProductId.length > 0) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.NOT_NEED_CODE
-        })
-
-        if((discountAmount=="" || discountAmount==0) && listProductId.length > 0) throw({
-            status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-            message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
         })
 
         if (listProductId.length > 0){ 
@@ -174,22 +169,17 @@ const updateDiscount = async (req, res, next) =>{
             message : middlewareErrorHandling.VOUCHER_CODE_EMPTY
         })
 
-        if((discountAmount === "" || discountAmount == "0" ) && discountCode !== "" ) throw({
+        if((discountAmount === "" || discountAmount == "0" ) && discountCode !== "" && oneGetOne === 0 ) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.VOUCHER_CANT_WITH_AMOUNT
         })
-
+        
         const listProductId = req.body.products.map(({productId})=>{return productId})
-
+        
         if(discountCode && listProductId.length > 0) throw({
             status : middlewareErrorHandling.BAD_REQUEST_STATUS,
             message : middlewareErrorHandling.NOT_NEED_CODE
         })
-
-        // if(!discountAmount && listProductId.length > 0) throw({
-        //     status : middlewareErrorHandling.BAD_REQUEST_STATUS,
-        //     message : middlewareErrorHandling.VOUCHER_NEED_AMOUNT
-        // })
 
         if (listProductId.length > 0){ 
             const productBindWithOtherDiscount = await Discount_Product.findAll({
@@ -214,10 +204,10 @@ const updateDiscount = async (req, res, next) =>{
             await Discount_Product.destroy({ where : { discountId } })
             
             if(isPercentage == 1 ){
-                req.body.products.map((product)=>product.endingPrice = ((1 - (discountAmount/100) )* product.detailProduct.productPrice))
+                req.body.products.map((product)=>product.endingPrice = ((1 - (discountAmount/100) )* product?.productPrice))
             }
             if(isPercentage == 0 && discountAmount > 0){
-                req.body.products.map((product)=>product.endingPrice = product.detailProduct.productPrice - discountAmount)
+                req.body.products.map((product)=>product.endingPrice = product?.productPrice - discountAmount)
             }
             await req.body.products.map((product)=>product.discountId = discountId)
             

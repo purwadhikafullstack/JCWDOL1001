@@ -3,7 +3,7 @@
       const reverseList = await Transaction_Detail.findAll({where : {
         transactionId : transactionId,
       }})
-      console.log(reverseList[0])
+      // console.log(reverseList[0])
       // //product check
       await Promise.all(
         reverseList.map(async (item) =>{ 
@@ -84,7 +84,7 @@
                 //stock obat racik : 1 quantity untuk obat raciknya
                 //ingredient : 2 , convertion 2
                 //sec ingredient > convertion
-                console.log("nilainya ",totalIngredientQuantity)
+                // console.log("nilainya ",totalIngredientQuantity)
                 //seandainya totalIngredientQuantity < main unit convertion?
 
 
@@ -163,8 +163,8 @@
                   // sisa skrg 5, konversi 20, perlu 210 dulu sisa? 15
                   const currentMainUnitQuantity = Math.floor((totalIngredientQuantity + secUnit?.dataValues?.quantity) / mainUnit?.dataValues?.convertion)
                   const currentSecUnitQuantity = (totalIngredientQuantity + secUnit?.dataValues?.quantity) % mainUnit?.dataValues?.convertion
-                  console.log("main unit qty : ",mainUnit.dataValues?.quantity)
-                  console.log("sec unit qty",secUnit.dataValues?.quantity)
+                  // console.log("main unit qty : ",mainUnit.dataValues?.quantity)
+                  // console.log("sec unit qty",secUnit.dataValues?.quantity)
                   await Product_History.create({
                     productId : itemRecipe?.dataValues?.ingredientProductId,
                     unit : mainUnit.dataValues?.product_unit.name,

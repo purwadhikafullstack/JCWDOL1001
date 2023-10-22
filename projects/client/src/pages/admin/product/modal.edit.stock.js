@@ -145,14 +145,6 @@ const inputStockChange = (e) => {
  
 
           <div className="my-4 flex flex-col gap-y-4">
-            {/* <div className="font-semibold">
-              <Input
-                type="text"
-                label="Product Name"
-                placeholder={productData?.productName}
-                isDisabled = {true}
-              />
-            </div> */}
             <div className="flex flex-col lg:flex-row gap-2">
               {`Nama produk : `}<div className="text-primary">{productData?.productName}</div>
             </div>
@@ -161,22 +153,8 @@ const inputStockChange = (e) => {
                 {productData?.product_details[0]?.quantity}</div>
             </div>
           </div>
-          
-          {/* <div className="mt-4 flex flex-col gap-y-4">
-            <div className="font-semibold">
-              <Input
-                type="text"
-                label="Current Stock(s)"
-                placeholder={productData?.product_details[0]?.quantity}
-                isDisabled = {true}
-              />
-            </div>
-          </div> */}
 
           <div className="flex flex-col my-3 border-t pt-6">
-          {/* <div className="font-bold text-lg text-teal-600">
-          Perubahan Stok
-          </div> */}
           <span className="text-xs">
             Silahkan pilih, apakah ingin menambah / mengurangi stok saat ini?
             </span>
@@ -237,7 +215,7 @@ const inputStockChange = (e) => {
               isButton
               isBLock
               isSecondary
-              title="Cancel"
+              title="Kembali"
               onClick={handleCloseModal}
             />
             <button
@@ -271,7 +249,7 @@ const inputStockChange = (e) => {
                 <Button
                   isButton
                   isPrimaryOutline
-                  title="Back"
+                  title="Kembali"
                   className="mt-4"
                   type="button"
                   onClick={() => setConfirmAdd(false)}
@@ -289,7 +267,7 @@ const inputStockChange = (e) => {
                 hover:bg-teal-700"
                 type="submit"
               >
-                Sure
+                Ya
               </button>
             </div>
           </div>

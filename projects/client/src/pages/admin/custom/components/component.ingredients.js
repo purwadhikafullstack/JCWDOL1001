@@ -12,23 +12,13 @@ function ListOfProduct({
 }){
     return product.map((item,index)=>{
         return(
-           
-            // onClick={()=>onIngredientProductChange([item?.productId, item?.productName])}
-            // value={[item?.productId, item?.productName]}
                 <div
                   key={index}
-                //   onMouseDown={() => handleSelection(index)}
-                //   ref={index === focusedIndex ? resultContainer : null}
-                //   style={{
-                //     backgroundColor:
-                //       index === focusedIndex ? "rgba(0,0,0,0.1)" : "",
-                //   }}
                   onClick={()=>clickOption([item?.productId, item?.productName])}
                   className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
                 >
                  <p> {item.productName}</p>
                 </div>
-            
         )
     })
 }
@@ -48,7 +38,6 @@ export default function IngredientList({
         }
     })
     useEffect(()=>{
-        console.log(isSubmit)
         if(isSubmit){
             resetValue()
         }

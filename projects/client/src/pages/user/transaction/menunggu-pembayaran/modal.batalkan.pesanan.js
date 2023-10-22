@@ -28,7 +28,7 @@ export default function ModalBatalkanPesanan({
   ];
 
   const chooseReason = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setInputReasonRef(null);
     setChooseReasonRef(e.target.value);
   };
