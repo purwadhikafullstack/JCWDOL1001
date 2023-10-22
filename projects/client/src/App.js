@@ -147,7 +147,7 @@ function App() {
           <Route path="/tentang-kami" element={<TentangKami/>} />     
           <Route path="/kebijakan-privasi" element={<KebijakanPrivasi/>} />     
           <Route path="/syarat-ketentuan" element={<SyaratKetentuan/>} />     
-          <Route path="*" element={<NotFound user={user}/>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
       <ToastContainer 
