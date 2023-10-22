@@ -40,6 +40,7 @@ export default function UserList({
             user : state?.custom?.dataUser
         }
     })
+    console.log(totalPage)
     const [page,setPage] = useState(1)
     const [sortDate,setSortDate] = useState(false)
     const dispatch = useDispatch()
@@ -109,6 +110,9 @@ export default function UserList({
 
     return(
         <div className="flex flex-col w-full items-center justify-center">
+        {
+            user.length > 0 ? 
+            <>
             <span className="font-semibold mb-6">
                 Resep dokter dari customer mana yang hendak diproses?
             </span>
@@ -166,8 +170,16 @@ export default function UserList({
                 </tbody>
             </table>
             <div className="mt-4 flex items-center justify-center">
-            <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
+            
+
+                <Pagination currentPage={currentPage} totalPage={totalPage} setPage={setPage}/>
             </div>
+            </>
+                :
+                <div className="flex flex-col h-full items-center justify-center">
+                Belum ada customer yang melakukan upload resep lagi.
+                </div>
+            }
         </div>
     )
 }

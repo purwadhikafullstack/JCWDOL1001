@@ -56,7 +56,6 @@ export const inCheckOut = createAsyncThunk(
     async (payload , {rejectWithValue}) => {
         try {
             await api.post("/cart/checkOut", payload)
-            toast.success("Check Out Succeed")
         }
         catch(error){
             toast.error(error.response?.data?.message)

@@ -37,7 +37,7 @@ export default function ResetPassword({
                 dispatch(resetPass({password : passwordRef.current?.value, token : token}))
                 setError("")
                 setSubmit(true)
-                
+                navigate("/")
             }
 
         }catch(error) {
@@ -49,7 +49,7 @@ export default function ResetPassword({
 
             setError(errors)
             console.log(errors)
-            toast.error("Check your input field!")
+            toast.error("Periksa kembali kolom pengisian.")
 
             setIsToastVisible(true)
 

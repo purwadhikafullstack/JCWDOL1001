@@ -256,7 +256,7 @@ export const resetPass= createAsyncThunk(
 
             const {data} = response
 
-            toast.success("Data Password telah diubah")
+            toast.success("Data password telah diubah. Silahkan gabung kembali")
             
         } catch (error) {
             toast.error(error.response?.data?.message)
