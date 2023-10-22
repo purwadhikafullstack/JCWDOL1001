@@ -5,6 +5,7 @@ import Input from "../../Input"
 import { login } from "../../../store/slices/auth/slices"
 import { LoginValidationSchema } from "../../../store/slices/auth/validation"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom";
 
 export default function LoginContext ({
     onRegist = ()=>{},
@@ -15,6 +16,7 @@ export default function LoginContext ({
 })
 {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const {isLogin} = useSelector(state => {
 		return {
 			isLogin : state?.auth?.isLogin
@@ -34,7 +36,10 @@ export default function LoginContext ({
                 abortEarly: false,
             })
             setError("")
-            dispatch(login(output)).then(()=>setTitle(""))
+            dispatch(login(output)).then(()=>{
+                setTitle("")
+                navigate("/")
+            })
 
         }catch(error) {
             const errors = {}
