@@ -177,7 +177,6 @@ export default function CategoryList(){
                             <HiXMark className="text-2xl text-primary" />
                         </Button>
                     }
-                    
                 </form>
             </div>
 
@@ -193,7 +192,7 @@ export default function CategoryList(){
                         <option value={"DESC"}>Z-A</option>
                     </select>
             </div>
-
+            
             <div className="relative overflow-x-auto mt-2">
                 <table className="text-gray-500 w-full text-left text-sm">
                     <thead className="text-gray-700 bg-slate-100 text-sm uppercase">

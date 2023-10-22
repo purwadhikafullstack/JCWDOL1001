@@ -6,13 +6,15 @@ export const getAddress = createAsyncThunk(
     "address/getAddress",
     async (payload, { rejectWithValue }) => {
         try {
-            const {page, name} = payload
+            const {page, name, address} = payload
 
             let PARAMETER = "?"
 
             if(page) PARAMETER += `page=${page ? page : 1 }&`
             
             if(name) PARAMETER += `name=${name}&`
+
+            if(address) PARAMETER += `address=${address}&`
 
             const { data } = await api.get("/address" + encodeURI(PARAMETER))
 

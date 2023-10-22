@@ -89,7 +89,9 @@ const discountSlice = createSlice({
         },
         [checkerDiscount.fulfilled] : (state, action) => {
             state = Object.assign(state, {
-                listDiscount : action.payload.data
+                listDiscount : action.payload.data,
+                totalPage : action.payload?.totalPage,
+                currentPage : action.payload?.currentPage,
             })
         },
         [checkerDiscount.rejected] : (state,action) => {
