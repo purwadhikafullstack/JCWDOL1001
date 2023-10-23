@@ -69,9 +69,8 @@ export default function Password() {
     newPasswordRef.current.value = null;
     rePasswordRef.current.value = null;
   }
-  if(passwordChangeStatus === "success"){
+  if(passwordChangeStatus === "success" && submit === true){
     clearField();
-    dispatch(changePasswordSuccess())
   }
 
   return (
