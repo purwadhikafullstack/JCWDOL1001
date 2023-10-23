@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTransactionList } from "../../../store/slices/transaction/slices";
-import { formatDate } from "../../../utils/formatDate";
 import formatNumber from "../../../utils/formatNumber";
 import Button from "../../../components/Button";
 import Modal from "../../../components/Modal";
@@ -9,8 +7,7 @@ import IngredientList from "./components/component.ingredients";
 import { BsTrashFill,BsImage } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import Input from "../../../components/Input";
-import { getProducts } from "../../../store/slices/product/slices";
-import { checkIngredient, getUser } from "../../../store/slices/custom/slices";
+import { checkIngredient } from "../../../store/slices/custom/slices";
 import UserList from "./components/component.user";
 import NormalProductList from "./components/component.normalProduct";
 import { capitalizeEachWords } from "../../../utils/capitalizeEachWords";
@@ -83,6 +80,12 @@ export default function CustomOrder({}) {
     }
   } 
 
+  const deleteProduct = () =>{
+    const selectedProduct = listAllCustomProduct.filter(
+      (item) => item.productName !== oldNameProduct
+    );
+    setListAllCustomProduct(selectedProduct)
+  }
 
   const handleShowModal = (productName) => {
     // munculin modal
@@ -105,12 +108,12 @@ export default function CustomOrder({}) {
       setOption(1)
     }
     if(selectedProduct.type === 0){
-      setOption(0)
+      setNormalProductState(selectedProduct?.productName)
       setProductIdState(selectedProduct?.productId)
       setProductQuantityState(selectedProduct?.quantity)
-      setNormalProductState(selectedProduct?.productName)
       setProductPriceState(selectedProduct?.productPrice)
       setOldNameProduct(selectedProduct?.productName)
+      setOption(0)
     }
     }
   };
@@ -119,6 +122,8 @@ export default function CustomOrder({}) {
     setMedState(false)
     setTitleState(false)
     setProductNameState("")
+    setNormalProductState("")
+    setOldNameProduct("")
     setProductIdState("")
     setProductPriceState("")
     setProductDosageState("")
@@ -136,6 +141,7 @@ export default function CustomOrder({}) {
     setError("")
     //validation
     if(option === 1){
+
       await customValidationSchema.validate({
         ingredientList : listAllIngredient,
         productName : productNameState,
@@ -147,6 +153,7 @@ export default function CustomOrder({}) {
       })
     }
     if( option === 0){
+
       await normalValidationSchema.validate({
         normalProductId : +productIdState,
         normalProductName : productNameState,
@@ -173,7 +180,18 @@ export default function CustomOrder({}) {
         })
       }
       if(option === 0){
-        //await normal
+            //check Product Duplicate
+      const selectedProduct = listAllCustomProduct.find(
+        (item) => item.productName === productNameState
+        );
+        if(selectedProduct){
+          toast.error("Produk sudah ada dalam daftar")
+          setIsToastVisible(true);
+    
+          return setTimeout(() => {
+            setIsToastVisible(false);
+          }, 2000);
+        }
        
         items.push({
           // productName : productNameRef.current.value,
@@ -187,8 +205,7 @@ export default function CustomOrder({}) {
   }
   else{
     const result = listAllCustomProduct
-    // console.log(productNameState)
-    // console.log(oldNameProduct)
+
       for(let i =0; i < result.length ; i++){
         if(result[i].productName === oldNameProduct){
           if(option === 1){
@@ -210,7 +227,7 @@ export default function CustomOrder({}) {
       }
     }
     
-    // console.log("result = ",result)
+
       setListAllCustomProduct(result)
   }
     setProductNameState("")
@@ -219,7 +236,7 @@ export default function CustomOrder({}) {
     setProductDosageState("")
     setProductQuantityState("")
     setOption(2)
-    // console.log(items)
+
     setListAllCustomProduct(items)
     setMedState(false)
     setShowModal(false);
@@ -257,7 +274,6 @@ export default function CustomOrder({}) {
   }}
 
   const onIngredientProductChange = (params) =>{
-    // console.log(params)
     params?.forEach((item,index)=>
     index === 0 ? setIngredientId(item):setIngredientName(item))
     
@@ -297,6 +313,21 @@ const onUserChange = (params) =>{
 
 const submitIngredient = async () =>{
   try{
+    setError("");
+
+    const selected = listAllIngredient?.find(
+      (item)=> item.productId === +ingredientId
+      );
+  
+    if(selected){
+      toast.error("Bahan obat racik sudah ada dalam daftar")
+        setIsToastVisible(true);
+  
+        return setTimeout(() => {
+          setIsToastVisible(false);
+        }, 2000);
+    }
+
     await ingredientValidationSchema.validate({
       ingredientId : ingredientId, 
       ingredientQuantity : ingredientQuantityRef?.current?.value  
@@ -310,7 +341,7 @@ const submitIngredient = async () =>{
       productName : ingredientName,
       quantity : ingredientQuantityRef?.current?.value
     }]
-    // console.log(result)
+
     setListAllIngredient(result)
     ingredientQuantityRef.current.value = null
     setIngredientSubmit(true)
@@ -318,7 +349,7 @@ const submitIngredient = async () =>{
     setTimeout(() => {
       setIngredientSubmit(false)
     }, 2000);
-    setError("");
+
   }
   catch(error){
     const errors = {};
@@ -771,7 +802,6 @@ const handleSubmitOrder = () =>{
     <div className="border p-4 shadow-md">
       <div onChange={() => setError({ ...error, normalProductId: false })}>
       <NormalProductList
-        // product={dataProduct}
         onNormalProductChange={onNormalProductChange}
         productId={productIdState}
         productName={normalProductState}
@@ -812,10 +842,22 @@ const handleSubmitOrder = () =>{
             onClick={() => handleCloseModal()}
           />
           <div className="flex gap-2">
+          {titleState &&
+          <Button
+              isButton
+              isDanger
+              title={`Hapus`}
+              isDisabled={isToastVisible}
+              onClick={() => {
+              deleteProduct()
+              handleCloseModal()
+              }}
+              />
+          }
             <Button
               isButton
               isPrimary
-              title={`Confirm`}
+              title={titleState ? `Ubah` : `Tambah`}
               isDisabled={isToastVisible}
               onClick={() => handleAddModal()}
               />

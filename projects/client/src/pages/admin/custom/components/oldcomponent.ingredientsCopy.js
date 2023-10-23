@@ -25,14 +25,6 @@ export default function IngredientList({
     selected
 
 }){
-    // dispatch(getProducts({
-    //     category_id : "",
-    //     product_name : "",
-    //     sort_name : "", 
-    //     sort_price : "", 
-    //     page : 1,
-    //     limit: 12
-    //   }));
 
     const selectProductRef = useRef(null)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -46,14 +38,9 @@ export default function IngredientList({
             className= {`w-full rounded-lg border bg-inherit px-2 py-2 outline-none 
             ${ errorInput ? "border-red-300" : "border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/50"}`}
             ref={selectProductRef} onChange={()=>{
-                // onChange()
                 onIngredientProductChange(selectProductRef?.current?.value)}}
             onClick={() => setIsDropdownOpen(true)}
             >
-                {/* <Input
-                type="text"
-                placeholder="earch..." 
-                /> */}
                  <option disabled={isDropdownOpen}>Select Ingredient Product:  </option>
                 <ListOfProduct
                 selected={selected}

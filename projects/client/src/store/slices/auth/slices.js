@@ -214,7 +214,7 @@ export const changeProfileData = createAsyncThunk (
             const userId = payload.userId;
             delete payload.userId;
             const response = await api.patch(`auth/change-profile/${userId}`,payload)
-            toast.success("Your profile data has been updated.")
+            toast.success("Profil berhasil diubah.")
             return {}
         }catch(error){
             toast.error(error.response?.data?.message)
@@ -256,7 +256,7 @@ export const resetPass= createAsyncThunk(
 
             const {data} = response
 
-            toast.success("Data Password telah diubah")
+            toast.success("Data password telah diubah. Silahkan gabung kembali")
             
         } catch (error) {
             toast.error(error.response?.data?.message)

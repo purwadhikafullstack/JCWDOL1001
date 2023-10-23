@@ -14,7 +14,9 @@ function ListOfProduct({
         (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
               item?.discountProducts[0]?.endingPrice : item?.productPrice
             )
-            let name = (item?.discountProducts?.length !== 0 && item.discountProducts[0]?.discount?.oneGetOne === false ?
+            let name = (item?.discountProducts?.length === 0 ?
+                item.productName :
+                 item.discountProducts[0]?.discount?.oneGetOne === false ?
                 item.productName : (item.productName + " (Promo Buy 1 Get 1)")
               )
         return(
@@ -107,7 +109,7 @@ export default function NormalProductList({
     },[productName])
 
     useEffect(()=>{
-        // console.log(isSubmit)
+
         if(isSubmit){
             resetValue()
         }

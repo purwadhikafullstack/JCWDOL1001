@@ -20,9 +20,11 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
 
     const inputRef = useRef()
     const [input,setInput] = useState("")
-    const [page,setPage] = useState("")
+    const [page,setPage] = useState(1)
+    const [filter,setfilter] = useState(false)
 
     const clearFilter = () => {
+        setfilter(false)
         setInput("")
         setDiscount(null)
     }
@@ -40,25 +42,33 @@ export default function DiscountChecker({setDiscount,selectedDiscount,subTotal})
     }
 
     useEffect(()=>{
-        setDiscount(listDiscount[0])
-    },[listDiscount])
+        setDiscount(selectedDiscount)
+    },[selectedDiscount])
+
+    useEffect(()=>{
+        if(filter === true){
+            dispatch(checkerDiscount({"code" : input, "nominal":subTotal})).then((response)=>{
+                response?.payload?.type ==="success" && setDiscount(listDiscount[0])
+            })
+        }
+    },[input])
 
     useEffect(()=>{
         dispatch(checkerDiscount({page:page,nominal : subTotal}))
-    },[page])
+    },[page,input])
     
     return (
         <div className="flex flex-col gap-3 items-start">
             <div className="flex gap-4">
                 {selectedDiscount
-                    ? <Input type="button" value={selectedDiscount?.discountCode ? selectedDiscount?.discountCode :input} />
+                    ? <Input type="button" value={selectedDiscount?.discountCode ? selectedDiscount?.discountCode : input} />
                     : <Input ref={inputRef} type="text" placeholder="Cari kode" />
                 }
                 <Button isButton isPrimaryOutline
                     className={selectedDiscount ? "hidden" : ""}
                     onClick={()=>{
+                        setfilter(true)
                         setInput(inputRef?.current?.value)
-                        dispatch(checkerDiscount({"code" : inputRef?.current?.value, "nominal":subTotal}))
                     }}
                 > Cari </Button>
                 <Button className={`flex flex-row items-center h-auto text-red-700 ${selectedDiscount ? "" : "hidden"}`}

@@ -13,11 +13,13 @@ import { getAddress } from "../../store/slices/address/slices.js"
 
 export default function UploadRecipePage(){
 
-    const {isLoading,address,userStatus} = useSelector(state => {
+    const {isLoading,address,userStatus, totalPage, currentPage} = useSelector(state => {
 		return {
 			isLoading : state?.uploadRecipe?.isLoading,
             address : state?.address?.data,
             userStatus : state?.auth?.status,
+            currentPage : state?.address?.currentPage,
+            totalPage : state?.address?.totalPage
 		}
 	})
 
@@ -39,6 +41,8 @@ export default function UploadRecipePage(){
         etd :"",
         cost :""
     })
+
+    const [page, setPage] = useState(1)
 
     const [showModal, setShowModal] = useState({ show: false, context: "" })
 
@@ -96,7 +100,7 @@ export default function UploadRecipePage(){
         }
     }    
     useEffect(() => {
-        dispatch(getAddress({page:1}))
+        dispatch(getAddress({page:page}))
         setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
         if(userStatus===0){
             navigate("/","replace")
@@ -108,11 +112,16 @@ export default function UploadRecipePage(){
         setSelectedAddress(address?.find((address)=>{return address?.isPrimary === 1 && address?.isDeleted === 0}))
     },[address])
 
+    useEffect(() => {
+        dispatch(getAddress({page:page}))
+    },[page])
+
+
     return(
         <div className={`container max-w-3xl pt-24  ${width <= mobileWidth && "pb-24"}`}>
             <div className="flex flex-col gap-5">
                 <h3 className="title">Jasa Pengiriman</h3>
-                <ShippingAddress listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
+                <ShippingAddress setPage={setPage} totalPage={totalPage} currentPage={currentPage} listAddress={address} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
                 {(error.addressId && selectedAddress.length ===0) && (
                     <div className="text-sm text-red-500 dark:text-red-400 -mt-5">
                         {error.addressId}

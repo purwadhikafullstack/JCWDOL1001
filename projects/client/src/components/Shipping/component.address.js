@@ -65,7 +65,7 @@ export default function ShippingAddress({
                     handleCloseModal={()=>{
                         handleShowModal("Daftar Alamat")
                         dispatch(resetSuccessAddress())
-                        dispatch(getAddress())
+                        dispatch(getAddress({page:1}))
                     }}
                 />
             </Modal>
